@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "{{PROJECT_ROOT_POSIX}}/能力资产/tools/hooks/codex/session-start.ps1"
+            ],
+            "timeout": 15,
+            "statusMessage": "加载{{PROJECT_NAME}}项目治理上下文"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "{{PROJECT_ROOT_POSIX}}/能力资产/tools/hooks/codex/user-prompt-submit.ps1"
+            ],
+            "timeout": 10,
+            "statusMessage": "检查用户输入的项目治理上下文"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "{{PROJECT_ROOT_POSIX}}/能力资产/tools/hooks/claude/stop-chat-summary.ps1"
+            ],
+            "timeout": 15,
+            "statusMessage": "检查实施收尾交接卡格式"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "{{PROJECT_ROOT_POSIX}}/能力资产/tools/hooks/claude/post-edit-framework-check.ps1"
+            ],
+            "timeout": 20,
+            "statusMessage": "改 framework 后快检索引一致性"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "auto|manual",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "{{PROJECT_ROOT_POSIX}}/能力资产/tools/hooks/claude/pre-compact-snapshot.ps1"
+            ],
+            "timeout": 15,
+            "statusMessage": "压缩前留存 PM 轨迹"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "{{PROJECT_ROOT_POSIX}}/能力资产/tools/hooks/claude/pre-write-guard.ps1"
+            ],
+            "timeout": 10,
+            "statusMessage": "敏感写入(密钥)前置确认"
+          }
+        ]
+      }
+    ]
+  }
+}

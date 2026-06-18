@@ -1,0 +1,87 @@
+{
+  "version": "0.1.0",
+  "description": "{{PROJECT_NAME}}操作系统 hooks 清单。源码在能力资产/tools/hooks，执行脚本在能力资产/tools/scripts。",
+  "hooks": [
+    {
+      "id": "readme-index-check",
+      "description": "检查 ADR/PROP/元规则池、hooks 文档与 PM 工作区入口等 README/INDEX 锚点是否一致。",
+      "triggers": ["manual", "pre-commit", "scheduled"],
+      "script": "能力资产/tools/scripts/check-readme-indexes.ps1",
+      "checkArgs": [],
+      "applyArgs": [],
+      "allowExitCodes": [0]
+    },
+    {
+      "id": "adr-readme-dry-run",
+      "description": "按 ADR-*.md 文件核对 ADR README；Check 只报差异，Apply 才补表。",
+      "triggers": ["manual", "pre-commit", "file-watch"],
+      "script": "能力资产/tools/scripts/update-adr-readme.ps1",
+      "checkArgs": ["-Mode", "Check"],
+      "applyArgs": ["-Mode", "Apply"],
+      "allowExitCodes": [0]
+    },
+    {
+      "id": "pm-tracking-check",
+      "description": "检查状态.md PM 切换轨迹是否超过 30 分钟未更新；exit 10 作为非阻塞强提醒。",
+      "triggers": ["manual", "chat-output", "scheduled"],
+      "script": "能力资产/tools/scripts/check-pm-tracking.ps1",
+      "checkArgs": ["-Threshold", "30"],
+      "applyArgs": ["-Threshold", "30"],
+      "allowExitCodes": [0, 5, 10]
+    },
+    {
+      "id": "handoff-zone-check",
+      "description": "检查交接区待接手积压、待接手卡 ①-⑥ 标题顺序、⑤ Status 5 态、已接手文件名归档年龄、状态.md 待接手断链；只报警，不自动移动历史卡。",
+      "triggers": ["manual", "scheduled"],
+      "script": "能力资产/tools/scripts/check-handoff-zone.ps1",
+      "checkArgs": [],
+      "applyArgs": [],
+      "allowExitCodes": [0, 5]
+    },
+    {
+      "id": "chat-summary-check",
+      "description": "检查 chat 输出是否按顺序包含 ①-⑦、PM 切换轨迹、⑥ 交接区/待接手/ 详情路径和状态.md PM 轨迹行号；接收归档且待接手为空时允许 ⑥ 指向 accepted 已接手卡；等待外部 chat-output 事件接入时传 TextPath。",
+      "triggers": ["chat-output"],
+      "script": "能力资产/tools/hooks/chat-output/check-chat-summary.ps1",
+      "checkArgs": ["-TextPath", "__TEXT_PATH__", "-Root", "__ROOT__"],
+      "applyArgs": ["-TextPath", "__TEXT_PATH__", "-Root", "__ROOT__"],
+      "allowExitCodes": [0]
+    },
+    {
+      "id": "hook-install-check",
+      "description": "检查 {{APP_REPO_DIR}}/.git/hooks/pre-commit 与 pre-push 是否已接入项目内 wrapper。",
+      "triggers": ["manual"],
+      "script": "能力资产/tools/hooks/install-hooks.ps1",
+      "checkArgs": ["-Mode", "Check"],
+      "applyArgs": ["-Mode", "Apply"],
+      "allowExitCodes": [0]
+    },
+    {
+      "id": "framework-health-check",
+      "description": "运行当前操作系统总健康检查。",
+      "triggers": ["scheduled"],
+      "script": "能力资产/tools/scripts/check-operating-system.ps1",
+      "checkArgs": [],
+      "applyArgs": [],
+      "allowExitCodes": [0]
+    },
+    {
+      "id": "pre-release-check",
+      "description": "发布前门禁 — push 前强制 npm test（vitest run）+ npm run build 全过，任一失败 exit 1 阻止 push。",
+      "triggers": ["manual", "pre-push"],
+      "script": "能力资产/tools/scripts/check-pre-release.ps1",
+      "checkArgs": [],
+      "applyArgs": [],
+      "allowExitCodes": [0]
+    },
+    {
+      "id": "retro-cadence-check",
+      "description": "沉淀节奏闹钟 — 距上次 RETRO 积累 ≥N 个 framework 活动批次时提醒项目 PM 派沉淀 PM 写 RETRO（议题 CK / Layer 4）。",
+      "triggers": ["manual", "scheduled"],
+      "script": "能力资产/tools/scripts/check-retro-cadence.ps1",
+      "checkArgs": [],
+      "applyArgs": [],
+      "allowExitCodes": [0, 5]
+    }
+  ]
+}

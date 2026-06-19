@@ -50,6 +50,33 @@ function Test-RequiredDirectory {
   }
 }
 
+function Test-InstallerCopyItems {
+  param([string[]]$ExpectedItems)
+
+  $installerRel = "实例化项目.ps1"
+  $installerPath = Join-Path $Root $installerRel
+  if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
+    $failureSink.Add("🔴 缺实例化脚本：$installerRel")
+    return
+  }
+
+  $scriptText = Get-Content -LiteralPath $installerPath -Raw -Encoding UTF8
+  $match = [regex]::Match($scriptText, '\$copyItems\s*=\s*@\((?<body>[\s\S]*?)\)')
+  if (-not $match.Success) {
+    $failureSink.Add("🔴 实例化脚本未找到 `$copyItems 清单")
+    return
+  }
+
+  $items = @([regex]::Matches($match.Groups["body"].Value, '"([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
+  foreach ($item in $ExpectedItems) {
+    if ($items -notcontains $item) {
+      $failureSink.Add("🔴 实例化脚本 `$copyItems 缺少：$item")
+    } else {
+      $passSink.Add("实例化脚本复制清单：$item")
+    }
+  }
+}
+
 $requiredFiles = @(
   "AGENTS.md", "状态.md", "README.md",
   "操作系统/00_总入口.md",
@@ -86,9 +113,15 @@ $requiredFiles = @(
 
 if ($isTemplateRoot) {
   $requiredFiles += @(
+    ".gitignore",
+    "实例化项目.ps1",
     "项目配置/README.md",
+    "项目配置/_模板.project.json",
+    "项目配置/.gitkeep",
+    "项目区/.gitignore",
     "项目区/README.md",
-    "项目区/清单.md"
+    "项目区/清单.md",
+    "项目区/本地实例/.gitkeep"
   )
 } else {
   $requiredFiles += @("TASKS.md")
@@ -116,6 +149,26 @@ if ($isTemplateRoot) {
 foreach ($f in $requiredFiles) { Test-RequiredFile $f }
 foreach ($f in $optionalFiles) { Test-OptionalFile $f }
 foreach ($d in $requiredDirs) { Test-RequiredDirectory $d }
+
+if ($isTemplateRoot) {
+  Test-InstallerCopyItems @(
+    ".codex",
+    ".claude",
+    ".gitignore",
+    "AGENTS.md",
+    "README.md",
+    "状态.md",
+    "实例化项目.ps1",
+    "操作系统",
+    "能力资产",
+    "PM工作区",
+    "交接区",
+    "确认改动",
+    "项目配置",
+    "项目区",
+    "Docs"
+  )
+}
 
 Write-Host ("  ✅ P4a 通过项：{0}" -f $passSink.Count) -ForegroundColor Green
 if ($localFailures.Count -gt 0) {

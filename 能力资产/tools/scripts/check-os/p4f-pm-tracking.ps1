@@ -12,7 +12,7 @@ if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
     exit 5
 }
 
-& $scriptPath -Threshold $Threshold
+& $scriptPath -Root $Root -Threshold $Threshold
 $pmTrackingExit = $LASTEXITCODE
 
 if ($pmTrackingExit -eq 5) {

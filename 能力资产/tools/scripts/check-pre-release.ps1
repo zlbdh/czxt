@@ -10,8 +10,17 @@ param(
 #         `& npm <subcmd>` 会把参数解析错（npm 收到 "pm" → Unknown command）。cmd /c 走 npm.cmd 标准路径。
 
 $ErrorActionPreference = "Stop"
+$frameworkScope = Join-Path $PSScriptRoot "check-os\framework-scope.ps1"
+if (Test-Path -LiteralPath $frameworkScope -PathType Leaf) {
+  . $frameworkScope
+}
+
 $repo = Join-Path $Root "{{APP_REPO_DIR}}"
 if (-not (Test-Path -LiteralPath (Join-Path $repo "package.json"))) {
+  if ((Get-Command Test-IsTemplateRoot -ErrorAction SilentlyContinue) -and (Test-IsTemplateRoot -Root $Root)) {
+    Write-Host "  🟡 模板根未实例化 {{APP_REPO_DIR}}，跳过业务发布门禁" -ForegroundColor Yellow
+    exit 5
+  }
   Write-Host "  🔴 {{APP_REPO_DIR}}/package.json 不存在 — 发布门禁无法确认仓库，fail-closed" -ForegroundColor Red
   exit 1
 }

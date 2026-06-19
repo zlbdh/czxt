@@ -15,12 +15,17 @@
 #    导致找不到 状态.md（exit 1），P4f 形同虚设。现上溯 3 层到项目根。
 
 param(
+    [string]$Root = "",
     [int]$Threshold = 30  # 阈值（分钟），默认 30
 )
 
 $ErrorActionPreference = "Stop"
-# FIX: 能力资产\tools\scripts → 上溯 3 层到项目根
-$projectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+if ([string]::IsNullOrWhiteSpace($Root)) {
+    # FIX: 能力资产\tools\scripts → 上溯 3 层到项目根
+    $projectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+} else {
+    $projectRoot = [System.IO.Path]::GetFullPath($Root)
+}
 $stateFile = Join-Path $projectRoot "状态.md"
 
 if (-not (Test-Path $stateFile)) {

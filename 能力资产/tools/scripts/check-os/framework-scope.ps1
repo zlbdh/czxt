@@ -21,5 +21,10 @@ function Test-IsTemplateRoot {
   $readme = Join-Path $Root "README.md"
   if (-not (Test-Path -LiteralPath $readme -PathType Leaf)) { return $false }
   $text = Get-Content -LiteralPath $readme -Raw -Encoding UTF8
-  return ($text -match '#\s*操作系统模板' -and $text -match '\{\{PROJECT_ROOT\}\}')
+  $hasTemplateTitle = $text -match '#\s*操作系统模板'
+  $hasTemplateScaffold = (
+    (Test-Path -LiteralPath (Join-Path $Root "项目配置\_模板.project.json") -PathType Leaf) -and
+    (Test-Path -LiteralPath (Join-Path $Root "项目区\清单.md") -PathType Leaf)
+  )
+  return ($hasTemplateTitle -and $hasTemplateScaffold)
 }

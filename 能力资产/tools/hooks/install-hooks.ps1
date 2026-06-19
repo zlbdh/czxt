@@ -5,15 +5,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+. (Join-Path $PSScriptRoot "..\scripts\check-os\framework-scope.ps1")
 
 $repoPath = Join-Path $Root "{{APP_REPO_DIR}}"
 $hooksDir = Join-Path $repoPath ".git\hooks"
-$isTemplateRoot = $false
-$rootReadme = Join-Path $Root "README.md"
-if (Test-Path -LiteralPath $rootReadme -PathType Leaf) {
-  $rootText = Get-Content -LiteralPath $rootReadme -Raw -Encoding UTF8
-  $isTemplateRoot = ($rootText -match '#\s*操作系统模板' -and $rootText -match '\{\{PROJECT_ROOT\}\}')
-}
+$isTemplateRoot = Test-IsTemplateRoot -Root $Root
 
 if (-not (Test-Path -LiteralPath $hooksDir)) {
   if ($isTemplateRoot -and $Mode -eq "Check") {

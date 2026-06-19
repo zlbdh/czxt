@@ -6,12 +6,8 @@ $ErrorActionPreference = "Stop"
 $failures = @()
 . (Join-Path $PSScriptRoot "anchor-common.ps1")
 . (Join-Path $PSScriptRoot "prop-status-helpers.ps1")
-$isTemplateRoot = $false
-$rootReadmeForMode = Join-Path $Root "README.md"
-if (Test-Path -LiteralPath $rootReadmeForMode -PathType Leaf) {
-  $rootModeText = Get-Content -LiteralPath $rootReadmeForMode -Raw -Encoding UTF8
-  $isTemplateRoot = ($rootModeText -match '#\s*操作系统模板' -and $rootModeText -match '\{\{PROJECT_ROOT\}\}')
-}
+. (Join-Path (Split-Path -Parent $PSScriptRoot) "check-os\framework-scope.ps1")
+$isTemplateRoot = Test-IsTemplateRoot -Root $Root
 
 $propRoot = Join-Path $Root "确认改动"
 $propStates = Get-PropStateSpecs

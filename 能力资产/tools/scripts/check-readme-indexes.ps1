@@ -4,6 +4,12 @@ param(
 
 $ErrorActionPreference = "Stop"
 $failures = @()
+$isTemplateRoot = $false
+$frameworkScope = Join-Path $PSScriptRoot "check-os\framework-scope.ps1"
+if (Test-Path -LiteralPath $frameworkScope -PathType Leaf) {
+  . $frameworkScope
+  $isTemplateRoot = Test-IsTemplateRoot -Root $Root
+}
 
 function Count-Lines {
   param(
@@ -107,12 +113,10 @@ $panoramaPaths = @(
   (Join-Path $Root "操作系统\04_台账\议题全景.md"),
   (Join-Path $Root "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md")
 )
-$panoramaRows = 0
 $panoramaFound = $false
 foreach ($panoramaPath in $panoramaPaths) {
   if (Test-Path -LiteralPath $panoramaPath) {
     $panoramaFound = $true
-    $panoramaRows += Count-Lines -Path $panoramaPath -Pattern '^\| \*\*.*ADR-'
   }
 }
 if ($panoramaFound) {
@@ -120,6 +124,8 @@ if ($panoramaFound) {
 } else {
   Write-Host "  🟡 未找到议题全景.md（信息项）" -ForegroundColor Yellow
 }
+
+$templateSkip = @("github-actions-anchor.ps1","docs-edge-ops-anchor.ps1","docs-edge-history-anchor.ps1","product-docs-anchor.ps1","ledger-spec-anchor.ps1","smoke-history-semantics-anchor.ps1","prop-template-anchor.ps1")
 
 foreach ($helper in @(
   "os-main-entry-anchor.ps1",
@@ -155,6 +161,10 @@ foreach ($helper in @(
   "p4b-business-debt-anchor.ps1",
   "markdown-links-anchor.ps1"
 )) {
+  if ($isTemplateRoot -and ($templateSkip -contains $helper)) {
+    Write-Host "  ℹ️ 模板根跳过 $helper 来源项目锚点" -ForegroundColor Gray
+    continue
+  }
   $helperPath = Join-Path $PSScriptRoot "check-readme-indexes\$helper"
   if (-not (Test-Path -LiteralPath $helperPath)) {
     Add-Failure "$helper 缺失"

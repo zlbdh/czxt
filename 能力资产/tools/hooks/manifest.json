@@ -54,7 +54,7 @@
       "script": "能力资产/tools/hooks/install-hooks.ps1",
       "checkArgs": ["-Mode", "Check"],
       "applyArgs": ["-Mode", "Apply"],
-      "allowExitCodes": [0]
+      "allowExitCodes": [0, 5]
     },
     {
       "id": "framework-health-check",
@@ -72,7 +72,7 @@
       "script": "能力资产/tools/scripts/check-pre-release.ps1",
       "checkArgs": [],
       "applyArgs": [],
-      "allowExitCodes": [0]
+      "allowExitCodes": [0, 5]
     },
     {
       "id": "retro-cadence-check",

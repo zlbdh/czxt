@@ -7,7 +7,10 @@ function Invoke-HooksSmokeConfigRunnerContracts {
   Assert-True ($runnerOutput -match "readme-index-check") "runner missing readme-index-check"
   Assert-True ($runnerOutput -match "adr-readme-dry-run") "runner missing adr-readme-dry-run"
 
-  $installOutput = Run-Checked @("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $Paths.InstallHooks, "-Mode", "Check")
+  $installOutput = powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.InstallHooks -Mode Check 2>&1
+  $installCode = $LASTEXITCODE
+  Assert-True ((0, 5) -contains $installCode) "install hook check bad exit: $installCode"
+  $installOutput = $installOutput -join "`n"
   Assert-True ($installOutput -match "hooks installer check") "install hook check missing report"
 
   $installViaRunner = Run-Checked @("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $Paths.Runner, "-Trigger", "manual", "-Mode", "Check", "-Hook", "hook-install-check")

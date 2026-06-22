@@ -4,6 +4,8 @@ param(
   [Parameter(Mandatory=$true)][string]$AppRepoDir,
   [string]$CurrentVersion = "v0.1.0",
   [string]$CurrentSprint = "Sprint-1",
+  [string]$AppId = "",
+  [string]$ProjectSlug = "",
   [switch]$Force
 )
 
@@ -15,6 +17,17 @@ $ProjectRootPosix = $ProjectRoot.Replace("\", "/")
 $ProjectRootLower = $ProjectRoot.ToLowerInvariant()
 $InitTime = Get-Date -Format "yyyy-MM-dd HH:mm"
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
+$TemplateRootFull = [System.IO.Path]::GetFullPath($TemplateRoot)
+if ($ProjectRootLower -eq $TemplateRootFull.ToLowerInvariant()) {
+  throw "目标路径不能是模板根自身：$ProjectRoot"
+}
+
+if ([string]::IsNullOrWhiteSpace($ProjectSlug)) {
+  $ProjectSlug = (($ProjectName.ToLowerInvariant()) -replace '[^a-z0-9]+','-').Trim('-')
+  if ([string]::IsNullOrWhiteSpace($ProjectSlug)) { $ProjectSlug = "project" }
+}
+if ([string]::IsNullOrWhiteSpace($AppId)) { $AppId = $ProjectSlug }
 
 if (!(Test-Path -LiteralPath $ProjectRoot)) {
   New-Item -ItemType Directory -Path $ProjectRoot | Out-Null
@@ -34,7 +47,6 @@ $copyItems = @(
   "交接区",
   "确认改动",
   "项目配置",
-  "项目区",
   "Docs"
 )
 
@@ -48,6 +60,29 @@ foreach ($item in $copyItems) {
     throw "目标已存在：$dst。若确认覆盖，请加 -Force。"
   }
   Copy-Item -LiteralPath $src -Destination $dst -Recurse -Force
+}
+
+# 项目区：只复制骨架（README/清单/.gitignore + 空 本地实例/.gitkeep），
+# 绝不递归复制 本地实例/* —— 防自实例化时把生成中的实例反复拷进自己（无限套娃），
+# 同时避免新项目继承模板的本地实例残留。
+$pzSrc = Join-Path $TemplateRoot "项目区"
+$pzDst = Join-Path $ProjectRoot "项目区"
+if (!(Test-Path -LiteralPath $pzSrc)) {
+  throw "模板缺少必要项：项目区"
+}
+if ((Test-Path -LiteralPath $pzDst) -and -not $Force) {
+  throw "目标已存在：$pzDst。若确认覆盖，请加 -Force。"
+}
+New-Item -ItemType Directory -Path (Join-Path $pzDst "本地实例") -Force | Out-Null
+foreach ($pzFile in @("README.md", "清单.md", ".gitignore")) {
+  $pzf = Join-Path $pzSrc $pzFile
+  if (Test-Path -LiteralPath $pzf) {
+    Copy-Item -LiteralPath $pzf -Destination (Join-Path $pzDst $pzFile) -Force
+  }
+}
+$pzKeep = Join-Path $pzSrc "本地实例\.gitkeep"
+if (Test-Path -LiteralPath $pzKeep) {
+  Copy-Item -LiteralPath $pzKeep -Destination (Join-Path $pzDst "本地实例\.gitkeep") -Force
 }
 
 function Ensure-Directory {
@@ -126,6 +161,8 @@ foreach ($file in $files) {
   $text = $text.Replace("{{PROJECT_ROOT_LOWER}}", $ProjectRootLower)
   $text = $text.Replace("{{PROJECT_NAME}}", $ProjectName)
   $text = $text.Replace("{{APP_REPO_DIR}}", $AppRepoDir)
+  $text = $text.Replace("{{PROJECT_SLUG}}", $ProjectSlug)
+  $text = $text.Replace("{{APP_ID}}", $AppId)
   $text = $text.Replace("{{CURRENT_VERSION}}", $CurrentVersion)
   $text = $text.Replace("{{CURRENT_SPRINT}}", $CurrentSprint)
   $text = $text.Replace("{{INIT_TIME}}", $InitTime)

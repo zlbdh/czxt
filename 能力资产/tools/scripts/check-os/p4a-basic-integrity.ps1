@@ -77,6 +77,35 @@ function Test-InstallerCopyItems {
   }
 }
 
+function Test-InstallerProjectZoneSkeleton {
+  $installerRel = "实例化项目.ps1"
+  $installerPath = Join-Path $Root $installerRel
+  if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
+    $failureSink.Add("🔴 缺实例化脚本：$installerRel")
+    return
+  }
+  $scriptText = Get-Content -LiteralPath $installerPath -Raw -Encoding UTF8
+
+  # 防递归回归：项目区 不得进 $copyItems 总递归复制清单（否则自实例化时无限套娃）
+  $match = [regex]::Match($scriptText, '\$copyItems\s*=\s*@\((?<body>[\s\S]*?)\)')
+  $copyItemList = @()
+  if ($match.Success) {
+    $copyItemList = @([regex]::Matches($match.Groups["body"].Value, '"([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
+  }
+  if ($copyItemList -contains "项目区") {
+    $failureSink.Add("🔴 实例化脚本 `$copyItems 不应含 项目区（会递归套娃）：改为只拷骨架")
+  } else {
+    $passSink.Add("实例化脚本 项目区 未进总递归清单（防套娃）")
+  }
+
+  # 防漏拷回归：项目区 仍须以骨架方式复制（README/清单/.gitignore + 本地实例/.gitkeep）
+  if (($scriptText -match '项目区') -and ($scriptText -match '本地实例') -and ($scriptText -match '\.gitkeep')) {
+    $passSink.Add("实例化脚本 项目区 骨架复制（含 本地实例/.gitkeep）")
+  } else {
+    $failureSink.Add("🔴 实例化脚本缺 项目区 骨架复制（README/清单/.gitignore + 本地实例/.gitkeep）")
+  }
+}
+
 $requiredFiles = @(
   "AGENTS.md", "状态.md", "README.md",
   "操作系统/00_总入口.md",
@@ -165,9 +194,9 @@ if ($isTemplateRoot) {
     "交接区",
     "确认改动",
     "项目配置",
-    "项目区",
     "Docs"
   )
+  Test-InstallerProjectZoneSkeleton
 }
 
 Write-Host ("  ✅ P4a 通过项：{0}" -f $passSink.Count) -ForegroundColor Green

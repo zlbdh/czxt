@@ -26,6 +26,7 @@ Assert-HooksSmokeSupportFiles -SupportRoot $supportRoot
 . (Join-Path $supportRoot "hooks-smoke-chat-output-contracts.ps1")
 . (Join-Path $supportRoot "hooks-smoke-codex-contracts.ps1")
 . (Join-Path $supportRoot "hooks-smoke-claude-contracts.ps1")
+. (Join-Path $supportRoot "hooks-smoke-claude-pathgate-contracts.ps1")
 . (Join-Path $supportRoot "hooks-smoke-p4b-touch-contracts.ps1")
 . (Join-Path $supportRoot "hooks-smoke-lifecycle-contracts.ps1")
 

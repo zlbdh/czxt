@@ -86,6 +86,7 @@ function Assert-HooksSmokeSupportFiles {
     "hooks-smoke-chat-output-accepted-contracts.ps1",
     "hooks-smoke-chat-output-contracts.ps1",
     "hooks-smoke-claude-contracts.ps1",
+    "hooks-smoke-claude-pathgate-contracts.ps1",
     "hooks-smoke-codex-contracts.ps1",
     "hooks-smoke-codex-stop-contracts.ps1",
     "hooks-smoke-codex-tool-contracts.ps1",

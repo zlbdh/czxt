@@ -11,6 +11,7 @@ function Invoke-HooksSmokeLifecycleContracts {
     Invoke-HooksSmokeChatOutputContracts -Root $Root -Paths $Paths -Fixture $fixture
     Invoke-HooksSmokeCodexContracts -Root $Root -Paths $Paths -Fixture $fixture
     Invoke-HooksSmokeClaudeContracts -Root $Root -Paths $Paths
+    Invoke-HooksSmokeClaudePathGateContracts -Root $Root -Paths $Paths
     Invoke-HooksSmokeP4bTouchContracts -Root $Root -Paths $Paths
   } finally {
     Remove-HooksSmokeChatFixture -Fixture $fixture

@@ -88,6 +88,7 @@ RETRO-002-2026-07.md
 | [RETRO-020](RETRO-020-2026-06.md) | 2026-06-08~09 | v3.39/40/41/42 四闭环（便当食品安全 + 出行备货 + **重量曲线🏆首破 schema-less** + M 偏离记录·2 把 schema 数据刀） | 1549→1623 全绿 / 🏆 schema 迁移安全定式确立（2 把刀真机零丢失·新表 4 处改 checklist·无 upgrade·v140→v160）+ 数据刀 ultracode 隐私维度（截断/本地/可删除/不批判）+ 投资刀确定性切法（M 先记录后学习）+ 便当米饭蜡样芽孢杆菌真隐患修 |
 | [RETRO-021](RETRO-021-2026-06.md) | 2026-06-14 | PROP-044 AC3+AC4 framework 受控并行首次试点（26 文件 scope frontmatter / 3 并行 worker / 非 Sprint 专项） | B-lite 实战验证 ✅ 0 越界（精确 61−26）+ 体检 gate exit 0 + 派工卡互斥字段有效 / 🔴 barrier 浪费（B 305s 拖死 A 79s·C 55s）→ 候选 **DU** 工作量均衡 + **DV** 越界探针 / 升 ADR 暂缓·标候选·再 1-2 次实战 |
 | [RETRO-022](RETRO-022-2026-06.md) | 2026-06-14 | 单日 framework 治理大批次 + **PM 实体化 agent 化**（指针同步 11 文件 + P4h 锚点守卫 + PROP-044 B-lite 2 次试点 + 发布门禁/状态.md 切档 2 P0 + 9 PM 全量 agent 化） | 🥇 hooks 上线即抓自己作者的假绿 + 指针锚点 P4h 守卫封堵漂移 + B-lite spread 5.5×→1.5×（DU 第 2 数据点）+ 🐛 npm.ps1 shim 坑（`cmd /c` 解）+ 状态.md -68% 字节守恒 / **PM 实体化 agent 调度模型升 ADR-038**（9 PM 全量 agent 化 + 项目 PM 单点调度·验收 + 禁嵌套 + 单源落笔）/ DU/DV/DW 留候选 |
+| [RETRO-023](RETRO-023-2026-06.md) | 2026-06-22 | czxt 产品化 dogfood 三刀（实例化递归套娃修复 `2d216a8` / README门面+体检scope `6abddc8` / PROP-001 路径软门禁 `96e82cf`·首个 czxt 原生 PROP 全生命周期） | 🥇 dogfood 实跑抓出 5 explorer 漏掉的递归套娃高危 BUG + 🛡️ 框架自带守卫反向 catch 作者本人三处改动 + 🔴 ADR-038 调度模型首会话即被作者违反 2 次（inline→纠正后 PROP-001 首次正确派 worker）+ DW 时间戳第 3 次复发→建议提 PROP + 体检 scope 排除自托管实例待全面排查 |
 
 附属候选文件：[`RETRO-009-候选议题.md`](RETRO-009-候选议题.md) 不是正式 RETRO，不计入正式编号。
 

@@ -29,6 +29,8 @@ powershell -File 能力资产/tools/hooks/run-hooks.ps1 -Trigger manual -Mode Ch
 powershell -File 能力资产/tools/hooks/install-hooks.ps1 -Mode Check
 ```
 
+> ✍️ **写 PM 轨迹推荐用法**：`powershell -NoProfile -File 能力资产/tools/scripts/add-pm-track.ps1 -From "<从>" -To "<到>" -Task "<干了啥>"` —— 自动用 `Get-Date` 盖真实时间戳追加一行规范轨迹，避免手填时间戳出错（P4f 轨迹崩塌）。
+
 > ⚠️ **合并来源**：原 `{{PROJECT_ROOT}}\tools/`（task #90-#92 新建）+ 本目录原声明文档（PROP-028 落地）→ task #109 合并到统一治理 / **PM 自纠 #75 教训**：新建顶级目录前必检查命名冲突
 
 | 文件 | 内容 |

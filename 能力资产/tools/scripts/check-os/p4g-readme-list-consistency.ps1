@@ -63,7 +63,7 @@ if (Test-Path -LiteralPath $poolPath) {
 }
 
 $readmes = Get-ChildItem -LiteralPath $Root -Filter "README.md" -Recurse -ErrorAction SilentlyContinue | Where-Object {
-    $_.FullName -notmatch "\\\.git\\|\\node_modules\\|\\已接手\\|\\状态-archive\\|CHANGELOG-2026"
+    $_.FullName -notmatch "\\\.git\\|\\node_modules\\|\\已接手\\|\\状态-archive\\|CHANGELOG-2026|\\本地实例\\"
 }
 $total = $readmes.Count
 $withFm = 0

@@ -6,6 +6,7 @@
 # 用法：
 #   powershell -NoProfile -File 能力资产/tools/scripts/add-pm-track.ps1 `
 #     -From "项目 PM「咪咪」" -To "操作系统 PM「框架管家」" -Task "干了啥"
+#   含 ASCII 引号/特殊字符的 task → 改用 -TaskFile <文件>（把 task 写文件再传），避开命令行引号截断。
 #
 # 行为：
 #   1. 时间戳 = Get-Date -Format 'yyyy-MM-dd HH:mm'（自动取真值，不接受外部传时间）
@@ -18,7 +19,8 @@
 param(
     [Parameter(Mandatory = $true)][string]$From,
     [Parameter(Mandatory = $true)][string]$To,
-    [Parameter(Mandatory = $true)][string]$Task,
+    [string]$Task = "",
+    [string]$TaskFile = "",
     [string]$Checkpoint = "✅ Q1-Q7：framework / 操作系统 PM",
     [string]$Done = "✅",
     [string]$StatePath = ""
@@ -46,6 +48,19 @@ function Format-Cell {
     param([string]$Value)
     if ($null -eq $Value) { return "" }
     return ($Value -replace '\|', '/' -replace '[\r\n]+', ' ').Trim()
+}
+
+# -TaskFile 优先（robust：含 ASCII 引号/特殊字符的 task 走文件读，避开命令行 arg 引号截断 → dogfood 实战发现）
+if (-not [string]::IsNullOrWhiteSpace($TaskFile)) {
+    if (-not (Test-Path -LiteralPath $TaskFile -PathType Leaf)) {
+        Write-Host "❌ 找不到 TaskFile：$TaskFile" -ForegroundColor Red
+        exit 1
+    }
+    $Task = [System.IO.File]::ReadAllText($TaskFile, [System.Text.UTF8Encoding]::new($false))
+}
+if ([string]::IsNullOrWhiteSpace($Task)) {
+    Write-Host "❌ 必须提供 -Task 或 -TaskFile（任务描述不能为空）" -ForegroundColor Red
+    exit 1
 }
 
 $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm'   # 核心：自动取真值

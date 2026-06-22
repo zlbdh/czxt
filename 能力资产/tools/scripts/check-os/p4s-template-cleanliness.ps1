@@ -45,7 +45,7 @@ $terms = @(
   ("xiaoxiao" + "dewo")
 )
 $extensions = @(".md", ".ps1", ".json", ".txt", ".html", ".js", ".ts", ".jsx", ".tsx", ".yml", ".yaml")
-$skipDirs = @("\.git\")
+$skipDirs = @("\.git\", "\本地实例\")
 
 $files = Get-ChildItem -LiteralPath $Root -Recurse -Force -File | Where-Object {
   $path = $_.FullName

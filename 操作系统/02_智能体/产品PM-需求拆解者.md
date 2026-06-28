@@ -17,6 +17,8 @@ description: 产品 PM「需求拆解者」playbook — 模糊业务需求拆成
 
 ⭐ **跟项目 PM「咪咪」的关系**：产品 PM 是项目 PM **切的帽子之一**；项目 PM 识别业务需求 → 跑 `decision-checkpoint` → 切本帽子。
 
+产品 PM 内含“需求拆解 mode / 体验设计 mode”；体验设计可调用 `product-design` 插件，但不单独新增设计 PM，规则见 [`../01_架构/PM专业mode能力层.md`](../01_架构/PM专业mode能力层.md)。
+
 ## 触发条件（项目 PM 路由 → 本帽子）
 
 zlbdh 说出以下任一种业务需求语言：

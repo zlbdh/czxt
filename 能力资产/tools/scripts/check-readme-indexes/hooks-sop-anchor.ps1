@@ -1,4 +1,4 @@
-param([string]$Root)
+﻿param([string]$Root)
 
 $ErrorActionPreference = "Stop"
 $sop = Join-Path $Root "操作系统\07_完整工作流\hooks-运行SOP.md"

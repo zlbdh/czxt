@@ -1,4 +1,4 @@
-function Invoke-OsSubcheck {
+﻿function Invoke-OsSubcheck {
   param(
     [string]$RelativeScript,
     [string]$FailureLabel,

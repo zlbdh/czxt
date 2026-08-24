@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 $root = Resolve-Path (Join-Path $PSScriptRoot "..\..\..")
 $script:OsCheckRoot = $root

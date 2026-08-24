@@ -1,4 +1,4 @@
-param(
+﻿param(
   [ValidateSet("Check", "Apply")]
   [string]$Mode = "Check",
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path

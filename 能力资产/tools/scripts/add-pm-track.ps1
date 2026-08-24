@@ -1,4 +1,4 @@
-# 能力资产/tools/scripts/add-pm-track.ps1
+﻿# 能力资产/tools/scripts/add-pm-track.ps1
 # PM 切换轨迹追加器 — RETRO-023 候选 DW 落地（PM 轨迹时间戳自动化）
 # 核心：调用时自动用 Get-Date 盖真实时间戳，追加一行规范 PM 轨迹到 状态.md 末尾，
 #       杜绝手填（手猜值 vs 真值差几十分钟 → P4f「轨迹崩塌」红，已 3 次复发）。

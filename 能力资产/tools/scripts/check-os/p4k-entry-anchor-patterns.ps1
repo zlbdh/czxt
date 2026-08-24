@@ -1,4 +1,4 @@
-$script:EntryAnchorPatternRows = @'
+﻿$script:EntryAnchorPatternRows = @'
 状态.md§项目真相：`Docs/1-需求文档/Sprint-1需求清单\.md`§状态旧 Sprint-1 真相锚
 TASKS.md§5KB\s*/\s*8KB 红区|trainingFixtures\.js 14\.7KB|Chat\.jsx 11827B§TASKS 旧 P4b/业务债口径
 操作系统/00_变更记录/CHANGELOG.md§(?m)^# agent/ 演进日志|开发操作系统.*agent/ \+ framework§CHANGELOG 旧 agent/ 命名

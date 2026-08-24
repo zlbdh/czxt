@@ -1,4 +1,4 @@
-# 能力资产/tools/scripts/check-pm-tracking.ps1
+﻿# 能力资产/tools/scripts/check-pm-tracking.ps1
 # 改进 2 完整版 — PM 切换轨迹自动检查（PROP-027 v2 升完整版）
 # 借鉴 Kiro Hooks 模式 — 检测状态.md 末尾 PM 轨迹时间戳，超时报警
 #

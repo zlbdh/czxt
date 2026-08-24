@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Get-HandoffSortValue {
   param([System.IO.FileInfo]$File)

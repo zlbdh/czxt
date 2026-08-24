@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$TextPath = "",
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 )

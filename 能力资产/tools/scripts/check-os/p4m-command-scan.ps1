@@ -1,4 +1,4 @@
-function Test-P4mRequiredFiles {
+﻿function Test-P4mRequiredFiles {
   param(
     [string]$Root,
     [string[]]$Files

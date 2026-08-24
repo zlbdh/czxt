@@ -1,4 +1,4 @@
-Assert-Contains "确认改动\README.md" "PROP-020-路径D-方案v0\.md.*不计独立递增编号" "PROP 编号例外 PROP-020"
+﻿Assert-Contains "确认改动\README.md" "PROP-020-路径D-方案v0\.md.*不计独立递增编号" "PROP 编号例外 PROP-020"
 Assert-Contains "确认改动\README.md" "PROP-027-v2-2026-05-21-chat简版⑦段硬约束\.md.*共用议题号" "PROP 编号例外 PROP-027"
 Assert-Contains "确认改动\README.md" "PROP-025-2026-05-20-database拆分" "PROP-025 追溯补档索引"
 Assert-Contains "确认改动\README.md" "chat 简版后续由 PROP-027 v2 扩为 ①-⑦" "PROP README chat 简版现行口径"

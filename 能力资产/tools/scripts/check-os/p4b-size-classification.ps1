@@ -1,4 +1,4 @@
-function Get-AppSrcP4bMeta {
+﻿function Get-AppSrcP4bMeta {
   param([string]$Rel)
 
   $kind = if ($Rel -match '[\\/]__tests__[\\/]|\.test\.(js|jsx|ts|tsx)$') { "test" } else { "prod" }

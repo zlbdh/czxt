@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function New-HooksSmokeChatFixture {
   param([string]$Root)

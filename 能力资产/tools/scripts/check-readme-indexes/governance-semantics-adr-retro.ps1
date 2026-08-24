@@ -1,4 +1,4 @@
-Assert-Contains "Docs\3-开发文档\adr\README.md" "ADR-011.*ADR-017 分层化" "ADR-011 阈值继承边界"
+﻿Assert-Contains "Docs\3-开发文档\adr\README.md" "ADR-011.*ADR-017 分层化" "ADR-011 阈值继承边界"
 Assert-Contains "Docs\3-开发文档\adr\README.md" "ADR-018.*①-⑦" "ADR-018 chat 简版现行口径"
 Assert-Contains "Docs\3-开发文档\adr\README.md" "ADR-027.*主-元-决策-实施" "ADR-027 四层术语"
 Assert-Contains "Docs\3-开发文档\通用提示词-开发操作系统体检.md" '历史模板说明.*当前内化入口见' "开发操作系统体检提示词历史边界"

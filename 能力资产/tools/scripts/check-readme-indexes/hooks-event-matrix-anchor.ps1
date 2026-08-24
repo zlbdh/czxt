@@ -1,4 +1,4 @@
-param([string]$Root)
+﻿param([string]$Root)
 
 $ErrorActionPreference = "Stop"
 $matrix = Join-Path $Root "操作系统\06_工具治理\hooks-事件矩阵.md"

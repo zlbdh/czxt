@@ -1,4 +1,4 @@
-param([string]$Root)
+﻿param([string]$Root)
 
 $ErrorActionPreference = "Stop"
 $rel = "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md"

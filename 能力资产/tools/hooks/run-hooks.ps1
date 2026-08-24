@@ -1,4 +1,4 @@
-param(
+﻿param(
   [ValidateSet("manual", "pre-commit", "pre-push", "chat-output", "file-watch", "scheduled")]
   [string]$Trigger = "manual",
   [ValidateSet("Check", "Apply")]

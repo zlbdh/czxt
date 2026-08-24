@@ -1,4 +1,4 @@
-$script:P4kToolSubjectChecks = @(
+﻿$script:P4kToolSubjectChecks = @(
     @{ Path = "能力资产/tools/README.md"; Pattern = 'Codex/CC\s*战场|Codex\s*战场|Claude Code\s*战场'; Label = "tools README 仍用工具战场表述责任边界" },
     @{ Path = "能力资产/tools/构建脚本.md"; Pattern = 'Codex\s*战场|Claude Code\s*战场|PM / framework\s*战场'; Label = "构建脚本文档仍用工具战场表述责任边界" },
     @{ Path = "操作系统/02_智能体/操作系统PM-框架管家.md"; Pattern = '测试代码 = Claude Code|构建配置 = Codex / Claude Code|给 Claude Code|Codex\s*战场|`tools/\*\*`|业务 ignore 留 Claude Code|让 Claude Code 改 CHANGELOG|实际 commit 由 Codex 顺手带|外部工具战场|→ Claude Code|→ Codex'; Label = "操作系统 PM playbook 仍用工具名当责任主体或旧 tools 路径" },

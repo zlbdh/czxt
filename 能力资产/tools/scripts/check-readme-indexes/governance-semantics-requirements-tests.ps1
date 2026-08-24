@@ -1,4 +1,4 @@
-Assert-Contains "TASKS.md" "项目 Task 历史台账" "TASKS 当前/历史边界"
+﻿Assert-Contains "TASKS.md" "项目 Task 历史台账" "TASKS 当前/历史边界"
 Assert-Contains "Docs\1-需求文档\README.md" "当前需求真源优先级.*README\.md.*状态\.md.*smoke" "需求文档入口真源优先级"
 Assert-Contains "Docs\1-需求文档\功能清单.md" "历史功能快照" "功能清单历史边界"
 Assert-Contains "Docs\1-需求文档\PRD-v3.md" "历史 PRD 说明.*当前版本.*状态\.md" "PRD-v3 历史边界"

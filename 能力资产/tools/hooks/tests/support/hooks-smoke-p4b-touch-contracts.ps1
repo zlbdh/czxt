@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function New-HooksSmokeP4bFixture {
   param([string]$Root)

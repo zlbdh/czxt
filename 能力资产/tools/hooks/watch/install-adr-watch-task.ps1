@@ -1,4 +1,4 @@
-param(
+﻿param(
   [ValidateSet("Check", "Apply", "Remove")]
   [string]$Mode = "Check",
   [string]$TaskName = "CZXT-ADR-README-Watch",

@@ -1,4 +1,4 @@
-# 能力资产/tools/scripts/check-retro-cadence.ps1
+﻿# 能力资产/tools/scripts/check-retro-cadence.ps1
 # 沉淀节奏闹钟 — 议题 CK / Layer 4 自动化用在「沉淀触发」上（PROP-044 一脉 hooks）
 #
 # 监控 RETRO 沉淀节奏：距上次 RETRO 后 CHANGELOG 已积累 ≥N 个 framework 活动「天批次」

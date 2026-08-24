@@ -1,4 +1,4 @@
-function Get-BranchHandoffIssues {
+﻿function Get-BranchHandoffIssues {
   param(
     [Parameter(Mandatory=$true)][string]$Root,
     [int]$MaxPending = 3,

@@ -1,4 +1,4 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 # Claude Code PostToolUse 适配器（PROP-038）：Edit/Write 改 framework/PM 工作区/治理入口后，跑 readme-index 快检，
 # 仅在索引漂移时非阻塞提醒（systemMessage）；普通业务代码静默放行，触碰 {{APP_REPO_DIR}}/src 红/软区大文件时仅软提醒。

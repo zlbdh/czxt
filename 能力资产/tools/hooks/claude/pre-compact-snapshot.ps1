@@ -1,4 +1,4 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 # Claude Code PreCompact 适配器（PROP-038 / 议题 CK）：context 压缩前快照「最后 PM 切换轨迹」并提醒，
 # 防 PM 留痕 / 未发收尾交接卡在自动压缩中丢失（治本 session 反复踩的留痕崩塌）。

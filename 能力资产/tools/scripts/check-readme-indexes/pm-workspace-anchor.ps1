@@ -1,4 +1,4 @@
-param([string]$Root)
+﻿param([string]$Root)
 
 $ErrorActionPreference = "Stop"
 $checker = Join-Path $Root "能力资产\tools\scripts\check-os\p4n-pm-workspace.ps1"

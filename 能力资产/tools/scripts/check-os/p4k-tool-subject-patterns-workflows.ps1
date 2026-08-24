@@ -1,4 +1,4 @@
-$script:P4kToolSubjectWorkflowChecks = @(
+﻿$script:P4kToolSubjectWorkflowChecks = @(
     @{ Path = "能力资产/tools/依赖矩阵.md"; Pattern = 'Claude Code 实施|Codex ship'; Label = "依赖矩阵仍用工具名定义新增依赖实施/ship 阶段" },
     @{ Path = "操作系统/01_架构/三类行为铁律-附录.md"; Pattern = '仅允许绑定 Codex 发布闭环'; Label = "三类行为铁律附录仍把版本 tag 责任绑定到工具而非测试发布 PM" },
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint-附录.md"; Pattern = '外部工具战场'; Label = "decision-checkpoint 附录仍使用外部工具战场口径" },

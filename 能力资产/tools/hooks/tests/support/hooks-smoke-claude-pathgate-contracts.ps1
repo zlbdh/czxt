@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 # PROP-001 路径 C 类软门禁契约（claude）。
 # 从 hooks-smoke-claude-contracts.ps1 拆出：历史归档 / 嵌套归档 / apk 已存在 / apk 新建 / 普通 framework 放行。

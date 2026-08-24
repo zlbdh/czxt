@@ -1,4 +1,4 @@
-$checks = @(
+﻿$checks = @(
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint.md"; Pattern = "handoff\s+卡（跨工具时）|交接卡给\s*(Claude Code|Codex)|Codex\s*战场"; Label = "decision-checkpoint 仍把工具当交接接手主语" },
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint.md"; Pattern = "跨分支（项目 PM ↔ 增长 PM）|`{{APP_REPO_DIR}}/src/\*\*`\s*\|\s*❌|`{{APP_REPO_DIR}}/package\.json`[^\r\n]*\|\s*❌ 同上"; Label = "decision-checkpoint 路径/分支速查仍残留旧角色或准许角色写反" },
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint-附录.md"; Pattern = "交接卡给\s*(Claude Code|Codex)|Codex\s*战场"; Label = "decision-checkpoint 附录示例仍把工具当交接接手主语" },

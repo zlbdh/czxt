@@ -1,4 +1,4 @@
-function Write-HandoffIssueBlock {
+﻿function Write-HandoffIssueBlock {
   param(
     [object[]]$Items,
     [string]$Title,

@@ -1,4 +1,4 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 # Codex PostToolUse 适配器（PROP-038 镜像 / 与 claude/post-edit-framework-check.ps1 同源逻辑）：
 # Edit/Write/apply_patch 改 framework/PM 工作区/治理入口后跑 readme-index 快检，**仅漂移时**经 additionalContext（Codex 可靠读取，同 SessionStart 注入）+ systemMessage 软提醒。

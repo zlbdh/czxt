@@ -1,4 +1,4 @@
-$statePath = Join-Path $Root "状态.md"
+﻿$statePath = Join-Path $Root "状态.md"
 if (Test-Path -LiteralPath $statePath -PathType Leaf) {
   $stateHead = (Get-Content -LiteralPath $statePath -TotalCount 120 -Encoding UTF8) -join "`n"
   if ($stateHead -match 'P4a[-–]P4p|P4j[-–]P4p|主-元-子-子子|git\s+push\s+origin\s+master|hotfix/|创建\s+hotfix\s+分支|AskUserQuestion|TaskCreate|Set-Content\s+-Encoding\s+utf8NoBOM') {

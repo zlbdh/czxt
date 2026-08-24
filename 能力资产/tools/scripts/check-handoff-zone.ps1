@@ -1,4 +1,4 @@
-param(
+﻿param(
   [int]$MaxPending = 3,
   [int]$OldDoneDays = 30,
   [string]$Root = ""

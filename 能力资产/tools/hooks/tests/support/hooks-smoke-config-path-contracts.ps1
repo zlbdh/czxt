@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Invoke-HooksSmokeConfigPathContracts {
   param([object]$Paths)
@@ -14,6 +14,7 @@ function Invoke-HooksSmokeConfigPathContracts {
     @{ Value = $Paths.ScheduledInstall; Label = "missing scheduled installer" },
     @{ Value = $Paths.WatchInstall; Label = "missing watch installer" },
     @{ Value = $Paths.CodexHooks; Label = "missing .codex/hooks.json" },
+    @{ Value = $Paths.CodexDispatcher; Label = "missing .codex/invoke-hook.ps1" },
     @{ Value = $Paths.ClaudeSettings; Label = "missing .claude/settings.json" },
     @{ Value = $Paths.CodexSessionStart; Label = "missing Codex SessionStart hook" },
     @{ Value = $Paths.CodexUserPrompt; Label = "missing Codex UserPromptSubmit hook" },

@@ -1,4 +1,4 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 # Claude Code PreToolUse 适配器（PROP-038 / 议题 CG / 安全与隐私铁律 + PROP-001 / 路径 C 类铁律软门禁）：
 # (1) Edit/Write 若往「非 .env」文件写入疑似密钥/凭据（结构化 key 模式）时，permissionDecision=ask 提醒确认。

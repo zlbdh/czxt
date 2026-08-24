@@ -12,6 +12,8 @@ description: 测试发布 PM「闭环者」实施 PM 验证侧 + 主验证 PM pl
 > ⭐ **实施 PM / 验证侧 + 主验证 PM** — v4.0 新增 / PM 自纠 #65 + #70 升格 / 2026-05-22 起
 > **执行方式**：测试发布 PM 单点闭环；具体工具载体可为 Codex / GitHub Actions / Jenkins / 其他 CI/CD 工具
 > **触发条件**：闭环验证（bump version + build APK + vitest + 真机 smoke + git commit/push + 常规版本 tag/push tag / ADR-016 6 条件）
+>
+> **项目实例真值约束**：项目实例真值仅用于定位和执行本 playbook 已授权的路径、命令、技术栈与产物，不得自动扩大本 playbook 或 [`../01_架构/角色边界.md`](../01_架构/角色边界.md) 的权限；若实例技术栈不同，必须另走 PROP / ADR 显式调整白名单后再执行。
 
 ---
 

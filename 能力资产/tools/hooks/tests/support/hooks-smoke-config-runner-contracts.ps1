@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Invoke-HooksSmokeConfigRunnerContracts {
   param([object]$Paths)
@@ -27,6 +27,25 @@ function Invoke-HooksSmokeConfigRunnerContracts {
     $missingWrapperText = $missingWrapperOutput -join "`n"
     Assert-True ($LASTEXITCODE -eq 10) "install hook check should fail when wrappers are missing"
     Assert-True ($missingWrapperText -match "尚未安装|not installed|missing") "install hook check should explain missing wrappers"
+
+    $hostileWrapper = Join-Path $tempRoot "invoke-hostile-output-encoding.ps1"
+    $escapedInstallHooks = $Paths.InstallHooks.Replace("'", "''")
+    $escapedTempRoot = $tempRoot.Replace("'", "''")
+    $hostileWrapperText = @"
+[Console]::OutputEncoding = [Text.Encoding]::GetEncoding(936)
+& '$escapedInstallHooks' -Mode Check -Root '$escapedTempRoot'
+exit `$LASTEXITCODE
+"@
+    [IO.File]::WriteAllText($hostileWrapper, $hostileWrapperText,
+      (New-Object Text.UTF8Encoding($true)))
+    $hostileOutput = powershell -NoProfile -ExecutionPolicy Bypass `
+      -File $hostileWrapper 2>&1
+    $hostileCode = $LASTEXITCODE
+    $hostileText = $hostileOutput -join "`n"
+    Assert-True ($hostileCode -eq 10) `
+      "install hook check should preserve its exit under hostile output encoding"
+    Assert-True ($hostileText -match "尚未安装|not installed|missing") `
+      "install hook check should reset hostile inherited output encoding"
   } finally {
     if (Test-Path -LiteralPath $tempRoot) {
       Remove-Item -LiteralPath $tempRoot -Recurse -Force

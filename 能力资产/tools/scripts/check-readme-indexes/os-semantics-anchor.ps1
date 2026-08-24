@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 )
 
@@ -109,19 +109,13 @@ $p4Docs = @(
   "操作系统\07_完整工作流\hooks-运行SOP-附录.md"
 )
 foreach ($rel in $p4Docs) {
-  Assert-NotContains $rel "P4a[-–]P4p|P4j[-–]P4p|P4a[-–]P4q|P4j[-–]P4q|P4a[-–]P4r|P4j[-–]P4r" "P4 体检范围"
-}
-foreach ($rel in @(
-  "能力资产\skills\项目体检.md",
-  "能力资产\tools\README.md",
-  "操作系统\06_工具治理\framework体检.md"
-)) {
-  Assert-Contains $rel "P4a[-–]P4s|P4j-P4s|P4s" "P4s 体检范围"
+  Assert-NotContains $rel "P4a[-–]P4[p-s]|P4j[-–]P4[p-s]" "P4 体检范围旧上限"
+  Assert-Contains $rel "P4a[-–]P4t|P4j[-–]P4t" "P4t 体检范围"
 }
 
 if ($failures.Count -gt 0) {
   exit 10
 }
 
-Write-Host "  ✅ 操作系统层级术语与 P4s 入口语义对齐" -ForegroundColor Green
+Write-Host "  ✅ 操作系统层级术语与 P4t 入口语义对齐" -ForegroundColor Green
 exit 0

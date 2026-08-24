@@ -40,7 +40,7 @@ PROP-020 路径 D `decision-checkpoint` 的 Q4“我的指令是否符合现有 
 
 ## 关联
 
-- [`../../确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md`](../../确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md)
-- [`../../交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md`](../../交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md)
+- 来源项目历史 PROP-022 主稿（模板实例不复制）：`确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md`
+- 来源项目历史 smoke #3 实证（模板实例不复制）：`交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md`
 - [`../../Docs/7-复盘/RETRO-009-候选议题.md`](../../Docs/7-复盘/RETRO-009-候选议题.md)
 - [`../../操作系统/07_完整工作流/decision-checkpoint.md`](../../操作系统/07_完整工作流/decision-checkpoint.md)

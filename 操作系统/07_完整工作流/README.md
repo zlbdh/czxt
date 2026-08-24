@@ -30,6 +30,7 @@ description: 完整工作流入口 — decision-checkpoint + 实施循环 + DoD 
 | [git流程.md](git流程.md) | git 仓库边界 / A-B-C 三类权限 / commit-push 6 条件 / commit message / 分支与 tag 规则 |
 | [hooks-运行SOP.md](hooks-运行SOP.md) | hooks 手动/自动运行、真源头、关键边界和验收入口 |
 | [hooks-运行SOP-附录.md](hooks-运行SOP-附录.md) | hooks 低频安装/删除命令、事件表、watcher 健康码和排障细节 |
+| [借鉴闭环.md](借鉴闭环.md) | 借鉴来源接入、评估、落地与审计的角色流、状态流和失败恢复 |
 
 ## 跟其他分组的区别
 
@@ -48,3 +49,4 @@ description: 完整工作流入口 — decision-checkpoint + 实施循环 + DoD 
 | 开始 L3/L4 改动 | 实施循环.md |
 | 改动收尾 | 实施循环.md DoD 段 + 实施循环-DoD.md |
 | 准备发版本 | 发布流程.md |
+| 借鉴 / 参考 / 对标 / 吸收 | [借鉴闭环.md](借鉴闭环.md) |

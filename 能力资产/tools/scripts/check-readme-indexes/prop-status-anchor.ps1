@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 )
 
@@ -8,6 +8,7 @@ $failures = @()
 . (Join-Path $PSScriptRoot "prop-status-helpers.ps1")
 . (Join-Path (Split-Path -Parent $PSScriptRoot) "check-os\framework-scope.ps1")
 $isTemplateRoot = Test-IsTemplateRoot -Root $Root
+$isLegacyProject = Test-IsCzxtLegacyProjectProfile -Root $Root
 
 $propRoot = Join-Path $Root "确认改动"
 $propStates = Get-PropStateSpecs
@@ -121,13 +122,14 @@ if (Test-Path -LiteralPath $prop039 -PathType Leaf) {
 }
 
 $rootReadme = Join-Path $Root "README.md"
-if ((Test-Path -LiteralPath $rootReadme -PathType Leaf) -and -not $isTemplateRoot) {
+if ((Test-Path -LiteralPath $rootReadme -PathType Leaf) -and $isLegacyProject) {
   $rootText = Get-Content -LiteralPath $rootReadme -Raw -Encoding UTF8
   if ($rootText -match "都等外部条件|PROP-039.*等.*GA|PROP-039.*未 GA" -or $rootText -notmatch "PROP-039.*已重估拆分") {
     Add-Failure "根 README 进行中 PROP 摘要未反映 PROP-039 已重估拆分"
   }
-} elseif ($isTemplateRoot) {
-  Write-Host "  ℹ️ 模板根模式：跳过来源项目进行中 PROP 摘要锚点" -ForegroundColor Gray
+} elseif (-not $isLegacyProject) {
+  $profileLabel = if ($isTemplateRoot) { '模板根模式' } else { 'generic project' }
+  Write-Host "  ℹ️ ${profileLabel}：跳过旧来源项目进行中 PROP 摘要锚点" -ForegroundColor Gray
 }
 
 if ($failures.Count -gt 0) { exit 10 }

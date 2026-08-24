@@ -57,7 +57,7 @@ description: PM 职责层与子 agent 执行层分离 / 项目 PM 统一调度�
 
 1. **写集大**：≥6 个独立文件，小批量单线程即可。
 2. **写集互斥**：每个 worker 有明确、不重叠的写入文件清单，派工卡必填。
-3. **主会话单点合并 + 体检 gate**：worker 返回后，项目 PM核对越界并跑 `能力资产/tools/scripts/check-operating-system.ps1`，以当前 P4a-P4s 输出为准。
+3. **主会话单点合并 + 体检 gate**：worker 返回后，项目 PM核对越界并跑 `能力资产/tools/scripts/check-operating-system.ps1`，以当前 P4a-P4t 输出为准。
 
 ⛔ 永远单点、禁并行写：`状态.md` · `交接区/` · `CHANGELOG.md` · `元规则池.md` · `角色边界.md` · `子agent调度机制.md`。
 

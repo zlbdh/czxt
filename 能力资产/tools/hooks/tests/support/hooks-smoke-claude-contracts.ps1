@@ -1,9 +1,10 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Invoke-HooksSmokeClaudeContracts {
   param(
     [string]$Root,
-    [object]$Paths
+    [object]$Paths,
+    [string]$TempRoot = (Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-claude-pm-" + [guid]::NewGuid().ToString("N")))
   )
 
   $postInput = '{"hook_event_name":"PostToolUse","tool_input":{"file_path":"D:\\WGKJ\\{{PROJECT_NAME}}\\操作系统\\06_工具治理\\hooks-设计.md"}}'
@@ -16,33 +17,38 @@ function Invoke-HooksSmokeClaudeContracts {
   $claudePostRelativeJson = $claudePostRelativeOutput | ConvertFrom-Json
   Assert-True ($claudePostRelativeJson.continue -eq $true) "Claude PostToolUse relative path bad"
 
-  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-claude-pm-" + [guid]::NewGuid().ToString("N"))
-  $tempScriptDir = Join-Path $tempRoot "能力资产\tools\scripts"
-  New-Item -ItemType Directory -Force -Path $tempScriptDir | Out-Null
-  Set-Content -LiteralPath (Join-Path $tempScriptDir "check-readme-indexes.ps1") -Encoding UTF8 -Value "param([string]`$Root)`nWrite-Host 'fake pm-workspace drift'`nexit 10`n"
-  $pmPostInput = [ordered]@{
-    hook_event_name = "PostToolUse"
-    tool_input = [ordered]@{ file_path = "PM工作区/项目PM-咪咪/README.md" }
-  } | ConvertTo-Json -Depth 5 -Compress
-  $claudePmPostOutput = $pmPostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $tempRoot
-  $claudePmPostJson = $claudePmPostOutput | ConvertFrom-Json
-  Assert-True ($claudePmPostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for PM工作区"
+  try {
+    $tempScriptDir = Join-Path $TempRoot "能力资产\tools\scripts"
+    New-Item -ItemType Directory -Force -Path $tempScriptDir | Out-Null
+    Set-Content -LiteralPath (Join-Path $tempScriptDir "check-readme-indexes.ps1") -Encoding UTF8 -Value "param([string]`$Root)`nWrite-Host 'fake pm-workspace drift'`nexit 10`n"
+    $pmPostInput = [ordered]@{
+      hook_event_name = "PostToolUse"
+      tool_input = [ordered]@{ file_path = "PM工作区/项目PM-咪咪/README.md" }
+    } | ConvertTo-Json -Depth 5 -Compress
+    $claudePmPostOutput = $pmPostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $TempRoot
+    $claudePmPostJson = $claudePmPostOutput | ConvertFrom-Json
+    Assert-True ($claudePmPostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for PM工作区"
 
-  $docs7PostInput = [ordered]@{
-    hook_event_name = "PostToolUse"
-    tool_input = [ordered]@{ file_path = "Docs/7-复盘/README.md" }
-  } | ConvertTo-Json -Depth 5 -Compress
-  $claudeDocs7PostOutput = $docs7PostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $tempRoot
-  $claudeDocs7PostJson = $claudeDocs7PostOutput | ConvertFrom-Json
-  Assert-True ($claudeDocs7PostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for Docs/7-复盘"
+    $docs7PostInput = [ordered]@{
+      hook_event_name = "PostToolUse"
+      tool_input = [ordered]@{ file_path = "Docs/7-复盘/README.md" }
+    } | ConvertTo-Json -Depth 5 -Compress
+    $claudeDocs7PostOutput = $docs7PostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $TempRoot
+    $claudeDocs7PostJson = $claudeDocs7PostOutput | ConvertFrom-Json
+    Assert-True ($claudeDocs7PostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for Docs/7-复盘"
 
-  $tasksPostInput = [ordered]@{
-    hook_event_name = "PostToolUse"
-    tool_input = [ordered]@{ file_path = "TASKS.md" }
-  } | ConvertTo-Json -Depth 5 -Compress
-  $claudeTasksPostOutput = $tasksPostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $tempRoot
-  $claudeTasksPostJson = $claudeTasksPostOutput | ConvertFrom-Json
-  Assert-True ($claudeTasksPostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for TASKS.md"
+    $tasksPostInput = [ordered]@{
+      hook_event_name = "PostToolUse"
+      tool_input = [ordered]@{ file_path = "TASKS.md" }
+    } | ConvertTo-Json -Depth 5 -Compress
+    $claudeTasksPostOutput = $tasksPostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $TempRoot
+    $claudeTasksPostJson = $claudeTasksPostOutput | ConvertFrom-Json
+    Assert-True ($claudeTasksPostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for TASKS.md"
+  } finally {
+    if (Test-Path -LiteralPath $TempRoot) {
+      Remove-Item -LiteralPath $TempRoot -Recurse -Force
+    }
+  }
 
   $compactInput = '{"hook_event_name":"PreCompact","trigger":"manual"}'
   $compactOutput = $compactInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePreCompact -Root $Root

@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 )
 
@@ -19,8 +19,9 @@ $helpers = @(
   "governance-semantics-active-entry.ps1"
 )
 
-if (Test-IsTemplateRoot -Root $Root) {
-  Write-Host "  ℹ️ 模板根模式：跳过项目实例需求/测试与来源项目 PROP 正文语义锚点" -ForegroundColor Gray
+if (-not (Test-IsCzxtLegacyProjectProfile -Root $Root)) {
+  $profileLabel = if (Test-IsTemplateRoot -Root $Root) { '模板根模式' } else { 'generic project' }
+  Write-Host "  ℹ️ ${profileLabel}：跳过旧来源业务专属需求/测试与 PROP 正文语义锚点" -ForegroundColor Gray
   $helpers = @(
     "governance-semantics-adr-retro.ps1",
     "governance-semantics-active-entry.ps1"

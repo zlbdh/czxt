@@ -1,4 +1,4 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 # Codex PreToolUse 适配器（PROP-038 镜像 / 与 claude/pre-write-guard.ps1 同源逻辑 + PROP-001 / 路径 C 类铁律软门禁）：
 # (1) Edit/Write/apply_patch 若往「非 .env」文件写疑似密钥（结构化 key 模式）时，经 additionalContext 软提醒 Codex 模型确认。

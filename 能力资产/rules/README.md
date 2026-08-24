@@ -28,6 +28,7 @@ description: 能力资产/rules/ 真规则索引 — 写代码 + 改动分级 + 
 | [F编号规则.md](F编号规则.md) | F-XXX 命名空间 / 数字段约定 / 编号查询 |
 | [视觉设计规范.md](视觉设计规范.md) | 咪咪文人风（配色 / 字号 / 动画 / 交互） |
 | [安全与隐私.md](安全与隐私.md) | 当前有效隐私 / API key / 本地数据默认动作 |
+| ⭐ [借鉴治理.md](借鉴治理.md) | 借鉴来源与事项的 schema、权限、安全不变量及 A/B/C 边界 |
 | [codex-push后防御.md](codex-push后防御.md) | Codex push 后 git 状态 / mount stale 防御 |
 | [git-commit-编码规范.md](git-commit-编码规范.md) | 中文 commit message / `git commit -F` / 编码防 BOM 规范 |
 | ⭐ [web-api-信源选型.md](web-api-信源选型.md) + [矩阵](web-api-信源矩阵.md) + [附录](web-api-信源选型-附录.md) | navigator.* / Intl.* / window.* API 在 Android WebView 的选型流程、可靠性矩阵与反例说明 |

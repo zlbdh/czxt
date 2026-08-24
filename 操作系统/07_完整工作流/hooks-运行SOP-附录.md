@@ -100,5 +100,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/sch
 | README 索引不一致 | 先跑 `check-readme-indexes.ps1` 定位，再跑对应 updater 的 `-Mode Check`。只有确定性索引差异才 `-Mode Apply` |
 | chat-output 失败 | 按输出补 ①-⑦、⑥ `交接区/待接手/...md` 路径、⑦ `状态.md L<line>`；纯简单对话可写 ⑥“无” + ⑦ `N=0 / 本 session 无切帽子`；不要用总结段替代 |
 | PM 轨迹超时 | `Select-String 状态.md -Pattern 'YYYY-MM-DD HH:mm'` 找行号；补真轨迹，不伪造 |
-| framework 体检失败 | 按 P4a-P4s 逐项修；P4b 软警告可交接，硬失败必须先修 |
+| framework 体检失败 | 按 P4a-P4t 逐项修；P4b 软警告可交接，硬失败必须先修 |
 | watch 误触发 | 暂停 watcher，手动跑 `update-adr-readme.ps1 -Mode Check` 与 `check-readme-indexes.ps1` 复核 |

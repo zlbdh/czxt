@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path,
   [object]$Failures = $null,
   [switch]$ShowLowList
@@ -22,7 +22,8 @@ foreach ($s in $refScope) {
   if (Test-Path -LiteralPath $sp) {
     Get-ChildItem -Recurse -LiteralPath $sp -Filter "*.md" -File -ErrorAction SilentlyContinue | ForEach-Object {
       if (Test-IsFrameworkArchivePath $_.FullName) { return }
-      $c = Get-Content -LiteralPath $_.FullName -Raw -ErrorAction SilentlyContinue
+      # WinPS 5.1 默认使用 ANSI；必须显式按 UTF-8 读取无 BOM Markdown 中的中文文件名。
+      $c = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
       $allMd += @{ Path = $_.FullName; Content = $c }
     }
   }
@@ -30,7 +31,7 @@ foreach ($s in $refScope) {
 foreach ($rf in $rootFiles) {
   $p = Join-Path $Root $rf
   if (Test-Path -LiteralPath $p -PathType Leaf) {
-    $allMd += @{ Path = $p; Content = (Get-Content -LiteralPath $p -Raw -ErrorAction SilentlyContinue) }
+    $allMd += @{ Path = $p; Content = (Get-Content -LiteralPath $p -Raw -Encoding UTF8 -ErrorAction SilentlyContinue) }
   }
 }
 

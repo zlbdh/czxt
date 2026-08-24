@@ -74,8 +74,8 @@ PROP-020 路径 D `decision-checkpoint` Q4 规则校验扩展候选：
 
 ## 关联
 
-- [PROP-023 主稿](../../确认改动/已审批/已完成/PROP-023-2026-05-15-项目PM记忆中枢化.md)
-- [PROP-020 路径 D](../../确认改动/已审批/已完成/PROP-020-路径D-方案v0.md) — PM 角色身份定义
+- [ADR-029 PM 工作区元记忆中枢化](../../Docs/3-开发文档/adr/ADR-029-议题BE永久化-PM工作区元记忆中枢化.md)
+- [ADR-023 PM 角色子类化](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) — PM 角色身份定义
 - [操作系统/02_智能体/](../../操作系统/02_智能体/) — 9 PM 角色 md
 - [能力资产/rules/](../../能力资产/rules/) — 元规则
 - [decision-checkpoint.md](../../操作系统/07_完整工作流/decision-checkpoint.md) — Q4 扩展候选

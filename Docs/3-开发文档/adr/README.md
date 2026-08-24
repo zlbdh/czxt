@@ -3,7 +3,7 @@ name: adr-index
 scope: project
 type: semantic
 loaded: on-demand
-description: ADR 永久决策档案索引（38 个 ADR / ADR-038 PM 实体化 agent 调度 2026-06-14 PROP-044）
+description: ADR 永久决策档案索引（39 个 ADR / ADR-039 统一借鉴区与闭环治理 2026-07-18）
 ---
 # ADR — 架构决策记录（Architecture Decision Records）
 
@@ -94,5 +94,6 @@ ADR-007-放弃HashRouter改用BrowserRouter.md
 | ADR-036 | schema 迁移安全定式 — 新表 4 处改 checklist + 无 upgrade + 真机零丢失 smoke（v15/v16 两刀验证 / 元规则 DS / PROP-043）⭐ | 现行 | 2026-06-09 |
 | ADR-037 | 敏感刀对抗审查 + 隐私 lens — 数据/安全/不可逆刀必 ultracode + 敏感数据截断/本地/可删/不批判（元规则 DT / PROP-043）⭐ | 现行 | 2026-06-09 |
 | ADR-038 | PM 实体化 agent 调度模型 — 9 PM 全量 agent 化（写=worker/只读=explorer）+ 项目 PM 单点调度·验收 + 单源主会话落笔 + 禁嵌套 + B-lite 受控并行（PROP-044 升永久 / 元规则 DX / RETRO-021+022）⭐ | 现行 | 2026-06-14 |
+| ADR-039 | 统一借鉴区与闭环治理 — 单根借鉴区 + 不可变来源快照 + 双卡状态合同 + 显式根模式 + 离线 P4t 守卫 | 现行 | 2026-07-18 |
 
 ⭐ **新增 ADR 后必须更新本表**（PM 自纠 #91 教训：软规则失守 / 议题 DN 体检 SOP 应集成「ADR 文件数 vs README 表格行数一致性核查」）。维护责任：操作系统 PM-框架管家（起 ADR 时同步更新）+ 沉淀 PM-沉淀者（每 Sprint RETRO 时复核）。

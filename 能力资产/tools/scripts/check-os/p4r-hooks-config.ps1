@@ -1,6 +1,12 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 $ErrorActionPreference = "Stop"
+try {
+  $utf8 = [Text.UTF8Encoding]::new($false)
+  [Console]::InputEncoding = $utf8
+  [Console]::OutputEncoding = $utf8
+  $OutputEncoding = $utf8
+} catch { }
 $warnings = @()
 . (Join-Path $PSScriptRoot "framework-scope.ps1")
 $isTemplateRoot = Test-IsTemplateRoot -Root $Root
@@ -10,8 +16,15 @@ function Invoke-ChildScript {
     [string]$Path,
     [string[]]$ScriptArgs = @()
   )
-  $output = & powershell -NoProfile -ExecutionPolicy Bypass -File $Path @ScriptArgs 2>&1
-  $code = $LASTEXITCODE
+  $previousErrorActionPreference = $ErrorActionPreference
+  $ErrorActionPreference = 'Continue'
+  try {
+    $output = & powershell -NoProfile -ExecutionPolicy Bypass -File $Path @ScriptArgs 2>&1
+    $code = $LASTEXITCODE
+  }
+  finally {
+    $ErrorActionPreference = $previousErrorActionPreference
+  }
   foreach ($line in @($output)) { Write-Host $line }
   return $code
 }
@@ -41,6 +54,12 @@ $installHooks = Join-Path $Root "能力资产\tools\hooks\install-hooks.ps1"
 if (-not (Test-Path -LiteralPath $installHooks -PathType Leaf)) {
   Write-Host "  🔴 install-hooks.ps1 缺失" -ForegroundColor Red
   exit 10
+}
+$businessGitPath = Join-Path $Root "{{APP_REPO_DIR}}\.git"
+if ((Get-CzxtRootMode -Root $Root) -eq 'project' -and
+    -not (Test-Path -LiteralPath $businessGitPath)) {
+  Write-Host "  ℹ️ generic project 尚未绑定业务仓库：跳过 git hooks 与关联运行态检查" -ForegroundColor Gray
+  exit 0
 }
 $code = Invoke-ChildScript -Path $installHooks -ScriptArgs @("-Mode", "Check", "-Root", $Root)
 if ($code -eq 5 -and $isTemplateRoot) {

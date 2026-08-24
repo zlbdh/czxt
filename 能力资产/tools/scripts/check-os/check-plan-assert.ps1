@@ -1,4 +1,4 @@
-function Assert-OsCheckPlan {
+﻿function Assert-OsCheckPlan {
   param(
     [object[]]$Plan,
     [string]$ScriptsRoot = (Split-Path -Parent $PSScriptRoot)
@@ -7,12 +7,12 @@ function Assert-OsCheckPlan {
   $sections = @($Plan)
   $checks = @($sections | ForEach-Object { $_.Checks })
   $ids = @($sections | ForEach-Object {
-    $m = [regex]::Match($_.Title, '【(P4[a-s])】')
+    $m = [regex]::Match($_.Title, '【(P4[a-t])】')
     if ($m.Success) { $m.Groups[1].Value }
   })
   $expected = @(
     "P4a", "P4b", "P4c", "P4d", "P4e", "P4f", "P4g", "P4h", "P4i",
-    "P4j", "P4k", "P4l", "P4m", "P4n", "P4o", "P4p", "P4q", "P4r", "P4s"
+    "P4j", "P4k", "P4l", "P4m", "P4n", "P4o", "P4p", "P4q", "P4r", "P4s", "P4t"
   )
 
   $issues = New-Object System.Collections.Generic.List[string]
@@ -23,7 +23,7 @@ function Assert-OsCheckPlan {
     $issues.Add("重复 section：$($group.Name)")
   }
   foreach ($section in $sections) {
-    $m = [regex]::Match($section.Title, '【(P4[a-s])】')
+    $m = [regex]::Match($section.Title, '【(P4[a-t])】')
     if (-not $m.Success) { continue }
     $prefix = $m.Groups[1].Value.ToLowerInvariant()
     foreach ($check in @($section.Checks)) {
@@ -56,6 +56,10 @@ function Assert-OsCheckPlan {
   $p4a = @($checks | Where-Object { $_.Script -eq "check-os\p4a-basic-integrity.ps1" })
   if ($p4a.Count -ne 1 -or $p4a[0].Args -ne "P4aPasses") {
     $issues.Add("P4a 必须写入 Passes 计数")
+  }
+  $p4t = @($checks | Where-Object { $_.Script -eq "check-os\p4t-borrowing-consistency.ps1" })
+  if ($p4t.Count -ne 1) {
+    $issues.Add("P4t 借鉴闭环 façade 必须且只能执行一次")
   }
 
   if ($issues.Count -gt 0) {

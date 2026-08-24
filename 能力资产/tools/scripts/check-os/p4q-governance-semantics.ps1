@@ -1,4 +1,4 @@
-param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
+﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
 $ErrorActionPreference = "Stop"
 $frameworkScope = Join-Path $PSScriptRoot "framework-scope.ps1"
@@ -7,6 +7,13 @@ if (-not (Test-Path -LiteralPath $frameworkScope -PathType Leaf)) {
   exit 10
 }
 . $frameworkScope
+
+$rootMode = Get-CzxtRootMode -Root $Root
+if ($rootMode -notin @('template', 'project')) {
+  Write-Host "  🔴 P4q 根模式非法：$rootMode" -ForegroundColor Red
+  exit 10
+}
+$isLegacyProject = Test-IsCzxtLegacyProjectProfile -Root $Root
 
 $helpers = @(
   "os-main-entry-anchor.ps1",
@@ -33,8 +40,9 @@ $helpers = @(
   "p4b-business-debt-anchor.ps1"
 )
 
-if (Test-IsTemplateRoot -Root $Root) {
-  Write-Host "  ℹ️ 模板根模式：跳过产品/运维/历史需求等项目实例边缘文档锚点" -ForegroundColor Gray
+if (-not $isLegacyProject) {
+  $profileLabel = if ($rootMode -eq 'template') { '模板根模式' } else { 'generic project' }
+  Write-Host "  ℹ️ ${profileLabel}：跳过旧来源业务专属需求 / PROP / edge-doc 等锚点" -ForegroundColor Gray
   $templateSkip = @(
     "docs-edge-ops-anchor.ps1",
     "docs-edge-history-anchor.ps1",

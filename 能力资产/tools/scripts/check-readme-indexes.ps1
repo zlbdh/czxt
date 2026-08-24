@@ -1,8 +1,10 @@
-param(
+﻿param(
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
 )
 
 $ErrorActionPreference = "Stop"
+# 子检查会按 Root.Length/Root 前缀计算相对路径，入口必须统一传递绝对根路径。
+$Root = (Resolve-Path -LiteralPath $Root).Path
 $failures = @()
 $isTemplateRoot = $false
 $frameworkScope = Join-Path $PSScriptRoot "check-os\framework-scope.ps1"
@@ -153,6 +155,7 @@ foreach ($helper in @(
   "retro-history-anchor.ps1",
   "smoke-history-semantics-anchor.ps1",
   "governance-semantics-anchor.ps1",
+  "borrowing-governance-anchor.ps1",
   "os-semantics-anchor.ps1",
   "prop-status-anchor.ps1",
   "prop-active-safety-anchor.ps1",

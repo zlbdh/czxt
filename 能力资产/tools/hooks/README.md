@@ -18,6 +18,7 @@ description: 操作系统 hooks 入口 — manifest / runner / git wrapper / Cod
 | `run-hooks.ps1` | 统一 runner，按 trigger 执行 hooks |
 | `install-hooks.ps1` | 安装/检查本地 `{{APP_REPO_DIR}}/.git/hooks/pre-commit` + `pre-push` wrapper；Check 发现缺失或漂移会失败 |
 | `.codex/hooks.json` | Codex 原生 lifecycle hooks 入口（项目根配置） |
+| `.codex/invoke-hook.ps1` | Codex 命令分发器；入口用 quote-free `EncodedCommand` 向上绑定最近的 CZXT 根标记，再调用固定白名单脚本 |
 | `.claude/settings.json` | Claude Code 原生 lifecycle hooks 入口（项目根配置） |
 | `codex/` / `claude/` | 两个运行时的 lifecycle 适配层 |
 | `chat-output/` | chat 简版收尾检查脚本 |
@@ -60,7 +61,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/run
 
 ## Codex 原生 hooks（5 个事件）
 
-项目级入口：`.codex/hooks.json`。Codex UI「钩子」页读取该配置；首次加载后需要 review/trust。
+项目级入口：`.codex/hooks.json`。Codex UI「钩子」页读取该配置；项目 `.codex/` 配置层必须先受信任，新增或变更定义后还需 review/trust。命令通过 quote-free PowerShell bootstrap 从 session cwd 向上查找最近且**恰好一个** `.czxt-template-root` / `.czxt-project-root` 的根，确认同根 `.codex/hooks.json` 与 `.codex/invoke-hook.ps1` 后再分发；双标记冲突立即静默停止，不越过到外层根，也不依赖 Git 或不可执行的模板路径占位符。
 
 | 事件 | 用途 |
 |---|---|
@@ -81,7 +82,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/run
 ## 边界
 
 - `.git/hooks` 不是真源头，只放本目录 wrapper 的安装副本。
-- `.codex/hooks.json` 和 `.claude/settings.json` 只做运行时 lifecycle 适配，不承载业务逻辑。
+- `.codex/hooks.json`、`.codex/invoke-hook.ps1` 和 `.claude/settings.json` 只做运行时 lifecycle 适配，不承载业务逻辑。
 - Stop / chat-output hook 只检查并阻断不合格收尾，不会替 agent 改写最终回复、移动交接卡或补 PM 轨迹。
 - 自动写入仅限确定性索引，例如 ADR README 表格；语义型摘要先输出报告或 patch。
 - `PreToolUse` 只覆盖疑似密钥结构提醒，不替代 `baseUrl`、用户数据删除、真实密钥外传等 C/B 类边界判断。

@@ -1,4 +1,4 @@
-function Get-OsCheckPlan {
+﻿function Get-OsCheckPlan {
   @(
     [PSCustomObject]@{
       Title = "【P4a】基础文件完整性检查..."
@@ -118,6 +118,12 @@ function Get-OsCheckPlan {
       Title = "【P4s】模板纯净度守卫..."
       Checks = @(
         [PSCustomObject]@{ Script = "check-os\p4s-template-cleanliness.ps1"; Failure = "P4s 模板纯净度守卫" }
+      )
+    },
+    [PSCustomObject]@{
+      Title = "【P4t】借鉴闭环一致性守卫..."
+      Checks = @(
+        [PSCustomObject]@{ Script = "check-os\p4t-borrowing-consistency.ps1"; Failure = "P4t 借鉴闭环一致性"; Warning = "P4t 借鉴闭环软警告" }
       )
     }
   )

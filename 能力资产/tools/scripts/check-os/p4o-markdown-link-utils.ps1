@@ -1,4 +1,4 @@
-function Get-Rel([string]$Path) {
+﻿function Get-Rel([string]$Path) {
   $full = [System.IO.Path]::GetFullPath($Path)
   $rootFull = [System.IO.Path]::GetFullPath($Root).TrimEnd('\')
   if ($full.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -16,6 +16,51 @@ function Decode-Part([string]$Value) {
   try { return [System.Uri]::UnescapeDataString($Value) } catch { return $Value }
 }
 
+function Remove-InlineCodeSpans([string]$Line) {
+  $chars = $Line.ToCharArray()
+  $index = 0
+  while ($index -lt $chars.Length) {
+    if ($chars[$index] -ne [char]0x60) {
+      $index++
+      continue
+    }
+
+    $backslashCount = 0
+    $before = $index - 1
+    while ($before -ge 0 -and $chars[$before] -eq [char]0x5C) {
+      $backslashCount++
+      $before--
+    }
+    if (($backslashCount % 2) -eq 1) {
+      $index++
+      continue
+    }
+
+    $start = $index
+    while ($index -lt $chars.Length -and $chars[$index] -eq [char]0x60) { $index++ }
+    $delimiterLength = $index - $start
+    $search = $index
+    $closed = $false
+    while ($search -lt $chars.Length) {
+      if ($chars[$search] -ne [char]0x60) {
+        $search++
+        continue
+      }
+      $closeStart = $search
+      while ($search -lt $chars.Length -and $chars[$search] -eq [char]0x60) { $search++ }
+      if (($search - $closeStart) -ne $delimiterLength) { continue }
+      for ($position = $start; $position -lt $search; $position++) {
+        $chars[$position] = ' '
+      }
+      $index = $search
+      $closed = $true
+      break
+    }
+    if (-not $closed) { $index = $start + $delimiterLength }
+  }
+  return (-join $chars)
+}
+
 function Remove-CodeFences([string]$Text) {
   $out = New-Object System.Collections.Generic.List[string]
   $inFence = $false
@@ -25,7 +70,7 @@ function Remove-CodeFences([string]$Text) {
       $out.Add("") | Out-Null
       continue
     }
-    $out.Add($(if ($inFence) { "" } else { $line })) | Out-Null
+    $out.Add($(if ($inFence) { "" } else { Remove-InlineCodeSpans $line })) | Out-Null
   }
   return ($out -join "`n")
 }

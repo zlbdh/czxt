@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path,
   [object]$Failures = $null,
   [object]$Warnings = $null,
@@ -7,6 +7,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "framework-scope.ps1")
+. (Join-Path $PSScriptRoot "p4a-gate0-integrity.ps1")
+. (Join-Path $PSScriptRoot "p4a-borrowing-assets.ps1")
 
 $localFailures = New-Object System.Collections.Generic.List[string]
 $localWarnings = New-Object System.Collections.Generic.List[string]
@@ -18,7 +20,10 @@ $warningSink = $localWarnings
 if ($null -ne $Warnings) { $warningSink = $Warnings }
 $passSink = $localPasses
 if ($null -ne $Passes) { $passSink = $Passes }
-$isTemplateRoot = Test-IsTemplateRoot -Root $Root
+$initialFailureCount = $failureSink.Count
+$rootMode = Get-CzxtRootMode -Root $Root
+$isTemplateRoot = $rootMode -eq 'template'
+Test-CzxtP4aRootMode -RootMode $rootMode -Failures $failureSink
 
 function Test-RequiredFile {
   param([string]$RelativePath)
@@ -50,33 +55,6 @@ function Test-RequiredDirectory {
   }
 }
 
-function Test-InstallerCopyItems {
-  param([string[]]$ExpectedItems)
-
-  $installerRel = "实例化项目.ps1"
-  $installerPath = Join-Path $Root $installerRel
-  if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
-    $failureSink.Add("🔴 缺实例化脚本：$installerRel")
-    return
-  }
-
-  $scriptText = Get-Content -LiteralPath $installerPath -Raw -Encoding UTF8
-  $match = [regex]::Match($scriptText, '\$copyItems\s*=\s*@\((?<body>[\s\S]*?)\)')
-  if (-not $match.Success) {
-    $failureSink.Add("🔴 实例化脚本未找到 `$copyItems 清单")
-    return
-  }
-
-  $items = @([regex]::Matches($match.Groups["body"].Value, '"([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
-  foreach ($item in $ExpectedItems) {
-    if ($items -notcontains $item) {
-      $failureSink.Add("🔴 实例化脚本 `$copyItems 缺少：$item")
-    } else {
-      $passSink.Add("实例化脚本复制清单：$item")
-    }
-  }
-}
-
 function Test-InstallerProjectZoneSkeleton {
   $installerRel = "实例化项目.ps1"
   $installerPath = Join-Path $Root $installerRel
@@ -104,6 +82,7 @@ function Test-InstallerProjectZoneSkeleton {
   } else {
     $failureSink.Add("🔴 实例化脚本缺 项目区 骨架复制（README/清单/.gitignore + 本地实例/.gitkeep）")
   }
+
 }
 
 $requiredFiles = @(
@@ -130,7 +109,19 @@ $requiredFiles = @(
   "能力资产/skills/状态推断-跨session监控.md", "能力资产/skills/状态推断-跨session监控-附录.md",
   "能力资产/rules/git-commit-编码规范.md",
   "能力资产/tools/scripts/check-operating-system.ps1",
+  "能力资产/tools/scripts/installer-borrowing-zone.ps1",
+  "能力资产/tools/scripts/installer-borrowing-skeleton.ps1",
+  "能力资产/tools/scripts/installer-path-safety.ps1",
+  "能力资产/tools/scripts/installer-file-safety.ps1",
+  "能力资产/tools/scripts/installer-source-copy.ps1",
+  "能力资产/tools/scripts/installer-handle-lease.ps1",
+  "能力资产/tools/scripts/installer-replace-transaction.ps1",
+  "能力资产/tools/scripts/installer-output-manifest.ps1",
+  "能力资产/tools/scripts/installer-tree-plan.ps1",
+  "能力资产/tools/scripts/installer-copy-expectation.ps1",
   "能力资产/tools/scripts/check-os/check-plan.ps1",
+  "能力资产/tools/scripts/check-os/p4a-borrowing-assets.ps1",
+  "能力资产/tools/scripts/check-os/p4a-borrowing-scaffold.ps1",
   "能力资产/tools/scripts/check-os/check-plan-assert.ps1",
   "能力资产/tools/scripts/check-os/p4m-command-scan.ps1",
   "能力资产/tools/scripts/check-os/p4b-size-classification.ps1",
@@ -142,6 +133,7 @@ $requiredFiles = @(
 
 if ($isTemplateRoot) {
   $requiredFiles += @(
+    ".czxt-template-root",
     ".gitignore",
     "实例化项目.ps1",
     "项目配置/README.md",
@@ -152,8 +144,8 @@ if ($isTemplateRoot) {
     "项目区/清单.md",
     "项目区/本地实例/.gitkeep"
   )
-} else {
-  $requiredFiles += @("TASKS.md")
+} elseif ($rootMode -eq 'project') {
+  $requiredFiles += @(".czxt-project-root", "TASKS.md")
 }
 
 $optionalFiles = @("操作系统/00_变更记录/CHANGELOG.md")
@@ -171,16 +163,20 @@ $requiredDirs = @(
 
 if ($isTemplateRoot) {
   $requiredDirs += @("项目配置", "项目区", "项目区/本地实例")
-} else {
+} elseif ($rootMode -eq 'project') {
   $requiredDirs += @("Docs/1-需求文档", "{{APP_REPO_DIR}}")
 }
 
 foreach ($f in $requiredFiles) { Test-RequiredFile $f }
 foreach ($f in $optionalFiles) { Test-OptionalFile $f }
 foreach ($d in $requiredDirs) { Test-RequiredDirectory $d }
+if ($rootMode -in @('template', 'project')) {
+  Test-CzxtBorrowingAssets -Root $Root -RootMode $rootMode -Failures $failureSink -Passes $passSink
+}
+Test-CzxtWinPsEncodingGate -Root $Root -Failures $failureSink -Passes $passSink
 
 if ($isTemplateRoot) {
-  Test-InstallerCopyItems @(
+  Test-CzxtInstallerCopyItems -Root $Root -Failures $failureSink -Passes $passSink -ExpectedItems @(
     ".codex",
     ".claude",
     ".gitignore",
@@ -200,7 +196,7 @@ if ($isTemplateRoot) {
 }
 
 Write-Host ("  ✅ P4a 通过项：{0}" -f $passSink.Count) -ForegroundColor Green
-if ($localFailures.Count -gt 0) {
+if ($failureSink.Count -gt $initialFailureCount) {
   exit 10
 }
 exit 0

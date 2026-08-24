@@ -1,10 +1,17 @@
-param(
+﻿param(
   [ValidateSet("Check", "Apply")]
   [string]$Mode = "Check",
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..")).Path
 )
 
 $ErrorActionPreference = "Stop"
+try {
+  $consoleUtf8 = New-Object System.Text.UTF8Encoding($false)
+  [Console]::InputEncoding = $consoleUtf8
+  [Console]::OutputEncoding = $consoleUtf8
+  $OutputEncoding = $consoleUtf8
+} catch {
+}
 . (Join-Path $PSScriptRoot "..\scripts\check-os\framework-scope.ps1")
 
 $repoPath = Join-Path $Root "{{APP_REPO_DIR}}"

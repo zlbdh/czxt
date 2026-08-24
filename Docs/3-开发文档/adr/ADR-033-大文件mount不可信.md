@@ -8,6 +8,8 @@ description: ADR-033 议题 CY 永久化 — 大文件 mount 操作不可信（�
 
 # ADR-033 · 议题 CY 永久化 — 大文件 mount 操作不可信
 
+- **状态**：现行
+
 > 升级：候选议题 CY（#67）+ #92/#94/状态.md mount-break（Sprint-11 今天 3+ 实证）→ 第 16 元规则
 > 起稿：沉淀 PM「沉淀者」 / 拍板：项目 PM「咪咪」 / RETRO-015
 

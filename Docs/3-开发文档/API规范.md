@@ -1,181 +1,105 @@
+---
+name: api-specification
+scope: project
+type: semantic
+loaded: on-demand
+description: 项目实例 API 契约填写模板；协议、模型、鉴权与错误边界分开记录
+---
+
 # API 规范
 
-> ⚠️ **安全说明（2026-06-15）**：本文示例不包含真实 key。真实 apiKey 只允许由用户在本机配置，不写入 tracked 文件、不外传；baseUrl/model 属半敏感配置，按当前 `操作系统/01_架构/三类行为铁律.md` 与 ADR-022 的 B/C 分层判断。
+> 模板根不内置固定 endpoint、供应商、模型或业务能力。实例化后以代码、配置、接口契约和真实探测作为项目实例真值；未确认项保留 `[填写]`。
 
-## AI 调用（唯一对外 API）
+## 安全边界
 
-代码：`src/shared/ai.js`
+- 真实密钥、token、用户数据和完整敏感响应不得写入 tracked 文件。
+- 密钥只保存在项目批准的本机密钥载体中；文档只记录环境变量名或配置入口。
+- base URL、模型名等半敏感配置按 `操作系统/01_架构/三类行为铁律.md` 与项目 ADR 执行。
+- 日志和错误样例必须脱敏，正文不得出现可复用凭证。
 
-### 配置
+## 真值来源
 
-```js
-LLM_DEFAULTS = {
-  baseUrl: 'https://token-plan-sgp.xiaomimimo.com/anthropic',
-  model:   'mimo-v2.5-pro',
-  apiKey:  '', // 默认不内置 key，用户在本机「我」页面填写
-}
-```
+| 优先级 | 证据 | 用途 |
+|---|---|---|
+| 1 | 接口实现、客户端代码、路由与配置 schema | 当前行为 |
+| 2 | OpenAPI / JSON Schema / protobuf 等契约文件 | 请求与响应结构 |
+| 3 | 真实探测、契约测试、服务日志 | 可用性与错误行为 |
+| 4 | 本文 | 摘要和协作约定 |
 
-用户可在「我」页面填写/清空（存 localStorage `llm-config-v1`）。
+## API 清单
 
-### 协议
+| API / 能力 | 类型 | 调用方 | 服务方 | 契约真源 | 鉴权 | 状态 |
+|---|---|---|---|---|---|---|
+| [填写] | 外部 / 内部 / 原生 | [填写] | [填写] | [填写] | [填写] | 待验证 |
 
-兼容 Anthropic Messages API。
+## 协议层
 
-```
-POST {baseUrl}/v1/messages
+协议层描述“请求如何传输和解析”，不绑定某个供应商或模型。至少填写：
+
+| 项 | 当前约定 | 证据 |
+|---|---|---|
+| 协议 / 版本 | [填写] | [填写] |
+| base URL 配置名 | [填写] | [填写] |
+| 路径与方法 | [填写] | [填写] |
+| 鉴权头 / 签名方式 | [填写] | [填写] |
+| 请求 Content-Type | [填写] | [填写] |
+| 超时 | [填写] | [填写] |
+| 重试条件与上限 | [填写] | [填写] |
+| 流式 / 非流式 | [填写] | [填写] |
+
+通用请求示意只表达结构，不代表项目已采用：
+
+```text
+METHOD <BASE_URL>/<RESOURCE>
 Headers:
-  x-api-key: <key>
-  anthropic-version: 2023-06-01
-  anthropic-dangerous-direct-browser-access: true
-  Content-Type: application/json
-
+  Authorization: <由项目实例定义>
+  Content-Type: <填写>
 Body:
-{
-  "model": "<model>",
-  "max_tokens": 1024,
-  "system": "<system prompt>",
-  "messages": [
-    { "role": "user", "content": "..." },
-    { "role": "assistant", "content": "..." },
-    ...
-  ]
-}
+  <按契约填写>
 ```
 
-图片消息：
+## 模型层
 
-```js
-content: [
-  { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: '<base64>' } },
-  { type: 'text', text: '...' },
-]
-```
+模型层描述“选择哪个能力提供方、模型或版本”，必须与协议层分离。兼容同一协议不代表模型相同，切换模型也不应偷偷改变请求契约。
 
-### 4 个 AI 能力
+| 项 | 当前值 | 配置真源 | 回退策略 | 最近验证 |
+|---|---|---|---|---|
+| 提供方 | [填写] | [填写] | [填写] | 待验证 |
+| 模型 / 版本 | [填写] | [填写] | [填写] | 待验证 |
+| 能力约束 | [填写] | [填写] | [填写] | 待验证 |
+| 数据驻留 / 合规 | [填写] | [填写] | [填写] | 待验证 |
 
-#### 1. callAI — 通用聊天
+## 请求与响应契约
 
-```js
-import { callAI } from '../shared/ai.js';
+每个 API 单独记录，避免把多项业务能力写成一个模糊“大接口”：
 
-const reply = await callAI({
-  messages: [{ role: 'user', content: '...' }],
-  systemOverride: '...',  // 可选
-  maxTokens: 800,         // 默认 1024
-});
-// 返回 string
-```
+### [填写：API 名称]
 
-#### 2. analyzeMealImage — 餐照分析
+- 用途：[填写]
+- 调用入口：[填写]
+- 方法与路径：[填写]
+- 请求 schema：[填写或链接]
+- 成功响应 schema：[填写或链接]
+- 错误响应 schema：[填写或链接]
+- 幂等规则：[填写]
+- 权限与隐私：[填写]
+- 契约测试：[填写]
 
-```js
-import { analyzeMealImage } from '../shared/ai.js';
+## 错误处理
 
-const json = await analyzeMealImage({
-  image: base64,         // 不带 data:image 前缀
-  profile: data.profile,
-  mealType: '早餐',
-});
-// 返回 { summary, calories, protein, suggestion }
-```
+| 类别 | 可重试 | 客户端行为 | 日志要求 |
+|---|---|---|---|
+| 配置缺失 | 否 | 明确提示缺哪一项，不发请求 | 不记录密钥值 |
+| 鉴权失败 | 否 | 停止重试，引导更新凭证 | 只记状态码和脱敏上下文 |
+| 限流 | 是 | 遵守服务端退避信息 | 记录次数与等待时间 |
+| 网络 / 5xx | 按契约 | 有界重试，禁止无限循环 | 记录 trace id 与脱敏摘要 |
+| 契约解析失败 | 否 | 保留原始错误分类，安全降级 | 响应内容先脱敏再留证 |
 
-#### 3. parseLedgerWithAI — 自然语言记账兜底
+## 变更与验收
 
-```js
-const ai = await parseLedgerWithAI({
-  text: '昨天打车 28',
-  ledgerContext: { today: '2026-05-07' },
-});
-// 返回 { action, reply, records: [{ text, amount, type, category, date }] }
-```
+- 协议、鉴权、字段或错误语义变化时，先更新契约测试，再改实现。
+- 模型层变化要单独验证能力、成本、合规和回退，不用“协议兼容”代替。
+- 至少保留一次成功、一次鉴权失败、一次限流或服务异常的真实脱敏证据。
+- 文档、代码与实际探测不一致时，状态写 PENDING，直到项目实例真值完成对账。
 
-只在本地 `parseLedgerText()` 解析失败时才调（节约 API 调用）。
-
-#### 4. summarizeDay — 今日整理
-
-```js
-const text = await summarizeDay({
-  date: today,
-  tasks: ...,
-  habits: ...,
-  meals: ...,
-  ...
-});
-// 返回 string
-```
-
-### 错误处理
-
-所有调用必须 try/catch：
-
-```js
-try {
-  const reply = await callAI({ ... });
-} catch (e) {
-  // e.message 形如 "API 401: Unauthorized"
-  setError(`AI 暂时没接上：${e.message?.slice(0, 80)}`);
-}
-```
-
-常见错误：
-- 401：API key 错或过期 → 引导用户去「我」改 key
-- 429：限流 → 等几分钟再试
-- 500/502：服务端 → 重试一次
-- 缺 key：抛 `MissingApiKeyError`，UI 显示「请先在我页面设置 API Key」
-
-## 内部数据 API（store actions）
-
-代码：`src/app/useAppData.js`
-
-```js
-const { data, actions, today } = store;
-
-// 档案
-await actions.saveProfile(profile);
-
-// 任务打卡
-await actions.setTask(taskId, 'done' | 'skip' | null);
-await actions.resetToday();
-
-// 喝水
-await actions.setHydration(8);
-
-// 习惯
-await actions.addHabit({ title, note, category, color });
-await actions.toggleHabit(habitId, dateKey);
-await actions.resetHabits();
-
-// 通用 CRUD（适用于 weightRecords / mealRecords / exerciseRecords / ledgerEntries / moments / chatMessages / deviceEvents）
-await actions.addRecord('mealRecords', { ... });    // 自动加 id + date + createdAt
-await actions.updateRecord('mealRecords', record);
-await actions.deleteRecord('mealRecords', id);
-
-// 备份
-const json = await actions.exportData();
-await actions.importData(jsonString);
-```
-
-### 设计原则
-
-- 所有 actions 都是 async（返回 Promise）
-- actions 内部：先写 DB → 再 setData → 触发 React 重渲染
-- 失败抛错，调用方 try/catch
-- 不在 actions 里弹 toast / alert（让 UI 决定怎么展示错）
-
-## Capacitor 原生 API（未来扩展）
-
-目前只用 Capacitor 6 核心。未来可能加：
-
-| 用途 | 插件 |
-|---|---|
-| 喝水通知（F-104） | `@capacitor/local-notifications` |
-| 应用锁（F-201） | `@capacitor/biometric-auth` 或 `@capacitor-community/biometric-auth` |
-| 自动备份（F-204） | `@capacitor/filesystem` |
-| BLE 体重秤 / 终端 | `@capacitor-community/bluetooth-le` |
-
-每加一个原生插件，要：
-1. `npm install <plugin>`
-2. `npx cap sync android`
-3. 在 `android/app/src/main/AndroidManifest.xml` 加权限（如 BLUETOOTH）
-4. 真机测试
+来源项目历史参考不是模板当前事实；旧 endpoint、模型名和业务函数可通过 Git 历史追溯，不在当前模板中继续固化。

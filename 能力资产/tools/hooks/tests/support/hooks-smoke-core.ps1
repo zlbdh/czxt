@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Assert-True {
   param(
@@ -126,6 +126,7 @@ function Get-HooksSmokePaths {
     ScheduledInstall = Join-Path $Root "能力资产\tools\hooks\scheduled\install-scheduled-task.ps1"
     WatchInstall = Join-Path $Root "能力资产\tools\hooks\watch\install-adr-watch-task.ps1"
     CodexHooks = Join-Path $Root ".codex\hooks.json"
+    CodexDispatcher = Join-Path $Root ".codex\invoke-hook.ps1"
     ClaudeSettings = Join-Path $Root ".claude\settings.json"
     CodexSessionStart = Join-Path $Root "能力资产\tools\hooks\codex\session-start.ps1"
     CodexUserPrompt = Join-Path $Root "能力资产\tools\hooks\codex\user-prompt-submit.ps1"

@@ -78,8 +78,8 @@ description: web API 在 Capacitor/Android WebView 场景下的信源选型规�
 
 ## 关联
 
-- [`../../确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md`](../../确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md) — PROP-022 主稿
-- [`../../交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md`](../../交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md) — F-SYSCHECK-1 smoke #3 阻塞实证
+- 来源项目历史 PROP-022 主稿（模板实例不复制）：`确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md`
+- 来源项目历史 smoke #3 实证（模板实例不复制）：`交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md`
 - [`../../Docs/7-复盘/RETRO-009-候选议题.md`](../../Docs/7-复盘/RETRO-009-候选议题.md) — 议题 AT 候选 backlog
 - [`操作系统/01_架构/角色边界.md`](../../操作系统/01_架构/角色边界.md) — 9 PM 角色边界 + 路径白名单
 - [`web-api-信源矩阵.md`](web-api-信源矩阵.md) — Android WebView API 可靠性矩阵

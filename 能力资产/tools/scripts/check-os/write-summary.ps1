@@ -1,4 +1,4 @@
-function Write-OsHealthSummary {
+﻿function Write-OsHealthSummary {
   param(
     [object]$Failures,
     [object]$Warnings,
@@ -30,9 +30,9 @@ function Write-OsHealthSummary {
     return 1
   }
   if ($Warnings.Count -gt 0 -or $StateStale) {
-    Write-Host "⚠️  P4a-P4s 通过（含警告 / stale — 进 RETRO 议题）" -ForegroundColor Yellow
+    Write-Host "⚠️  P4a-P4t 通过（含警告 / stale — 进 RETRO 议题）" -ForegroundColor Yellow
   } else {
-    Write-Host "🎉 P4a-P4s 全过 — framework 完全健康（含 PM 轨迹 + ADR-032 v2 列表一致性 + 版本/Sprint/ADR/RETRO/PROP 治理计数/工作流旧口径/协作旧口径/分支策略/skills命令/PM工作区入口/Markdown 链接/锚点/能力资产剩余区/治理语义锚点/hooks 配置与运行态/模板纯净度）" -ForegroundColor Green
+    Write-Host "🎉 P4a-P4t 全过 — framework 完全健康（含 PM 轨迹 + ADR-032 v2 列表一致性 + 版本/Sprint/ADR/RETRO/PROP 治理计数/工作流旧口径/协作旧口径/分支策略/skills命令/PM工作区入口/Markdown 链接/锚点/能力资产剩余区/治理语义锚点/hooks 配置与运行态/模板纯净度/借鉴闭环一致性）" -ForegroundColor Green
   }
   Write-Host "ℹ️  P4e mount 缓存陷阱提醒已输出（议题 D，不阻塞）" -ForegroundColor Gray
   Write-Host ""

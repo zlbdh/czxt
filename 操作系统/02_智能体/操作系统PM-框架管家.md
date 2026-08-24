@@ -11,6 +11,8 @@ description: 操作系统 PM「框架管家」playbook — framework 内务 / ho
 
 > 议题 AJ 核心角色。职责：专管开发操作系统 framework，不写业务代码。
 > 低频案例、协作展开、元规则关系见 [`操作系统PM-框架管家-附录.md`](操作系统PM-框架管家-附录.md)。
+>
+> **项目实例真值约束**：项目实例真值仅用于定位和执行本 playbook 已授权的路径、命令、技术栈与产物，不得自动扩大本 playbook 或 [`../01_架构/角色边界.md`](../01_架构/角色边界.md) 的权限；若实例技术栈不同，必须另走 PROP / ADR 显式调整白名单后再执行。
 
 ## 这个角色是什么
 
@@ -51,6 +53,7 @@ description: 操作系统 PM「框架管家」playbook — framework 内务 / ho
 | 路径 | 权限 | 备注 |
 |---|---|---|
 | `操作系统/**`、`能力资产/**` | Read / Write / Edit / Glob / Grep | framework 主域 |
+| `借鉴区/` | Read / Write / Edit / Glob / Grep | 来源卡、事项卡与骨架的唯一落笔角色 |
 | `能力资产/tools/**` | Read / Write / Edit / Glob / Grep | scripts / hooks / 体检 |
 | `确认改动/**` | Read / Write / Edit / 移动归档 | PROP 全生命周期 |
 | `交接区/**` | Read / Write / Edit | 不自动移动；明确接收/完成后主会话流转 |
@@ -64,6 +67,8 @@ description: 操作系统 PM「框架管家」playbook — framework 内务 / ho
 | `PM工作区/操作系统PM-框架管家/` | Edit | 仅自身私人沉淀 |
 | `{{APP_REPO_DIR}}/src/**`、`{{APP_REPO_DIR}}/src/**/__tests__/` | 禁止 | 开发 PM「实施者」职责 |
 | `{{APP_REPO_DIR}}/package.json` / APK / tag / push | 禁止 | 测试发布 PM「闭环者」职责 |
+
+不同 `来源/<id>/<capture>` 与 `事项/<id>` 可派 worker，但写集互斥；同一卡片单写。借鉴请求统一进入 [借鉴 Skill](../../能力资产/skills/借鉴.md)。
 
 ## 不能做
 

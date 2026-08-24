@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Get-HookScriptPath {
   param([object]$Hook)
@@ -22,6 +22,22 @@ function Get-HookScriptPathFromCommand {
   return $null
 }
 
+function Get-CodexHookDispatchName {
+  param([string]$Command)
+  $pattern = '\A(?:pwsh|powershell\.exe) -NoProfile -NonInteractive -ExecutionPolicy Bypass -OutputFormat Text -EncodedCommand ([A-Za-z0-9+/=]+)\z'
+  if ($Command -cmatch $pattern) {
+    try {
+      $bootstrap = [Text.Encoding]::Unicode.GetString(
+        [Convert]::FromBase64String($matches[1]))
+    }
+    catch { return "" }
+    if ($bootstrap -cmatch '& \$dispatcher -Hook ''([a-z-]+)''') {
+      return $matches[1]
+    }
+  }
+  return ""
+}
+
 function Normalize-HookPath {
   param([string]$Path)
   if ([string]::IsNullOrWhiteSpace($Path)) { return "" }
@@ -42,6 +58,7 @@ function Assert-HookMapsTo {
     [string]$Matcher = "",
     [int]$Timeout,
     [string]$StatusMessage,
+    [string]$DispatchName,
     [ValidateSet("Codex", "Claude")]
     [string]$Runtime
   )
@@ -63,17 +80,23 @@ function Assert-HookMapsTo {
   Assert-True ([int]$hook.timeout -eq $Timeout) "$Label $Event timeout drift"
   Assert-True ([string]$hook.statusMessage -eq $StatusMessage) "$Label $Event statusMessage drift"
 
-  $expected = Normalize-HookPath $ExpectedScript
-  $actual = Normalize-HookPath (Get-HookScriptPath $hook)
-  Assert-True ($actual -eq $expected) "$Label $Event script drift: $actual != $expected"
-
   if ($Runtime -eq "Codex") {
     Assert-True ($hook.command -and $hook.commandWindows) "$Label $Event should define command and commandWindows"
     foreach ($field in @("command", "commandWindows")) {
-      $fieldActual = Normalize-HookPath (Get-HookScriptPathFromCommand ([string]$hook.$field))
-      Assert-True ($fieldActual -eq $expected) "$Label $Event $field script drift: $fieldActual != $expected"
+      $actualDispatch = Get-CodexHookDispatchName ([string]$hook.$field)
+      Assert-True ($actualDispatch -ceq $DispatchName) `
+        "$Label $Event $field dispatch drift: $actualDispatch != $DispatchName"
+      Assert-True (-not ([string]$hook.$field).Contains('{{PROJECT_ROOT')) `
+        "$Label $Event $field must not retain an unresolved project-root placeholder"
+      Assert-True (-not ([string]$hook.$field).Contains('"')) `
+        "$Label $Event $field must remain quote-free for the Windows cmd hook runner"
+      Assert-True (-not ([string]$hook.$field).Contains('git ')) `
+        "$Label $Event $field must not bind dispatch to a Git repository root"
     }
   } else {
+    $expected = Normalize-HookPath $ExpectedScript
+    $actual = Normalize-HookPath (Get-HookScriptPath $hook)
+    Assert-True ($actual -eq $expected) "$Label $Event script drift: $actual != $expected"
     Assert-True ([string]$hook.command -match 'powershell(\.exe)?$') "$Label $Event command should be powershell.exe"
     Assert-True (@($hook.args) -contains "-File") "$Label $Event args should include -File"
   }

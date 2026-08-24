@@ -43,7 +43,7 @@ description: 开发操作系统（framework + 元规则）改动的轻量时间�
 
 ## 2026-08-24
 
-- **capture 事务安全终审（PROP-004 / ADR-039 / L4）**：补齐 staging→capture 树账本、repair 双移动封印、同字节 ABA、rename committed 对账、cleanup 后终检、真实 ADS/unknown 保留、初次与 post-move Git 精确清理及 P4t preflight 句柄生命周期；树 seal 改为流式 SHA-256 与逐成员 DFS，固定 `20000` 成员 / `536870912` 字节预算。fresh WinPS 362/362、assets 6/6、scaffold 63/63、docs 148/148、capture 8/8、hooks-smoke PASS；独立安全复审 P0/P1/P2=0。编码 `4ee4686`、功能 `7bf9ce4` 已按 ADR-016 正常 push 至 `origin/main`。
+- **capture 事务安全终审（PROP-004 / ADR-039 / L4）**：补齐 staging→capture 树账本、repair 双移动封印、同字节 ABA、rename committed 对账、cleanup 后终检、真实 ADS/unknown 保留、初次与 post-move Git 精确清理及 P4t preflight 句柄生命周期；树 seal 改为流式 SHA-256 与逐成员 DFS，固定 `20000` 成员 / `536870912` 字节预算。fresh WinPS 362/362、assets 6/6、scaffold 63/63、docs 148/148、capture 8/8、hooks-smoke PASS；独立安全复审 P0/P1/P2=0。编码 `4ee4686`、功能 `7bf9ce4`、交接 `cda4339` 已按 ADR-016 正常 push，核验 main 分叉 `0/0`。
 
 - **Codex 项目 hooks 恢复（L2）**：补回模板根用户级可信项目配置，并将 5 个 `.codex/hooks.json` 命令改为 quote-free PowerShell bootstrap；bootstrap 只接受最近且唯一的 CZXT 根标记并绑定 `.codex/invoke-hook.ps1`，双标记冲突即停，不依赖 Git 或绝对模板路径，规避 Windows `cmd.exe /C` 嵌套引号问题。TDD 覆盖 dispatcher 缺失、`.cmd`/Git 根误绑、独立非 Git、外层 Git 内嵌与双标记冲突；hooks-smoke PASS，Codex `hooks/list` 5/5 enabled+trusted、0 warning、0 error。
 

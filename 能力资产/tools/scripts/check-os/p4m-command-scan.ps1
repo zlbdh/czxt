@@ -24,7 +24,7 @@ function Invoke-P4mPatternChecks {
   foreach ($check in $Checks) {
     $path = Join-Path $Root $check.Path
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
-    $text = Get-Content -LiteralPath $path -Raw -ErrorAction SilentlyContinue
+    $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
     foreach ($match in [regex]::Matches($text, $check.Pattern)) {
       $line = ($text.Substring(0, $match.Index) -split "`n").Count
       $hits += "$($check.Path):L$line $($check.Label)"

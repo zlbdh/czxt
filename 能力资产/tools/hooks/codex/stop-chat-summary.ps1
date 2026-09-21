@@ -49,7 +49,7 @@ if (-not $looksLikeImplementationCloseout) {
   Continue-Hook
 }
 
-$tmpPath = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-codex-stop-chat-" + [guid]::NewGuid().ToString("N") + ".txt")
+$tmpPath = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-codex-stop-chat-" + [guid]::NewGuid().ToString("N") + ".txt")
 $message | Set-Content -LiteralPath $tmpPath -Encoding UTF8
 
 $runner = Join-Path $Root "能力资产\tools\hooks\run-hooks.ps1"

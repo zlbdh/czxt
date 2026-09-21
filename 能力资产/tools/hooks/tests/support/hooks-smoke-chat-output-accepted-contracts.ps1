@@ -7,7 +7,7 @@ function Invoke-HooksSmokeAcceptedDoneChatOutputContract {
     [object]$Fixture
   )
 
-  $sideRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-chat-accepted-" + [guid]::NewGuid().ToString("N"))
+  $sideRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-chat-accepted-" + [guid]::NewGuid().ToString("N"))
   $pendingDir = Join-Path $sideRoot "交接区\待接手"
   $doneDir = Join-Path $sideRoot "交接区\已接手"
   try {

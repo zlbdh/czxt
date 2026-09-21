@@ -2,6 +2,7 @@
 
 $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "framework-scope.ps1")
+. (Join-Path $PSScriptRoot "adr-governance-truth.ps1")
 
 if (-not (Test-IsTemplateRoot -Root $Root)) {
   Write-Host "  ℹ️ 非模板根模式：跳过模板纯净度守卫"
@@ -56,8 +57,6 @@ function Test-CurrentTruthFile {
   }
 }
 
-# 只对“当前真值”入口做定向检查。历史 ADR / RETRO 可保留来源技术术语，
-# 因此这里不全局禁止 React、Dexie 等词。
 $currentTruthChecks = @(
   @{
     Path = "README.md"
@@ -68,7 +67,7 @@ $currentTruthChecks = @(
   @{
     Path = "操作系统/00_总入口.md"
     Purpose = "ADR 状态"
-    Required = @("38 ADR 永久档案（35 现行 + 3 被替代/覆盖）")
+    Required = @("ADR 永久档案")
     Forbidden = @("38 ADR 永久现行")
   },
   @{
@@ -130,6 +129,14 @@ $currentTruthChecks = @(
 
 foreach ($check in $currentTruthChecks) {
   Test-CurrentTruthFile -RelativePath $check.Path -RequiredTerms $check.Required -ForbiddenTerms $check.Forbidden -Purpose $check.Purpose
+}
+
+$adrTruth = Get-CzxtAdrGovernanceTruth -Root $Root
+foreach ($failure in $adrTruth.Failures) {
+  $failures.Add("ADR 真源失败：$failure")
+}
+foreach ($failure in @(Test-CzxtAdrMainEntryAnchor -Root $Root -Truth $adrTruth)) {
+  $failures.Add($failure)
 }
 
 $currentPlaybooks = @(

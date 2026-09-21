@@ -20,11 +20,16 @@ $checks = @(
     @{ Path = "能力资产/skills/状态推断.md"; Pattern = '每次响应必跑'; Label = "状态推断仍要求普通响应每次跑 APK/smoke 推断" },
     @{ Path = "能力资产/skills/状态推断-推断项.md"; Pattern = '每次响应必跑|last_covered=\$\(\(retro_count \* 3\)\)|floor\(已完成 L3\+'; Label = "状态推断推断项仍含旧响应频率或 RETRO 公式" },
     @{ Path = "能力资产/skills/状态推断-跨session监控-附录.md"; Pattern = '(?m)^(最新卡|卡_mtime|最近代码_mtime|卡数|实际|索引)='; Label = "状态推断 Bash fallback 仍含中文变量赋值" },
-    @{ Path = "能力资产/skills/项目体检-检查项-5-6.md"; Pattern = '待接手数=|Windows/Codex 为 D:\\WGKJ\\{{PROJECT_NAME}}，Cowork'; Label = "项目体检 5-6 仍含不可复制 Bash 变量或误标 Windows/Codex" },
+    @{ Path = "能力资产/skills/项目体检-检查项-5-6.md"; Pattern = '待接手数=|Windows/Codex 为 D:\\WGKJ\\__CZXT_PROJECT_NAME_REGEX__，Cowork'; Label = "项目体检 5-6 仍含不可复制 Bash 变量或误标 Windows/Codex" },
     @{ Path = "能力资产/skills/项目体检-检查项-5-6.md"; Pattern = '(?s)检查项 5 / 9：跨 session 同步状态(?:(?!检查项 6 / 9).)*check-handoff-zone\.ps1'; Label = "项目体检检查项 5 仍把 handoff-zone 当作跨 session 对账入口" },
     @{ Path = "能力资产/skills/项目体检-检查项.md"; Pattern = 'floor\(已完成 L3\+ 数 / 3\)'; Label = "项目体检检查项 3 仍用旧 RETRO 固定公式" },
     @{ Path = "能力资产/skills/项目体检-附录.md"; Pattern = '待接手数='; Label = "项目体检附录仍含中文 Bash 变量" }
 )
+
+$projectLiteral = [regex]::Escape('{{PROJECT_NAME}}')
+foreach ($check in $checks) {
+  $check.Pattern = $check.Pattern.Replace('__CZXT_PROJECT_NAME_REGEX__', $projectLiteral)
+}
 
 $hits = @(Invoke-P4mPatternChecks -Root $Root -Checks $checks)
 Complete-P4mScan -Hits $hits -FailureTitle "rules/skills 可复制性旧口径" -SuccessMessage "rules/skills 可复制命令与起手语义未发现旧口径"

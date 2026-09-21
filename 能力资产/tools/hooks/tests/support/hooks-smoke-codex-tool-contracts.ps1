@@ -45,7 +45,7 @@ function Invoke-HooksSmokeCodexToolContracts {
   $relPost = Invoke-CodexJson $Paths.CodexPost (New-HookJson "PostToolUse" ([ordered]@{ file_path = "操作系统/06_工具治理/hooks-设计.md" }))
   Assert-True ($relPost.continue -eq $true) "Codex PostToolUse relative path bad"
 
-  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-codex-pm-" + [guid]::NewGuid().ToString("N"))
+  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-codex-pm-" + [guid]::NewGuid().ToString("N"))
   try {
     $tempScriptDir = Join-Path $tempRoot "能力资产\tools\scripts"
     New-Item -ItemType Directory -Force -Path $tempScriptDir | Out-Null
@@ -104,7 +104,7 @@ function Invoke-HooksSmokeCodexToolContracts {
   })) "历史归档" "Codex PreToolUse Docs/6-历史归档 apply_patch"
 
   # 正向 2 + 负向 2b：写已存在的 apk/ → 软提醒；写不存在的 apk/ → 放行（仅"修改已存在"才提醒）。
-  $apkRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-codex-apk-" + [guid]::NewGuid().ToString("N"))
+  $apkRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-codex-apk-" + [guid]::NewGuid().ToString("N"))
   try {
     $apkDir = Join-Path $apkRoot "apk"
     New-Item -ItemType Directory -Force -Path $apkDir | Out-Null

@@ -27,7 +27,7 @@ Assert-Contains "操作系统\05_记忆\AppData-memory退役清单.md" '不作�
 Assert-Contains "操作系统\05_记忆\AppData-memory退役清单.md" '新对话不再依赖' "AppData 新会话不依赖"
 Assert-Contains "操作系统\05_记忆\行为反思.md" '非密钥、非本机例外的项目真源' "项目外存储铁律含密钥例外"
 Assert-Contains "操作系统\05_记忆\行为反思.md" '由项目 PM 主会话或对应白名单收口加 1 行' "PM 轨迹留痕主语"
-Assert-NotContains "操作系统\05_记忆\行为反思.md" '项目所需数据 / 配置 / 状态，必须在 `D:\\WGKJ\\{{PROJECT_NAME}}\\` 内，Git 版本化' "项目外存储铁律过宽"
+Assert-NotContains "操作系统\05_记忆\行为反思.md" ('项目所需数据 / 配置 / 状态，必须在 `D:\\WGKJ\\' + [regex]::Escape('{{PROJECT_NAME}}') + '\\` 内，Git 版本化') "项目外存储铁律过宽"
 Assert-Contains "能力资产\skills\状态推断.md" '普通回应不自动写状态字段' "状态推断不自动写状态"
 Assert-Contains "能力资产\skills\状态推断-跨session监控.md" '不直接替用户拍板' "状态推断建议边界"
 Assert-Contains "操作系统\07_完整工作流\实施循环.md" 'AGENTS\.md.*00_总入口' "实施循环起手链路优先"

@@ -10,7 +10,12 @@
     @{ Path = "操作系统/02_智能体/共享技能/真机smoke清单.md"; Pattern = 'Codex 闭环前|Claude Code 完成代码后|HEAD hash 与 Codex 报告一致'; Label = "真机 smoke 清单仍按工具阶段触发或绑定 Codex 报告" },
     @{ Path = "操作系统/02_智能体/共享技能/mount-stale防御.md"; Pattern = 'Codex push 后起手|Codex 报告 push 成功|HEAD hash 与 Codex 报告一致'; Label = "mount stale 防御仍绑定 Codex 报告主语" },
     @{ Path = "操作系统/02_智能体/共享技能/PM自纠-trigger.md"; Pattern = '状态\.md 末尾 PM 切换轨迹加一行'; Label = "PM 自纠共享技能仍让任意 PM 直接写状态轨迹" },
-    @{ Path = "操作系统/02_智能体/开发PM-实施者.md"; Pattern = '{{APP_REPO_DIR}}/src/__tests__/\*\.test\.js'; Label = "开发 PM 测试路径白名单仍过窄" },
+    @{ Path = "操作系统/02_智能体/开发PM-实施者.md"; Pattern = '__CZXT_APP_REPO_DIR_REGEX__/src/__tests__/\*\.test\.js'; Label = "开发 PM 测试路径白名单仍过窄" },
     @{ Path = "操作系统/02_智能体/项目PM-咪咪.md"; Pattern = '切产品 PM 写 PRD，再派开发 PM'; Label = "项目 PM playbook 仍把修 bug/已有实施项强行路由产品 PM" },
     @{ Path = "操作系统/02_智能体/README.md"; Pattern = '按角色边界白名单动手 → 状态\.md 留痕'; Label = "智能体 README 状态留痕缺落笔主体" }
 )
+
+$appLiteral = [regex]::Escape('{{APP_REPO_DIR}}')
+foreach ($check in $script:P4kToolSubjectWorkflowChecks) {
+  $check.Pattern = $check.Pattern.Replace('__CZXT_APP_REPO_DIR_REGEX__', $appLiteral)
+}

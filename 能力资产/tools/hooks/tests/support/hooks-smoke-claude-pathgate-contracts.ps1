@@ -28,7 +28,7 @@ function Invoke-HooksSmokeClaudePathGateContracts {
   Assert-True ($archiveDeepJson.hookSpecificOutput.permissionDecision -eq "ask") "Claude PreToolUse should ask for nested/absolute Docs/6-历史归档"
 
   # 正向 2：写已存在的 apk/ 历史 APK → ask（构造真实存在文件）。
-  $apkRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-claude-apk-" + [guid]::NewGuid().ToString("N"))
+  $apkRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-claude-apk-" + [guid]::NewGuid().ToString("N"))
   try {
     $apkDir = Join-Path $apkRoot "apk"
     New-Item -ItemType Directory -Force -Path $apkDir | Out-Null

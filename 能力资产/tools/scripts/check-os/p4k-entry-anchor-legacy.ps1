@@ -4,14 +4,13 @@ $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "p4k-entry-anchor-patterns.ps1")
 
 $hits = @()
-foreach ($line in ($script:EntryAnchorPatternRows -split "`r?`n" | Where-Object { $_.Trim() })) {
-    $rel, $pattern, $label = $line -split '§', 3
-    $path = Join-Path $Root $rel
+foreach ($check in @(Get-P4kEntryAnchorChecks)) {
+    $path = Join-Path $Root $check.Path
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { continue }
-    $text = Get-Content -LiteralPath $path -Raw -ErrorAction SilentlyContinue
-    foreach ($match in [regex]::Matches($text, $pattern)) {
+    $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
+    foreach ($match in [regex]::Matches($text, $check.Pattern)) {
         $lineNo = ($text.Substring(0, $match.Index) -split "`n").Count
-        $hits += "$rel`:L$lineNo $label"
+        $hits += "$($check.Path)`:L$lineNo $($check.Label)"
     }
 }
 

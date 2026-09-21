@@ -11,8 +11,8 @@ function Invoke-HooksSmokeLifecycleContracts {
     Invoke-HooksSmokeChatOutputContracts -Root $Root -Paths $Paths -Fixture $fixture
     Invoke-HooksSmokeCodexContracts -Root $Root -Paths $Paths -Fixture $fixture
     $claudeTempRoot = [System.IO.Path]::GetTempPath()
-    $claudeFixtureRoot = Join-Path $claudeTempRoot ("{{APP_REPO_DIR}}-hooks-claude-pm-target-" + [guid]::NewGuid().ToString("N"))
-    $claudeConcurrentSentinel = Join-Path $claudeTempRoot ("{{APP_REPO_DIR}}-hooks-claude-pm-concurrent-" + [guid]::NewGuid().ToString("N"))
+    $claudeFixtureRoot = Join-Path $claudeTempRoot ("czxt-hooks-claude-pm-target-" + [guid]::NewGuid().ToString("N"))
+    $claudeConcurrentSentinel = Join-Path $claudeTempRoot ("czxt-hooks-claude-pm-concurrent-" + [guid]::NewGuid().ToString("N"))
     New-Item -ItemType Directory -Path $claudeConcurrentSentinel | Out-Null
     try {
       Invoke-HooksSmokeClaudeContracts -Root $Root -Paths $Paths -TempRoot $claudeFixtureRoot

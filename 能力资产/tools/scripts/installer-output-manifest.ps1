@@ -1,5 +1,7 @@
 ﻿$ErrorActionPreference = 'Stop'
 
+. (Join-Path $PSScriptRoot 'installer-render-text.ps1')
+
 function New-CzxtInstallerOutputManifest {
   return [pscustomobject]@{
     Schema = 'czxt-installer-output/v1'
@@ -87,6 +89,13 @@ function Complete-CzxtInstallerOutput {
   $leases = Open-CzxtInstallerOutputManifestLeases `
     -ProjectRoot $ProjectRoot -InstalledFiles $InstalledFiles
   try {
+    foreach ($state in @(Get-CzxtInstallerOutputStates -InstalledFiles $InstalledFiles)) {
+      $extension = [IO.Path]::GetExtension($state.Path)
+      if ($extension -notin @('.json', '.ps1')) { continue }
+      $snapshot = Get-CzxtInstallerOutputTextSnapshot -ProjectRoot $ProjectRoot `
+        -InstalledFiles $InstalledFiles -TargetPath $state.Path -Context '实例化最终格式校验'
+      Assert-CzxtInstallerRenderedText -Text $snapshot.Text -Extension $extension -Path $state.Path
+    }
     $marker = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
       -CandidatePath (Join-Path $ProjectRoot '.czxt-project-root') `
       -Context '项目根标记目标'

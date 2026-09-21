@@ -49,7 +49,7 @@ if ($legacyReq -match "Sprint-7\+.*移植候选") {
 }
 
 $gapAuditHead = Read-Head "Docs/1-需求文档/v3.0需求实现度审计-缺口台账.md" 12
-if ($gapAuditHead -notmatch "历史审计快照" -or $gapAuditHead -notmatch "不代表 v3\.52\.0 / {{CURRENT_SPRINT}} 当前 backlog") {
+if ($gapAuditHead -notmatch "历史审计快照" -or $gapAuditHead -notmatch ('不代表 v3\.52\.0 / ' + [regex]::Escape('{{CURRENT_SPRINT}}') + ' 当前 backlog')) {
   Add-Failure "v3.0 需求实现度审计缺少首屏历史快照 / 非当前 backlog 边界"
 }
 

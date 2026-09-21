@@ -3,7 +3,7 @@
 function New-HooksSmokeP4bFixture {
   param([string]$Root)
 
-  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-p4b-" + [guid]::NewGuid().ToString("N"))
+  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-p4b-" + [guid]::NewGuid().ToString("N"))
   $helperDir = Join-Path $tempRoot "能力资产\tools\hooks\shared"
   $srcDir = Join-Path $tempRoot "{{APP_REPO_DIR}}\src\features\demo"
   New-Item -ItemType Directory -Force -Path $helperDir, $srcDir | Out-Null

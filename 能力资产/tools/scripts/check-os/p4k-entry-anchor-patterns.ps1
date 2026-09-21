@@ -10,7 +10,7 @@ TASKS.md§5KB\s*/\s*8KB 红区|trainingFixtures\.js 14\.7KB|Chat\.jsx 11827B§TA
 操作系统/07_完整工作流/hooks-运行SOP-附录.md§按\s+P4a[-–]P4[imnop]|P4a[-–]P4p§hooks SOP 旧 P4
 操作系统/07_完整工作流/git流程.md§并删分支§git流程诱导删分支
 操作系统/07_完整工作流/发布流程.md§v3\.0 release 发布|git tag -a v3\.0|git push origin v3\.0|GitHub 上发 Release|npm run test:run§发布流程旧版本/release/测试命令
-操作系统/07_完整工作流/git流程.md§(?m)^\s*git add \.\s*$|utf8NoBOM|```bash\s*\r?\ncd D:\\WGKJ\\{{PROJECT_NAME}}\\{{APP_REPO_DIR}}§git流程旧实操示例
+操作系统/07_完整工作流/git流程.md§(?m)^\s*git add \.\s*$|utf8NoBOM|```bash\s*\r?\ncd D:\\WGKJ\\__CZXT_PROJECT_NAME_REGEX__\\__CZXT_APP_REPO_DIR_REGEX__§git流程旧实操示例
 操作系统/07_完整工作流/审批与归档.md§(?s)ls 确认改动/.*grep "PROP-"§审批归档旧 bash/grep 查询
 操作系统/07_完整工作流/实施循环-附录.md§出 dev APK \| ❌ \| ✅ build-apk\.bat|Codex（CLI）[^\r\n]*✅ build-apk\.bat§实施循环端能力旧 APK 命令
 操作系统/07_完整工作流/实施循环-DoD.md§核心\s*5\s*项|旧\s*33\+\s*测试§DoD 旧核心/旧测试数
@@ -18,10 +18,10 @@ TASKS.md§5KB\s*/\s*8KB 红区|trainingFixtures\.js 14\.7KB|Chat\.jsx 11827B§TA
 操作系统/07_完整工作流/实施循环-附录.md§TaskUpdate§旧工具名 TaskUpdate
 操作系统/03_交接/交接卡格式.md§79/79§交接卡旧测试数
 操作系统/02_智能体/开发PM-实施者.md§⑥-⑦§开发 PM 旧 chat 段
-操作系统/01_架构/角色边界.md§全部 Read \+ 调度其他 8 PM|`{{APP_REPO_DIR}}/\*\*` 绝对硬护栏|单源禁并行文件：[^。]*`角色边界\.md`。§角色边界旧白名单
+操作系统/01_架构/角色边界.md§全部 Read \+ 调度其他 8 PM|`__CZXT_APP_REPO_DIR_REGEX__/\*\*` 绝对硬护栏|单源禁并行文件：[^。]*`角色边界\.md`。§角色边界旧白名单
 操作系统/01_架构/子agent调度机制.md§单源禁并行文件：[^。]*`角色边界\.md`。|禁并行写：[^。]*`角色边界\.md`。§调度漏自身单源
 操作系统/02_智能体/沉淀PM-沉淀者.md§写入 `元规则池\.md`§沉淀直写元规则池
-操作系统/02_智能体/测试发布PM-闭环者.md§`{{APP_REPO_DIR}}/package\.json` version 字段 / `{{APP_REPO_DIR}}/\.gitattributes`§闭环者配置旧口径
+操作系统/02_智能体/测试发布PM-闭环者.md§`__CZXT_APP_REPO_DIR_REGEX__/package\.json` version 字段 / `__CZXT_APP_REPO_DIR_REGEX__/\.gitattributes`§闭环者配置旧口径
 操作系统/01_架构/状态机.md§单人单 PM§状态机旧单 PM
 操作系统/01_架构/README设计规范.md§远端 latest tag|31 README|## 六、关联§README 设计规范旧锚
 操作系统/05_记忆/scope-schema.md§Sprint-10 PROP-039 集成 Mem0 后§scope-schema 旧排期
@@ -46,3 +46,14 @@ PM工作区/测试发布PM-闭环者/README.md§待 Sprint-8 启动后实战累�
 能力资产/skills/状态推断-跨session监控.md§该填实\s+(git流程\.md|安全与隐私\.md|mcp/README\.md)|占位文件主动监控§状态推断旧动作
 能力资产/skills/状态推断-跨session监控-附录.md§该填实\s+(git流程\.md|安全与隐私\.md|mcp/README\.md)|占位文件主动监控§状态推断附录旧动作
 '@
+
+function Get-P4kEntryAnchorChecks {
+  param([string]$ProjectName='{{PROJECT_NAME}}', [string]$AppRepoDir='{{APP_REPO_DIR}}')
+  $values=@{ PROJECT_NAME=[regex]::Escape($ProjectName); APP_REPO_DIR=[regex]::Escape($AppRepoDir) }
+  foreach ($line in ($script:EntryAnchorPatternRows -split "`r?`n" | Where-Object { $_.Trim() })) {
+    $rel,$pattern,$label=$line -split '§',3
+    $pattern=[regex]::Replace($pattern,'__CZXT_(?<name>PROJECT_NAME|APP_REPO_DIR)_REGEX__',
+      [Text.RegularExpressions.MatchEvaluator]{ param($match) $values[$match.Groups['name'].Value] })
+    [pscustomobject]@{ Path=$rel; Pattern=$pattern; Label=$label }
+  }
+}

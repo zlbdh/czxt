@@ -4,10 +4,12 @@ function Invoke-HooksSmokeClaudeContracts {
   param(
     [string]$Root,
     [object]$Paths,
-    [string]$TempRoot = (Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-claude-pm-" + [guid]::NewGuid().ToString("N")))
+    [string]$TempRoot = (Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-claude-pm-" + [guid]::NewGuid().ToString("N")))
   )
 
-  $postInput = '{"hook_event_name":"PostToolUse","tool_input":{"file_path":"D:\\WGKJ\\{{PROJECT_NAME}}\\操作系统\\06_工具治理\\hooks-设计.md"}}'
+  $postInput = [ordered]@{ hook_event_name='PostToolUse'; project='{{PROJECT_NAME}}';
+    tool_input=[ordered]@{ file_path=(Join-Path $Root '操作系统/06_工具治理/hooks-设计.md') } } |
+    ConvertTo-Json -Depth 5 -Compress
   $claudePostOutput = $postInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $Root
   $claudePostJson = $claudePostOutput | ConvertFrom-Json
   Assert-True ($claudePostJson.continue -eq $true) "Claude PostToolUse bad"

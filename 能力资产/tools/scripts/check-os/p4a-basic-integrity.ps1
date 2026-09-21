@@ -117,6 +117,7 @@ $requiredFiles = @(
   "能力资产/tools/scripts/installer-handle-lease.ps1",
   "能力资产/tools/scripts/installer-replace-transaction.ps1",
   "能力资产/tools/scripts/installer-output-manifest.ps1",
+  "能力资产/tools/scripts/installer-render-text.ps1",
   "能力资产/tools/scripts/installer-tree-plan.ps1",
   "能力资产/tools/scripts/installer-copy-expectation.ps1",
   "能力资产/tools/scripts/check-os/check-plan.ps1",
@@ -127,6 +128,12 @@ $requiredFiles = @(
   "能力资产/tools/scripts/check-os/p4b-size-classification.ps1",
   "能力资产/tools/scripts/check-handoff-zone/report.ps1",
   "能力资产/tools/scripts/check-pm-tracking.ps1",
+  "能力资产/tools/scripts/check-pm-tracking/git-status.ps1",
+  "能力资产/tools/scripts/check-os/adr-governance-truth.ps1",
+  "能力资产/tools/scripts/check-os/tests/pm-tracking-contracts.ps1",
+  "能力资产/tools/scripts/check-os/tests/pm-tracking-contract-support.ps1",
+  "能力资产/tools/scripts/check-os/tests/adr-governance-count-contracts.ps1",
+  "能力资产/tools/scripts/check-os/tests/adr-governance-count-test-support.ps1",
   "Docs/3-开发文档/README.md",
   "Docs/3-开发文档/adr/README.md", "Docs/7-复盘/README.md"
 )

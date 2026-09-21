@@ -1,10 +1,12 @@
 ﻿function Get-AppSrcP4bMeta {
   param([string]$Rel)
 
+  $Rel = $Rel.Replace('\', '/')
+  $appPattern = [regex]::Escape('{{APP_REPO_DIR}}'.Replace('\', '/'))
   $kind = if ($Rel -match '[\\/]__tests__[\\/]|\.test\.(js|jsx|ts|tsx)$') { "test" } else { "prod" }
-  $domain = if ($Rel -match '^{{APP_REPO_DIR}}[\\/]src[\\/]features[\\/]([^\\/]+)') { "features/$($matches[1])" }
-    elseif ($Rel -match '^{{APP_REPO_DIR}}[\\/]src[\\/]shared[\\/]([^\\/]+)') { "shared/$($matches[1])" }
-    elseif ($Rel -match '^{{APP_REPO_DIR}}[\\/]src[\\/]([^\\/]+)') { "src/$($matches[1])" }
+  $domain = if ($Rel -match ('^' + $appPattern + '/src/features/([^/]+)')) { "features/$($matches[1])" }
+    elseif ($Rel -match ('^' + $appPattern + '/src/shared/([^/]+)')) { "shared/$($matches[1])" }
+    elseif ($Rel -match ('^' + $appPattern + '/src/([^/]+)')) { "src/$($matches[1])" }
     else { "src" }
   [PSCustomObject]@{ Kind = $kind; Domain = $domain }
 }
@@ -43,7 +45,8 @@ function Add-P4bSizeFinding {
 
   [void]$Warnings.Add("$($level.Tag) $Rel ${Size}B ($($level.Note))")
   [void]$SizeList.Add([PSCustomObject]@{ Size = $Size; Tag = $level.Tag; Rel = $Rel; Note = $level.Note })
-  if ($Rel -match '^{{APP_REPO_DIR}}[\\/]src[\\/]' -and @("danger", "soft") -contains $level.Level) {
+  $appPattern = [regex]::Escape('{{APP_REPO_DIR}}'.Replace('\', '/'))
+  if ($Rel.Replace('\', '/') -match ('^' + $appPattern + '/src/') -and @("danger", "soft") -contains $level.Level) {
     $meta = Get-AppSrcP4bMeta -Rel $Rel
     [void]$BusinessDebtList.Add([PSCustomObject]@{ Size = $Size; Level = $level.Level; Kind = $meta.Kind; Domain = $meta.Domain; Rel = $Rel })
   }

@@ -89,6 +89,7 @@ function New-TemplateSkeleton {
       '能力资产\tools\scripts\installer-handle-lease.ps1',
       '能力资产\tools\scripts\installer-replace-transaction.ps1',
       '能力资产\tools\scripts\installer-output-manifest.ps1',
+      '能力资产\tools\scripts\installer-render-text.ps1',
       '能力资产\tools\scripts\installer-tree-plan.ps1',
       '能力资产\tools\scripts\installer-copy-expectation.ps1')) {
     Copy-P4tTemplateFile -RelativePath $relative -Root $root

@@ -30,7 +30,7 @@ function Assert-MarkdownLinksResolve {
 }
 
 Assert-Contains "操作系统\04_台账\INDEX.md" '版本总览指针（当前 v3\.52\.0；明细表阶段截至 v3\.8\.2）' "版本总览阶段边界"
-Assert-Contains "操作系统\04_台账\INDEX.md" 'Sprint 总览指针（当前 {{CURRENT_SPRINT}}；明细表阶段截至 Sprint-7）' "Sprint 总览阶段边界"
+Assert-Contains "操作系统\04_台账\INDEX.md" ('Sprint 总览指针（当前 ' + [regex]::Escape('{{CURRENT_SPRINT}}') + '；明细表阶段截至 Sprint-7）') "Sprint 总览阶段边界"
 Assert-Contains "操作系统\04_台账\INDEX.md" '阶段性快照，不追实时全量' "台账数据延迟边界"
 Assert-Contains "操作系统\04_台账\INDEX.md" '项目沉淀/README\.md' "项目沉淀入口"
 
@@ -39,8 +39,8 @@ Assert-Contains "操作系统\04_台账\版本时间线.md" '当前生产 \*\*v3
 Assert-Contains "操作系统\04_台账\版本时间线.md" '本表明细截至 v3\.8\.2' "版本时间线明细截至"
 
 Assert-Contains "操作系统\04_台账\Sprint节奏.md" '阶段性快照 / 明细截至 2026-05-21' "Sprint 节奏阶段性快照"
-Assert-Contains "操作系统\04_台账\Sprint节奏.md" '当前 \*\*{{CURRENT_SPRINT}}\*\*' "Sprint 节奏当前 Sprint"
-Assert-Contains "操作系统\04_台账\Sprint节奏.md" 'Sprint-8 预告（历史快照 / 已收档，项目已进行至 {{CURRENT_SPRINT}}）' "Sprint-8 预告历史边界"
+Assert-Contains "操作系统\04_台账\Sprint节奏.md" ('当前 \*\*' + [regex]::Escape('{{CURRENT_SPRINT}}') + '\*\*') "Sprint 节奏当前 Sprint"
+Assert-Contains "操作系统\04_台账\Sprint节奏.md" ('Sprint-8 预告（历史快照 / 已收档，项目已进行至 ' + [regex]::Escape('{{CURRENT_SPRINT}}') + '）') "Sprint-8 预告历史边界"
 
 Assert-Contains "操作系统\04_台账\议题全景.md" '本文件是高频入口，不再承载全部历史表格' "议题全景入口化"
 Assert-Contains "操作系统\04_台账\议题全景.md" '当前真源' "议题全景当前真源"

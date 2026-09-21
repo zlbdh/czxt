@@ -230,5 +230,14 @@ function Test-CzxtBorrowingPlaceholderRewriteAllowed {
       (Join-Path $project '借鉴区\事项'))) {
     if (Test-CzxtBorrowingPathWithinRoot $candidate $protectedRoot) { return $false }
   }
+  $selfTestRoot=Get-CzxtBorrowingFullPath (Join-Path $project '能力资产\tools\scripts\check-os\tests')
+  $selfTestNames=@('installer-render-support.ps1','installer-render-unit-contracts.ps1',
+    'installer-render-contracts.ps1','installer-render-hook-contracts.ps1',
+    'installer-render-regex-contracts.ps1','installer-render-anchor-contracts.ps1')
+  if ((Test-CzxtBorrowingPathWithinRoot $candidate $selfTestRoot) -and
+      $selfTestNames -ccontains [IO.Path]::GetFileName($candidate) -and
+      (Split-Path -Parent $candidate).Equals($selfTestRoot,[StringComparison]::OrdinalIgnoreCase)) {
+    return $false
+  }
   return $true
 }

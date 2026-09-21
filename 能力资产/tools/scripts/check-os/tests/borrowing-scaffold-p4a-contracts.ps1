@@ -13,7 +13,7 @@ function Initialize-BorrowingGuardFixture {
       'installer-file-safety.ps1', 'installer-source-copy.ps1',
       'installer-handle-lease.ps1',
       'installer-replace-transaction.ps1',
-      'installer-output-manifest.ps1', 'installer-tree-plan.ps1',
+      'installer-output-manifest.ps1', 'installer-render-text.ps1', 'installer-tree-plan.ps1',
       'installer-copy-expectation.ps1')) {
     $source = Join-Path $TemplateRoot ('能力资产\tools\scripts\' + $helper)
     $target = Join-Path $GuardRoot ('能力资产\tools\scripts\' + $helper)

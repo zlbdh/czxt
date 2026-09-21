@@ -28,7 +28,7 @@ if (-not $sectionMatch.Success) {
   Fail-P4bAnchor "TASKS.md 缺少 P4b 业务债监控区块"
 }
 $section = $sectionMatch.Groups["body"].Value
-$p4bLine = @($section -split "\r?\n" | Where-Object { $_ -match '{{APP_REPO_DIR}}/src' -and $_ -match 'P4b 业务历史债' } | Select-Object -First 1)
+$p4bLine = @($section -split "\r?\n" | Where-Object { $_ -match [regex]::Escape('{{APP_REPO_DIR}}/src') -and $_ -match 'P4b 业务历史债' } | Select-Object -First 1)
 if ($p4bLine.Count -eq 0) {
   Fail-P4bAnchor "TASKS.md P4b 表格行缺少 {{APP_REPO_DIR}}/src + P4b 业务历史债"
 }
@@ -60,8 +60,11 @@ if (Test-Path -LiteralPath $devPlaybook) {
   Require-Snippet $devText "不是操作系统未完成项" "开发 PM 非 framework 未完成边界"
 }
 
-$badPattern = '(?is)(P4b|业务大文件债|业务历史债|{{APP_REPO_DIR}}/src)[\s\S]{0,260}((操作系统|framework)\s*(未完成|未闭环|不健康|失败)|必须[\s\S]{0,40}(全拆|清零)|全部[\s\S]{0,40}拆|数字(清零|归零)|为(数字|指标|P4b)[\s\S]{0,80}(拆|重构|改业务代码)|不清零(不能|不得|不许))'
-$reverseBadPattern = '(?is)((操作系统|framework)\s*(未完成|未闭环|不健康|失败)|必须[\s\S]{0,40}(全拆|清零)|全部[\s\S]{0,40}拆|数字(清零|归零)|为(数字|指标|P4b)[\s\S]{0,80}(拆|重构|改业务代码)|不清零(不能|不得|不许))[\s\S]{0,260}(P4b|业务大文件债|业务历史债|{{APP_REPO_DIR}}/src)'
+$badPattern = '(?is)(P4b|业务大文件债|业务历史债|__CZXT_APP_REPO_DIR_REGEX__/src)[\s\S]{0,260}((操作系统|framework)\s*(未完成|未闭环|不健康|失败)|必须[\s\S]{0,40}(全拆|清零)|全部[\s\S]{0,40}拆|数字(清零|归零)|为(数字|指标|P4b)[\s\S]{0,80}(拆|重构|改业务代码)|不清零(不能|不得|不许))'
+$reverseBadPattern = '(?is)((操作系统|framework)\s*(未完成|未闭环|不健康|失败)|必须[\s\S]{0,40}(全拆|清零)|全部[\s\S]{0,40}拆|数字(清零|归零)|为(数字|指标|P4b)[\s\S]{0,80}(拆|重构|改业务代码)|不清零(不能|不得|不许))[\s\S]{0,260}(P4b|业务大文件债|业务历史债|__CZXT_APP_REPO_DIR_REGEX__/src)'
+$appLiteral = [regex]::Escape('{{APP_REPO_DIR}}')
+$badPattern = $badPattern.Replace('__CZXT_APP_REPO_DIR_REGEX__', $appLiteral)
+$reverseBadPattern = $reverseBadPattern.Replace('__CZXT_APP_REPO_DIR_REGEX__', $appLiteral)
 $allowedNegativeContext = '不代表操作系统未完成|不是操作系统未完成|不代表 framework 未完成|不是 framework 未完成'
 $activeFiles = @(
   "TASKS.md",

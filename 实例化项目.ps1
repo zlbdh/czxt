@@ -19,7 +19,7 @@ $Utf8Bom = New-Object System.Text.UTF8Encoding($true)
 
 $InstallerLayout = Resolve-CzxtInstallerLayout -ProjectRoot $ProjectRoot -AppRepoDir $AppRepoDir
 $ProjectRoot = $InstallerLayout.ProjectRoot
-$AppRepoDir = $InstallerLayout.AppRepoDir
+$AppRepoDir = $InstallerLayout.AppRepoDir.Replace('\', '/')
 $AppRepoPath = $InstallerLayout.AppRepoPath
 $ProjectRootPosix = $ProjectRoot.Replace("\", "/")
 $ProjectRootLower = $ProjectRoot.ToLowerInvariant()
@@ -240,6 +240,12 @@ $files = @(Get-CzxtInstallerOutputStates -InstalledFiles $InstalledFiles | ForEa
 
 $rewriteParent = ''
 $rewriteParentLease = $null
+$renderValues = @{
+  PROJECT_ROOT=$ProjectRoot; PROJECT_ROOT_POSIX=$ProjectRootPosix
+  PROJECT_ROOT_LOWER=$ProjectRootLower; PROJECT_NAME=$ProjectName; APP_REPO_DIR=$AppRepoDir
+  PROJECT_SLUG=$ProjectSlug; APP_ID=$AppId; CURRENT_VERSION=$CurrentVersion
+  CURRENT_SPRINT=$CurrentSprint; INIT_TIME=$InitTime
+}
 try {
   foreach ($file in $files) {
     $fileParent = Get-CzxtBorrowingFullPath (Split-Path -Parent $file.FullName)
@@ -254,16 +260,8 @@ try {
     $snapshot = Get-CzxtInstallerOutputTextSnapshot -ProjectRoot $ProjectRoot `
       -InstalledFiles $InstalledFiles -TargetPath $file.FullName -Context '占位符替换目标'
     $text = $snapshot.Text
-    $rewritten = $text.Replace("{{PROJECT_ROOT}}", $ProjectRoot)
-    $rewritten = $rewritten.Replace("{{PROJECT_ROOT_POSIX}}", $ProjectRootPosix)
-    $rewritten = $rewritten.Replace("{{PROJECT_ROOT_LOWER}}", $ProjectRootLower)
-    $rewritten = $rewritten.Replace("{{PROJECT_NAME}}", $ProjectName)
-    $rewritten = $rewritten.Replace("{{APP_REPO_DIR}}", $AppRepoDir)
-    $rewritten = $rewritten.Replace("{{PROJECT_SLUG}}", $ProjectSlug)
-    $rewritten = $rewritten.Replace("{{APP_ID}}", $AppId)
-    $rewritten = $rewritten.Replace("{{CURRENT_VERSION}}", $CurrentVersion)
-    $rewritten = $rewritten.Replace("{{CURRENT_SPRINT}}", $CurrentSprint)
-    $rewritten = $rewritten.Replace("{{INIT_TIME}}", $InitTime)
+    $rewritten = ConvertTo-CzxtInstallerRenderedText -Text $text `
+      -Extension $file.Extension -Values $renderValues
     if ($rewritten -cne $text) {
       if ($null -eq $rewriteParentLease) {
         $rewriteParentLease = Open-CzxtInstallerParentDirectoryLease `

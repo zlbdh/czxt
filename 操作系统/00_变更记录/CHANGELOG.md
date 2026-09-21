@@ -41,6 +41,10 @@ description: 开发操作系统（framework + 元规则）改动的轻量时间�
 
 ---
 
+## 2026-09-21
+
+- **四项回归根因修复（L2）**：实例化参数改为 JSON 数据序列化、PowerShell 上下文编码及字面正则，支持特殊字符名称与多层业务目录；最终 JSON/PS 校验先于成功 marker。PM 轨迹在独立 Git 根读取真实状态，兼容 CP936、worktree、失败阻断和非 Git 回退；ADR 数量从文件及索引状态计算；PROP-003 按既有入库证据补齐已完成收档。RED/GREEN、专项复审与恢复后的实测明细见 `交接区/待接手/2026-09-04-1643-四项回归修复-操作系统PM到项目PM.md`；最终提交前复审同步收敛 ADR 测试临时目录的本轮所有权。
+
 ## 2026-08-24
 
 - **capture 事务安全终审（PROP-004 / ADR-039 / L4）**：补齐 staging→capture 树账本、repair 双移动封印、同字节 ABA、rename committed 对账、cleanup 后终检、真实 ADS/unknown 保留、初次与 post-move Git 精确清理及 P4t preflight 句柄生命周期；树 seal 改为流式 SHA-256 与逐成员 DFS，固定 `20000` 成员 / `536870912` 字节预算。fresh WinPS 362/362、assets 6/6、scaffold 63/63、docs 148/148、capture 8/8、hooks-smoke PASS；独立安全复审 P0/P1/P2=0。编码 `4ee4686`、功能 `7bf9ce4`、交接 `cda4339` 已按 ADR-016 正常 push，核验 main 分叉 `0/0`。

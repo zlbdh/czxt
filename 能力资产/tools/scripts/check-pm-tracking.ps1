@@ -26,6 +26,13 @@ if ([string]::IsNullOrWhiteSpace($Root)) {
 } else {
     $projectRoot = [System.IO.Path]::GetFullPath($Root)
 }
+$helperPath = Join-Path $PSScriptRoot "check-pm-tracking\git-status.ps1"
+if (-not (Test-Path -LiteralPath $helperPath -PathType Leaf)) {
+    Write-Host "❌ PM 轨迹 Git 状态 helper 缺失：$helperPath" -ForegroundColor Red
+    exit 10
+}
+. $helperPath
+
 $stateFile = Join-Path $projectRoot "状态.md"
 
 if (-not (Test-Path $stateFile)) {
@@ -62,29 +69,10 @@ try {
     exit 3
 }
 
-# Step 3: 检查项目根 framework 文件是否在最后 PM 轨迹后更新
-# 项目根不是 git 仓库，不能用 {{APP_REPO_DIR}}/.git 判断 操作系统/、能力资产/ 等改动。
-$frameworkChangedPaths = @()
 $trackWindowEnd = $lastTime.AddMinutes(1)
-$frameworkDirs = @("操作系统", "能力资产", "PM工作区", "确认改动", "交接区", "Docs")
-foreach ($dir in $frameworkDirs) {
-    $path = Join-Path $projectRoot $dir
-    if (Test-Path -LiteralPath $path) {
-        $frameworkChangedPaths += @(Get-ChildItem -LiteralPath $path -Recurse -File -ErrorAction SilentlyContinue |
-            Where-Object { $_.LastWriteTime -gt $trackWindowEnd } |
-            Select-Object -ExpandProperty FullName)
-    }
-}
-
-$rootFrameworkFiles = @("AGENTS.md", "README.md", "TASKS.md", "状态.md")
-foreach ($name in $rootFrameworkFiles) {
-    $path = Join-Path $projectRoot $name
-    if ((Test-Path -LiteralPath $path) -and ((Get-Item -LiteralPath $path).LastWriteTime -gt $trackWindowEnd)) {
-        $frameworkChangedPaths += $path
-    }
-}
-
-$frameworkChanged = @($frameworkChangedPaths).Count -gt 0
+$changeProbe = Get-PmTrackingFrameworkChangeProbe -ProjectRoot $projectRoot -TrackWindowEnd $trackWindowEnd
+$frameworkChangedPaths = @($changeProbe.ChangedPaths)
+$frameworkChanged = [bool]$changeProbe.FrameworkChanged
 
 # Step 4: 判定 + 报告
 Write-Host ""
@@ -93,11 +81,18 @@ Write-Host "  最后轨迹：$lastTrackTimestamp（状态.md L$lastTrackLineNum�
 Write-Host "  当前时间：$($now.ToString('yyyy-MM-dd HH:mm'))"
 Write-Host "  距上次：$diffMinutes 分钟（阈值 $Threshold 分钟）"
 Write-Host "  framework 改动：$(if ($frameworkChanged) {'✅ 有'} else {'❌ 无'})"
+Write-Host "  检测方式：$(if ($changeProbe.Method -eq 'git') {'Git 工作区/暂存区状态'} elseif ($changeProbe.Method -eq 'mtime') {'mtime 回退'} else {'Git 状态不可读'})"
 if ($frameworkChanged) {
     @($frameworkChangedPaths | Sort-Object | Select-Object -First 5) | ForEach-Object {
-        $rel = $_.Substring($projectRoot.Length).TrimStart('\')
-        Write-Host "    - $rel"
+        Write-Host "    - $_"
     }
+}
+
+if (-not $changeProbe.StatusAvailable) {
+    Write-Host ""
+    Write-Host "🔴 PM 轨迹检查无法读取 Git 状态 — 不能伪装为 clean" -ForegroundColor Red
+    Write-Host "  请先修复 Git 状态读取问题，再判断是否需要补登 PM 轨迹" -ForegroundColor Red
+    exit 10
 }
 
 if ($diffMinutes -gt $Threshold -and $frameworkChanged) {

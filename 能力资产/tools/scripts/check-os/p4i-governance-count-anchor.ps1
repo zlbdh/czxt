@@ -5,6 +5,7 @@
 $ErrorActionPreference = "Stop"
 $failures = @()
 $repoRoot = (Resolve-Path $Root).Path
+. (Join-Path $PSScriptRoot "adr-governance-truth.ps1")
 
 function Count-PropFilesForHealth {
     param([string]$Path)
@@ -15,17 +16,24 @@ function Count-PropFilesForHealth {
     ).Count
 }
 
-$adrDirI = Join-Path $repoRoot "Docs/3-开发文档/adr"
 $retroDirI = Join-Path $repoRoot "Docs/7-复盘"
-$sotAdrCount = $null
 $sotRetroCount = $null
 
-if (Test-Path -LiteralPath $adrDirI) {
-    $adrNums = Get-ChildItem -LiteralPath $adrDirI -Filter "ADR-*.md" |
-        ForEach-Object { [regex]::Match($_.Name, "ADR-(\d+)").Groups[1].Value } |
-        Where-Object { $_ } |
-        Sort-Object -Unique
-    $sotAdrCount = @($adrNums).Count
+$adrTruth = Get-CzxtAdrGovernanceTruth -Root $repoRoot
+Write-Host "  📌 ADR 真源：$($adrTruth.Text)（总数/现行/被替代覆盖；文件系统 + ADR 索引状态）" -ForegroundColor Gray
+foreach ($failure in $adrTruth.Failures) {
+    Write-Host "  🔴 ADR 真源失败：$failure" -ForegroundColor Red
+    $failures += $failure
+}
+
+$entryFailures = @(Test-CzxtAdrMainEntryAnchor -Root $repoRoot -Truth $adrTruth)
+if ($entryFailures.Count -eq 0) {
+    Write-Host "  ✅ 00_总入口 ADR 计数：$($adrTruth.Text) = 真源" -ForegroundColor Green
+} else {
+    foreach ($failure in $entryFailures) {
+        Write-Host "  🔴 00_总入口 ADR 计数漂移：$failure" -ForegroundColor Red
+        $failures += $failure
+    }
 }
 
 if (Test-Path -LiteralPath $retroDirI) {
@@ -36,25 +44,13 @@ if (Test-Path -LiteralPath $retroDirI) {
     $sotRetroCount = @($retroNums).Count
 }
 
-if (($null -ne $sotAdrCount) -and ($null -ne $sotRetroCount)) {
-    Write-Host "  📌 真知识源：$sotAdrCount ADR / $sotRetroCount RETRO（去重编号 / 文件系统）" -ForegroundColor Gray
+if ($null -ne $sotRetroCount) {
+    Write-Host "  📌 RETRO 真知识源：$sotRetroCount RETRO（去重编号 / 文件系统）" -ForegroundColor Gray
 }
 
 $readmePathI = Join-Path $repoRoot "README.md"
-if ((Test-Path -LiteralPath $readmePathI) -and ($null -ne $sotAdrCount)) {
+if (Test-Path -LiteralPath $readmePathI) {
     $rmRawI = Get-Content -LiteralPath $readmePathI -Raw -ErrorAction SilentlyContinue
-    $mRmAdr = [regex]::Match($rmRawI, "(\d+)\s*ADR\s*现行")
-    if ($mRmAdr.Success) {
-        if ([int]$mRmAdr.Groups[1].Value -eq $sotAdrCount) {
-            Write-Host "  ✅ README ADR 计数：$($mRmAdr.Groups[1].Value) = 真实 $sotAdrCount" -ForegroundColor Green
-        } else {
-            Write-Host "  🔴 README ADR 计数漂移：$($mRmAdr.Groups[1].Value) vs 真实 $sotAdrCount" -ForegroundColor Red
-            $failures += "README ADR 计数锚点 $($mRmAdr.Groups[1].Value) != 真实 $sotAdrCount"
-        }
-    } else {
-        Write-Host "  ℹ️ README 未找到「N ADR 现行」锚点（跳过）" -ForegroundColor Gray
-    }
-
     if ($null -ne $sotRetroCount) {
         $mRmRetro = [regex]::Match($rmRawI, "现行\s*/\s*(\d+)\s*RETRO")
         if ($mRmRetro.Success) {

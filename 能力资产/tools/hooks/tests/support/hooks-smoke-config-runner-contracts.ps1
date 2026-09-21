@@ -19,7 +19,7 @@ function Invoke-HooksSmokeConfigRunnerContracts {
   $chatOutputNoTextPath = Run-Checked @("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $Paths.Runner, "-Trigger", "chat-output", "-Mode", "Check")
   Assert-True ($chatOutputNoTextPath -match "chat-output hook ready") "runner should omit empty TextPath args for chat-output"
 
-  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-install-check-" + [guid]::NewGuid().ToString("N"))
+  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-install-check-" + [guid]::NewGuid().ToString("N"))
   $tempHooks = Join-Path $tempRoot "{{APP_REPO_DIR}}\.git\hooks"
   try {
     New-Item -ItemType Directory -Path $tempHooks -Force | Out-Null
@@ -55,7 +55,7 @@ exit `$LASTEXITCODE
   $badHookOutput = powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.Runner -Trigger manual -Mode Check -Hook "__typo__" 2>&1
   Assert-True ($LASTEXITCODE -eq 2) "runner should fail explicit unknown hook"
 
-  $preReleaseMissingRoot = Join-Path ([System.IO.Path]::GetTempPath()) "{{APP_REPO_DIR}}-hooks-missing-root"
+  $preReleaseMissingRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-missing-root-" + [guid]::NewGuid().ToString('N'))
   $preReleaseMissingOutput = powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.PreRelease -Root $preReleaseMissingRoot 2>&1
   Assert-True ($LASTEXITCODE -eq 1) "pre-release should fail closed when {{APP_REPO_DIR}}/package.json is missing"
 

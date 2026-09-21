@@ -27,7 +27,7 @@ Assert-Contains "操作系统\01_架构\三类行为铁律.md" '不主动问成�
 Assert-Contains "操作系统\01_架构\三类行为铁律.md" 'schema 表 / 字段定义' "schema 删除边界"
 Assert-NotContains "操作系统\01_架构\三类行为铁律.md" '等 zlbdh 决策' "C 类不可 ask-pass"
 
-Assert-Contains "操作系统\01_架构\角色边界.md" '{{APP_REPO_DIR}}/\.env\.local' "env 路径精确化"
+Assert-Contains "操作系统\01_架构\角色边界.md" ([regex]::Escape('{{APP_REPO_DIR}}') + '/\.env\.local') "env 路径精确化"
 Assert-Contains "操作系统\01_架构\角色边界.md" '常规版本 tag/push tag' "测试发布 PM tag owner"
 Assert-Contains "操作系统\01_架构\角色边界.md" '开发期本地自测=开发 PM' "开发期自测 owner"
 Assert-Contains "操作系统\01_架构\角色边界.md" '发布/ship gate 的 vitest 复核' "发布 gate 测试 owner"

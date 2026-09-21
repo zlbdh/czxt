@@ -28,6 +28,7 @@ function Get-CzxtBorrowingAssetManifest {
     '能力资产/tools/scripts/installer-handle-lease.ps1',
     '能力资产/tools/scripts/installer-replace-transaction.ps1',
     '能力资产/tools/scripts/installer-output-manifest.ps1',
+    '能力资产/tools/scripts/installer-render-text.ps1',
     '能力资产/tools/scripts/installer-tree-plan.ps1',
     '能力资产/tools/scripts/installer-copy-expectation.ps1',
     '能力资产/tools/scripts/check-os/p4a-borrowing-assets.ps1',
@@ -62,6 +63,12 @@ function Get-CzxtBorrowingAssetManifest {
     '能力资产/tools/scripts/check-os/tests/borrowing-scaffold-recovery-contracts.ps1',
     '能力资产/tools/scripts/check-os/tests/borrowing-scaffold-directory-lock-contracts.ps1',
     '能力资产/tools/scripts/check-os/tests/borrowing-scaffold-transaction-window-contracts.ps1',
+    '能力资产/tools/scripts/check-os/tests/installer-render-support.ps1',
+    '能力资产/tools/scripts/check-os/tests/installer-render-unit-contracts.ps1',
+    '能力资产/tools/scripts/check-os/tests/installer-render-contracts.ps1',
+    '能力资产/tools/scripts/check-os/tests/installer-render-hook-contracts.ps1',
+    '能力资产/tools/scripts/check-os/tests/installer-render-regex-contracts.ps1',
+    '能力资产/tools/scripts/check-os/tests/installer-render-anchor-contracts.ps1',
     '能力资产/tools/scripts/check-os/tests/borrowing-assets-p4a-contracts.ps1'
   )
   $files += Add-CzxtBorrowingAssetPrefix `

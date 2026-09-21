@@ -3,7 +3,7 @@
 function New-HooksSmokeChatFixture {
   param([string]$Root)
 
-  $samplePath = Join-Path ([System.IO.Path]::GetTempPath()) "{{APP_REPO_DIR}}-hooks-chat-sample.txt"
+  $samplePath = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-chat-sample-" + [guid]::NewGuid().ToString('N') + '.txt')
   $sampleHandoffName = "_hooks-smoke-chat-summary-valid.md"
   $sampleHandoffRel = "交接区/待接手/$sampleHandoffName"
   $sampleHandoffPath = Join-Path $Root ($sampleHandoffRel -replace '/', '\')
@@ -79,7 +79,7 @@ function Invoke-HooksSmokeChatOutputContracts {
   $badDetailOutput = powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ChatOutput -TextPath $Fixture.SamplePath 2>&1
   Assert-True ($LASTEXITCODE -eq 13) "chat-output should reject non-handoff detail path"
 
-  $sideRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("{{APP_REPO_DIR}}-hooks-chat-side-" + [guid]::NewGuid().ToString("N"))
+  $sideRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-chat-side-" + [guid]::NewGuid().ToString("N"))
   $sidePending = Join-Path $sideRoot "交接区\待接手"
   $sideDone = Join-Path $sideRoot "交接区\已接手"
   $sideSibling = Join-Path $sideRoot "交接区\待接手-旁路"

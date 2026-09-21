@@ -7,12 +7,14 @@ function Invoke-HooksSmokeCodexContracts {
     [object]$Fixture
   )
 
-  $sessionInput = '{"hook_event_name":"SessionStart","source":"startup","cwd":"D:\\WGKJ\\{{PROJECT_NAME}}","model":"gpt-5"}'
+  $sessionInput = [ordered]@{ hook_event_name='SessionStart'; source='startup'; cwd=$Root;
+    project='{{PROJECT_NAME}}'; model='gpt-5' } | ConvertTo-Json -Compress
   $sessionOutput = $sessionInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.CodexSessionStart -Root $Root
   $sessionJson = $sessionOutput | ConvertFrom-Json
   Assert-True ($sessionJson.hookSpecificOutput.hookEventName -eq "SessionStart") "SessionStart bad"
 
-  $promptInput = '{"hook_event_name":"UserPromptSubmit","turn_id":"t1","prompt":"继续检查 hooks","cwd":"D:\\WGKJ\\{{PROJECT_NAME}}","model":"gpt-5"}'
+  $promptInput = [ordered]@{ hook_event_name='UserPromptSubmit'; turn_id='t1'; prompt='继续检查 hooks';
+    cwd=$Root; project='{{PROJECT_NAME}}'; model='gpt-5' } | ConvertTo-Json -Compress
   $promptOutput = $promptInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.CodexUserPrompt
   $promptJson = $promptOutput | ConvertFrom-Json
   Assert-True ($promptJson.hookSpecificOutput.hookEventName -eq "UserPromptSubmit") "Prompt bad"

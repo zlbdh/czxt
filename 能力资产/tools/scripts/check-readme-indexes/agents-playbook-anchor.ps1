@@ -17,7 +17,7 @@ Assert-Contains "操作系统\02_智能体\项目PM-咪咪.md" '不会静默改�
 
 Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" '单源由主会话按当前帽子落最后一笔' "操作系统 PM 单源落笔"
 Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" '不自动移动；明确接收/完成后主会话流转' "交接区不自动移动"
-Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" '{{APP_REPO_DIR}}/\.env\.local` baseUrl/model/apiKey' "env 例外精确字段"
+Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" ([regex]::Escape('{{APP_REPO_DIR}}') + '/\.env\.local` baseUrl/model/apiKey') "env 例外精确字段"
 
 Assert-Contains "操作系统\02_智能体\沉淀PM-沉淀者.md" '给项目 PM 主会话的 PM 轨迹自检报告' "沉淀 PM 状态报告边界"
 Assert-Contains "操作系统\02_智能体\沉淀PM-沉淀者.md" '由项目 PM 按 Q7 派沉淀 PM explorer/worker' "沉淀 PM agent 实例化"
@@ -46,7 +46,7 @@ Assert-NotContains "操作系统\02_智能体\运营PM-运营咪咪.md" '除非 
 Assert-Contains "操作系统\02_智能体\运营PM-运营咪咪-附录.md" '项目 PM 只走分支间待处理卡' "运营素材池事件流"
 
 Assert-Contains "操作系统\02_智能体\技术PM-修复决策者-附录.md" '如需交接卡，交给项目 PM 写入' "技术 PM 不写交接卡"
-Assert-Contains "操作系统\02_智能体\产品PM-需求拆解者.md" '{{APP_REPO_DIR}}/src/\*\*/__tests__/' "产品 PM 测试路径禁写"
+Assert-Contains "操作系统\02_智能体\产品PM-需求拆解者.md" ([regex]::Escape('{{APP_REPO_DIR}}') + '/src/\*\*/__tests__/') "产品 PM 测试路径禁写"
 Assert-Contains "操作系统\02_智能体\产品PM-需求拆解者.md" 'PM 切角色硬检查协议' "产品 PM decision-checkpoint 口径"
 
 Assert-Contains "操作系统\02_智能体\Dev-开发.md" '历史样例 — 旧写入策略（不可复制执行）' "Dev 历史写入策略边界"

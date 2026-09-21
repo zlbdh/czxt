@@ -12,7 +12,7 @@ foreach ($check in $checks) {
         $hits += "$($check.Path) $($check.Label)（守卫目标文件缺失）"
         continue
     }
-    $text = Get-Content -LiteralPath $path -Raw -ErrorAction SilentlyContinue
+    $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
     foreach ($match in [regex]::Matches($text, $check.Pattern)) {
         $line = ($text.Substring(0, $match.Index) -split "`n").Count
         $hits += "$($check.Path):L$line $($check.Label)"

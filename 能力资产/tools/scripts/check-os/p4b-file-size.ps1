@@ -38,7 +38,7 @@ foreach ($scope in $scopes) {
     }
 }
 
-Write-Host ("  扫描 {0} 文件 ({{APP_REPO_DIR}}/src + 操作系统 + 能力资产)" -f $sizeStats.Total) -ForegroundColor Gray
+Write-Host (("  扫描 {0} 文件 (" -f $sizeStats.Total) + $scopes[0] + " + 操作系统 + 能力资产)") -ForegroundColor Gray
 Write-Host ("  ✅ 安全 (<6000B): {0}" -f $sizeStats.Safe) -ForegroundColor Green
 if ($sizeStats.Warn -gt 0) { Write-Host ("  🟢 警戒 (6000-6500B): {0}" -f $sizeStats.Warn) -ForegroundColor Green }
 if ($sizeStats.Soft -gt 0) { Write-Host ("  🟡 软建议 (6500-8000B): {0}" -f $sizeStats.Soft) -ForegroundColor Yellow }

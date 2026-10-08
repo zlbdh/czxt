@@ -3,26 +3,26 @@ name: changelog-2026-06-18-archive
 scope: project
 type: episodic
 loaded: on-demand
-description: 操作系统演进日志 2026-06-17~18 较早条目归档
+description: Earlier operating-system evolution entries archived for 2026-06-17~18
 ---
 
-# CHANGELOG 2026-06-17~18 较早条目
+# CHANGELOG 2026-06-17~18 Earlier Entries
 
-> 从 `CHANGELOG.md` 滚动归档，保留浏览证据；当前近况仍看 `CHANGELOG.md`。
-> **历史安全边界**：本归档含历史 hooks / git / push / tag 等词，仅作追溯，**不可直接复制执行**；敏感操作仍先查 `三类行为铁律.md` 与 ADR-022。
+> Rolled out of `CHANGELOG.md` for traceability; consult `CHANGELOG.md` for current updates. This is an English rendering of the historical record; the original wording remains in Git history.
+> **Historical safety boundary**: this archive contains historical references to hooks / git / push / tag. They are for traceability only. **Do not copy and execute directly**; consult `三类行为铁律.md` and ADR-022 before sensitive operations.
 
 ## 2026-06-18
 
-- **PROP-039 重估拆分收口**：把原 Mem0+Skills SDK 整包路径拆为 Mem0 本机只读记忆检索试点与 Agent/Skills 载体层只读上下文加载试点；同步 PROP、README、scope-schema、元规则候选与 readme-index 锚点。未装 SDK、未写 key、未引入业务依赖。
-- **PROP-034 进行中口径收口**：模型分层不再标“未开工/待排期”；更新为本地实现完成、待发布与外部三模型实测，明确不得伪造成本数据且未授权不做 commit/push/tag/version/release。验证：PROP 索引 + 状态快照 + 交接卡同步。
+- **PROP-039 reassessment and split completed**: split the original combined Mem0+Skills SDK approach into a local read-only Mem0 memory-retrieval pilot and a read-only context-loading pilot at the Agent/Skills carrier layer; synchronized PROP, README, scope-schema, meta-rule candidates, and readme-index anchors. No SDK was installed, no key was written, and no business dependency was introduced.
+- **PROP-034 in-progress status clarified**: model tiers are no longer described as not started/awaiting scheduling; the status now states that local implementation is complete, with release and external three-model measurements pending. It explicitly forbids fabricated cost data and unauthorized commit/push/tag/version/release operations. Verification: PROP index + status snapshot + handoff card synchronized.
 
 ## 2026-06-17
 
-- **接收归档 chat 收尾守卫补齐**：chat-output ⑥ 默认仍要求 `交接区/待接手/`；若待接手为空且目标为 `交接区/已接手/` 下 `status: accepted` 卡，则允许作为接收归档收尾详情。同步交接规范、manifest、hooks smoke 与锚点守卫。验证：hooks-smoke / readme-index ✅。
-- **操作系统全量逐文件审计收口**：4 explorer 读完审计开始时 95 个 `操作系统/**/*.md`；修交接假绿、测试归属、历史边界、旧 5 PM 附录口径、计数/索引/坏字符，新增逐文件明细，当前基线 96 Markdown。验证：full gate ✅。
-- **07_完整工作流 P1/P2 收口**：3 explorer 审决策/发布/hooks SOP；修需求接收 PROP 路由、Q7 真实 agent、审批 PM 路由、release keystore/APK 覆盖/version/tag、git preflight、DoD 交接和 scheduled/Stop/Claude ask 边界，补 `workflow-spec-anchor`。验证：target ✅。
-- **06_工具治理 P1/P2 收口**：3 explorer 审 hooks/体检/历史；修 FileChanged 兜底、scheduled 检查、Stop 阻断、历史残篇/frontmatter、check-plan/Q1-Q7，补历史锚点与 hooks 设计计数锚点。验证：target ✅。
-- **05_记忆 P1/P2 收口**：3 explorer 审入口/历史/scope；修起手、pm-workspace、ADR-028、状态推断，补 `memory-spec-anchor`。验证：target ✅。
-- **04_台账 P2 守卫补强**：3 explorer 审版本/Sprint/议题/历史；修阶段口径，补 `ledger-spec-anchor`。验证：target ✅。
-- **03_交接 P1/P2 收口**：3 explorer 审规范/hooks/现实；补 frontmatter、chat ⑥、Stop、② 路径与 `handoff-spec-anchor`。验证：target ✅。
-- **02_智能体 P1/P2 收口**：3 explorer 审 playbook/附录/共享技能；修单源、tag、分支、写权、历史边界，补 `agents-playbook-anchor`。验证：target ✅。
+- **Accepted-archive chat completion guard completed**: chat-output ⑥ still requires `交接区/待接手/` by default; if pending is empty and the target is a `status: accepted` card under `交接区/已接手/`, it is allowed as the completion-detail reference for accepting and archiving. Synchronized handoff specifications, manifest, hooks smoke, and anchor guards. Verification: hooks-smoke / readme-index ✅.
+- **Full per-file operating-system audit completed**: 4 explorers read all 95 `操作系统/**/*.md` files present when the audit began; corrected false-green handoffs, test ownership, historical boundaries, outdated 5-PM appendix wording, counts/indexes/corrupted characters; added per-file details, bringing the current baseline to 96 Markdown files. Verification: full gate ✅.
+- **07_Complete_Workflows P1/P2 closeout**: 3 explorers reviewed decision/release/hooks SOPs; corrected incoming-requirement PROP routing, real agents in Q7, approval PM routing, release keystore/APK overwrite/version/tag, git preflight, DoD handoffs, and scheduled/Stop/Claude ask boundaries; added `workflow-spec-anchor`. Verification: target ✅.
+- **06_Tool_Governance P1/P2 closeout**: 3 explorers reviewed hooks/health checks/history; corrected FileChanged fallback, scheduled checks, Stop blocking, historical fragments/frontmatter, and check-plan/Q1-Q7; added historical anchors and hooks-design count anchors. Verification: target ✅.
+- **05_Memory P1/P2 closeout**: 3 explorers reviewed entries/history/scope; corrected startup, pm-workspace, ADR-028, and status inference; added `memory-spec-anchor`. Verification: target ✅.
+- **04_Ledgers P2 guards strengthened**: 3 explorers reviewed versions/Sprints/issues/history; corrected stage descriptions and added `ledger-spec-anchor`. Verification: target ✅.
+- **03_Handoffs P1/P2 closeout**: 3 explorers reviewed specifications/hooks/actual behavior; added frontmatter, chat ⑥, Stop, the ② path, and `handoff-spec-anchor`. Verification: target ✅.
+- **02_Agents P1/P2 closeout**: 3 explorers reviewed playbooks/appendices/shared skills; corrected single-source, tag, branch, write-authority, and historical boundaries; added `agents-playbook-anchor`. Verification: target ✅.

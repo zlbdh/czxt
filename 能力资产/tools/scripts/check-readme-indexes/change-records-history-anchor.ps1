@@ -31,12 +31,13 @@ if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
       $head = (($text -split "`r?`n") | Select-Object -First 18) -join "`n"
       $rel = $_.FullName.Substring($Root.Length).TrimStart('\')
 
-      if ($head -notmatch "历史安全边界" -or $head -notmatch "不可直接复制执行") {
+      if ($head -notmatch "历史安全边界|Historical safety boundary" -or $head -notmatch "不可直接复制执行|Do not copy and execute directly") {
         Add-Failure "$rel lacks a historical safety boundary or prohibition on copying into execution near the top"
       }
 
-      $boundaryIndex = $text.IndexOf("历史安全边界")
-      foreach ($term in @("下次归档触发", "新会话", "当前活的导航路径全部从 agent", "唯一入口")) {
+      $boundaryMatch = [regex]::Match($text, "历史安全边界|Historical safety boundary")
+      $boundaryIndex = if ($boundaryMatch.Success) { $boundaryMatch.Index } else { -1 }
+      foreach ($term in @("下次归档触发", "新会话", "当前活的导航路径全部从 agent", "唯一入口", "Next archival trigger", "new session", "all currently active navigation paths start from", "sole entry point")) {
         $termIndex = $text.IndexOf($term)
         if ($termIndex -ge 0 -and ($boundaryIndex -lt 0 -or $termIndex -lt $boundaryIndex)) {
           Add-Failure "$rel contains potentially misleading current-sounding language before the historical safety boundary: $term"
@@ -61,7 +62,7 @@ foreach ($rel in @("操作系统\01_架构\元规则池.md", "操作系统\01_�
   if (Test-Path -LiteralPath $path -PathType Leaf) {
     $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
     if ($text -match "本文件归档|This file is archived") {
-      Add-Failure "$rel 是活文档，不应使用“本文件归档”"
+      Add-Failure "$rel is an active document and must not claim that this file is archived"
     }
   }
 }
@@ -71,7 +72,7 @@ foreach ($rel in @("操作系统\01_架构\工具载体矩阵.md", "操作系统
   if (Test-Path -LiteralPath $path -PathType Leaf) {
     $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
     if ($text -match "历史归档\\|历史归档/" -and $text -notmatch "历史愿景快照，仅追溯|以下仅作演化追溯|historical vision snapshot for traceability only|These support evolution traceability only") {
-      Add-Failure "$rel 引用历史源时缺“仅追溯”语义"
+      Add-Failure "$rel cites a historical source without limiting it to traceability"
     }
   }
 }

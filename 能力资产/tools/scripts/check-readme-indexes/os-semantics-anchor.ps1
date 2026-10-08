@@ -50,8 +50,8 @@ foreach ($rel in @(
 }
 Assert-NotContains "操作系统\05_记忆\行为反思.md" "chat 简版 ⑥ 必含.*PM 切换轨迹|short chat section ⑥ must include.*PM transitions" "PM-transition placement in the short chat summary"
 Assert-NotContains "README.md" "交接卡\s*6\s*段格式" "Obsolete handoff-card section count"
-Assert-Contains "操作系统\06_工具治理\历史归档\2026-05\记忆治理方案-2026-05-22.md" "历史快照 / 非当前执行入口" "Memory-governance historical archive boundary"
-Assert-Contains "操作系统\00_变更记录\状态-archive\README.md" "不可直接复制执行" "Historical boundary for dangerous commands in status archives"
+Assert-Contains "操作系统\06_工具治理\历史归档\2026-05\记忆治理方案-2026-05-22.md" "历史快照 / 非当前执行入口|Historical snapshot / not a current execution entry point" "Memory-governance historical archive boundary"
+Assert-Contains "操作系统\00_变更记录\状态-archive\README.md" "不可直接复制执行|Do not copy and execute directly" "Historical boundary for dangerous commands in status archives"
 
 $stateArchiveDir = Join-Path $Root "操作系统\00_变更记录\状态-archive"
 if (Test-Path -LiteralPath $stateArchiveDir -PathType Container) {
@@ -60,8 +60,8 @@ if (Test-Path -LiteralPath $stateArchiveDir -PathType Container) {
     $rel = $file.FullName.Substring($Root.Length).TrimStart('\')
     $text = Get-Text $rel
     $head = Get-Head $rel 16
-    if ($text -match "(?i)git reset|git push|\bpush\b|\btag\b|hotfix/|\bmaster\b|baseUrl|api[_-]?key|apikey|sk-[A-Za-z0-9_-]{4,}|Bearer\s+[A-Za-z0-9._-]+|密钥|凭证|rm -rf|rm\s+\.git/index|Remove-Item|\.env\.local|tp-[a-z0-9]{4,}|chat 简版\s*(①-⑥|⑥)") {
-      if ($head -notmatch "历史安全边界" -or $head -notmatch "不可直接复制执行" -or $head -notmatch "三类行为铁律" -or $head -notmatch "ADR-022") {
+    if ($text -match "(?i)git reset|git push|\bpush\b|\btag\b|hotfix/|\bmaster\b|baseUrl|api[_-]?key|apikey|sk-[A-Za-z0-9_-]{4,}|Bearer\s+[A-Za-z0-9._-]+|密钥|凭证|\bsecrets?\b|\bcredentials?\b|\bAPI keys?\b|rm -rf|rm\s+\.git/index|Remove-Item|\.env\.local|tp-[a-z0-9]{4,}|chat 简版\s*(①-⑥|⑥)|(?:short chat|chat short[- ]form)\s*(①-⑥|⑥)") {
+      if ($head -notmatch "历史安全边界|Historical safety boundary" -or $head -notmatch "不可直接复制执行|Do not copy and execute directly" -or $head -notmatch "三类行为铁律" -or $head -notmatch "ADR-022") {
         Add-Failure "Status archive lacks a historical safety boundary near the top: $rel"
       }
     }
@@ -77,8 +77,8 @@ foreach ($rel in @(
 )) {
   $text = Get-Text $rel
   $head = Get-Head $rel 18
-  if ($text -match "(?i)agent[\\/]|git reset|rm -rf|api[_-]?key|apikey|\.env\.local|baseUrl|\btag\b|\bpush\b|hotfix/|\bmaster\b|密钥|凭证|chat 简版\s*(①-⑥|⑥)") {
-    if ($head -notmatch "历史安全边界" -or $head -notmatch "不可直接复制执行" -or $head -notmatch "三类行为铁律|操作系统/.+能力资产") {
+  if ($text -match "(?i)agent[\\/]|git reset|rm -rf|api[_-]?key|apikey|\.env\.local|baseUrl|\btag\b|\bpush\b|hotfix/|\bmaster\b|密钥|凭证|\bsecrets?\b|\bcredentials?\b|\bAPI keys?\b|chat 简版\s*(①-⑥|⑥)|(?:short chat|chat short[- ]form)\s*(①-⑥|⑥)") {
+    if ($head -notmatch "历史安全边界|Historical safety boundary" -or $head -notmatch "不可直接复制执行|Do not copy and execute directly" -or $head -notmatch "三类行为铁律|操作系统/.+能力资产") {
       Add-Failure "Historical change record lacks a safety boundary near the top: $rel"
     }
   }

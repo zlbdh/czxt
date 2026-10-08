@@ -3,46 +3,46 @@ name: agent-readme-history
 scope: project
 type: episodic
 loaded: on-demand
-description: 历史档案 — 旧 agent/ 目录时代的 AI 协作中心 README（5 大分组说明，已被现行操作系统结构替代）
+description: Historical archive — AI collaboration center README from the old agent/ directory era (5 groups, superseded by the current operating-system structure)
 ---
 
-# agent/ — AI 协作中心
+# agent/ — AI Collaboration Center
 
-> ⚠️ **历史安全边界**：正文只作追溯，不代表当前执行流程，不可直接复制执行；涉及旧路径、旧命令、API key 或交接格式时，回到现行 `操作系统/` + `能力资产/` 真源重判。
-> 历史快照：本文保留旧 `agent/` 时代 README 原貌，文内“当前/唯一入口”等表述指 2026-05 当时，不代表现行入口。配套旧 INDEX 见 [`agent-INDEX-历史.md`](agent-INDEX-历史.md)。
-> 原文冻结快照：下方原文内链接是旧路径样本，不维护为当前可点击入口；当前入口见 [`../00_总入口.md`](../00_总入口.md)。
+> ⚠️ **Historical safety boundary**: This body is for traceability only and does not represent the current execution workflow. Do not copy and execute directly; for old paths, old commands, API keys, or handoff formats, reassess against the current `操作系统/` + `能力资产/` sources of truth.
+> Historical snapshot, rendered in English: This preserves the old `agent/` era README. Expressions such as “current/sole entry point” refer to 2026-05, not the present entry points. The companion old INDEX is [`agent-INDEX-历史.md`](agent-INDEX-历史.md).
+> Frozen historical source snapshot: The links in the body below are old-path samples and are not maintained as present clickable entry points; for the present entry point, see [`../00_总入口.md`](../00_总入口.md).
 
-⭐ **入口**：[INDEX.md](INDEX.md) — 任务 → 该读哪些规则
+⭐ **Entry point**: [INDEX.md](INDEX.md) — task → rules to read
 
-## 这是什么
+## What This Is
 
-所有 AI 协作相关内容（角色 / 技能 / 流程 / 规则 / 配置）的唯一维护点。
-不在这里的都不是 AI 协作约定。
+The sole maintenance point for all AI collaboration content (roles / skills / workflows / rules / configuration).
+Anything outside this directory is not an AI collaboration convention.
 
-## 5 大分组
+## 5 Groups
 
-| 分组 | 装什么 |
+| Group | Contents |
 |---|---|
-| [agents/](agents/) | AI 角色 playbook（PM / Dev / QA / AI 边界） |
-| [skills/](skills/) | 单一能力操作脚本（出 APK / 跑测试） |
-| [workflows/](workflows/) | 多步骤流程（改动循环 / 审批归档 / 需求接收 / 发布 / git） |
-| [rules/](rules/) | 真规则（写代码 / 写 PRD / 视觉规范 / 已知约束 / 安全） |
-| [mcp/](mcp/) | MCP 服务器配置 |
+| [agents/](agents/) | AI role playbooks (PM / Dev / QA / AI boundaries) |
+| [skills/](skills/) | Single-capability operating scripts (build APKs / run tests) |
+| [workflows/](workflows/) | Multistep workflows (change cycle / approval and archiving / requirement intake / release / git) |
+| [rules/](rules/) | Actual rules (coding / PRD writing / visual standards / known constraints / security) |
+| [mcp/](mcp/) | MCP server configuration |
 
-## 跟其他顶层目录的边界
+## Boundaries with Other Top-Level Directories
 
-| 目录 | 装什么 | 跟 agent/ 的关系 |
+| Directory | Contents | Relationship to agent/ |
 |---|---|---|
-| `agent/` | AI 协作约定 | 本身 |
-| `Docs/` | 业务 / 技术 / 测试 / 运维 / 复盘文档 | agent/ 是规则，Docs/ 是业务 |
-| `{{APP_REPO_DIR}}/` | React + Capacitor 代码 | agent/ 不动代码 |
-| `确认改动/` | PROP 档案库 | agent/workflows/审批与归档.md 管 PROP 流转 |
-| `apk/` | APK 归档 | agent/skills/出APK.md 管打包 |
-| `.github/` | GitHub Actions | agent/skills/出APK.md 管 CI 部分 |
+| `agent/` | AI collaboration conventions | The directory itself |
+| `Docs/` | Business / technical / test / operations / retrospective documentation | agent/ contains rules; Docs/ contains business documentation |
+| `{{APP_REPO_DIR}}/` | React + Capacitor code | agent/ does not modify code |
+| `确认改动/` | PROP archive | agent/workflows/审批与归档.md governs PROP transitions |
+| `apk/` | APK archive | agent/skills/出APK.md governs packaging |
+| `.github/` | GitHub Actions | agent/skills/出APK.md governs the CI portion |
 
-## 历史命名
+## Historical Naming
 
-2026-05-08 ADR-003 曾把所有 AI 协作内容塞进 `rules/`，但 rules 这个名字承担不了 agents/skills/workflows 的语义。
-2026-05-09 PROP-004 / ADR-007 重构为 `agent/` 按语义 5 分类。
+On 2026-05-08, ADR-003 placed all AI collaboration content in `rules/`, but the name rules could not cover the meanings of agents/skills/workflows.
+On 2026-05-09, PROP-004 / ADR-007 refactored it into `agent/` with 5 semantic categories.
 
-详见 [`Docs/3-开发文档/adr/ADR-007-...md`](../Docs/3-开发文档/adr/ADR-007-rules目录按语义重构为agent.md)。
+See [`Docs/3-开发文档/adr/ADR-007-...md`](../Docs/3-开发文档/adr/ADR-007-rules目录按语义重构为agent.md).

@@ -12,7 +12,7 @@ if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
 $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
 $failures = @()
 
-if ($text -notmatch '2026-05-22 快照口径') {
+if ($text -notmatch '2026-05-22 快照口径|refer to the 2026-05-22 snapshot') {
   $failures += "Historical snapshot guidance is missing"
 }
 

@@ -55,9 +55,9 @@ Assert-Contains "操作系统\04_台账\项目沉淀\README.md" '未来候选沉
 Assert-Contains "操作系统\04_台账\项目沉淀\README.md" '暂无数据时保持本入口，不虚构正文|When\ no\ data\ exists,\ retain\ this\ entry;\ do\ not\ invent\ body\ content\.' "Do not invent project learning"
 Assert-NotContains "操作系统\04_台账\项目沉淀\README.md" '\]\(' "Project-learning candidates must not be Markdown links"
 
-Assert-Contains "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md" '2026-05-22 快照口径' "Issue historical snapshot date"
-Assert-Contains "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md" '不作为当前永久数/候选数单一信息源' "Issue historical snapshot is not current truth"
-Assert-Contains "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md" '当前 / 待 / 候选 / 下一个 / 载体 / 层级' "Issue historical snapshot legacy terminology boundary"
+Assert-Contains "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md" '2026-05-22 快照口径|refer to the 2026-05-22 snapshot' "Issue historical snapshot date"
+Assert-Contains "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md" '不作为当前永久数/候选数单一信息源|not the single source for current permanent/candidate counts' "Issue historical snapshot is not current truth"
+Assert-Contains "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md" '当前 / 待 / 候选 / 下一个 / 载体 / 层级|Current / pending / candidate / next / carrier / layer' "Issue historical snapshot legacy terminology boundary"
 Assert-MarkdownLinksResolve "操作系统\04_台账\历史归档\2026-05\议题全景-2026-05-22-历史快照.md"
 
 if ($failures.Count -gt 0) {

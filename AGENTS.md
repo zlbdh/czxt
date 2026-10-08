@@ -3,115 +3,106 @@ name: agents-entry
 scope: project
 type: semantic
 loaded: always
-description: AGENTS 5 秒指引 / 新会话起手必读 / 完整规范在 操作系统/00_总入口.md
+description: Five-second AGENTS guide for every new session. Full rules are in 操作系统/00_总入口.md.
 ---
 
-# {{PROJECT_NAME}} — AGENTS 入口
+# {{PROJECT_NAME}} — AGENTS Entry Point
 
-> 新会话起手必读。完整规范在 `操作系统/00_总入口.md`，本文件只做 **5 秒指引**。
+> Read this at the start of every session. Full rules are in `操作系统/00_总入口.md`; this file is a **five-second guide**.
 
----
+## Five startup steps
 
-## 起手 5 步（任何 session 开干前）
+Before beginning work in any session:
 
-1. 读 `状态.md` — 跨 session 快照
-2. 读 `操作系统/00_总入口.md` — 8 个操作系统编号模块（00-07）+ 能力资产入口
-3. 读 `操作系统/01_架构/角色边界.md` — **9 PM × 主-元-决策-实施四层** + 路径白名单
-4. 读 `交接区/待接手/` 最新文件（如有）
-5. 跑 `能力资产/skills/项目体检.md` — framework 体检 + Q1-Q7 自检
+1. Read `状态.md` for the cross-session snapshot.
+2. Read `操作系统/00_总入口.md` for the eight numbered operating system modules (00–07) and capability assets entry point.
+3. Read `操作系统/01_架构/角色边界.md` for the nine PM roles across the lead, meta, decision, and implementation layers, plus their path allowlists.
+4. Read the latest file in `交接区/待接手/`, if present.
+5. Run the [project health check](能力资产/skills/项目体检.md): the framework checks and Q1–Q7 self-check.
 
-借鉴、参考、对标请求统一走 [借鉴 Skill](能力资产/skills/借鉴.md)，本入口不复制执行规则。
+Route borrowing, reference, and benchmarking requests through the [borrowing skill](能力资产/skills/借鉴.md). Its execution rules are not duplicated here.
 
-## ⭐ 9 PM 矩阵速记（v4.0 终态 / 2026-05-22）
+## Nine-PM matrix reference
 
-```
-主 PM(1)    : 项目 PM「咪咪」(唯一对外身份 / PM 自纠 #63)
-元-层 PM(1) : 🪞 沉淀 PM「沉淀者」(议题 AJ + 元规则池治理)
-决策 PM(5)  : 操作系统 / 产品 / 技术 / 测试 / 运营
-实施 PM(2)  : 🔨 开发 PM「实施者」+ ✅ 测试发布 PM「闭环者」（具体工具载体可替换）
-```
+Final v4.0 model, May 22, 2026:
 
-📌 PM = 抽象角色（不变）/ 工具 = 可替换载体（详见 [`操作系统/01_架构/工具载体矩阵.md`](操作系统/01_架构/工具载体矩阵.md)）
-📌 元规则池：永久/候选当前数详见 [`操作系统/01_架构/元规则池.md`](操作系统/01_架构/元规则池.md)（单一信息源）
-
----
-
-## 敏感操作必查清单（不要靠记忆）
-
-涉及任一项 → **先 grep `操作系统/01_架构/三类行为铁律.md` 的 `### ❌ C 类` 清单**：
-
-- `git commit` / `git push`（B 类条件性，6 条件 — 详见 ADR-016）
-- `package.json` 改 version（B 类配套 APK 任务）
-- 真实密钥外传 / 写 tracked 文件 / 用户数据删除（C 类**永不动**）；`{{APP_REPO_DIR}}/.env.local` 的 baseUrl / model / apiKey 本机配置属 B 类护栏，按 ADR-022 与三类行为铁律执行
-- `_framework` 级文件（`操作系统/` 和 `能力资产/` / `Docs/` / `确认改动/` / `交接区/`）
-- 模板产品化文件（`项目区/` / `项目配置/` / 根 `README.md` / `实例化项目.ps1`）
-
-历史教训：PM 改 version 2.3→2.7 时违 C 类（PROP-012 信号 3）— **没人能靠记忆，必查**。
-
----
-
-## 文件大小规则（PROP-013 / ADR-017，按工具分层）
-
-| 工具 | 软建议 | 行为 |
-|---|---|---|
-| **Cowork**（mount 截断风险）| 6500B | >6500B 改用 Python/Bash 写入（绕 Edit）|
-| **Claude Code / Codex** | 8KB | <8KB 安全，>8KB 工程审美层面建议拆 |
-| **所有工具共同** | bash `wc -c` 关键决策 | **必用 Read 工具复核**（PROP-013 / RETRO-005 卡 2 / PROP-014 P3 首次实战） |
-
-适用范围：`{{APP_REPO_DIR}}/src/` + `操作系统/` 和 `能力资产/`（Docs/ / 历史档案豁免）
-
----
-
-## 跨角色协作（chat 简版 ①-⑦ 强制）
-
-完成实施任务时**必发 chat 简版**（PROP-014 / ADR-018 第 3 条强制）：
-
-```
-【任务名 从 A 到 B】
-① 时间：YYYY-MM-DD HH:MM
-② 文件变更：N 新建 / M 修改（含 commit hash）
-③ 测试：vitest ✅ N/N | esbuild ✅ | build ✅ | APK ⏳ | smoke ⏳ | push ⏳
-④ 你要做：[1] xxx [2] xxx [3] xxx
-⑤ 警戒：✅/🟡/🔴
-⑥ 详情：读 交接区/待接手/...md
-⑦ PM 切换轨迹：本次 session 加 N 行（状态.md L<line>）⭐ PROP-027 v2 硬约束
-```
-
-❌ **不接受"总结段"代替** — 详见 `操作系统/03_交接/交接卡格式.md`
-
----
-
-## 流程优先三阶判定（PROP-014 / ADR-018）
-
-实施中遇到流程问题时：
-
-| 严重度 | 行为 |
+| Layer | Roles |
 |---|---|
-| 🔴 阻塞 | 立刻停手 → 开 PROP 治理 → 修完再继续 |
-| 🟡 非阻塞 bug | 业务继续 + 进 RETRO backlog |
-| 🟢 优化机会 | 业务继续 + 下次 RETRO 讨论 |
+| Lead (1) | Project PM “Mimi”: sole external identity; PM self-correction #63 |
+| Meta (1) | Knowledge PM “Curator”: issue AJ and meta-rule pool governance |
+| Decision (5) | Operating System, Product, Technical, Test, and Operations PMs |
+| Implementation (2) | Development PM “Implementer” and Test and Release PM “Closer”; their tools are replaceable |
 
----
+PM roles represent stable responsibilities; tools are replaceable execution environments. See the [tool matrix](操作系统/01_架构/工具载体矩阵.md).
 
-## 项目特殊约定
+The [meta-rule pool](操作系统/01_架构/元规则池.md) is the single source of truth for current permanent and candidate rule counts.
 
-- 当前目录是“操作系统模板根”；模板本体目标远端是 `https://github.com/zlbdh/czxt.git`。
-- 模板根可以作为独立 git 仓库；实例化后的业务项目仍按显式项目卡决定仓库边界。
-- 业务代码：项目实例中的 `{{APP_REPO_DIR}}/` 子目录（模板根不承载业务代码）。
-- `项目区/` 用来放本地项目实例或试装目录；真实项目内容默认不提交到模板仓库。
-- `项目配置/` 在模板仓库中只保留 `_模板.project.json`；具体项目卡默认放本机项目目录或 `项目区/本地实例/<项目>/`，不要只靠目录名判断项目状态。
-- 演进追踪四档案：PROP（重，提议）/ ADR（重，决策档案）/ RETRO（重，复盘）/ **`操作系统/00_变更记录/CHANGELOG.md`（轻，小改动）**
+## Required checks before sensitive actions
 
----
+For any item below, first search the Class C section (`### ❌ C 类`) in `操作系统/01_架构/三类行为铁律.md`. Do not rely on memory.
 
-## 完整 framework 速查
+- `git commit` or `git push`: conditional Class B actions with six requirements; see ADR-016.
+- Changing `package.json` version: Class B when paired with an APK release task.
+- Disclosing real secrets, committing them to tracked files, or deleting user data: Class C, never perform. Local `baseUrl`, `model`, and `apiKey` configuration in `{{APP_REPO_DIR}}/.env.local` is subject to the Class B safeguards in ADR-022 and the three-class behavior rules.
+- Framework files in `操作系统/`, `能力资产/`, `Docs/`, `确认改动/`, or `交接区/`.
+- Template productization files in `项目区/`, `项目配置/`, the root `README.md`, or `实例化项目.ps1`.
 
-- 操作系统 8 个编号模块导航：[`操作系统/00_总入口.md`](操作系统/00_总入口.md)
-- 当前 PROP 状态：[`确认改动/README.md`](确认改动/README.md)
-- 当前 ADR 索引：[`Docs/3-开发文档/adr/README.md`](Docs/3-开发文档/adr/README.md)
-- 当前 RETRO：[`Docs/7-复盘/README.md`](Docs/7-复盘/README.md)
-- Framework 演进日志（轻量）：[`操作系统/00_变更记录/CHANGELOG.md`](操作系统/00_变更记录/CHANGELOG.md)
+Historical lesson: changing version 2.3 to 2.7 violated the then-applicable Class C rule (PROP-012, signal 3). Always check the current rule.
 
----
+## File-size rules
 
-📌 本文件遵循「极简入口」原则 — 详细规则永远在 `操作系统/` 和 `能力资产/` 内部，本文件只指路。修改前先想：**新工具能不能 5 秒看完？** 不能就 stop。
+PROP-013 and ADR-017 define guidance by tool:
+
+| Tool | Guideline | Action |
+|---|---|---|
+| Cowork, where mounts may truncate | 6,500 bytes | Above this size, write with Python or Bash instead of Edit |
+| Claude Code / Codex | 8 KB | Files below 8 KB are generally safe; consider splitting larger files by responsibility |
+| All tools | Decisions based on Bash `wc -c` | Verify with the Read tool; see PROP-013, RETRO-005 card 2, and the first PROP-014 P3 trial |
+
+Applies to `{{APP_REPO_DIR}}/src/`, `操作系统/`, and `能力资产/`. Documentation in `Docs/` and historical archives is exempt.
+
+## Cross-role collaboration
+
+Every completed implementation task must include the seven-part chat handoff below (PROP-014 / ADR-018, requirement 3):
+
+```text
+[Task: from role A to role B]
+1. Time: YYYY-MM-DD HH:MM
+2. Changes: N new / M modified files, including commit hash
+3. Tests: vitest PASS N/N | esbuild PASS | build PASS | APK pending | smoke pending | push pending
+4. Your next steps: [1] ... [2] ... [3] ...
+5. Status: pass / warning / failure
+6. Details: read 交接区/待接手/...md
+7. PM role transitions: N rows added this session in 状态.md at line <line>; PROP-027 v2 requirement
+```
+
+Report actual results; the example is a format, not evidence of passing checks. A summary paragraph cannot replace this handoff. See the [handoff format](操作系统/03_交接/交接卡格式.md).
+
+## Process-first triage
+
+When implementation exposes a process problem, use the three levels in PROP-014 / ADR-018:
+
+| Severity | Action |
+|---|---|
+| Blocking | Stop, open a governance PROP, fix the problem, then continue |
+| Nonblocking bug | Continue the business task and add the issue to the RETRO backlog |
+| Improvement opportunity | Continue the business task and discuss it at the next RETRO |
+
+## Project-specific conventions
+
+- This directory is the operating system template root. Its remote is `https://github.com/zlbdh/czxt.git`.
+- The template root may be an independent Git repository. Initialized projects use their explicit project cards to define repository boundaries.
+- Application code belongs in each project's `{{APP_REPO_DIR}}/` subdirectory. The template root contains no application code.
+- `项目区/` holds local project instances or trial installations. Actual project content is excluded from template commits by default.
+- The template repository keeps only `_模板.project.json` in `项目配置/`. Concrete project cards normally belong in the local project directory or `项目区/本地实例/<project>/`. A directory name alone does not establish project status.
+- Four records track evolution: PROP for substantial proposals, ADR for decisions, RETRO for retrospectives, and `操作系统/00_变更记录/CHANGELOG.md` for smaller changes.
+
+## Framework reference
+
+- [Eight operating system modules](操作系统/00_总入口.md)
+- [Current PROP status](确认改动/README.md)
+- [ADR index](Docs/3-开发文档/adr/README.md)
+- [Current RETRO](Docs/7-复盘/README.md)
+- [Framework changelog](操作系统/00_变更记录/CHANGELOG.md)
+
+Keep this entry point minimal. Detailed rules belong in `操作系统/` and `能力资产/`. Before adding content, consider whether a new tool can still understand this entry point quickly.

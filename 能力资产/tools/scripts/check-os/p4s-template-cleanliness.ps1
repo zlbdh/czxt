@@ -61,7 +61,7 @@ $currentTruthChecks = @(
   @{
     Path = "README.md"
     Purpose = "产品化阶段"
-    Required = @("P1 已完成", "P2 未完成")
+    Required = @("P1 complete", "P2 incomplete")
     Forbidden = @("准备进入长期产品化模板阶段", "再做首个受控提交")
   },
   @{

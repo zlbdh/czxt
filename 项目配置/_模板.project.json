@@ -1,12 +1,11 @@
 {
-  "projectName": "新项目",
-  "projectRoot": "D:\\WGKJ\\新项目",
+  "projectName": "NewProject",
+  "projectRoot": "D:\\Projects\\NewProject",
   "appRepoDir": "app",
   "currentVersion": "v0.1.0",
   "currentSprint": "Sprint-1",
   "notes": [
-    "项目可以替换，操作系统固定。",
-    "实例化时只替换项目字段，不改 9 PM、Q1-Q7、hooks、交接和体检规则。"
+    "The project is replaceable; the operating system remains consistent.",
+    "Initialization replaces only project fields. Preserve the nine PM roles, Q1\u2013Q7, hooks, handoffs, and health-check rules."
   ]
 }
-

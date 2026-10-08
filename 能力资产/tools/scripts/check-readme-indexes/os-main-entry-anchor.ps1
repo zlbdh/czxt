@@ -64,7 +64,7 @@ if ($entry -notmatch 'AGENTS\.md 是\*\*5 秒指引\*\*' -or $entry -notmatch '�
   Add-Failure "00_总入口 未明确 AGENTS 5 秒指引 / 本文件深入目录导航分工"
 }
 
-if ($agents -notmatch '完整规范在 `操作系统/00_总入口\.md`' -or $agents -notmatch '读 `操作系统/00_总入口\.md`') {
+if ($agents -notmatch 'Full rules are in `操作系统/00_总入口\.md`' -or $agents -notmatch 'Read `操作系统/00_总入口\.md`') {
   Add-Failure "AGENTS.md 未保持指向 00_总入口 的互补起手关系"
 }
 

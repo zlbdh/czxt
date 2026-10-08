@@ -3,32 +3,30 @@ name: project-zone-index
 scope: template
 type: semantic
 loaded: on-demand
-description: 项目区入口 — 本地放置项目实例，模板仓库只追踪说明和清单
+description: Local project area. The template repository tracks only its instructions and registry.
 ---
 
-# 项目区
+# Local Project Area
 
-这里是操作系统模板根下的本地项目区，用来放被这套操作系统管理或试装的项目实例。
+This directory holds local project instances managed by the operating system template or used for trial installations.
 
-## 规则
+## Rules
 
-- `本地实例/` 可以放真实项目目录、试装目录或克隆目录。
-- 真实项目内容默认不提交到 `czxt` 模板仓库。
-- 项目元数据先复制 `项目配置/_模板.project.json`，再放到本机项目目录或 `本地实例/<项目>/`；模板仓库默认不提交具体项目卡。
-- 如果某个项目要长期纳入模板验证，先在 `清单.md` 登记，再决定是否实例化操作系统。
+- `本地实例/` may hold actual project directories, trial installations, or clones.
+- Actual project content is excluded from the `czxt` template repository by default.
+- Start project metadata by copying `项目配置/_模板.project.json` into a local project directory or `本地实例/<project>/`. Concrete project cards are excluded from template commits by default.
+- Before using a project for ongoing template validation, register it in `清单.md`, then decide whether to initialize the operating system for it.
 
-## 推荐结构
+## Suggested structure
 
-```text
-项目区/
-├── README.md
-├── 清单.md
-└── 本地实例/
-    └── <项目名>/      # 本地存在，git 默认忽略
-```
+| Path | Purpose |
+|---|---|
+| `README.md` | Instructions for this area |
+| `清单.md` | Project registry |
+| `本地实例/<project>/` | Local project instance, ignored by Git by default |
 
-## 与项目配置的关系
+## Relationship to project configuration
 
-- `项目区/` 放本地实体或试装结果。
-- `项目配置/` 在模板仓库中只保留 `_模板.project.json`；具体项目卡默认留在本机。
-- `实例化项目.ps1` 仍以显式项目卡路径或手工参数为准，不会自动扫描本目录。
+- `项目区/` holds local project instances and trial results.
+- `项目配置/` contains only `_模板.project.json` in the template repository. Concrete project cards remain local by default.
+- `实例化项目.ps1` uses explicit project card paths or manually supplied parameters. It does not automatically scan this directory.

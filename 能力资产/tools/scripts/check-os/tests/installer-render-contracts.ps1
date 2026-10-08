@@ -22,7 +22,7 @@ try {
       Assert-CzxtEqual 0 $install.ExitCode ('installer failed: ' + $install.StdErr)
       Assert-InstallerRenderSyntax $project
       $json = [IO.File]::ReadAllText((Join-Path $project '.codex/hooks.json')) | ConvertFrom-Json
-      Assert-CzxtEqual ('加载' + $case.Name + '项目治理上下文') $json.hooks.SessionStart[0].hooks[0].statusMessage 'JSON值必须逐字保留'
+      Assert-CzxtEqual ('Loading governance context for ' + $case.Name) $json.hooks.SessionStart[0].hooks[0].statusMessage 'JSON值必须逐字保留'
       $manifest = [IO.File]::ReadAllText((Join-Path $project '能力资产/tools/hooks/manifest.json')) | ConvertFrom-Json
       $hook = $manifest.hooks | Where-Object { $_.id -eq 'hook-install-check' }
       Assert-CzxtTrue ($hook.description.Contains('frontend/app/.git/hooks')) '业务路径应规范化为正斜杠'

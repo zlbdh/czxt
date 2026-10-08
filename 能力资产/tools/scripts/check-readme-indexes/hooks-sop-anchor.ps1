@@ -18,14 +18,14 @@ if (($post -match "apply_patch") -and ($pre -match "apply_patch")) {
   }
 }
 if (($text -match "PreToolUse") -and (
-    $text -notmatch "不是完整 C 类判定器" -or
+    $text -notmatch "(?:不是完整 C 类判定器|not a complete Class C classifier)" -or
     $text -notmatch "baseUrl" -or
-    $text -notmatch "用户数据删除"
+    $text -notmatch "(?:用户数据删除|user-data deletion)"
   )) {
   Write-Host "  🔴 hooks SOP 未写明 PreToolUse 只做密钥结构提醒，不能替代 C/B 类边界判断" -ForegroundColor Red
   exit 10
 }
-if ($text -notmatch "check-operating-system\.ps1" -or $text -notmatch "P4r hooks 配置与运行态锚点") {
+if ($text -notmatch "check-operating-system\.ps1" -or $text -notmatch "(?:P4r hooks 配置与运行态锚点|P4r hook configuration and runtime anchors)") {
   Write-Host "  🔴 hooks SOP 未把 P4r 作为 hooks 文档/运行态变更后的收口检查" -ForegroundColor Red
   exit 10
 }

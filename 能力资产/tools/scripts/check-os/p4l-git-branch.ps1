@@ -9,8 +9,8 @@ $releaseFlowPath = Join-Path $Root "操作系统/07_完整工作流/发布流程
 if ((Test-Path -LiteralPath $gitFlowPath) -and (Test-Path -LiteralPath $releaseFlowPath)) {
     $gitFlowText = Get-Content -LiteralPath $gitFlowPath -Raw -ErrorAction SilentlyContinue
     $releaseFlowText = Get-Content -LiteralPath $releaseFlowPath -Raw -ErrorAction SilentlyContinue
-    if ($gitFlowText -match "单 main 分支") {
-        $matches = [regex]::Matches($releaseFlowText, "hotfix/|创建\s+hotfix\s+分支|merge\s+回\s+main")
+    if ($gitFlowText -match "单 main 分支|Single main branch") {
+        $matches = [regex]::Matches($releaseFlowText, "hotfix/|创建\s+hotfix\s+分支|merge\s+回\s+main|create\s+a\s+hotfix\s+branch|merge\s+back\s+into\s+main")
         if ($matches.Count -gt 0) {
             Write-Host "  🔴 发布流程仍含 hotfix 分支步骤：$($matches.Count) 处" -ForegroundColor Red
             exit 10

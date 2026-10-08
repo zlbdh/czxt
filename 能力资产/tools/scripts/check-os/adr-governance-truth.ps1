@@ -130,6 +130,10 @@ function Test-CzxtAdrMainEntryAnchor {
   $pattern = '(?<total>\d+)\s*ADR\s*永久档案\s*（\s*(?<current>\d+)\s*现行\s*\+\s*(?<replaced>\d+)\s*被替代/覆盖\s*）'
   $match = [regex]::Match($entryText, $pattern)
   if (-not $match.Success) {
+    $englishPattern = '(?<total>\d+)\s+permanent ADR records\s*\(\s*(?<current>\d+)\s+current\s*\+\s*(?<replaced>\d+)\s+superseded/overridden\s*\)'
+    $match = [regex]::Match($entryText, $englishPattern, [Text.RegularExpressions.RegexOptions]::IgnoreCase)
+  }
+  if (-not $match.Success) {
     $failures.Add("$entryRelative 未找到 ADR 计数锚点：N ADR 永久档案（N 现行 + N 被替代/覆盖）")
     return @($failures)
   }

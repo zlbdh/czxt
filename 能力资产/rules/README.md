@@ -3,60 +3,60 @@ name: rules-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 能力资产/rules/ 真规则索引 — 写代码 + 改动分级 + 已知技术约束 + 议题防御规则
+description: Authoritative capability rules for coding, change levels, technical constraints, and issue prevention.
 ---
 
-# 能力资产/rules/ — 真规则
+# Capability Rules
 
-⭐ **写代码前必读 [写代码.md](写代码.md) + [已知技术约束.md](已知技术约束.md)；任何改动开工前必读 [改动分级.md](改动分级.md)**
+**Before writing code, read [Writing Code](写代码.md) and [Technical Constraints](已知技术约束.md). Before any change, read [Change Levels](改动分级.md).**
 
-## 这一组讲什么
+## Purpose
 
-真正的「规则 / 约束 / 标准 / 判断框架」—— 描述「应该怎样」，不描述「按什么顺序做」。
+Rules, constraints, standards, and decision frameworks describe **what should be true**, rather than a sequence of steps.
 
-按顺序做的属于 `workflows/`；具体能力的脚本属于 `skills/`；角色行为属于 `操作系统/02_智能体/`；可复用执行型 agent 资产才属于 `能力资产/agents/`。
+Sequences belong in `workflows/`, single-capability scripts in `skills/`, role behavior in `操作系统/02_智能体/`, and reusable execution-agent assets in `能力资产/agents/`.
 
-## 文件清单
+## Inventory
 
-| 文件 | 一句话 |
+| File | Scope |
 |---|---|
-| ⭐ [改动分级.md](改动分级.md) | L1-L4 判等级 + 测试问题分诊 + 决策树 |
-| [改动分级-扩展规则.md](改动分级-扩展规则.md) | L1-L4 在 framework / Docs / 交接区等路径上的扩展判定 |
-| ⭐ [写代码.md](写代码.md) | 命名 / 文件大小 / 状态管理 / 数据流 / 错误处理 / AI 调用 |
-| ⭐ [已知技术约束.md](已知技术约束.md) + [附录](已知技术约束-附录.md) | 12 项约束速查（mount / 沙箱 / JDK 17 / storage / npm.ps1 / PS5.1 stderr 等） |
-| [写PRD.md](写PRD.md) | 业务语言原则 / 编号规则 |
-| [F编号规则.md](F编号规则.md) | F-XXX 命名空间 / 数字段约定 / 编号查询 |
-| [视觉设计规范.md](视觉设计规范.md) | 咪咪文人风（配色 / 字号 / 动画 / 交互） |
-| [安全与隐私.md](安全与隐私.md) | 当前有效隐私 / API key / 本地数据默认动作 |
-| ⭐ [借鉴治理.md](借鉴治理.md) | 借鉴来源与事项的 schema、权限、安全不变量及 A/B/C 边界 |
-| [codex-push后防御.md](codex-push后防御.md) | Codex push 后 git 状态 / mount stale 防御 |
-| [git-commit-编码规范.md](git-commit-编码规范.md) | 中文 commit message / `git commit -F` / 编码防 BOM 规范 |
-| ⭐ [web-api-信源选型.md](web-api-信源选型.md) + [矩阵](web-api-信源矩阵.md) + [附录](web-api-信源选型-附录.md) | navigator.* / Intl.* / window.* API 在 Android WebView 的选型流程、可靠性矩阵与反例说明 |
+| [Change Levels](改动分级.md) | L1-L4 classification, test issue triage, and decisions. |
+| [Extended Change Rules](改动分级-扩展规则.md) | Extended classification for framework, Docs, handoff, and other paths. |
+| [Writing Code](写代码.md) | Naming, file size, state, data flow, errors, and AI calls. |
+| [Technical Constraints](已知技术约束.md) and [Appendix](已知技术约束-附录.md) | Twelve constraints: mounts, sandbox, JDK 17, storage, npm.ps1, PowerShell 5.1 stderr, and more. |
+| [Writing a PRD](写PRD.md) | Business language and numbering. |
+| [Feature Numbering](F编号规则.md) | F-XXX namespaces, numeric ranges, and ID lookup. |
+| [Visual Design](视觉设计规范.md) | Mimi's literary style: colors, typography, animation, and interaction. |
+| [Security and Privacy](安全与隐私.md) | Current default safeguards for privacy, API keys, and local data. |
+| [Borrowing Governance](借鉴治理.md) | Source/item schemas, permissions, security invariants, and A/B/C boundaries. |
+| [Post-push Verification](codex-push后防御.md) | Git state and stale-mount safeguards after Codex pushes. |
+| [Commit Encoding](git-commit-编码规范.md) | Unicode commit messages, `git commit -F`, and BOM prevention. |
+| [Web API Source Selection](web-api-信源选型.md), [Matrix](web-api-信源矩阵.md), and [Appendix](web-api-信源选型-附录.md) | Android WebView selection process, reliability matrix, and counterexamples for navigator.*, Intl.*, and window.* APIs. |
 
-## 跟其他分组的区别
+## Relationship to other groups
 
-- **rules/**：判断标准 / 约束（"应该怎样"）
-- **操作系统/02_智能体/**：角色身份（"谁在做"）；**能力资产/agents/** 只放可复用执行型 agent 资产
-- **skills/**：单一能力（"会做这件事"）
-- **workflows/**：多步骤流程（"按什么顺序做"）
+- `rules/`: decision criteria and constraints—what should be true.
+- `操作系统/02_智能体/`: role identities—who does the work. `能力资产/agents/` contains only reusable execution agents.
+- `skills/`: a single capability—how to perform one task.
+- `workflows/`: multistep procedures—the order of operations.
 
-## 速记 — 4 级判等级
+## Four-level reminder
 
-| 等级 | 例子 | 流程 |
+| Level | Example | Process |
 |---|---|---|
-| L1 | 文案 / 单点小修 | 直接改 + CHANGELOG |
-| L2 | 行为微调 / 单点 bug | 改对应 DEV 文档 + 代码 + 测试 + CHANGELOG |
-| L3 | 新功能 | PM (PRD) → Dev → QA → APK → smoke |
-| L4 | 架构 / schema 变化 | L3 全套 + 写 ADR |
+| L1 | Copy or small localized change | Change and CHANGELOG. |
+| L2 | Behavior refinement or localized bug | Relevant development documentation, code, tests, and CHANGELOG. |
+| L3 | New feature | PM/PRD → Development → QA → APK → smoke. |
+| L4 | Architecture or schema | Full L3 process plus ADR. |
 
-判等级有疑问 → 默认升一级，不要降级。
+When uncertain, escalate one level; do not downgrade. The main change-level rule supplies all prerequisite gates.
 
-## 速记 — 文件大小规则（按工具分层）
+## File size reminders by tool
 
-| 工具 | 软建议 | 行为 |
+| Tool | Advisory | Response |
 |---|---|---|
-| Cowork（mount 截断风险）| 6500B | >6500B 改大文件用 Python/Bash 写入，绕 Edit；项目体检告警但不强制拆 |
-| Claude Code / Codex | 8KB | 无硬限制；>8KB 按单一职责工程审美建议拆 |
-| 所有工具共同 | 决策前核真实字节 | 关键判断信 `check-operating-system.ps1` / Read 复核，不信单独 mount `wc -c` |
+| Cowork, with mount truncation risk | 6,500 bytes | Use Python/Bash for larger writes, bypassing Edit. Health checks warn but do not force splitting. |
+| Claude Code / Codex | 8 KB | No hard limit; consider splitting by responsibility above 8 KB. |
+| All tools | Verify real bytes before decisions | Confirm with `check-operating-system.ps1` and Read; do not rely solely on mounted `wc -c`. |
 
-详见 [写代码.md](写代码.md) 文件大小规则与 `已知技术约束.md` §1。
+See [Writing Code](写代码.md) and section 1 of the technical constraints.

@@ -34,7 +34,7 @@ $docs = @(
 
 foreach ($doc in $docs) {
   $text = Read-Text $doc.Rel
-  if ($text -match 'main\s*/\s*master|git push\s*触发|push\s*触发|推完\s*commit\s*自动跑') {
+  if ($text -match 'main\s*/\s*master|git push\s*触发|push\s*触发|推完\s*commit\s*自动跑|automatically (?:run|build|trigger)[^\r\n]*(?:after|on) (?:a )?(?:git )?push|(?:git )?push (?:triggers|automatically triggers)') {
     Add-Failure "$($doc.Label) 仍把手动-only GitHub Actions 写成 push/自动触发"
   }
 }

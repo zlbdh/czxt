@@ -3,103 +3,103 @@ name: api-specification
 scope: project
 type: semantic
 loaded: on-demand
-description: 项目实例 API 契约填写模板；协议、模型、鉴权与错误边界分开记录
+description: API contract template for a project instance. Record protocols, models, authentication, and error boundaries separately.
 ---
 
-# API 规范
+# API Specification
 
-> 模板根不内置固定 endpoint、供应商、模型或业务能力。实例化后以代码、配置、接口契约和真实探测作为项目实例真值；未确认项保留 `[填写]`。
+> The template root does not prescribe an endpoint, provider, model, or business capability. After initialization, use code, configuration, interface contracts, and actual probes as the project instance's sources of truth. Leave unconfirmed items as `[fill in]`.
 
-## 安全边界
+## Safety boundaries
 
-- 真实密钥、token、用户数据和完整敏感响应不得写入 tracked 文件。
-- 密钥只保存在项目批准的本机密钥载体中；文档只记录环境变量名或配置入口。
-- base URL、模型名等半敏感配置按 `操作系统/01_架构/三类行为铁律.md` 与项目 ADR 执行。
-- 日志和错误样例必须脱敏，正文不得出现可复用凭证。
+- Never write real secrets, tokens, user data, or complete sensitive responses to tracked files.
+- Store secrets only in the project's approved local secret store. Documentation records environment variable names or configuration entry points only.
+- Handle partially sensitive settings such as base URLs and model names according to `操作系统/01_架构/三类行为铁律.md` and the project's ADRs.
+- Redact logs and error examples. Document text must not contain reusable credentials.
 
-## 真值来源
+## Project instance source of truth
 
-| 优先级 | 证据 | 用途 |
+| Priority | Evidence | Purpose |
 |---|---|---|
-| 1 | 接口实现、客户端代码、路由与配置 schema | 当前行为 |
-| 2 | OpenAPI / JSON Schema / protobuf 等契约文件 | 请求与响应结构 |
-| 3 | 真实探测、契约测试、服务日志 | 可用性与错误行为 |
-| 4 | 本文 | 摘要和协作约定 |
+| 1 | Interface implementation, client code, routes, and configuration schemas | Current behavior |
+| 2 | Contract files such as OpenAPI, JSON Schema, or protobuf | Request and response structures |
+| 3 | Actual probes, contract tests, and service logs | Availability and error behavior |
+| 4 | This document | Summary and collaboration conventions |
 
-## API 清单
+## API inventory
 
-| API / 能力 | 类型 | 调用方 | 服务方 | 契约真源 | 鉴权 | 状态 |
+| API / capability | Type | Caller | Service provider | Authoritative contract | Authentication | Status |
 |---|---|---|---|---|---|---|
-| [填写] | 外部 / 内部 / 原生 | [填写] | [填写] | [填写] | [填写] | 待验证 |
+| [fill in] | External / internal / native | [fill in] | [fill in] | [fill in] | [fill in] | Pending verification |
 
-## 协议层
+## Protocol layer
 
-协议层描述“请求如何传输和解析”，不绑定某个供应商或模型。至少填写：
+The protocol layer describes how requests are transported and parsed; it is not tied to a particular provider or model. Complete at least these fields:
 
-| 项 | 当前约定 | 证据 |
+| Item | Current contract | Evidence |
 |---|---|---|
-| 协议 / 版本 | [填写] | [填写] |
-| base URL 配置名 | [填写] | [填写] |
-| 路径与方法 | [填写] | [填写] |
-| 鉴权头 / 签名方式 | [填写] | [填写] |
-| 请求 Content-Type | [填写] | [填写] |
-| 超时 | [填写] | [填写] |
-| 重试条件与上限 | [填写] | [填写] |
-| 流式 / 非流式 | [填写] | [填写] |
+| Protocol / version | [fill in] | [fill in] |
+| Base URL configuration name | [fill in] | [fill in] |
+| Path and method | [fill in] | [fill in] |
+| Authentication header / signing method | [fill in] | [fill in] |
+| Request Content-Type | [fill in] | [fill in] |
+| Timeout | [fill in] | [fill in] |
+| Retry conditions and limit | [fill in] | [fill in] |
+| Streaming / nonstreaming | [fill in] | [fill in] |
 
-通用请求示意只表达结构，不代表项目已采用：
+This generic request illustrates structure only; it does not mean the project has adopted it:
 
 ```text
 METHOD <BASE_URL>/<RESOURCE>
 Headers:
-  Authorization: <由项目实例定义>
-  Content-Type: <填写>
+  Authorization: <Defined by the project instance>
+  Content-Type: <Fill in>
 Body:
-  <按契约填写>
+  <Complete according to the contract>
 ```
 
-## 模型层
+## Model layer
 
-模型层描述“选择哪个能力提供方、模型或版本”，必须与协议层分离。兼容同一协议不代表模型相同，切换模型也不应偷偷改变请求契约。
+The model layer identifies the capability provider, model, or version. Keep it separate from the protocol layer. Compatibility with one protocol does not imply the same model, and changing a model must not silently change the request contract.
 
-| 项 | 当前值 | 配置真源 | 回退策略 | 最近验证 |
+| Item | Current value | Authoritative configuration | Fallback strategy | Last verified |
 |---|---|---|---|---|
-| 提供方 | [填写] | [填写] | [填写] | 待验证 |
-| 模型 / 版本 | [填写] | [填写] | [填写] | 待验证 |
-| 能力约束 | [填写] | [填写] | [填写] | 待验证 |
-| 数据驻留 / 合规 | [填写] | [填写] | [填写] | 待验证 |
+| Provider | [fill in] | [fill in] | [fill in] | Pending verification |
+| Model / version | [fill in] | [fill in] | [fill in] | Pending verification |
+| Capability constraints | [fill in] | [fill in] | [fill in] | Pending verification |
+| Data residency / compliance | [fill in] | [fill in] | [fill in] | Pending verification |
 
-## 请求与响应契约
+## Request and response contracts
 
-每个 API 单独记录，避免把多项业务能力写成一个模糊“大接口”：
+Document each API separately. Do not combine several business capabilities into one ambiguous interface.
 
-### [填写：API 名称]
+### [Fill in: API name]
 
-- 用途：[填写]
-- 调用入口：[填写]
-- 方法与路径：[填写]
-- 请求 schema：[填写或链接]
-- 成功响应 schema：[填写或链接]
-- 错误响应 schema：[填写或链接]
-- 幂等规则：[填写]
-- 权限与隐私：[填写]
-- 契约测试：[填写]
+- Purpose: [fill in]
+- Call entry point: [fill in]
+- Method and path: [fill in]
+- Request schema: [fill in or link]
+- Success response schema: [fill in or link]
+- Error response schema: [fill in or link]
+- Idempotency rules: [fill in]
+- Permissions and privacy: [fill in]
+- Contract tests: [fill in]
 
-## 错误处理
+## Error handling
 
-| 类别 | 可重试 | 客户端行为 | 日志要求 |
+| Category | Retryable | Client behavior | Logging requirements |
 |---|---|---|---|
-| 配置缺失 | 否 | 明确提示缺哪一项，不发请求 | 不记录密钥值 |
-| 鉴权失败 | 否 | 停止重试，引导更新凭证 | 只记状态码和脱敏上下文 |
-| 限流 | 是 | 遵守服务端退避信息 | 记录次数与等待时间 |
-| 网络 / 5xx | 按契约 | 有界重试，禁止无限循环 | 记录 trace id 与脱敏摘要 |
-| 契约解析失败 | 否 | 保留原始错误分类，安全降级 | 响应内容先脱敏再留证 |
+| Missing configuration | No | Identify the missing setting; do not send a request | Do not log secret values |
+| Authentication failure | No | Stop retrying and guide the user to update credentials | Record only the status code and redacted context |
+| Rate limit | Yes | Follow the server's backoff instructions | Record attempt counts and wait times |
+| Network / 5xx | Per contract | Bounded retries; never an infinite loop | Record the trace ID and a redacted summary |
+| Contract parsing failure | No | Preserve the original error classification and degrade safely | Redact response content before retaining evidence |
 
-## 变更与验收
+## Changes and acceptance
 
-- 协议、鉴权、字段或错误语义变化时，先更新契约测试，再改实现。
-- 模型层变化要单独验证能力、成本、合规和回退，不用“协议兼容”代替。
-- 至少保留一次成功、一次鉴权失败、一次限流或服务异常的真实脱敏证据。
-- 文档、代码与实际探测不一致时，状态写 PENDING，直到项目实例真值完成对账。
+- Update contract tests before implementation when protocols, authentication, fields, or error semantics change.
+- Validate model changes separately for capability, cost, compliance, and fallback behavior; protocol compatibility is not a substitute.
+- Retain real, redacted evidence of at least one success, one authentication failure, and one rate limit or service error.
+- If documentation, code, and actual probes disagree, set the status to PENDING until the project instance's sources of truth are reconciled.
 
-来源项目历史参考不是模板当前事实；旧 endpoint、模型名和业务函数可通过 Git 历史追溯，不在当前模板中继续固化。
+Historical references from the source project are not current template facts. Earlier endpoints, model names, and business functions remain traceable through Git history; do not keep embedding them in the current template.

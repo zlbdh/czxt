@@ -3,42 +3,42 @@ name: dev-docs-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 开发文档填写入口 — 模板边界、项目实例真值与 ADR 导航
+description: Development documentation entry point, template boundaries, project instance sources of truth, and ADR navigation.
 ---
 
-# 开发文档入口
+# Development Documentation
 
-> 模板根不预设业务项目的框架、目录、API、数据库或版本。实例化后，必须根据真实代码和配置填写本目录，不能沿用模板中的猜测。
+> The template root does not prescribe an application's framework, directories, APIs, database, or version. After initialization, fill in this directory from actual code and configuration; do not carry forward assumptions from the template.
 
-## 项目实例真值
+## Project instance source of truth
 
-开发文档只能摘要真实工程，不替代工程真源。发生冲突时按以下顺序判断：
+Development documentation summarizes the actual project; it does not replace authoritative engineering sources. Resolve conflicts in this order:
 
-1. 项目卡、业务仓库内的代码、manifest、锁文件、schema 与迁移文件。
-2. 可重复执行的构建、测试、运行日志和部署配置。
-3. `操作系统/` 与 `能力资产/` 的协作和安全规则。
-4. 本目录中的说明文档。
+1. The project card and the application repository's code, manifests, lockfiles, schemas, and migrations.
+2. Reproducible build and test results, runtime logs, and deployment configuration.
+3. The collaboration and safety rules in `操作系统/` and `能力资产/`.
+4. The explanatory documents in this directory.
 
-如果项目尚未提供某项事实，保留 `[填写]` 并注明待验证，不要从来源项目历史或目录名推断。
+If a project fact is unavailable, retain `[fill in]` and mark it as pending verification. Do not infer it from the source project's history or a directory name.
 
-## 当前填写入口
+## Current templates
 
-| 文档 | 用途 | 完成证据 |
+| Document | Purpose | Completion evidence |
 |---|---|---|
-| [`项目结构.md`](项目结构.md) | 模板根与项目实例的中性目录导航 | 真实目录清单与关键入口对应 |
-| [`技术栈.md`](技术栈.md) | 记录项目实际采用的语言、框架、构建与测试工具 | manifest / 锁文件 / 版本命令 |
-| [`API规范.md`](API规范.md) | 记录协议层、模型层、鉴权、错误与兼容约定 | 代码、配置、接口契约与真实探测 |
-| [`数据库schema.md`](数据库schema.md) | 记录存储引擎、实体、索引、版本与迁移 | schema / migration 真源与迁移测试 |
-| [`adr/README.md`](adr/README.md) | ADR 永久档案索引 | P4g / P4i 计数守卫 |
+| [Project structure](项目结构.md) | Neutral navigation for the template root and project instance | Actual directories matched to key entry points |
+| [Technology stack](技术栈.md) | Record the languages, frameworks, build tools, and test tools the project actually uses | Manifests, lockfiles, and version commands |
+| [API specification](API规范.md) | Record protocol and model layers, authentication, errors, and compatibility contracts | Code, configuration, interface contracts, and actual probes |
+| [Database schema](数据库schema.md) | Record the storage engine, entities, indexes, versions, and migrations | Authoritative schema/migration sources and migration tests |
+| [ADR index](adr/README.md) | Permanent architecture decision records | P4g / P4i count guards |
 
-## 历史参考边界
+## Historical reference boundary
 
-本目录其余旧文档可能是来源项目历史参考，不是模板当前事实。历史 ADR、RETRO 和快照不因模板中立化而删除；使用时必须先看文件状态与日期，再回到项目实例真值复核。
+Other older documents in this directory may be historical references from the source project, not current template facts. Historical ADRs, RETROs, and snapshots are not deleted when making the template neutral. Read each file's status and date first, then verify it against the project instance's sources of truth.
 
-## 维护规则
+## Maintenance rules
 
-- 技术依赖或版本变化：同步 `技术栈.md`，并写明真源路径。
-- 接口契约变化：同步 `API规范.md`；真实密钥永不写入 tracked 文件。
-- schema 或迁移变化：同步 `数据库schema.md`，并附升级、回滚与数据安全证据。
-- 目录边界变化：同步 `项目结构.md`，但不复制完整文件树或业务模块清单。
-- 无法验证的内容标为 `[填写]` / `待验证`，不包装成已完成。
+- Dependency or version changes: update `技术栈.md` and identify the authoritative source path.
+- Interface contract changes: update `API规范.md`; never write real secrets to tracked files.
+- Schema or migration changes: update `数据库schema.md` with upgrade, rollback, and data safety evidence.
+- Directory boundary changes: update `项目结构.md` without copying the complete file tree or business module inventory.
+- Mark unverified content as `[fill in]` / `Pending verification`; do not present it as completed.

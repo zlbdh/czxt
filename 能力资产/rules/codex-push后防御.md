@@ -3,106 +3,106 @@ name: codex-push-post-defense
 scope: project
 type: semantic
 loaded: on-demand
-description: Codex push 后 working tree dirty / 真代码删除 / index 损坏的双 verify 防御规则与非破坏诊断路径（议题 BK）
+description: Double verification and nondestructive diagnosis for dirty files, deleted code, truncation, or index corruption after a Codex push (issue BK).
 ---
 
-# Codex push 后防御机制（议题 BK 永久化 / PROP-024 Phase 2）
+# Verification After a Codex Push (Issue BK / PROP-024 Phase 2)
 
-> 适用对象：项目 PM「咪咪」（任一运行时继续工作的 PM）
-> 触发场景：Codex 报告 push 完成（commit `xxx` to `origin/main`）后，PM 在任一运行时继续操作前
-> 议题 BK 实战累积：2 次（v3.6.1 + v3.6.2 同模式）— 历史曾高频复现；当前作为长期防御规则保留
+Applies to Project PM “Mimi,” or a PM continuing work in any runtime, after Codex reports pushing commit `xxx` to `origin/main` and before further operations.
 
-## 一、症状识别
+Historical evidence: the pattern occurred twice, in v3.6.1 and v3.6.2. It was frequent during that period; this rule remains a long-term safeguard.
 
-Codex push 完成报告「working tree clean / up to date with origin/main」，但另一运行时或本机 shell 查看实际状态可能出现：
+## 1. Recognize symptoms
 
-| 症状 | 实战表现 |
+Codex may report a clean working tree synchronized with origin/main while another runtime or local shell observes:
+
+| Symptom | Historical observation |
 |---|---|
-| working tree dirty | `git status --short` 显示 modified 文件 |
-| 真代码删除 | `git diff` 显示业务代码行被删（如 v3.6.1 Chat.jsx 删 143 行）|
-| 文件截断 | 末尾 `\ No newline at end of file` + 空格（如 v3.6.2 Profile.jsx）|
-| `.git/index` 损坏 | git 命令报 `bad signature 0x00000000` |
+| Dirty working tree | `git status --short` lists modified files. |
+| Deleted source code | `git diff` shows business-code deletions, such as 143 lines from Chat.jsx in v3.6.1. |
+| Truncated file | Trailing `\ No newline at end of file` and whitespace, such as Profile.jsx in v3.6.2. |
+| Corrupt `.git/index` | Git reports `bad signature 0x00000000`. |
 
-## 二、双 verify 硬规则（PM 起手必跑）
+## 2. Mandatory double verification
 
-### 2.1 Codex push 报告收到后立即跑
+### 2.1 Immediately after the push report
 
 ```powershell
-git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" status --short    # 看是否 dirty
-git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1  # 看 HEAD 是否对应 Codex 报告的 commit hash
+git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" status --short    # Check for modifications.
+git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1  # Compare HEAD with the reported hash.
 ```
 
-如 `git status` 不 clean → 立即跳 §三 非破坏诊断路径；不要自动恢复。
+If status is not clean, go directly to the nondestructive diagnosis in section 3. Do not recover automatically.
 
-### 2.2 PM 任何操作前再 verify 一次
+### 2.2 Again before any PM operation
 
-任何运行时内 Edit / Write / apply_patch / mv 操作前，跑一次 §2.1 确保起手干净。
+Repeat section 2.1 before Edit, Write, apply_patch, or mv in any runtime to confirm the initial state is clean.
 
-## 三、非破坏诊断路径（按严重度递增）
+## 3. Nondestructive diagnosis, in increasing severity
 
-### 3.1 基础诊断（最常见 — v3.6.2 同模式）
+### 3.1 Basic diagnosis (the common v3.6.2 pattern)
 
 ```powershell
-git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" status --short                 # 确认 dirty 文件
+git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" status --short
 git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" diff -- <file> | Select-Object -First 30
-git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1               # 看 HEAD 是否对应 Codex 报告
+git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1
 ```
 
-⭐ **当前硬规则**：这里不再默认执行 `git reset --hard HEAD`。即使历史 ship 卡曾写过预批，也必须按当前 Codex / 项目安全边界处理：先停手、保留现场、向 zlbdh 报告 dirty 文件和 diff 摘要；只有用户在本次上下文里明确要求恢复，才可执行破坏性恢复命令。
+**Current mandatory rule:** do not run `git reset --hard HEAD` by default. Even if historical shipping cards mention preapproval, follow current Codex and project safety boundaries: stop, preserve the scene, and report modified files and a diff summary to zlbdh. Destructive recovery requires the user's explicit request in the current context.
 
-### 3.2 index 损坏诊断（罕见 — v3.6.1 同模式）
+### 3.2 Index corruption (the rare v3.6.1 pattern)
 
 ```powershell
-# 如 git 命令报 "bad signature 0x00000000 / fatal: index file corrupt"
-git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" status              # 记录原始报错
-git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1    # 若可用，记录 HEAD
+# If Git reports bad signature 0x00000000 or fatal: index file corrupt:
+git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" status              # Record the original error.
+git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1    # Record HEAD if available.
 ```
 
-不要自动 `rm .git/index`，也不要接着 `git reset --hard`。这两步会改写 git 工作区状态，必须等 zlbdh 明确授权。
+Do not automatically run `rm .git/index` or follow it with `git reset --hard`. Both change repository state and require explicit authorization from zlbdh.
 
-### 3.3 HEAD 完整性 verify（每次必跑）
+### 3.3 Verify HEAD every time
 
 ```powershell
 git -C "{{PROJECT_ROOT}}\{{APP_REPO_DIR}}" log --oneline -1
-# 输出应该对应 Codex push 报告的 commit hash
-# 如不一致 → 严重问题，立即 ask zlbdh
+# It must match the hash in the Codex push report.
+# A mismatch is serious: ask zlbdh immediately.
 ```
 
-## 四、根因推测（仍待 PROP-024 Phase 2 调查）
+## 4. Root-cause hypotheses, still pending PROP-024 Phase 2 investigation
 
-按可能性排序：
+In estimated likelihood order:
 
-1. **跨运行时 mount/cache + Codex 并行写入 `.git` 冲突**（历史最常见）
-2. WSL/Linux 与 Windows 路径混用同步问题
-3. Codex 在 push 后某个工具自动操作触发回滚
-4. 文件系统 cache 不一致
+1. Cross-runtime mount/cache behavior combined with concurrent Codex writes to `.git`, historically most common.
+2. Synchronization problems from mixed WSL/Linux and Windows paths.
+3. An automatic tool operation after the push triggering a rollback.
+4. Inconsistent filesystem caches.
 
-调查方向 — Codex push 时让其他运行时完全停止 file 操作 + 复跑 → 看是否再现。
+Investigation: completely stop file operations in other runtimes during a Codex push, rerun, and check whether the problem recurs.
 
-## 五、防御实战表
+## 5. Historical incidents
 
-| 实战 | 时间 | 症状 | 恢复方式 |
+| Incident | Time | Symptom | Historical recovery |
 |---|---|---|---|
-| #1 | 2026-05-19 12:00（v3.6.1 push 后）| 5 文件 modified + index 损坏 | 历史曾用 `rm .git/index + git reset + git reset --hard HEAD` 恢复；现规则改为先停手授权 |
-| #2 | 2026-05-19 14:45（v3.6.2 push 后）| Profile.jsx 截断（删 7 行）| 历史曾用 `git reset --hard HEAD` 恢复；现规则改为先停手授权 |
+| 1 | May 19, 2026, 12:00, after v3.6.1 push | Five modified files and a corrupt index | `rm .git/index + git reset + git reset --hard HEAD` was used then. The current rule requires stopping for authorization first. |
+| 2 | May 19, 2026, 14:45, after v3.6.2 push | Profile.jsx truncated by seven lines | `git reset --hard HEAD` was used then. The current rule requires stopping for authorization first. |
 
-## 六、与议题 BG/BH/BO 联动
+## 6. Related issues
 
-- 议题 BG（commit BOM）— 已 `能力资产/rules/git-commit-编码规范.md` 永久化
-- 议题 BH（.bat CRLF）— 已 `{{APP_REPO_DIR}}/.gitattributes` 永久化
-- 议题 BO（build-apk.bat 解析）— PROP-024 Phase 3b Codex 修脚本
+- BG, commit BOM: permanent rule in `能力资产/rules/git-commit-编码规范.md`.
+- BH, `.bat` CRLF: permanent rule in `{{APP_REPO_DIR}}/.gitattributes`.
+- BO, `build-apk.bat` parsing: Codex script fix in PROP-024 Phase 3b.
 
-议题 BK 与上述 3 议题独立但通过 PROP-024 综合治理同步推进。
+BK is independent of those three issues but proceeds with them under PROP-024 governance.
 
-## 七、收档条件
+## 7. Closure criteria
 
-- ≥3 次 Codex push 后跑双 verify + 0 再现 → 议题 BK 收档（根因找到 / 修复机制有效）
-- 或 — ≥3 次再现但都被本规则捕获 + 业务零事故 → 议题 BK 部分收档（防御有效但根因未知，标 v1 长期监控）
+- At least three Codex pushes with double verification and zero recurrence: close BK when the root cause is found and the fix is effective.
+- Alternatively, at least three recurrences all caught by this rule with zero business incidents: partially close BK, marking v1 long-term monitoring because the defense works but the root cause remains unknown.
 
-## 八、不要做（硬反例）
+## 8. Prohibited responses
 
-- ❌ Codex push 报告后直接做 Edit / Write / apply_patch 操作（不先 verify）
-- ❌ working tree dirty 时继续业务操作（污染会扩散）
-- ❌ 默认执行 `git reset --hard` / `rm .git/index` / 删除文件等破坏性恢复命令（必须等 zlbdh 本次明确授权）
-- ❌ 试图理解 Codex 为什么报 clean 但实际 dirty（先保留现场并报告，再调查）
-- ❌ 跳过 §2 双 verify 步骤（议题 BK 防御 100% 依赖前置 verify）
+- Editing immediately after a push report without verification.
+- Continuing business work with an unexplained dirty tree and spreading corruption.
+- Default destructive recovery with `git reset --hard`, `rm .git/index`, or file deletion without zlbdh's explicit current authorization.
+- Investigating why Codex reported clean before preserving the scene and reporting it.
+- Skipping section 2: this defense depends entirely on verification before further operations.

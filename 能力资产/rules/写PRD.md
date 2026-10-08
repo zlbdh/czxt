@@ -3,127 +3,118 @@ name: write-prd
 scope: project
 type: semantic
 loaded: on-demand
-description: 写 PRD 的业务语言原则 — 模板、技术术语对照表、用户输入边界四类、工作量/优先级标记、拆分判断与复盘清单
+description: Business-language PRD template, terminology, four input boundaries, effort, priority, splitting decisions, and review checklist.
 ---
 
-# 规则：写 PRD（业务语言原则）
+# Rule: Writing a PRD in Business Language
 
-📋 **核心原则：写给 zlbdh 看的部分必须是业务语言，不出现技术术语。**
+**Core principle: sections written for zlbdh must use business language without technical jargon.**
 
-## 模板（业务语言版）
+## Business-language template
 
-新建 `F-XXX` 前先按 [`F编号规则.md`](F编号规则.md) 扫当前占用，避免撞号。
+Before creating an `F-XXX`, scan existing IDs using the [feature numbering rule](F编号规则.md) to prevent collisions.
 
 ```markdown
-## F-XXX · <用人话写的标题>
+## F-XXX · <Plain-language title>
 
-### 这是什么
-1-2 句话说清楚要做啥，不出现 React/Component/Route/Hook 等词。
-用「页面 / 卡片 / 弹窗 / 按钮 / 列表」等业务名词。
+### What this is
+Explain the work in one or two sentences, without React, Component, Route, or Hook terminology.
+Use familiar product terms: page, card, dialog, button, list.
 
-### 你打开 APP 时会看到什么
-描述用户的视觉感受 / 操作过程，像在描述电影画面：
-- 在 X 页面看到 Y
-- 点 Y → 出现 Z
-- Z 上有 A B C 三个按钮
-- 点 A → 弹起 D（可加 ASCII 草图）
+### What you will see when you open the app
+Describe what the user sees and does, as if describing a scene:
+- Page X displays Y.
+- Tap Y to show Z.
+- Z has buttons A, B, and C.
+- Tap A to open D. A sketch may help.
 
-### 验收标准（你试出来这些都对就算完成）
-- [ ] 行为描述 1
-- [ ] 行为描述 2
-- [ ] 边界场景：没数据时显示 ...
-- [ ] 边界场景：错误时显示 ...
+### Acceptance criteria
+The work is complete when the user can verify all these behaviors:
+- [ ] Behavior 1
+- [ ] Behavior 2
+- [ ] Empty state: display ...
+- [ ] Error state: display ...
 
-### ⭐ 用户输入边界（议题 P / ADR-022 决定 4，**必填**）
+### User input boundaries (issue P / ADR-022 decision 4; required)
 
-任何用户可输入字段必须明示以下 4 类边界（不写 = PRD 不完整）：
+Every user-editable field must specify all four boundaries. Omitting them makes the PRD incomplete.
 
-- **留空 → 默认值**：count 类（如鸡蛋阈值）= 5 / decimal 类（如蛋白粉阈值）= 0.2 / 字符串类 = 空字符串
-- **显式 0 → 真 0**：用户主动输入 0 表示"故意为 0"（区分 "留空" vs "显式 0"，**JS `Number("") === 0` 陷阱**）
-- **null / undefined / "" 三态拦截**：用 `isMissing` helper 或 `?? `运算符，绝不靠 `!v` 判断
-- **数字字符串**：解析为对应数值（如 `"5"` → `5`），非法字符串走默认值
+- **Blank → default**: count values, such as an egg threshold, default to 5; decimal values, such as a protein powder threshold, default to 0.2; strings default to an empty string.
+- **Explicit 0 → actual 0**: entering 0 intentionally means zero. Distinguish blank from explicit zero; beware JavaScript's `Number("") === 0`.
+- **Handle null / undefined / "" separately**: use an `isMissing` helper or the `??` operator as appropriate; never rely on `!v`.
+- **Numeric strings**: parse to the corresponding number, such as `"5"` → `5`; invalid strings use the default.
 
-**反例**（RETRO-007 卡 1 + F-PREP-1 #07，2 次同模式踩坑）：
-- ❌ PRD 写「decimal 阈值默认 0.2」但代码用 `value ?? DEFAULT` → 用户输入空字符串 `""` 绕过 `??` → `Number("") === 0` → threshold 变 0
-- ✅ 正确：先 `if (v === null || v === undefined || v === '') return DEFAULT` 拦截三态，再 `Number(v)` 解析
+Counterexample (RETRO-007 card 1 + F-PREP-1 #07: the same failure occurred twice):
+- Incorrect: the PRD says a decimal threshold defaults to 0.2, but `value ?? DEFAULT` lets `""` through; `Number("") === 0` changes the threshold to 0.
+- Correct: first check `if (v === null || v === undefined || v === '') return DEFAULT`, then parse with `Number(v)`.
 
-### 不在范围内
-（避免理解偏差，明确说不做啥）
-- 不做 X
-- 不做 Y
+### Out of scope
+State exclusions explicitly to prevent misunderstandings:
+- X is excluded.
+- Y is excluded.
 ```
 
-## 业务语言对照表
+## Business-language alternatives
 
-| 不要写 | 改成 |
+| Avoid | Use |
 |---|---|
-| ErrorBoundary | "出错时显示友好提示" |
-| Route / Routes | "页面 / tab" |
-| Component / Hook | "卡片 / 模块" / "页面" |
-| Modal / Drawer | "弹窗" / "从底部滑上来的卡片" |
-| State / setState | "（改完）立刻更新" |
-| Lazy loading | "（先不加载，需要时再加载）" |
-| Refactor | "整理代码（你看不见变化）" |
-| Debounce | "（防止快速连点）" |
-| LocalStorage / IndexedDB | "本地存储" / "手机里" |
-| API / endpoint | "接口" 或 直接说 "AI 调用" |
-| Schema migration | "升级时数据自动迁移" |
-| Validation | "检查输入是否合法" |
+| ErrorBoundary | “Show a helpful message if something goes wrong” |
+| Route / Routes | “Page / tab” |
+| Component / Hook | “Card / module” or “page” |
+| Modal / Drawer | “Dialog” or “card that slides up from the bottom” |
+| State / setState | “Update immediately after the change” |
+| Lazy loading | “Load it when needed” |
+| Refactor | “Organize the code without visible changes” |
+| Debounce | “Prevent repeated rapid taps” |
+| LocalStorage / IndexedDB | “Local storage” or “on the phone” |
+| API / endpoint | “Interface,” or simply “AI call” |
+| Schema migration | “Automatically transfer existing data during the upgrade” |
+| Validation | “Check whether the input is valid” |
 
-## 工作量标记
+## Effort
 
-- **小（S）**：< 1 小时 / 单文件 / 视觉调整
-- **中（M）**：半天 / 多文件 / 加新组件
-- **大（L）**：一天 / 多模块 / 数据 schema 改 / 加原生插件
+- **Small (S)**: under one hour / one file / visual adjustment.
+- **Medium (M)**: half a day / multiple files / new component.
+- **Large (L)**: one day / multiple modules / data schema change / new native plugin.
 
-## 优先级
+## Priority
 
-- **P0**：不做现有功能用不了 / 安全隐患（AKA must）
-- **P1**：用户体验明显改善 / 解决真实痛点（AKA should）
-- **P2**：锦上添花（AKA nice to have）
+- **P0**: existing functionality cannot work without it, or a security risk exists; must have.
+- **P1**: clear user experience improvement or a real pain point; should have.
+- **P2**: an enhancement; nice to have.
 
-## 拆 PRD 的判断
+## Deciding when to split a PRD
 
-一个 PRD 条目应该是「**能独立交付的最小用户价值**」。
+Each entry should represent **the smallest independently deliverable user value**.
 
-太大要拆：
-- 「F-001 加月历」太大 → 拆成多个独立 F 编号，或在同一 F 下拆成子验收项：
-  - F-101 加月历基础能力
-  - F-102 Health 使用月历
-  - F-103 Timeline 使用月历
-  - F-104 Profile 使用月历
+Split oversized entries. “F-001: add a calendar” is too broad. Use separate feature IDs or subcriteria under one feature:
 
-太小可以合：
-- 「PillButton 加 hover」+ 「PrimaryButton 加 hover」 → 合成 「F-LAYOUT-X 列表点击微反馈」
+- F-101: basic calendar capability.
+- F-102: calendar in Health.
+- F-103: calendar in Timeline.
+- F-104: calendar in Profile.
 
-## 反例（坏 PRD）
+Combine undersized entries. Hover feedback for `PillButton` and `PrimaryButton` can become “F-LAYOUT-X: subtle feedback when tapping a list.”
 
-❌ 「加 React `ErrorBoundary` 包在 AppShell 的每个 Route 外层」
-（用户看不懂）
+## Counterexamples
 
-✅ 「APP 不能再白屏崩掉。万一某个页面出 bug，不要全屏白，要显示『打了个嗝』提示，让用户能继续用其他 tab。」
-（业务价值清晰）
+Poor: “Wrap each AppShell Route with a React `ErrorBoundary`.” The user cannot understand the implementation jargon.
 
-❌ 「重构 useAppData 把 db 调用 memoize 减少 re-render」
-（纯技术）
+Better: “The app must no longer crash to a blank screen. If one page fails, show a brief error message and let the user continue using other tabs.” This explains the user value.
 
-✅ 不应该出现在 PRD 里。这是开发自己的优化，不是用户感知到的需求。
-（应该放 Dev 的 task list 里）
+Poor: “Refactor useAppData to memoize database calls and reduce re-renders.” This is technical optimization, not a user-visible requirement. Put it in the developer's task list instead of the PRD.
 
-## 用户故事格式（可选）
+## Optional user story
 
-如果 PRD 比较抽象，可加用户故事：
+For an abstract requirement, add a user story:
 
-> 作为 zlbdh，
-> 我想要 「点月历某天看那天明细」，
-> 以便我能快速回顾不需要切多个 tab。
+> As zlbdh, I want to tap a calendar date to see that day's details, so I can review them quickly without switching between tabs.
 
-## 复盘检查清单
+## Review checklist
 
-写完一份 PRD，自检：
-- [ ] 全文不出现技术术语（grep 检查）
-- [ ] 验收标准是用户能"亲眼看到"的（不是"代码能跑通"）
-- [ ] 不在范围内的事情明说了
-- [ ] 边界情况列了（没数据 / 错误 / 加载）
-- [ ] 工作量 + 优先级标了
-- [ ] 受影响的页面 / 模块列了（用业务名）
+- [ ] No technical jargon in user-facing prose; verify with a text search.
+- [ ] Acceptance criteria describe what a user can see, rather than merely whether code runs.
+- [ ] Exclusions are explicit.
+- [ ] Empty, error, and loading states are covered.
+- [ ] Effort and priority are marked.
+- [ ] Affected pages and modules use business names.

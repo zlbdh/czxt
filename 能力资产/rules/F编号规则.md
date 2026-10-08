@@ -3,83 +3,84 @@ name: f-number-namespace-rule
 scope: project
 type: semantic
 loaded: on-demand
-description: F-XXX 功能编号空间约定 — 数字分段按模块语义、命名空间前缀分类、避免撞号的查询命令
+description: F-XXX feature namespaces, numeric module ranges, sequential IDs, and commands to prevent collisions.
 ---
 
-# 规则：F-XXX 编号空间约定
+# Rule: F-XXX Feature Numbering
 
-避免编号撞号 / 混用 / 命名空间冲突。
+Prevent duplicate IDs, mixed usage, and namespace collisions.
 
-## 命名空间分类
+## Namespaces
 
-| 命名空间 | 前缀 | 用途 | 例子 |
+| Namespace | Prefix | Purpose | Examples |
 |---|---|---|---|
-| **数字（核心功能）** | `F-XXX`（3 位）| Sprint PRD 里的核心 feature | F-001 / F-006 / F-205 |
-| **导航/架构（命名空间）** | `F-NAV-X` | 导航相关功能 | F-NAV-1 |
-| **聊天（命名空间）** | `F-CHAT-X` | 聊天相关功能 | F-CHAT-1 |
-| **布局/UI 微调（命名空间）** | `F-LAYOUT-X` | 微交互 / 动画 / UI 细节 | F-LAYOUT-1 / F-LAYOUT-2 |
+| Numeric core features | `F-XXX` (three digits) | Core features in Sprint PRDs | F-001 / F-006 / F-205 |
+| Navigation / architecture | `F-NAV-X` | Navigation features | F-NAV-1 |
+| Chat | `F-CHAT-X` | Chat features | F-CHAT-1 |
+| Layout / UI refinements | `F-LAYOUT-X` | Microinteractions, animation, UI details | F-LAYOUT-1 / F-LAYOUT-2 |
 
-## 数字段编号规则
+## Numeric ranges
 
-数字部分按**模块语义**分段，避免乱串：
+Assign ranges by **module meaning**, without mixing unrelated modules.
 
-| 段 | 范围 | 模块 |
+| Range | IDs | Module |
 |---|---|---|
-| 0xx | F-001 ~ F-099 | 通用功能 / 跨模块（如 F-001 月历点日期） |
-| 1xx | F-100 ~ F-199 | 健康模块（饮食 / 训练 / 体重）|
-| 2xx | F-200 ~ F-299 | 系统级 / 防御（如 F-205 ErrorBoundary / F-203 聊天归档）|
-| 3xx | F-300 ~ F-399 | 时光（碎片 / 回忆）|
-| 4xx | F-400 ~ F-499 | 记账 |
-| 5xx | F-500 ~ F-599 | 自律打卡 |
-| 6xx | F-600 ~ F-699 | 个人档案 / 设置 |
-| 9xx | F-900 ~ F-999 | 实验性 / 可砍 |
+| 0xx | F-001–F-099 | General or cross-module features, such as F-001 calendar date selection |
+| 1xx | F-100–F-199 | Health: diet, training, weight |
+| 2xx | F-200–F-299 | System / safeguards, such as F-205 ErrorBoundary or F-203 chat archiving |
+| 3xx | F-300–F-399 | Timeline: moments and memories |
+| 4xx | F-400–F-499 | Accounting |
+| 5xx | F-500–F-599 | Habit tracking |
+| 6xx | F-600–F-699 | Profile and settings |
+| 9xx | F-900–F-999 | Experimental or removable features |
 
-## 命名空间 X 编号规则
+## Sequential namespace IDs
 
-`F-NAV-X / F-CHAT-X / F-LAYOUT-X` 等用顺序数字，不跳号：
-- F-NAV-1（已用）→ F-NAV-2 ...
-- F-CHAT-1（已用）→ F-CHAT-2 ...
-- F-LAYOUT-1（已用）→ F-LAYOUT-2（已用）→ F-LAYOUT-3 ...
+Use consecutive numbers for `F-NAV-X`, `F-CHAT-X`, `F-LAYOUT-X`, and similar namespaces:
 
-## 何时用数字 vs 命名空间
+- F-NAV-1 (used) → F-NAV-2 ...
+- F-CHAT-1 (used) → F-CHAT-2 ...
+- F-LAYOUT-1 (used) → F-LAYOUT-2 (used) → F-LAYOUT-3 ...
 
-- **是核心 feature**：用数字段（如 F-006 习惯月历）
-- **是某领域的迭代**：用命名空间（如 F-NAV-2 是导航又改一次）
-- **是跨模块通用**：用 0xx（如 F-001 月历点日期看明细）
+## Choosing a namespace
 
-## 编号查询命令
+- Core feature: numeric range, such as F-006 habit calendar.
+- Iteration within a domain: named namespace, such as F-NAV-2 for another navigation change.
+- General cross-module feature: 0xx, such as F-001 calendar date details.
 
-写新 F-XXX 前必跑：
+## Required ID lookup
+
+Run before creating a new F-XXX:
 
 ```powershell
 cd {{PROJECT_ROOT}}
 
-# 查当前需求真源里的所有已有 F 编号
+# Find every existing feature ID in the current requirements source of truth.
 rg -o "F-[A-Z0-9-]+" Docs/1-需求文档 -g "*.md" |
   ForEach-Object { ($_ -split ':')[-1] } |
   Sort-Object -Unique
 ```
 
-新 F = 上面输出里**对应命名空间最大编号 + 1**（跳号需在 PROP 里说明理由）。
+The new ID is **the highest existing number in the corresponding namespace plus one**. Explain any skipped number in a PROP.
 
-## 历史样例（不作当前占用真源）
+## Historical examples, not the current allocation source
 
+```text
+F-001     Calendar date details (0xx general)
+F-002     Health diet/training calendar (1xx health)
+F-003     Accounting calendar (4xx accounting)
+F-006     Habit calendar and backdated check-ins (5xx habits)
+F-205     ErrorBoundary (2xx system)
+F-203     Chat history archiving (2xx system)
+F-NAV-1   Profile entry at upper right and rearrangement of five tabs
+F-CHAT-1  Separate Chat tab
+F-LAYOUT-1  Tab transition fade-in
+F-LAYOUT-2  Subtle feedback when tapping a list
 ```
-F-001  月历点日期看明细（0xx 通用）
-F-002  健康饮食/训练月历（1xx 健康）
-F-003  记账月历（4xx 记账）
-F-006  习惯月历 + 补签（5xx 自律）
-F-205  ErrorBoundary（2xx 系统）
-F-203  聊天历史归档（2xx 系统）
-F-NAV-1   「我」右上角 + 5 Tab 重排
-F-CHAT-1  聊天独立成 Tab
-F-LAYOUT-1  Tab 切换 fadein
-F-LAYOUT-2  列表点击微反馈
-```
 
-**注意**：本清单只是 2026-05-09 左右的早期样例，不代表当前全部占用；当前占用必须跑上方命令。F-006 当前在 5xx 段（自律），但语义偏 0xx 通用（月历是跨模块的）——保留历史命名不动，下次新增按本规则走。
+These are early examples from around May 9, 2026, not a complete allocation list. Always run the command above for current IDs. The historical F-006 classification is 5xx habits, although its calendar semantics lean toward cross-module 0xx. Preserve its historical name; apply this rule to new IDs.
 
-## 关联
+## References
 
-- [`操作系统/07_完整工作流/审批与归档.md`](../../操作系统/07_完整工作流/审批与归档.md) §C 编号查询通用命令
-- [`能力资产/skills/状态推断.md`](../skills/状态推断.md) 跟 PROP/ADR/RETRO 编号一起对账
+- [Approval and archiving](../../操作系统/07_完整工作流/审批与归档.md), section C: general ID lookup commands.
+- [Status inference](../skills/状态推断.md): reconcile IDs alongside PROP, ADR, and RETRO numbers.

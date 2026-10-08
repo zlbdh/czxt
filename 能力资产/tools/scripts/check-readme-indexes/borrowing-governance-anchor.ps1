@@ -41,9 +41,9 @@ Assert-Contains "操作系统\00_总入口.md" '向谁学、学了什么' `
   "总入口声明借鉴区回答的问题"
 Assert-Contains "操作系统\00_总入口.md" '不是第 9 个操作系统模块' `
   "总入口保持八模块边界"
-Assert-Contains "README.md" '借鉴区/.*根级外部证据层' `
+Assert-Contains "README.md" '借鉴区/.*根级外部证据层|借鉴区/.*External evidence: sources and lessons learned' `
   "根 README 声明借鉴区"
-Assert-Contains "Docs\3-开发文档\项目结构.md" '借鉴区/.*外部证据层' `
+Assert-Contains "Docs\3-开发文档\项目结构.md" '借鉴区/.*外部证据层|借鉴区/.*is an external evidence area' `
   "项目结构登记借鉴区"
 
 # 9 PM 路径白名单与并行边界。
@@ -113,7 +113,7 @@ $routes = [ordered]@{
   "操作系统\02_智能体\README.md" = "../../能力资产/skills/借鉴.md"
   "操作系统\02_智能体\项目PM-咪咪.md" = "../../能力资产/skills/借鉴.md"
   "操作系统\02_智能体\操作系统PM-框架管家.md" = "../../能力资产/skills/借鉴.md"
-  "Docs\3-开发文档\项目结构.md" = "../../../能力资产/skills/借鉴.md"
+  "Docs\3-开发文档\项目结构.md" = "../../能力资产/skills/借鉴.md"
 }
 foreach ($entry in $routes.GetEnumerator()) {
   Assert-ExactlyOneBorrowingSkillRoute $entry.Key $entry.Value

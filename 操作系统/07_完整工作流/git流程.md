@@ -3,148 +3,148 @@ name: git-flow
 scope: project
 type: procedural
 loaded: on-demand
-description: git 仓库边界 / A-B-C 权限 / commit-push 6 条件 / message / 分支与 tag 规则
+description: Git repository boundaries, Class A/B/C permissions, six commit/push conditions, commit messages, branches, and tags.
 ---
 
-# 工作流：git 流程
+# Workflow: Git Flow
 
-本文件区分两层 git 边界：
+This document distinguishes two repository boundaries:
 
-| 层级 | 仓库根 | 用途 |
+| Layer | Repository root | Purpose |
 |---|---|---|
-| 操作系统模板仓库 | 模板根（当前目标 remote：`https://github.com/zlbdh/czxt.git`） | 维护 `操作系统/`、`能力资产/`、`PM工作区/`、`项目配置/`、`项目区/` 等模板本体 |
-| 项目实例业务仓库 | `{{PROJECT_ROOT}}\{{APP_REPO_DIR}}\`（remote 通常为 `https://github.com/zlbdh/{{APP_REPO_DIR}}.git`） | 维护业务代码、构建产物索引和业务发布历史 |
+| Operating system template repository | Template root; current target remote: `https://github.com/zlbdh/czxt.git` | Maintain the template itself, including `操作系统/`, `能力资产/`, `PM工作区/`, `项目配置/`, and `项目区/` |
+| Project instance application repository | `{{PROJECT_ROOT}}\{{APP_REPO_DIR}}\`; remote is typically `https://github.com/zlbdh/{{APP_REPO_DIR}}.git` | Maintain application code, build-output indexes, and application release history |
 
-实例化到业务项目后，项目根 `{{PROJECT_ROOT}}\` 是否是 git 仓库以项目卡片和真实 `.git` 为准；历史默认是业务仓库在 `{{APP_REPO_DIR}}/`，操作系统层在项目根旁路维护。模板产品化阶段则允许模板根作为独立仓库进入 `czxt`。
+After initialization into an application project, whether `{{PROJECT_ROOT}}\` is a Git repository is determined by the project card and actual `.git` directory. Historically, the default application repository was `{{APP_REPO_DIR}}/`, with the operating system maintained separately at the project root. Template productization allows the template root to be an independent `czxt` repository.
 
 ---
 
-## 谁能动 git？（ADR-016 后）
+## Who may operate Git? After ADR-016
 
-| 操作 | A 类 自动 | B 类 条件性 | C 类 永不 |
+| Operation | Class A: automatic | Class B: conditional | Class C: never |
 |---|---|---|---|
-| git status / log / diff（只读）| ✅ AI 自动 | — | — |
-| git commit / push（main 分支常规）| — | ✅ B 类 6 条件 | — |
-| 改 `package.json` version | — | ✅ 配套 APK 任务 | — |
-| force push / rebase 已 push 的 commit | — | — | ❌ |
-| 删除分支 / 删 tag | — | — | ❌ |
-| 常规版本 tag / push tag（配套 APK 发版）| — | ✅ B 类发版闭环条件 | — |
-| 删 tag / 改 tag / 推分发渠道 release | — | — | ❌ zlbdh 专属 |
+| Read-only `git status`, `log`, or `diff` | ✅ AI may act automatically | — | — |
+| Ordinary `git commit` / `push` on main | — | ✅ Six Class B conditions | — |
+| Change `package.json` version | — | ✅ As part of an APK task | — |
+| Force push or rebase pushed commits | — | — | ❌ |
+| Delete a branch or tag | — | — | ❌ |
+| Ordinary version tag / push tag as part of an APK release | — | ✅ Class B release-completion conditions | — |
+| Delete/change a tag or publish a distribution-channel release | — | — | ❌ Reserved for zlbdh |
 
-→ 详见 [`角色边界.md`](../01_架构/角色边界.md) + [`ADR-016`](../../Docs/3-开发文档/adr/ADR-016-AI-git权限下放.md)。
-
----
-
-## B 类 git commit/push 6 条件（ADR-016）
-
-AI 跑 git 必满足以下全部：
-
-1. ✅ 仅当前目标仓库 main 分支（业务发布默认 `{{APP_REPO_DIR}}/`；模板维护默认模板根）
-2. ✅ commit message 真实（基于 working tree 实际改动，不虚标 PROP/ADR/feature）
-3. ✅ 不 force / 不 rebase / 不 rewrite history
-4. ✅ push 失败立刻停手 + 写交接卡报错 + 不重试
-5. ✅ 交接卡明示 commit hash + push 结果（事后可核查）
-6. ✅ contextual 授权（zlbdh 明确要求 / 或上一棒交接卡含「下一棒可 push」字样）
-
-任一违反 → 立刻停手 + 写交接卡 + 等 zlbdh 决策。
+See [role boundaries](../01_架构/角色边界.md) and [ADR-016](../../Docs/3-开发文档/adr/ADR-016-AI-git权限下放.md).
 
 ---
 
-## Commit message 格式
+## Six Class B Git commit/push conditions: ADR-016
 
+AI must satisfy all of the following:
+
+1. ✅ Only the current target repository's main branch. Application releases default to `{{APP_REPO_DIR}}/`; template maintenance defaults to the template root.
+2. ✅ Truthful commit messages based on actual working-tree changes; do not falsely label PROP, ADR, or feature work.
+3. ✅ No force, rebase, or history rewriting.
+4. ✅ If a push fails, stop immediately, record the error in a handoff card, and do not retry.
+5. ✅ The handoff card explicitly records the commit hash and push result for later verification.
+6. ✅ Contextual authorization: an explicit instruction from zlbdh, or an earlier handoff explicitly allowing the next owner to push.
+
+If any condition is violated, stop immediately, write a handoff card, and wait for zlbdh's decision.
+
+---
+
+## Commit message format
+
+```text
+<type>(<scope>): <one-sentence summary>
+
+- Change 1
+- Change 2
+- Test / APK results, if applicable
 ```
-<type>(<scope>): <一句话总结>
 
-- 改动点 1
-- 改动点 2
-- 测试 / APK 结果（如有）
-```
+### Type dictionary
 
-### type 词典
-
-| type | 用途 | 例 |
+| Type | Purpose | Example |
 |---|---|---|
-| `feat` | 新功能 | `feat(sprint-1): F-002 健康饮食/训练月历完成` |
-| `fix` | bug 修复 | `fix: 修复月历点格抽屉空数据崩溃` |
-| `refactor` | 重构无功能变化 | `refactor: 抽离 HealthMeals 子组件` |
-| `docs` | 仅文档 | `docs: 补 git流程.md 跟 ADR-016 对齐` |
-| `chore` | 杂项（version bump / 依赖更新）| `chore: bump version 2.7.0 → 2.8.0` |
-| `test` | 仅测试 | `test: 加 LedgerCalendar 颜色梯度边界测试` |
+| `feat` | New feature | `feat(sprint-1): complete F-002 nutrition and workout calendar` |
+| `fix` | Bug fix | `fix: prevent empty-data crash in calendar day drawer` |
+| `refactor` | Refactor without changing behavior | `refactor: extract HealthMeals component` |
+| `docs` | Documentation only | `docs: align Git flow with ADR-016` |
+| `chore` | Maintenance such as version bumps or dependency updates | `chore: bump version 2.7.0 → 2.8.0` |
+| `test` | Tests only | `test: cover LedgerCalendar color-gradient boundaries` |
 
-### scope（可选）
+### Scope: optional
 
-- `sprint-N` — Sprint 标识（业务 feature）
-- 模块名 — `accounting` / `health` / `timeline` 等
-- 元规则 — `framework` / `agent`（模板仓库可用；业务仓库按业务模块名）
+- `sprint-N`: Sprint identifier for an application feature.
+- Module name: `accounting`, `health`, `timeline`, etc.
+- Meta-rules: `framework` or `agent` in the template repository; use business module names in the application repository.
 
-示例要点：标题写真实 feature / fix / refactor；正文列改动点、测试结果、APK 路径和 smoke 结论，禁止虚标 PROP/ADR/feature。
-
----
-
-## 分支策略
-
-**单 main 分支**（自用 App，无协作者）
-
-- ✅ 所有改动直接进 main
-- ❌ 不开 feature branch（业务节奏快 + 无 review 流程，多分支徒增复杂度）
-- ❌ 不开 dev 分支（main 就是 dev，没区别）
-- 例外：未确定实验可临时开 `experiment/*`，验证后把有效改动落回 main；实验分支清理由 zlbdh 手动决定，AI 不删分支
+The title must identify the actual feature, fix, or refactor. The body lists changes, test results, APK path, and smoke conclusion. False PROP/ADR/feature labels are prohibited.
 
 ---
 
-## Push 时机
+## Branch strategy
 
-每个 feature 完整闭环（代码 + 测试 + APK + smoke）后由测试发布 PM「闭环者」push（playbook 见 [`../02_智能体/测试发布PM-闭环者.md`](../02_智能体/测试发布PM-闭环者.md)）。
+**Single main branch**: personal-use app with no collaborators.
 
-不是每天结束、不是每个 PROP 收档 — **按业务里程碑**。
+- ✅ All changes go directly to main.
+- ❌ No feature branches: fast application work and no review process make multiple branches unnecessarily complex.
+- ❌ No dev branch: main is the development branch.
+- Exception: uncertain experiments may temporarily use `experiment/*`. After verification, put valid changes onto main. zlbdh decides experiment-branch cleanup manually; AI must not delete branches.
 
-| 时机 | 是否 push |
+---
+
+## When to push
+
+The Test and Release PM “Closer” pushes after a feature's full lifecycle is complete: code, tests, APK, and smoke. See the [playbook](../02_智能体/测试发布PM-闭环者.md).
+
+Push according to **business milestones**, rather than at every day's end or every PROP closure.
+
+| Milestone | Push? |
 |---|---|
-| 开发 PM「实施者」完成代码 + 测试三层过（当前执行载体：Claude Code） | ❌ 不 push（留给测试发布 PM「闭环者」跑闭环） |
-| 测试发布 PM「闭环者」出 APK + smoke 通过（当前执行载体：Codex） | ✅ push |
-| smoke 发现 bug 修完 | ✅ push（修复 commit）|
-| 单纯 framework 文档改（操作系统/ / 能力资产/ / Docs/ / 确认改动/）| ❌ 不进 git（这些不在 {{APP_REPO_DIR}}/ 仓库）|
+| Development PM “Implementer” completes code and all three test layers; current runtime: Claude Code | ❌ Do not push; leave release completion to the Test and Release PM “Closer” |
+| Test and Release PM “Closer” produces the APK and smoke passes; current runtime: Codex | ✅ Push |
+| A bug discovered in smoke testing is fixed | ✅ Push the fix commit |
+| Framework documentation only: `操作系统/`, `能力资产/`, `Docs/`, `确认改动/` | ❌ Do not add to Git; these are outside the `{{APP_REPO_DIR}}/` repository |
 
 ---
 
-## Tag 规则
+## Tag rules
 
-常规版本闭环允许打版本 tag，但必须绑定测试发布 PM「闭环者」发布闭环。
+Ordinary version tags are allowed only as part of the Test and Release PM “Closer” release lifecycle.
 
-允许条件：
-- 已完成代码、测试、build、APK、smoke；
-- `package.json` 版本、APK 命名、交接卡版本一致；
-- tag 格式为 `vX.Y.Z`；
-- 交接卡明示 commit hash、tag、push 结果；
-- 不删除、不改写、不移动已有 tag。
+Required conditions:
+- Code, tests, build, APK, and smoke are complete.
+- `package.json`, APK naming, and the handoff card agree on the version.
+- The tag uses `vX.Y.Z`.
+- The handoff explicitly records the commit hash, tag, and push result.
+- No existing tag is deleted, rewritten, or moved.
 
-不允许：
-- 删 tag / 改 tag / 重新指向已存在 tag；
-- 推 GitHub Release 或任何分发渠道 release（仍由 zlbdh 决定）。
+Prohibited:
+- Delete, change, or retarget an existing tag.
+- Publish a GitHub Release or release through any distribution channel; zlbdh still decides these actions.
 
 ---
 
-## AI 端 git 实操示例（速记）
+## AI Git command quick reference
 
 ```powershell
 cd {{PROJECT_ROOT}}\{{APP_REPO_DIR}}
-git branch --show-current      # 必须是 main
-git remote get-url origin      # 必须是 zlbdh/{{APP_REPO_DIR}}
+git branch --show-current      # Must be main
+git remote get-url origin      # Must be zlbdh/{{APP_REPO_DIR}}
 git status --short
 git diff --stat
-# 确认交接卡或用户上下文已给 contextual 授权
-git add <本轮文件1> <本轮文件2>
-git commit -m "<type>(<scope>): <真实改动一句话>"
-git push                       # 失败立刻停，不重试
-git log -1 --oneline           # 记录 commit hash
-git status --short             # working tree clean
+# Confirm contextual authorization from the handoff or user instructions.
+git add <current-file-1> <current-file-2>
+git commit -m "<type>(<scope>): <truthful one-sentence change>"
+git push                       # On failure, stop immediately; do not retry.
+git log -1 --oneline           # Record the commit hash.
+git status --short             # Working tree clean.
 ```
 
 ---
 
-## 关联
+## Related references
 
-- [`操作系统/01_架构/角色边界.md`](../01_架构/角色边界.md) — A/B/C 三类边界详细规则
-- [`Docs/3-开发文档/adr/ADR-016-AI-git权限下放.md`](../../Docs/3-开发文档/adr/ADR-016-AI-git权限下放.md) — 本规则的决策记录
-- [`操作系统/07_完整工作流/实施循环-附录.md`](实施循环-附录.md) DoD 端能力对照表 — 哪个工具能跑 git
-- [`操作系统/03_交接/交接卡格式.md`](../03_交接/交接卡格式.md) — 交接卡 ⑤ 警戒段是 6 条件 ⑤ 复核点
+- [Role boundaries](../01_架构/角色边界.md) — detailed Class A/B/C rules.
+- [ADR-016](../../Docs/3-开发文档/adr/ADR-016-AI-git权限下放.md) — the decision behind this rule.
+- [Implementation appendix](实施循环-附录.md), DoD runtime capability table — which tools can operate Git.
+- [Handoff format](../03_交接/交接卡格式.md) — warning section ⑤ is the verification point for condition ⑤.

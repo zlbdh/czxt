@@ -43,17 +43,56 @@ function Test-CurrentTruthFile {
     return
   }
 
+  # Exact translations of required semantic anchors; all existing requirements remain mandatory.
+  $anchorAliases = @{
+    "ADR 永久档案" = "permanent ADR records"
+    "P1 已完成" = "P1 complete"
+    "P2 未完成" = "P2 incomplete"
+    "P1 complete" = "P1 已完成"
+    "P2 incomplete" = "P2 未完成"
+    "自托管首证" = "initial self-hosted evidence"
+    "项目实例真值" = "project instance source of truth"
+    "模板根不预设" = "template root does not prescribe"
+    "模板根导航" = "template root navigation"
+    "项目实例导航" = "project instance navigation"
+    "[填写]" = "[fill in]"
+    "协议层" = "protocol layer"
+    "模型层" = "model layer"
+    "迁移与兼容" = "migration and compatibility"
+    "定向当前真值检查" = "targeted current-truth checks"
+  }
   foreach ($term in $RequiredTerms) {
-    if ($text.IndexOf($term, [System.StringComparison]::OrdinalIgnoreCase) -lt 0) {
+    $hasTerm = $text.IndexOf($term, [System.StringComparison]::OrdinalIgnoreCase) -ge 0
+    $hasAlias = $anchorAliases.ContainsKey($term) -and
+      ($text.IndexOf($anchorAliases[$term], [System.StringComparison]::OrdinalIgnoreCase) -ge 0)
+    if (-not $hasTerm -and -not $hasAlias) {
       $failures.Add("$RelativePath 缺少「${Purpose}」锚点：$term")
     }
   }
 
+  # Translated stale assertions remain forbidden; localization must not bypass these gates.
+  $forbiddenAliases = @{
+    "准备进入长期产品化模板阶段" = "preparing to enter long-term template productization"
+    "再做首个受控提交" = "then make the first controlled commit"
+    "38 ADR 永久现行" = "38 permanently current ADRs"
+    "## P1 前验收" = "## Pre-P1 acceptance"
+    "Dexie schema 索引" = "Dexie schema index"
+    "APK 大小: 5.5 MB" = "APK size: 5.5 MB"
+    "Bundle 大小（v2.2" = "Bundle size (v2.2"
+    "### 4 个 AI 能力" = "### 4 AI capabilities"
+    "当前 schema 版本：v16" = "Current schema version: v16"
+    "19 张业务表 + meta" = "19 business tables + meta"
+    "小米自研 MiMo" = "Xiaomi's in-house MiMo"
+  }
   foreach ($term in $ForbiddenTerms) {
-    $idx = $text.IndexOf($term, [System.StringComparison]::OrdinalIgnoreCase)
-    if ($idx -lt 0) { continue }
-    $line = ($text.Substring(0, $idx) -split "`n").Count
-    $failures.Add("$RelativePath`:L$line 仍含来源项目或过期当前事实：$term；应改为项目实例占位、真源指针或显式阶段判定")
+    $variants = @($term)
+    if ($forbiddenAliases.ContainsKey($term)) { $variants += $forbiddenAliases[$term] }
+    foreach ($variant in $variants) {
+      $idx = $text.IndexOf($variant, [System.StringComparison]::OrdinalIgnoreCase)
+      if ($idx -lt 0) { continue }
+      $line = ($text.Substring(0, $idx) -split "`n").Count
+      $failures.Add("$RelativePath`:L$line 仍含来源项目或过期当前事实：$variant；应改为项目实例占位、真源指针或显式阶段判定")
+    }
   }
 }
 

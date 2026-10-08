@@ -3,109 +3,110 @@ name: decision-checkpoint-附录
 scope: project
 type: procedural
 loaded: on-demand
-description: decision-checkpoint 参考附录（失败处理案例 / DoD 整合 / 实战留痕示例 / 议题 AJ 关闭条件 / 关联）— 主文件按需跳转 / PROP-042 第 1 棒拆出
+description: Decision checkpoint reference appendix — failure cases, DoD integration, practical records, issue AJ closure conditions, and references; split out in PROP-042 handoff 1.
 ---
 
-# decision-checkpoint 附录（参考 / 案例 / 历史）
+# Decision Checkpoint Appendix — References, Examples, and History
 
-> 主文件：[`decision-checkpoint.md`](decision-checkpoint.md)（Q1-Q7 判定协议 + 路径白名单核心 + agent 实例化判定）
-> 本附录：参考性案例 + 历史条件 + 关联（按需读 / PROP-042 第 1 棒拆出 / 议题 AY）
-> 历史案例里的工具名只代表当时执行载体，不作现行权责主体。
-
----
-
-## 失败处理（议题 AJ 真实战）
-
-### 场景 1 — Q2 越界识别（议题 AJ 防御机制生效）
-
-```
-项目 PM 想做："anomalyDetector.js 9070B 拆 messages 文件"
-
-Q1: 性质是 framework 治理（refactor 不改业务）→ 切「操作系统 PM」帽子
-Q2: grep `操作系统/01_架构/角色边界.md` 路径白名单
-   → 操作系统 PM 路径白名单：操作系统/ + 能力资产/ + tools/ + 确认改动/ + Docs/3/ + 7/ + 项目根
-   → 即将改：{{APP_REPO_DIR}}/src/shared/anomalyDetector.js
-   → ❌ {{APP_REPO_DIR}}/** 不在白名单 → 跳 Q3
-Q3: 越界 → 切回项目 PM → 写交接卡给开发 PM「实施者」（执行载体：Claude Code）
-   → ✅ 防御机制生效，避免 PM 自纠 #41 重演
-```
-
-### 场景 2 — Q1 模糊（切错帽子风险）
-
-```
-项目 PM 想做："PROP-020 P0 实验文件 _pingtest.md 改名 archived"
-
-Q1: 文件在 .claude/agents/ → 不是 framework 内务（当时旧 5 PM 路径案例；现行按 9 PM 路径白名单 + 真实 agent 机制判断）
-   → 切回项目 PM 写交接卡给开发 PM「实施者」（执行载体：Claude Code）
-Q2: N/A（Q1 已识别本帽子不能做）
-Q3: 默认动作 = 写交接卡给开发 PM「实施者」（执行载体：Claude Code）
-
-→ ✅ 防御识别"看起来像内务实际属对应 PM 职责战场（工具仅作执行载体）"灰区
-```
-
-### 场景 3 — Q3 极少例外（紧急情况）
-
-```
-紧急情况：framework bug 导致项目 PM 切角色帽子时崩 → 阻塞所有工作
-
-Q1: 操作系统 PM
-Q2: 跳过（极少例外）
-Q3: 切操作系统 PM 帽子修 framework bug
-   → 同时 状态.md PM 角色切换轨迹明示「越界例外 — 紧急 framework 修复」
-   → 修完立刻补开 PROP 治理（议题 AJ 重审机制）
-```
+> Primary document: [decision-checkpoint.md](decision-checkpoint.md): Q1–Q7 protocol, core path allowlist, and agent instantiation.
+> This appendix contains reference examples, historical conditions, and related links. Read as needed; split out in PROP-042 handoff 1 / issue AY.
+> Tool names in historical examples identify the runtime used at that time; they do not define current responsibility or authority.
 
 ---
 
-## 跟实施循环 DoD 的整合
+## Failure handling: actual issue AJ cases
 
-[`实施循环.md`](实施循环.md) DoD 5 项扩展为 6 项：
+### Case 1: Q2 identifies a boundary violation — issue AJ defense works
 
-- [ ] **decision-checkpoint** Q1-Q7 跑过 ✅（PROP-020 P3' + ADR-038 Q7）
-- [ ] **代码** 按 PRD 实现，无 TODO 残留
-- [ ] **测试** vitest + esbuild + vite build 三层全过
-- [ ] **PRD** 状态「实施中」→「已完成」+ 需求历史加条目
-- [ ] **PROP 收档** 状态字段切「已完成」+ mv + README 计数更新
-- [ ] **跑两个对账 skill** 项目体检 + 状态推断 全过
+```text
+Project PM intends: "Split messages out of anomalyDetector.js, 9070B."
+
+Q1: Appears to be framework governance: refactor without changing business behavior → Operating System PM role.
+Q2: Search the path allowlist in 操作系统/01_架构/角色边界.md.
+   → Operating System PM allowlist: 操作系统/ + 能力资产/ + tools/ + 确认改动/ + Docs/3/ + 7/ + project root.
+   → Intended edit: {{APP_REPO_DIR}}/src/shared/anomalyDetector.js.
+   → ❌ {{APP_REPO_DIR}}/** is not allowlisted → proceed to Q3.
+Q3: Outside boundary → return to Project PM → write a handoff to Development PM "Implementer" (runtime: Claude Code).
+   → ✅ Defense works and prevents a repeat of PM self-correction #41.
+```
+
+### Case 2: Ambiguous Q1 — risk of selecting the wrong role
+
+```text
+Project PM intends: "Rename PROP-020 P0 experiment file _pingtest.md to archived."
+
+Q1: File is under .claude/agents/ → not framework maintenance in the then-current five-PM path example.
+    Current work follows the nine-PM path allowlist and actual agent mechanism.
+   → Return to Project PM and hand off to Development PM "Implementer" (runtime: Claude Code).
+Q2: N/A; Q1 already identified that this role cannot perform the work.
+Q3: Default action = hand off to Development PM "Implementer" (runtime: Claude Code).
+
+→ ✅ Defense identifies the gray area: work may look like internal maintenance but belong to another PM's responsibility; tools are only runtimes.
+```
+
+### Case 3: Rare Q3 exception — emergency
+
+```text
+Emergency: a framework bug crashes PM role switching and blocks all work.
+
+Q1: Operating System PM.
+Q2: Skipped as a rare exception.
+Q3: Take the Operating System PM role and repair the framework bug.
+   → At the same time, explicitly record "Boundary exception — emergency framework repair" in the PM transition log in 状态.md.
+   → Immediately after repair, open the governance PROP required by the issue AJ reassessment mechanism.
+```
 
 ---
 
-## 实战留痕（状态.md PM 角色切换轨迹）
+## Integration with the implementation-loop DoD
 
-每次跑 decision-checkpoint + 切角色 → 状态.md 加一行（PROP-020 §5 设计）：
+The [implementation loop](实施循环.md) DoD expanded from five to six items:
+
+- [ ] **Decision checkpoint** Q1–Q7 completed ✅: PROP-020 P3' + ADR-038 Q7.
+- [ ] **Code** implements the PRD with no remaining TODOs.
+- [ ] **Tests**: vitest, esbuild, and vite build all pass.
+- [ ] **PRD** moves from in progress to completed, with an entry in requirement history.
+- [ ] **PROP archival**: status changes to completed, file moves, and README counts are updated.
+- [ ] **Both reconciliation skills** pass: project health check and status inference.
+
+---
+
+## Practical records: PM transition log in 状态.md
+
+Each decision-checkpoint run and role transition adds one row to `状态.md`, as designed in PROP-020 §5:
 
 ```markdown
-## 🎩 PM 角色切换轨迹
+## 🎩 PM Role Transitions
 
-| 时间 | 从角色 | 到角色 | 任务 | decision-checkpoint 跑过？ | 完成回流 |
+| Time | From role | To role | Task | Decision checkpoint completed? | Completion feedback |
 |---|---|---|---|---|---|
-| 2026-05-14 12:15 | 项目 PM | 操作系统 PM | PROP-020 路径 D 加强版 v0 起稿 | ✅ | ✅ |
+| 2026-05-14 12:15 | Project PM | Operating System PM | Draft PROP-020 path D enhanced v0 | ✅ | ✅ |
 ```
 
-跨 session / 跨运行时 PM 自纠模式可见性 + RETRO-009 复盘素材。
+This makes PM self-correction patterns visible across sessions and runtimes and supplies evidence for RETRO-009.
 
-⭐ **PM 自纠 #76 教训**：Edit 状态.md 后必 grep `task #XXX` 真验证行号（不能只 grep 关键字 / bash mount cache 假象用 Read verify）。
-
----
-
-## 议题 AJ 关闭条件（PROP-020 §6 引用 / 已 ADR-023 收档）
-
-议题 AJ 关闭 = 4 子条件全过：
-
-1. ✅ 5 角色 md 落地（PROP-020 P1' 完成 2026-05-14 12:25）
-2. ✅ 角色边界规则升级（早期 AI边界.md 已并入 `操作系统/01_架构/角色边界.md`）
-3. ✅ 本 workflow 新建 + 实施循环.md 引用（PROP-020 P3' 完成）
-4. ✅ PM 至少 3 次实战未触发 #38/#41/#42 同模式（跨 Sprint 验证）
-
-→ 已 [ADR-023「议题 AJ PM 角色子类化 + decision-checkpoint」](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) 收档。
+⭐ **Lesson from PM self-correction #76**: after editing `状态.md`, search for `task #XXX` and verify its actual line number. A keyword match alone is insufficient; use Read to verify against misleading Bash mount-cache output.
 
 ---
 
-## 关联
+## Issue AJ closure conditions: PROP-020 §6, archived under ADR-023
 
-- [`../01_架构/角色边界.md`](../01_架构/角色边界.md) — 9 PM × 主-元-决策-实施四层路径白名单
-- [`../02_智能体/项目PM-咪咪.md`](../02_智能体/项目PM-咪咪.md) — 编排者（路由判断者 / 唯一对外身份 ADR-031）
-- [`../02_智能体/操作系统PM-框架管家.md`](../02_智能体/操作系统PM-框架管家.md) — 议题 AJ 核心角色
-- [`实施循环.md`](实施循环.md) — DoD 6 项含本 workflow
-- [`../01_架构/元规则池.md`](../01_架构/元规则池.md) — AJ(ADR-023) 永久化
-- [`ADR-023`](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) — 议题 AJ 的现行决策档案
+Issue AJ closes only when all four subconditions pass:
+
+1. ✅ Five role Markdown files implemented: PROP-020 P1' completed 2026-05-14 12:25.
+2. ✅ Role-boundary rules upgraded; the early AI-boundary document was merged into `操作系统/01_架构/角色边界.md`.
+3. ✅ This workflow created and referenced by the implementation loop: PROP-020 P3' complete.
+4. ✅ At least three real PM uses did not repeat the #38/#41/#42 pattern, verified across Sprints.
+
+Archived under [ADR-023: issue AJ PM role specialization and decision checkpoint](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md).
+
+---
+
+## Related references
+
+- [Role boundaries](../01_架构/角色边界.md) — nine PMs across lead, meta, decision, and implementation layers; path allowlists.
+- [Project PM](../02_智能体/项目PM-咪咪.md) — coordinator, routing decision maker, and sole external identity under ADR-031.
+- [Operating System PM](../02_智能体/操作系统PM-框架管家.md) — core issue AJ role.
+- [Implementation loop](实施循环.md) — six-item DoD includes this workflow.
+- [Meta-rule pool](../01_架构/元规则池.md) — permanent AJ rule, ADR-023.
+- [ADR-023](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) — current decision record for issue AJ.

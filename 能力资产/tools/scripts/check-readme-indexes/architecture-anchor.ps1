@@ -28,13 +28,13 @@ Assert-Contains "操作系统\01_架构\三类行为铁律.md" 'schema 表 / 字
 Assert-NotContains "操作系统\01_架构\三类行为铁律.md" '等 zlbdh 决策' "C 类不可 ask-pass"
 
 Assert-Contains "操作系统\01_架构\角色边界.md" ([regex]::Escape('{{APP_REPO_DIR}}') + '/\.env\.local') "env 路径精确化"
-Assert-Contains "操作系统\01_架构\角色边界.md" '常规版本 tag/push tag' "测试发布 PM tag owner"
-Assert-Contains "操作系统\01_架构\角色边界.md" '开发期本地自测=开发 PM' "开发期自测 owner"
-Assert-Contains "操作系统\01_架构\角色边界.md" '发布/ship gate 的 vitest 复核' "发布 gate 测试 owner"
+Assert-Contains "操作系统\01_架构\角色边界.md" '(?:常规版本 tag/push tag|ordinary version tags and tag pushes under ADR-016)' "测试发布 PM tag owner"
+Assert-Contains "操作系统\01_架构\角色边界.md" '(?:开发期本地自测=开发 PM|local development self-tests belong to the Development PM)' "开发期自测 owner"
+Assert-Contains "操作系统\01_架构\角色边界.md" '(?:发布/ship gate 的 vitest 复核|Release/ship-gate vitest verification)' "发布 gate 测试 owner"
 Assert-Contains "操作系统\01_架构\角色边界.md" '\.gitattributes' "测试发布 PM gitattributes 白名单"
-Assert-NotContains "操作系统\01_架构\角色边界.md" '用户明确裁决处理' "C 类不走单次裁决"
+Assert-NotContains "操作系统\01_架构\角色边界.md" '用户明确裁决处理|handled by a one-time explicit user decision' "C 类不走单次裁决"
 
-Assert-Contains "操作系统\00_总入口.md" '除项目 PM 主会话外，每个 PM' "总入口 agent 例外"
+Assert-Contains "操作系统\00_总入口.md" '(?:除项目 PM 主会话外，每个 PM|Except for the Project PM.s main session, each PM)' "总入口 agent 例外"
 Assert-Contains "操作系统\01_架构\子agent调度机制.md" '除项目 PM 主会话外，每个 PM' "子 agent 正文例外"
 Assert-Contains "操作系统\01_架构\子agent调度机制-附录.md" '除项目 PM 主会话外，每个 PM' "子 agent 附录例外"
 Assert-NotContains "操作系统\01_架构\演化哲学.md" 'Claude Code 等载体|Codex 等载体|只读 Docs/4-测试文档/' "演化哲学旧载体/窄读口径"

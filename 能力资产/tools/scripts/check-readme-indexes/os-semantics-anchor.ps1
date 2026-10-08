@@ -29,7 +29,7 @@ $layerFiles = @(
 )
 
 foreach ($rel in $layerFiles) {
-  Assert-NotContains $rel "主-元-子-子子|子子\s*(PM|2|层)" "9 PM 四层术语"
+  Assert-NotContains $rel "主-元-子-子子|子子\s*(PM|2|层)|lead-meta-child-grandchild|grandchild\s*(PM|2|layer)" "9 PM 四层术语"
 }
 
 foreach ($rel in @(
@@ -42,6 +42,8 @@ foreach ($rel in @(
 )) {
   if ($rel -in @("AGENTS.md", "README.md")) {
     Assert-Contains $rel "lead, meta, decision, and implementation" "Current nine-PM layer terminology"
+  } elseif ($rel -eq "操作系统\00_总入口.md") {
+    Assert-Contains $rel "主-元-决策-实施|lead, meta, decision, and implementation" "Current nine-PM layer terminology"
   } else {
     Assert-Contains $rel "主-元-决策-实施" "9 PM 四层现行术语"
   }

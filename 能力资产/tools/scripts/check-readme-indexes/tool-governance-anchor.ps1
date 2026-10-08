@@ -14,8 +14,8 @@ function Add-Failure {
 $osEntryPath = Join-Path $Root "操作系统\00_总入口.md"
 if (Test-Path -LiteralPath $osEntryPath) {
   $text = Get-Content -LiteralPath $osEntryPath -Raw -Encoding UTF8
-  $line = [regex]::Match($text, '(?m)^\| \[`06_工具治理/`\].*$')
-  if ($line.Success -and ($line.Value -match 'hooks') -and ($line.Value -match '体检')) {
+  $line = [regex]::Match($text, '(?m)^\| (?:\[`06_工具治理/`\]|\[Tool governance\]\(06_工具治理/\)).*$')
+  if ($line.Success -and ($line.Value -match 'hooks') -and ($line.Value -match '体检|health checks')) {
     Write-Host "  ✅ 00_总入口 06_工具治理 摘要包含 hooks + 体检"
   } else {
     Add-Failure "00_总入口 06_工具治理 摘要未覆盖 hooks + 体检"

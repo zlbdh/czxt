@@ -3,36 +3,33 @@ name: mcp-config-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 能力资产/mcp/ MCP/连接器能力索引；INSTALLED.md 为项目侧能力声明单一信息源
+description: Project MCP and connector capability index; INSTALLED.md is the single declaration source.
 ---
 
-# 能力资产/mcp/ — MCP / 连接器能力声明
+# MCP and Connector Capabilities
 
-## 这一组讲什么
+This group declares the project's Model Context Protocol (MCP), connector, and plugin capabilities and explains their uses.
 
-MCP（Model Context Protocol）/ 连接器 / plugin 的项目侧能力声明 + 用途说明。
+## Current status
 
-## 当前状态
+**Documented:** [INSTALLED.md](INSTALLED.md) is the single source for project capability declarations. Each Cowork, Codex, or Claude Code client manages its actual installations. This directory records required capabilities, historical use, and considerations when adding capabilities.
 
-✅ **已填实** — [`INSTALLED.md`](INSTALLED.md) 是项目 MCP / 连接器能力声明单一信息源。Cowork / Codex / Claude Code 的真实安装仍由各客户端管理，本目录只记录项目侧需要什么能力、历史用过什么能力、接入新能力时的注意事项。
+## Ongoing maintenance
 
-## 持续维护内容
+- Maintain the core, on-demand, and unused capability matrix in `INSTALLED.md`.
+- If an MCP integration can perform sensitive actions such as writing files, Git operations, or external sending, classify them under A/B/C in `操作系统/01_架构/三类行为铁律.md`. Ordinary commits and pushes are conditional Class B under ADR-016; force pushes, rebase, tag deletion, GitHub Releases, and similar actions remain Class C.
 
-- 继续维护 [`INSTALLED.md`](INSTALLED.md) 的核心 / 按需 / 未用能力矩阵。
-- 如出现 MCP 能执行敏感动作（写文件 / git / 外部发送），补到 `操作系统/01_架构/三类行为铁律.md` 的 A/B/C 分级边界；常规 commit / push 按 ADR-016 B 类，force push / rebase / 删 tag / GitHub Release 等仍按 C 类。
+## Update triggers
 
-## 何时更新（触发条件）
+Immediately update `INSTALLED.md` and, as needed, this index when:
 
-满足任一条 → 立刻更新 [`INSTALLED.md`](INSTALLED.md) 并视影响更新本索引：
+1. First adding an MCP integration, such as Slack, GitHub, or Linear.
+2. First encountering an MCP bug that affects development.
+3. MCP capabilities conflict with AI action boundaries: ordinary pushes are Class B; force pushes, rebase, deleting tags, and Releases are Class C.
+4. Different MCP configurations across sessions produce inconsistent results.
 
-- ✅ 第一次接入新 MCP（Slack / GitHub / Linear 等业务 MCP）
-- ✅ 第一次出现 MCP 相关 bug 影响开发流程
-- ✅ MCP 跟 AI 边界有冲突（如常规 git push 属 B 类，force push / rebase / 删 tag / Release 属 C 类）
-- ✅ 多个 session 用了不同 MCP 配置导致结果不一致
+Any trigger requires the server inventory, uses, and boundaries to be documented promptly.
 
-任何上面 4 条触发 → 立刻补 MCP 服务器清单 + 用途 + 边界。
+## Responsibility of this group
 
-## 跟其他分组的区别
-
-- **mcp/**：能力声明（项目需要哪些 MCP / 连接器 / plugin、何时用、是否需现场核验）
-- 其他分组：行为约定
+`mcp/` declares which MCPs, connectors, or plugins the project needs, when they are used, and whether availability must be checked in the current environment. Other groups define behavioral rules.

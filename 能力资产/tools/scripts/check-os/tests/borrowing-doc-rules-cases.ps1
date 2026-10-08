@@ -36,7 +36,18 @@ function Invoke-BorrowingDocRulesCases {
 
   Invoke-CzxtContract 'rules index lists borrowing governance exactly once' {
     $index = Get-BorrowingDocText $Root $indexRelative
-    Assert-BorrowingIndexLink $index '文件清单' '借鉴治理.md' '借鉴治理.md' 1
-    Assert-BorrowingDocMatchCount $index '\[借鉴治理\.md\]\(借鉴治理\.md\)' 1 'rules index total entry count'
+    $scan = Get-BorrowingMarkdownScan $index
+    $inventoryHeadings = @()
+    for ($line = 0; $line -lt $scan.Lines.Count; $line++) {
+      if (-not $scan.OutsideFence[$line]) { continue }
+      $heading = [regex]::Match($scan.Lines[$line],
+        '^[ ]{0,3}##[ \t]+(?<title>文件清单|Inventory)(?:[ \t]+#+)?[ \t]*$')
+      if ($heading.Success) { $inventoryHeadings += $heading.Groups['title'].Value }
+    }
+    Assert-CzxtEqual 1 $inventoryHeadings.Count 'rules index inventory section count'
+    $section = Get-BorrowingMarkdownSection $index $inventoryHeadings[0]
+    $linkPattern = '\[(?:借鉴治理\.md|Borrowing Governance)\]\(借鉴治理\.md\)'
+    Assert-BorrowingDocMatchCount $section $linkPattern 1 'rules inventory borrowing entry count'
+    Assert-BorrowingDocMatchCount $index $linkPattern 1 'rules index total entry count'
   }
 }

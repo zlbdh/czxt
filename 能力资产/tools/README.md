@@ -3,64 +3,86 @@ name: capability-tools-index
 scope: project
 type: procedural
 loaded: on-demand
-description: 能力资产/tools/ 工具治理索引 — 当前 App 模板构建参考 + 项目实例依赖真值模板（PROP-028）+ scripts/ 真可执行（task #109 合并）
+description: App-template build reference, instance dependency template, executable scripts, and hook entry points (PROP-028 / task 109).
 ---
 
-# 能力资产/tools · 工具治理
+# Tool Governance
 
-> 构建脚本声明（PROP-028 落地）+ **真可执行脚本 `scripts/`**（task #109 合并 / 议题 CM v3.2 / 2026-05-22）+ **hooks 入口**（PROP-038 Layer 4 v0 / 2026-06-13）
->
-> **口径边界**：`构建脚本.md` 是当前 App 模板参考；项目实例必须以项目卡、真实仓库脚本和 CI 配置为准。引用其中技术栈或命令不得自动扩大 [`角色边界.md`](../../操作系统/01_架构/角色边界.md) 的路径白名单。
+Build-script declarations were introduced under PROP-028; **executable `scripts/`** were consolidated in task #109 / issue CM v3.2 on May 22, 2026; **hook entry points** followed in PROP-038 Layer 4 v0 on June 13, 2026.
 
-## 结构
+**Boundary:** `构建脚本.md` is an app-template reference. Each instance follows its project card, actual repository scripts, and CI configuration. Referencing its technology or commands does not expand the [role path allowlists](../../操作系统/01_架构/角色边界.md).
 
-| 子项 | 类型 | 内容 |
+## Structure
+
+| Entry | Type | Contents |
 |---|---|---|
-| `构建脚本.md` | **声明文档** | 当前 App 模板的 npm scripts、APK 构建与 PM 分工参考；项目实例真值优先 |
-| `依赖矩阵.md` | **声明文档** | 从项目实例 manifest、lockfile 和仓库脚本回填依赖真值的模板 + 升级 / 新增依赖 SOP |
-| `scripts/` 🆕 | **真可执行** | 8 个公开入口脚本：`check-operating-system.ps1` / `check-winps-encoding.ps1` / `check-pm-tracking.ps1` / `check-readme-indexes.ps1` / `update-adr-readme.ps1` / `check-handoff-zone.ps1` / `check-pre-release.ps1` / `check-retro-cadence.ps1`；`scripts/check-os/` 是 `check-operating-system.ps1` 的内部 P4a-P4t 子检查/support helper，其中 P4t 负责只读离线的借鉴闭环一致性；`scripts/check-readme-indexes/` 是 README/INDEX 锚点内部 helper，并桥接 P4o/P4q/P4r 让 PostToolUse 与总健康能发现活跃 Markdown 断链、治理语义和 hooks 配置漂移，`scripts/check-handoff-zone/` 是交接区检查内部 helper，均不单独进 hooks manifest；hooks 真源见 `hooks/manifest.json` |
-| `hooks/` 🆕 | **触发器入口** | `manifest.json` + `run-hooks.ps1` + git/watch/scheduled wrapper；`tests/support/` 是 smoke 内部契约模块 |
+| `构建脚本.md` | Declaration | App-template npm scripts, APK builds, and PM responsibilities; the project instance source of truth takes priority. |
+| `依赖矩阵.md` | Declaration | Dependency inventory filled from actual manifests, lockfiles, and scripts; upgrade and installation procedures. |
+| `scripts/` | Executable | Eight public entry points listed below, with internal subchecks and helpers. |
+| `hooks/` | Triggers | `manifest.json`, `run-hooks.ps1`, Git/watch/scheduled wrappers; `tests/support/` holds internal smoke-test contracts. |
 
-## scripts/ 调用示例
+Public script entry points:
+
+- `check-operating-system.ps1`
+- `check-winps-encoding.ps1`
+- `check-pm-tracking.ps1`
+- `check-readme-indexes.ps1`
+- `update-adr-readme.ps1`
+- `check-handoff-zone.ps1`
+- `check-pre-release.ps1`
+- `check-retro-cadence.ps1`
+
+`scripts/check-os/` contains internal P4a-P4t subchecks and support helpers for the health-check entry point. P4t performs read-only, offline borrowing-cycle consistency checks.
+
+`scripts/check-readme-indexes/` contains internal README/INDEX helpers and bridges P4o/P4q/P4r so both PostToolUse and the complete health check detect broken links in active Markdown, governance semantics, and hook configuration drift. `scripts/check-handoff-zone/` contains internal handoff helpers. These helpers do not receive separate hook-manifest entries; `hooks/manifest.json` is authoritative.
+
+## Invocation examples
 
 ```powershell
-# 项目根跑
+# Run from the project root.
 powershell -File 能力资产/tools/scripts/check-operating-system.ps1
 powershell -File 能力资产/tools/scripts/check-pm-tracking.ps1
 powershell -File 能力资产/tools/hooks/run-hooks.ps1 -Trigger manual -Mode Check
 powershell -File 能力资产/tools/hooks/install-hooks.ps1 -Mode Check
 ```
 
-> ✍️ **写 PM 轨迹推荐用法**：`powershell -NoProfile -File 能力资产/tools/scripts/add-pm-track.ps1 -From "<从>" -To "<到>" -Task "<干了啥>"` —— 自动用 `Get-Date` 盖真实时间戳追加一行规范轨迹，避免手填时间戳出错（P4f 轨迹崩塌）。
+Recommended PM tracking command:
 
-> ⚠️ **合并来源**：原 `{{PROJECT_ROOT}}\tools/`（task #90-#92 新建）+ 本目录原声明文档（PROP-028 落地）→ task #109 合并到统一治理 / **PM 自纠 #75 教训**：新建顶级目录前必检查命名冲突
+```powershell
+powershell -NoProfile -File 能力资产/tools/scripts/add-pm-track.ps1 -From "<from-role>" -To "<to-role>" -Task "<work-performed>"
+```
 
-| 文件 | 内容 |
-|---|---|
-| [构建脚本.md](构建脚本.md) | 当前 App 模板的 npm scripts、APK 构建与 PM 分工参考；项目实例真值优先 |
-| [依赖矩阵.md](依赖矩阵.md) | 从项目实例 manifest、lockfile 和仓库脚本回填依赖真值的模板 + 升级 / 新增依赖 SOP |
-| [hooks/README.md](hooks/README.md) | 操作系统 hooks manifest / runner / wrapper 入口 |
+It appends a correctly formatted row with a real `Get-Date` timestamp, preventing manual timestamp errors that break P4f tracking.
 
-## 与 {{APP_REPO_DIR}}/ 真实工具的关系
+Consolidation history: the former `{{PROJECT_ROOT}}\tools/`, created in tasks #90–#92, and this directory's PROP-028 declarations were merged in task #109. PM self-correction #75 requires checking naming conflicts before creating a top-level directory.
 
-- **本目录**：声明式文档（说明工具用途 / 升级策略）
-- **{{APP_REPO_DIR}}/build-apk.bat / package.json**：真实工具
-- **{{APP_REPO_DIR}}/.env.local**：本机 AI 配置（gitignore；按 ADR-022 6 护栏属 B 类）；真实 API key 外传 / 写入 tracked 文件仍是 C 类
+## References
 
-## 维护
-- 新增 / 升级依赖时同步本目录
-- 新增 hooks 时同步 `hooks/manifest.json` + `hooks/README.md` + `操作系统/06_工具治理/hooks-设计.md` + `操作系统/06_工具治理/hooks-事件矩阵.md` / 附录 + `操作系统/07_完整工作流/hooks-运行SOP.md` / 附录
-- 责任：操作系统 PM + 接 PR 的角色
+- [Build Scripts](构建脚本.md): app-template build and role reference.
+- [Dependency Matrix](依赖矩阵.md): actual instance dependencies and upgrade procedures.
+- [Hooks](hooks/README.md): manifest, runner, and wrappers.
 
-## Windows PowerShell 5.1 编码门禁
+## Relationship to application tools
 
-从项目根执行：
+- This directory provides declarations about tool purpose and upgrade policy, alongside the executable framework scripts described above.
+- `{{APP_REPO_DIR}}/build-apk.bat` and `package.json` are actual application tools.
+- `{{APP_REPO_DIR}}/.env.local` is ignored local AI configuration, conditional Class B under ADR-022's six safeguards. Externally transmitting real API keys or writing them to tracked files remains Class C.
+
+## Maintenance
+
+- Synchronize this directory when adding or upgrading dependencies.
+- New hooks require updates to `hooks/manifest.json`, `hooks/README.md`, `操作系统/06_工具治理/hooks-设计.md`, the hook event matrix and appendix, and `操作系统/07_完整工作流/hooks-运行SOP.md` and appendix.
+- Operating System PM and the role receiving the PR share responsibility.
+
+## Windows PowerShell 5.1 encoding gate
+
+From the project root:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/scripts/check-winps-encoding.ps1 -Root $PWD
 ```
 
-- 检查范围：根 `实例化项目.ps1`（存在时）、`.claude/**/*.ps1`、`.codex/**/*.ps1`、`能力资产/**/*.ps1`；排除 `.git/`、`项目区/本地实例/` 与 `借鉴区/**/快照/`。
-- 编码策略：范围内脚本必须以 UTF-8 BOM（`EF BB BF`）开头，并能被当前 Windows PowerShell 5.1 解析器无错误解析。
-- 发现预览：追加 `-ListOnly` 时只输出稳定排序、去重后的相对路径，不检查 BOM 或语法，也不修改文件。
-- 退出码：全部通过为 `0`；Root 非法、发现/读取失败、缺少 BOM 或语法错误为 `10`。
+- Scope: root `实例化项目.ps1` if present, `.claude/**/*.ps1`, `.codex/**/*.ps1`, and `能力资产/**/*.ps1`. Excludes `.git/`, `项目区/本地实例/`, and `借鉴区/**/快照/`.
+- Every in-scope script must begin with UTF-8 BOM bytes `EF BB BF` and parse without errors in the current Windows PowerShell 5.1 parser.
+- `-ListOnly` lists stable, sorted, deduplicated relative paths without checking BOM/syntax or modifying files.
+- Exit code `0` means all checks pass. Invalid Root, discovery/read failures, missing BOM, or syntax errors return `10`.

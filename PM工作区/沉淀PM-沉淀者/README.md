@@ -4,60 +4,59 @@ scope: pm-workspace
 pm: 沉淀PM-沉淀者
 type: semantic
 loaded: on-demand
-description: 沉淀 PM「沉淀者」私人工作区入口（元-层 / 紧贴主 PM / ADR-027）
+description: "Knowledge PM \"Curator\" workspace entry point: meta layer, close collaboration with the lead PM, and ADR-027."
 ---
-# 🪞 沉淀 PM「沉淀者」· 私人工作区
 
-> ⭐ **元-层 PM 工作区**（task #104.5 / 2026-05-22 / PM 自纠 #65/#68/#71/#72）
-> **角色定义**：[`操作系统/02_智能体/沉淀PM-沉淀者.md`](../../操作系统/02_智能体/沉淀PM-沉淀者.md)
-> **元-层 PM**：紧贴主 PM「咪咪」/ 横跨项目全周期
+# 🪞 Knowledge PM "Curator": Private Workspace
 
-## 当前状态（v4.0 终态落地 / 已进入实战沉淀）
+> ⭐ **Meta-layer PM workspace**: task #104.5 / 2026-05-22 / PM self-corrections #65/#68/#71/#72.
+> **Role definition**: [Knowledge PM playbook](../../操作系统/02_智能体/沉淀PM-沉淀者.md).
+> **Meta-layer PM**: works closely with lead PM "Mimi" throughout the project lifecycle.
 
-- ✅ **已有基础沉淀**：`速查表/` 已开始承载议题 AJ 留痕、PM 自纠识别、元规则升级评估等 SOP。
-- 📋 **继续提炼**：
-  - 实战回顾（关键治理批次的沉淀 PM 主沉淀汇总）
-  - PM 自纠（沉淀机制本身的反思 / 元-元规则）
+## Current status: v4.0 final model implemented; lessons now accumulating
 
-## 6 大主职责（紧贴 §四 角色定义）
+- ✅ **Initial records exist**: `速查表/` contains SOPs for issue AJ tracking, identifying PM self-corrections, and evaluating meta-rule promotion.
+- 📋 **Continue developing**:
+  - Practice reviews: Knowledge PM summaries of important governance batches.
+  - PM self-corrections: reflection on the learning process itself and meta-meta-rules.
 
-详见 [`角色定义文件`](../../操作系统/02_智能体/沉淀PM-沉淀者.md) §二 职责矩阵：
+## Six main responsibilities: follow section 4 of the role definition
 
-1. 议题 AJ 留痕监控（每 30 分钟扫状态.md）
-2. PM 自纠累积识别（跨 Sprint 同模式扫描）
-3. 跨 Sprint RETRO 起稿
-4. 元规则池治理（`操作系统/01_架构/元规则池.md`）
-5. decision-checkpoint Q1-Q7 自检（含 agent 实例化判定）
-6. framework 体检 trigger
+See section 2, the responsibility matrix, in the [role definition](../../操作系统/02_智能体/沉淀PM-沉淀者.md):
 
-## 三层沉淀架构 — Layer 2 + Layer 3 主导
+1. Monitor issue AJ tracking; scan `状态.md` every 30 minutes.
+2. Identify recurring PM self-correction patterns across sprints.
+3. Draft cross-sprint RETROs.
+4. Govern the meta-rule pool at `操作系统/01_架构/元规则池.md`.
+5. Run decision-checkpoint Q1–Q7, including the agent-instantiation decision.
+6. Trigger framework health checks.
 
-- **Layer 1**：每 PM 私人沉淀（9 PM 自治）— 本 PM 只读不写
-- **Layer 2**：本 PM 主沉淀 — 跨 PM 协调（本目录主战场）
-- **Layer 3**：项目沉淀 — 项目全周期（`操作系统/04_台账/项目沉淀/`）
+## Three learning layers: leads Layers 2 and 3
 
-## 路径白名单
+- **Layer 1**: each of the nine PMs' private records; this PM may read but not write them.
+- **Layer 2**: this PM's cross-PM coordination and learning, primarily in this directory.
+- **Layer 3**: project-wide learning across the entire lifecycle, `操作系统/04_台账/项目沉淀/`.
 
-| 类别 | 路径 |
+## Path allowlist
+
+| Category | Path |
 |---|---|
-| 主战场 | 本目录全部 |
-| 元规则池 | `操作系统/01_架构/元规则池.md` |
-| 项目沉淀 | `操作系统/04_台账/项目沉淀/` |
-| 议题 backlog | `操作系统/04_台账/议题全景.md` |
-| 工具触发 | `能力资产/tools/scripts/check-*.ps1` |
-| Read 范围 | 全部 |
-| 禁区 | ❌ `{{APP_REPO_DIR}}/**` / ❌ 其他 PM 私人沉淀（PM 自纠 #59 跨界禁令）|
+| Primary responsibility | This entire directory |
+| Meta-rule pool | `操作系统/01_架构/元规则池.md` |
+| Project learning records | `操作系统/04_台账/项目沉淀/` |
+| Issue backlog | `操作系统/04_台账/议题全景.md` |
+| Tool triggers | `能力资产/tools/scripts/check-*.ps1` |
+| Read access | All files |
+| Prohibited | ❌ `{{APP_REPO_DIR}}/**` / ❌ Other PMs' private learning records, under self-correction #59 |
 
-## 速查表
+## Quick references
 
-PM 自纠累积到第 3 次同模式时必建速查表文件。当前 `速查表/` 已有基础条目，后续继续按实战补齐：
+Create a quick-reference file when the same PM self-correction pattern occurs a third time. Initial entries already exist in `速查表/`; continue expanding them through practice:
 
-- 议题 AJ 留痕监控 SOP（来源 PM 自纠 #57/#58/#62）
-- PM 自纠累积识别 SOP（来源 PROP-030 实战经验）
-- 元规则升级评估 SOP（来源 9 永久化 + 19 候选演化）
-- RETRO 起稿 SOP（来源 RETRO-009/010/011/012 模板）
+- Issue AJ tracking SOP, from PM self-corrections #57/#58/#62.
+- Recurring PM self-correction identification SOP, from PROP-030 practice.
+- Meta-rule promotion assessment SOP, informed by 9 permanent and 19 candidate rules.
+- RETRO drafting SOP, from RETRO-009/010/011/012 templates.
 
----
-
-📌 治理原则：本目录由**沉淀 PM 自己**维护；其他 PM 不得整理（PM 自纠 #59 铁律）
-📌 **元-层位置**：紧贴主 PM / 横跨项目全周期 / 不归子-子子实施层（PM 自纠 #72）
+📌 This directory is maintained by the **Knowledge PM**. Other PMs must not reorganize it: self-correction #59.
+📌 **Meta-layer position**: close to the lead PM, spanning the project lifecycle, outside the subordinate implementation layer; self-correction #72.

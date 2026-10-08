@@ -4,79 +4,81 @@ scope: pm-workspace
 pm: 项目PM-咪咪
 type: semantic
 loaded: on-demand
-description: 项目 PM「咪咪」私人工作区入口 — 速查表 + 自纠 + 实战回顾（主 PM / 唯一对外身份 / ADR-031）
+description: "Project PM \"Mimi\" workspace entry point: quick references, self-corrections, and practice reviews; lead PM and sole external identity under ADR-031."
 ---
-# 项目 PM「咪咪」· 元记忆中枢
 
-> ⭐ PROP-023 v1 落地（2026-05-15，议题 BE）— PM 自己的元记忆中枢，解决 framework 复杂度超 PM 单 chat 维护能力问题
-> ⭐ PROP-023 v2 路径调整（2026-05-21，议题 CM）— 从 `项目PM/` 迁到 `PM工作区/项目PM-咪咪/`，配套 PM 私人工作区同步建立（[`PM工作区/README.md`](../README.md)）
-> **核心铁律**：PM 切角色帽子前 / 写 handoff 卡前 / 起 PROP 前 — **先 grep 本文件夹**！
+# Project PM "Mimi": Meta-Memory Center
 
-## 起手 30 秒（切项目 PM 帽子 / 写 handoff、PROP、chat 前）
+> ⭐ PROP-023 v1, 2026-05-15 / issue BE: the PM's own meta-memory center addresses framework complexity exceeding what one conversation can manage.
+> ⭐ PROP-023 v2 path update, 2026-05-21 / issue CM: moved `项目PM/` to `PM工作区/项目PM-咪咪/`, alongside the other private PM workspaces; see the [workspace index](../README.md).
+> **Mandatory rule**: before switching PM roles, writing a handoff, or drafting a PROP, **search this directory first**.
 
-1. 新会话总入口仍按 [`操作系统/00_总入口.md`](../../操作系统/00_总入口.md)；本文件不是每次 session 的第一入口。
-2. 当任务涉及项目 PM 编排、handoff、PROP、chat 简版时，先扫 `速查表/` 查相关元规则（防 PM 自纠同模式）。
-3. 读 `状态.md` 看进度 + 待接手交接卡；PM 切换轨迹以 `状态.md` 末尾为单一留痕源。
-4. 写 handoff / PROP / chat 简版前 — 必跑 `速查表/` 防御检查。
+## Thirty-second startup before Project PM work, handoffs, PROPs, or chat summaries
 
-## 目录速查
+1. New sessions still begin with the [operating system entry point](../../操作系统/00_总入口.md). This file is not the first entry point for every session.
+2. For Project PM orchestration, handoffs, PROPs, or short chat handoffs, first search `速查表/` for relevant meta-rules to prevent repeated self-corrections.
+3. Read `状态.md` for progress and pending handoffs. The PM transition table at its end is the single tracking source.
+4. Run the defensive checks in `速查表/` before writing a handoff, PROP, or short chat handoff.
 
-| 子目录 | 装什么 | 何时读 |
+## Directory reference
+
+| Subdirectory | Contents | When to read |
 |---|---|---|
-| ⭐ [速查表/](速查表/) | 元规则陷阱档案 + 防御检查清单 | **写 handoff / PROP / chat 前必读** |
-| [实战回顾/](实战回顾/) | 每个 Sprint feature 完整时间线 + PM 自纠累积 | 起类似 feature 前查同模式 |
-| [PM自纠/](PM自纠/) | PM 自纠按类型 + 按日期 | 跨 Sprint 同模式识别 |
+| ⭐ [Quick references](速查表/) | Meta-rule pitfalls and defensive checklists | Required before handoffs, PROPs, or chat summaries |
+| [Practice reviews](实战回顾/) | Full sprint-feature timelines and accumulated self-corrections | Check matching patterns before starting a similar feature |
+| [PM self-corrections](PM自纠/) | Self-corrections by type and date | Recognize repeated patterns across sprints |
 
-## ⭐ 速查表清单（PM 切角色前 1 分钟核对）
+## Quick-reference checklist: review before switching roles
 
-| 文件 | 防御点 | PM 自纠来源 |
+| File | Protection | Source |
 |---|---|---|
-| [速查表/ADR-022决定5-4类角色铁律.md](速查表/ADR-022决定5-4类角色铁律.md) | 路径分判：framework / 业务代码 / 测试代码 / 闭环 | PM 自纠 #41/#42 |
-| [速查表/Capacitor版本核对.md](速查表/Capacitor版本核对.md) | 装新依赖前 Read package.json 确认主版本 | PM 自纠 #46 |
-| [速查表/plugin集成防御.md](速查表/plugin集成防御.md) | 必静态 import + NotificationChannel + cap sync | PM 自纠 #47 |
-| [速查表/chat简版去重检查.md](速查表/chat简版去重检查.md) | chat 输出最后扫一遍代码块去重 | PM 自纠 #48 |
-| [速查表/议题AT矩阵速查.md](速查表/议题AT矩阵速查.md) | web API 选型必查 `能力资产/rules/web-api-信源选型.md` | PM 自纠 #45 |
-| [速查表/PROP状态字段语义.md](速查表/PROP状态字段语义.md) | 代码完成 ≠ PROP 完成（需 Codex push） | PM 自纠 #44 |
-| [速查表/CHANGELOG-header规则.md](速查表/CHANGELOG-header规则.md) | 业务代码改动**不进** `操作系统/00_变更记录/CHANGELOG.md` | PM 自纠 #43 |
+| [ADR-022 decision 5: four role boundaries](速查表/ADR-022决定5-4类角色铁律.md) | Distinguish framework, application code, test code, and release verification by path | Self-corrections #41/#42 |
+| [Capacitor version verification](速查表/Capacitor版本核对.md) | Read package.json and confirm the major version before adding dependencies | #46 |
+| [Plugin integration safeguards](速查表/plugin集成防御.md) | Static import, NotificationChannel, and cap sync | #47 |
+| [Chat handoff deduplication](速查表/chat简版去重检查.md) | Check code blocks for duplicated output before sending | #48 |
+| [Issue AT matrix reference](速查表/议题AT矩阵速查.md) | Consult `能力资产/rules/web-api-信源选型.md` before selecting a Web API | #45 |
+| [PROP status semantics](速查表/PROP状态字段语义.md) | Code completion is not PROP completion; Codex must push | #44 |
+| [CHANGELOG header rule](速查表/CHANGELOG-header规则.md) | Application code changes do not belong in `操作系统/00_变更记录/CHANGELOG.md` | #43 |
 
-## ⭐ 实战回顾清单
+## Practice review inventory
 
-| 实战 | feature | 关键议题 | 文件 |
+| Case | Feature | Key issues | File |
 |---|---|---|---|
-| #1 | F-SYSCHECK-1（v3.5.8）| 议题 AJ 实战 #1 + 议题 G P0 + 议题 AT 永久化 | [实战回顾/实战-1-F-SYSCHECK-1.md](实战回顾/实战-1-F-SYSCHECK-1.md) |
-| #2 | F-ALARM-1（v3.5.9 ⏳）| 议题 AJ 实战 #2 + plugin 集成 bug + 跨时区 + 低电量 | [实战回顾/实战-2-F-ALARM-1.md](实战回顾/实战-2-F-ALARM-1.md) |
+| #1 | F-SYSCHECK-1, v3.5.8 | Issue AJ case #1, issue G P0, and issue AT made permanent | [F-SYSCHECK-1 review](实战回顾/实战-1-F-SYSCHECK-1.md) |
+| #2 | F-ALARM-1, v3.5.9 ⏳ | Issue AJ case #2, plugin integration bug, time zones, and low battery | [F-ALARM-1 review](实战回顾/实战-2-F-ALARM-1.md) |
 
-## 跟其他 framework 文件的关系
+## Relationship to other framework files
 
-| 角色 | 文件 | 区别 |
+| Role | File | Distinction |
 |---|---|---|
-| **职位定义** | `操作系统/02_智能体/项目PM-咪咪.md` 等 9 PM 角色 md | "项目经理这个职位干啥"（PROP-020 路径 D 落地） |
-| **元规则约束** | `能力资产/rules/*` + `操作系统/07_完整工作流/*` | "应该怎样 / 按什么顺序" |
-| **本文件夹 PM 工作中枢** | `PM工作区/项目PM-咪咪/` | "PM 实际记的事 + 自己踩过的坑" |
-| **项目全局起手记忆** | `操作系统/05_记忆/INDEX.md` | 用户偏好、行为反思、项目历史指针的当前入口 |
-| **项目快照** | `状态.md` | 当前进度 + 待接手 + 历史段 |
+| Role definition | Nine role documents such as `操作系统/02_智能体/项目PM-咪咪.md` | What the Project PM position does; PROP-020 path D |
+| Meta-rule constraints | `能力资产/rules/*` + `操作系统/07_完整工作流/*` | How work should be done and in what order |
+| This PM's work center | `PM工作区/项目PM-咪咪/` | What the PM actually records and the mistakes they have encountered |
+| Project-wide startup memory | `操作系统/05_记忆/INDEX.md` | Current entry point for preferences, behavioral reflections, and project-history pointers |
+| Project snapshot | `状态.md` | Current progress, pending handoffs, and history |
 
-→ 本文件夹是 **「PM 自己的工作笔记本」**（前 4 个是规则 / 身份 / 通用记忆 / 项目状态，本文件夹是 PM 工作产出）
+This directory is the PM's own working notebook. The other categories contain rules, identity, shared memory, and project status; this directory contains PM work products.
 
-## 维护规则
+## Maintenance rules
 
-- ⭐ **速查表/ 文件长度原则**：入口保持短、最多 1 屏优先；超过约 2KB 时先判断是否仍可快速扫读，再决定拆分。
-- ⭐ **实战回顾/ 命名约定**：`实战#N-feature名.md`（按议题 AJ 实战编号）
-- ⭐ **待决议 / backlog 命名约定**：如后续恢复本 PM 私有 backlog，再用 `议题XX-标题.md`（按字母编号）
-- 跨 Sprint 渐进迁移，不一次性大手术
+- **Quick-reference length**: keep entry points short, preferably one screen. Above approximately 2KB, first assess whether the file remains easy to scan, then decide whether to split it.
+- **Practice review names**: `实战#N-feature名.md`, using issue AJ's practice sequence number.
+- **Pending decision / backlog names**: if this PM's private backlog is restored, use `议题XX-标题.md`, with letter-based IDs.
+- Migrate gradually across sprints; avoid a single broad reorganization.
 
-## 议题 AR Q4.g 候选维度新增
+## Issue AR candidate dimension Q4.g
 
-PROP-020 路径 D `decision-checkpoint` Q4 规则校验扩展候选：
-- Q4.g — **写 handoff / PROP / chat 前必先 grep `PM工作区/项目PM-咪咪/速查表/`**（议题 BE 落地配套）
+Candidate extension to PROP-020 path D's decision-checkpoint Q4:
 
-待 RETRO-009 收官时议题 AR 升级 decision-checkpoint 时同步落地。
+- Q4.g: **search `PM工作区/项目PM-咪咪/速查表/` before any handoff, PROP, or chat summary**, supporting issue BE.
 
-## 关联
+Implement alongside the issue AR decision-checkpoint upgrade when RETRO-009 closes.
 
-- [ADR-029 PM 工作区元记忆中枢化](../../Docs/3-开发文档/adr/ADR-029-议题BE永久化-PM工作区元记忆中枢化.md)
-- [ADR-023 PM 角色子类化](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) — PM 角色身份定义
-- [操作系统/02_智能体/](../../操作系统/02_智能体/) — 9 PM 角色 md
-- [能力资产/rules/](../../能力资产/rules/) — 元规则
-- [decision-checkpoint.md](../../操作系统/07_完整工作流/decision-checkpoint.md) — Q4 扩展候选
-- [状态.md](../../状态.md) — 项目快照
+## Related
+
+- [ADR-029: PM workspace meta-memory centers](../../Docs/3-开发文档/adr/ADR-029-议题BE永久化-PM工作区元记忆中枢化.md).
+- [ADR-023: PM role specialization](../../Docs/3-开发文档/adr/ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md).
+- [Nine PM role documents](../../操作系统/02_智能体/).
+- [Meta-rules](../../能力资产/rules/).
+- [Decision checkpoint](../../操作系统/07_完整工作流/decision-checkpoint.md): proposed Q4 extension.
+- [Project snapshot](../../状态.md).

@@ -3,16 +3,16 @@ name: ops-pm-quick-index
 scope: template
 type: semantic
 loaded: on-demand
-description: 运营 PM 速查表占位 — 项目实例化后按需补充
+description: "Operations PM quick-reference placeholder. Add project-specific references after initialization."
 ---
 
-# 运营 PM 速查表
+# Operations PM Quick References
 
-模板根只保留入口，不预置具体项目的发布节奏、平台账号、品牌资料或内容草稿。
+The template root contains only this entry point. It does not prescribe any project's release cadence, platform accounts, brand materials, or content drafts.
 
-项目实例化后，可在项目自己的工作区补充：
+After initializing a project, add the following to its own workspace as needed:
 
-- 内容策略
-- 发布日历
-- 互动模板
-- 品牌与平台资料
+- Content strategy.
+- Publishing calendar.
+- Interaction templates.
+- Brand and platform information.

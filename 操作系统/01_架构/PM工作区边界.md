@@ -3,52 +3,52 @@ name: pm-workspace-boundaries
 scope: project
 type: semantic
 loaded: on-demand
-description: 9 PM 私人工作区边界 — 路径表 + 跨界禁令 + 05_记忆关系
+description: Nine private PM workspace boundaries — paths, cross-boundary prohibitions, and the relationship to project memory.
 ---
 
-# PM 工作区边界
+# PM Workspace Boundaries
 
-> 主入口见 [`角色边界.md`](角色边界.md)。本文件专管 9 PM 私人工作区，避免 framework 整理时误动别人的私人沉淀。
+> The main entry is [role boundaries](角色边界.md). This file governs the nine private PM workspaces so that framework maintenance does not disturb another PM's private knowledge.
 
-## 9 PM 私人工作区
+## Nine private PM workspaces
 
-| PM 子角色 | 私人工作区 | 说明 |
+| PM role | Private workspace | Contents |
 |---|---|---|
-| 项目 PM「咪咪」 | [`PM工作区/项目PM-咪咪/`](../../PM工作区/项目PM-咪咪/) | 速查表、实战回顾、PM 自纠、角色切换轨迹 |
-| 操作系统 PM「框架管家」 | [`PM工作区/操作系统PM-框架管家/`](../../PM工作区/操作系统PM-框架管家/) | framework 治理沉淀 |
-| 产品 PM「需求拆解者」 | [`PM工作区/产品PM-需求拆解者/`](../../PM工作区/产品PM-需求拆解者/) | PRD 与需求拆解沉淀 |
-| 技术 PM「修复决策者」 | [`PM工作区/技术PM-修复决策者/`](../../PM工作区/技术PM-修复决策者/) | 技术诊断沉淀 |
-| 测试 PM「质量门户」 | [`PM工作区/测试PM-质量门户/`](../../PM工作区/测试PM-质量门户/) | 验收策略沉淀 |
-| 运营 PM「运营咪咪」 | [`PM工作区/运营PM-运营咪咪/`](../../PM工作区/运营PM-运营咪咪/) | GTM 与运营内容 |
-| 沉淀 PM「沉淀者」 | [`PM工作区/沉淀PM-沉淀者/`](../../PM工作区/沉淀PM-沉淀者/) | 跨 PM 沉淀与元规则治理 |
-| 开发 PM「实施者」 | [`PM工作区/开发PM-实施者/`](../../PM工作区/开发PM-实施者/) | 开发侧速查和实战沉淀 |
-| 测试发布 PM「闭环者」 | [`PM工作区/测试发布PM-闭环者/`](../../PM工作区/测试发布PM-闭环者/) | 发布闭环与 smoke 经验 |
+| Project PM “Mimi” | [Project PM workspace](../../PM工作区/项目PM-咪咪/) | Quick references, field reviews, PM self-corrections, and role transition records |
+| Operating System PM “Framework Steward” | [Operating System PM workspace](../../PM工作区/操作系统PM-框架管家/) | Framework governance knowledge |
+| Product PM “Requirements Analyst” | [Product PM workspace](../../PM工作区/产品PM-需求拆解者/) | PRD and requirements analysis knowledge |
+| Technical PM “Fix Strategist” | [Technical PM workspace](../../PM工作区/技术PM-修复决策者/) | Technical diagnosis knowledge |
+| Test PM “Quality Gate” | [Test PM workspace](../../PM工作区/测试PM-质量门户/) | Acceptance strategy knowledge |
+| Operations PM “Operations Mimi” | [Operations PM workspace](../../PM工作区/运营PM-运营咪咪/) | GTM and operations content |
+| Knowledge PM “Curator” | [Knowledge PM workspace](../../PM工作区/沉淀PM-沉淀者/) | Cross-PM knowledge and meta-rule governance |
+| Development PM “Implementer” | [Development PM workspace](../../PM工作区/开发PM-实施者/) | Development quick references and field knowledge |
+| Test and Release PM “Closer” | [Test and Release PM workspace](../../PM工作区/测试发布PM-闭环者/) | Release completion and smoke-test experience |
 
-## 跨界禁令
+## Cross-boundary prohibitions
 
-1. 任一 PM 不得整理、移动、重命名、合并其他 PM 的私人工作区。
-2. 不得以“framework 一致性”为理由压过 PM 角色边界。
-3. 跨 PM 私人目录改动走 PROP 或该 PM 自决，不由动手 PM 单方面执行。
-4. 项目 PM 可以调度对应 PM 整理自己的目录，但不直接替它 mv。
+1. No PM may organize, move, rename, or merge another PM's private workspace.
+2. “Framework consistency” must not override PM role boundaries.
+3. Changes across private PM directories require a PROP or that PM's own decision; the acting PM must not execute them unilaterally.
+4. The Project PM may ask the responsible PM to organize its own directory, but must not move it directly on that PM's behalf.
 
-## `05_记忆` 的关系
+## Relationship to `05_记忆`
 
-`操作系统/05_记忆/INDEX.md` 是项目全局起手元记忆：用户偏好、项目历史指针、跨 PM 共享事实。它不是某个 PM 的私人工作区。
+`操作系统/05_记忆/INDEX.md` is project-wide startup meta-memory: user preferences, project history pointers, and shared cross-PM facts. It is not an individual PM's private workspace.
 
-每个 PM 都可读 `05_记忆`，治理归操作系统 PM「框架管家」。
+Every PM may read `05_记忆`; Operating System PM “Framework Steward” owns its governance.
 
-## 触发场景
+## Trigger scenarios
 
-| 场景 | 行为 |
+| Scenario | Required action |
 |---|---|
-| framework 整理时发现某 PM 私人目录“看起来该归类” | 停手，写 PROP 或交给该 PM |
-| 运营内容需要沉淀 | 写入运营 PM 工作区，不挪到操作系统 |
-| 元规则需要跨 PM 固化 | 沉淀 PM 起草，操作系统 PM 协助落 framework，项目 PM 验收 |
-| 私人工作区断链或 README 漂移 | 可提交修复建议；涉及重排结构仍需对应 PM 裁决 |
+| During framework maintenance, a PM's private directory appears to need reorganization | Stop; write a PROP or refer it to that PM |
+| Operations content needs to be retained | Write it in the Operations PM workspace; do not move it into the operating system |
+| A meta-rule needs cross-PM formalization | Knowledge PM drafts; Operating System PM assists with framework implementation; Project PM accepts |
+| A private workspace has broken links or README drift | A repair proposal may be submitted; structural reorganization still requires the responsible PM's decision |
 
-## 关联
+## Related references
 
-- [`角色边界.md`](角色边界.md) — 路径白名单主入口
-- [`角色边界-协作附录.md`](角色边界-协作附录.md) — 对外身份和反例
-- [`../02_智能体/`](../02_智能体/) — 9 PM playbook
-- [`../../PM工作区/README.md`](../../PM工作区/README.md) — PM 工作区入口
+- [Role boundaries](角色边界.md) — main path allowlist.
+- [Collaboration appendix](角色边界-协作附录.md) — external identity and counterexamples.
+- [Agents](../02_智能体/) — nine PM playbooks.
+- [PM workspace index](../../PM工作区/README.md) — workspace entry point.

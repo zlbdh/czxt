@@ -3,15 +3,15 @@ name: ops-pm-workspace
 scope: template
 type: semantic
 loaded: on-demand
-description: 运营 PM 工作区占位 — 模板根不携带具体项目运营资料
+description: "Operations PM workspace placeholder. The template root does not include project-specific operations materials."
 ---
 
-# 运营 PM「运营咪咪」工作区
+# Operations PM "Operations Mimi" Workspace
 
-这里保留运营 PM 的工作区骨架，但模板仓库不默认携带具体项目的发布计划、品牌资料、内容草稿、素材图片或平台资料。
+This is the Operations PM's workspace scaffold. The template repository does not include any particular project's release plans, brand materials, content drafts, images, or platform information by default.
 
-## 使用规则
+## Usage rules
 
-- 新项目实例化后，可在项目自己的工作区补充运营资料。
-- 进入公共模板的运营样例必须先脱敏，避免出现具体项目名、包名、域名、平台账号、素材图和发布计划。
-- 若只是本机试用材料，放到 `项目区/本地实例/<项目>/`，不要提交到模板仓库。
+- After initializing a project, add operations materials in that project's own workspace as needed.
+- Redact any operations examples before adding them to the public template. Avoid concrete project names, package names, domains, platform accounts, images, and release plans.
+- Keep local trial materials in `项目区/本地实例/<project>/`; do not commit them to the template repository.

@@ -1,20 +1,18 @@
-# Sprint 1 技术拆解
+# Sprint 1 Technical Breakdown
 
-📌 这份文档是 PM→Dev 的交接产物，含技术细节、文件清单、估算、风险。
-对应业务 PRD：`Docs/1-需求文档/Sprint-1需求清单.md`。
+This PM-to-Development handoff contains technical details, file lists, estimates, and risks. The corresponding business PRD is `Docs/1-需求文档/Sprint-1需求清单.md`.
 
----
+## F-205: ErrorBoundary for graceful failure ⭐ P0
 
-## F-205 · ErrorBoundary 不崩降级 ⭐ P0
+**Level**: L3, a new feature spanning multiple files and requiring the full three-part process.
+**Business PRD**: F-205 in `Docs/1-需求文档/Sprint-1需求清单.md`.
+**Status**: Completed on 2026-05-08, verified on Windows and with device smoke tests.
 
-**等级**：L3（新功能 / 跨多文件 / 走完整三件套）
-**业务 PRD**：`Docs/1-需求文档/Sprint-1需求清单.md` F-205 段
-**状态**：已完成（2026-05-08，Windows + 真机 smoke 已验证）
+### Data layer
 
-### 数据层
+- Reuse the existing `db.deviceEvents` table. **No schema change**, which makes this L3 rather than L4.
+- New event type:
 
-- 复用现有 `db.deviceEvents` 表，**无 schema 变化**（所以是 L3 不是 L4）
-- 新事件类型：
   ```js
   {
     type: 'error',
@@ -32,26 +30,28 @@
     createdAt: ISO,
   }
   ```
-- useAppData actions 复用现有 `addRecord('deviceEvents', {...})`
 
-### UI 层
+- Reuse the existing useAppData action `addRecord('deviceEvents', {...})`.
 
-#### 新组件：`src/shared/ErrorBoundary.jsx`
+### UI layer
 
-- **必须是 class component**（React hooks 不支持 `componentDidCatch`）
-- props：
-  - `children`
-  - `tabName`：用于错误日志区分哪个 tab 崩
-  - `onError(payload)`：可选，用于写入 deviceEvents
-- fallback UI：
-  - 米白卡片，居中
-  - 文案：「咪咪打了个嗝 🫧 切到其他 tab 试试？」
-  - 按钮「返回首页」（清错误 state 让 Home 重新挂载）
-  - 隐藏区域显示 message + stack（开发用，UI 上折叠）
+#### New component: `src/shared/ErrorBoundary.jsx`
 
-#### 集成：`src/app/AppShell.jsx`
+- **Must be a class component**; React hooks do not support `componentDidCatch`.
+- Props:
+  - `children`.
+  - `tabName`, identifying the failed tab in error logs.
+  - Optional `onError(payload)`, for writing deviceEvents.
+- Fallback UI:
+  - Centered off-white card.
+  - Message: “Mimi had a hiccup 🫧 Try another tab?”
+  - “Return Home” button, clearing error state and remounting Home.
+  - A collapsed developer section showing message + stack.
 
-每个 Route 用 ErrorBoundary 包：
+#### Integration: `src/app/AppShell.jsx`
+
+Wrap every Route in an ErrorBoundary:
+
 ```jsx
 <Route path="/" element={
   <ErrorBoundary tabName="home" onError={logError}>
@@ -60,104 +60,102 @@
 } />
 ```
 
-`logError` 从 `store.actions.addRecord('deviceEvents', { type: 'error', payload })` 来。
+`logError` uses `store.actions.addRecord('deviceEvents', { type: 'error', payload })`.
 
-#### Profile 页（`src/features/profile/Profile.jsx`）
+#### Profile: `src/features/profile/Profile.jsx`
 
-新增 Card「最近的小问题」：
-- 位置：在「设备扩展」Card 下方
-- 显示：取 `data.deviceEvents.filter(e => e.type === 'error').slice(0, 5)`
-- 每条：日期 / tab 名 / message 简短
-- 空状态：「最近一切顺利 🌿」
-- 不暴露 stack（折叠 / 不显示），避免吓到 zlbdh
+Add a “Recent Issues” card:
 
-### 文件清单
+- Place it below the Device Extensions card.
+- Display `data.deviceEvents.filter(e => e.type === 'error').slice(0, 5)`.
+- Each entry shows the date, tab name, and a short message.
+- Empty state: “Everything has been running smoothly 🌿”.
+- Keep the stack hidden or collapsed to avoid alarming zlbdh.
 
+### Files
+
+```text
++ src/shared/ErrorBoundary.jsx          New, approximately 70 lines
++ src/shared/ErrorBoundary.test.js      New, approximately 30 lines
+M src/app/AppShell.jsx                  +10 lines: import, five Route wrappers, logError closure
+M src/features/profile/Profile.jsx      +20 lines: new card for the five most recent errors
 ```
-+ src/shared/ErrorBoundary.jsx          新增 ~70 行
-+ src/shared/ErrorBoundary.test.js      新增 ~30 行
-M src/app/AppShell.jsx                  +10 行（import + 5 Route 包裹 + logError 闭包）
-M src/features/profile/Profile.jsx      +20 行（新 Card 渲染最近 5 条 error）
-```
 
-不动数据库 schema，不动 useAppData，不动 useAppData.js 的 actions。
+Do not change the database schema, useAppData, or the actions in useAppData.js.
 
-### 估算
+### Estimate
 
-| 维度 | 估值 |
+| Dimension | Estimate |
 |---|---|
-| 工作量 | **M（半天）** |
-| 影响文件 | 4 |
-| 改 schema | 否 |
-| 跨 feature | 否（component-only + 一个集成点 + 一个 UI 入口） |
+| Effort | M, half a day |
+| Affected files | 4 |
+| Schema change | No |
+| Cross-feature change | No: components, one integration point, and one UI entry point |
 
-### 风险
+### Risks
 
-| 风险 | 缓解 |
+| Risk | Mitigation |
 |---|---|
-| class component 在 Vite Fast Refresh 下行为异常 | 加 `// @refresh reset` 顶部，或忽略（class 不参与 HMR） |
-| `componentDidCatch` 里调 `actions.addRecord` 是异步的，会丢错误 | 用 `setTimeout(() => actions.addRecord(...), 0)` 解耦渲染 |
-| 子组件 reset 后还会循环报错 | 给 fallback「返回首页」按钮一个 key 重置 + Hash navigate to /，强制 unmount |
-| ErrorBoundary 自己崩 | 不可能，但 fallback UI 用最简单 div + style，不依赖 Card 等可能崩的组件 |
+| Class component behaves unexpectedly with Vite Fast Refresh | Add `// @refresh reset` at the top, or ignore because classes do not participate in HMR |
+| Async `actions.addRecord` in `componentDidCatch` loses the error | Decouple from rendering with `setTimeout(() => actions.addRecord(...), 0)` |
+| Child continues failing after reset | Reset with a key on the fallback Return Home action and Hash navigation to /, forcing unmount |
+| ErrorBoundary itself fails | The original plan considered this impossible; keep the fallback to basic div + style and avoid components such as Card that could fail |
 
-### 测试覆盖（vitest）
+### Test coverage: vitest
 
-- `src/shared/ErrorBoundary.test.js`：
-  - 正常子组件 → 渲染 children ✓
-  - 子组件 throw → 渲染 fallback ✓
-  - 子组件 throw → 调用 `onError` prop ✓
-  - 点「返回首页」→ state 重置 ✓
+`src/shared/ErrorBoundary.test.js`:
 
-### 验收
+- Normal child → renders children ✓.
+- Throwing child → renders fallback ✓.
+- Throwing child → calls `onError` ✓.
+- Return Home click → resets state ✓.
 
-复用业务 PRD（`Docs/1-需求文档/Sprint-1需求清单.md` 的 F-205 验收清单 5 条）。
+### Acceptance
 
----
+Reuse the five F-205 acceptance criteria in `Docs/1-需求文档/Sprint-1需求清单.md`.
 
-(后续 F-203 / F-001 / F-006 / F-002 / F-003 / F-LAYOUT-1 / F-LAYOUT-2 技术拆解
-开工时再加进来。这份文档随 Sprint 推进逐步填充。)
+Add later technical breakdowns for F-203 / F-001 / F-006 / F-002 / F-003 / F-LAYOUT-1 / F-LAYOUT-2 when work starts. This document grows with the sprint.
 
+## SPLIT-001: Split large files, PROP-001 B3 implementation
 
----
+**Proposal**: `确认改动/已审批/PROP-001-2026-05-08-拆分大文件.md`.
+**Level**: L3, multiple files with no schema or architecture change.
+**Approach**: B3, split all five files in stages, selected by zlbdh on 2026-05-08.
 
-## SPLIT-001 · 拆分大文件（PROP-001 B3 实施）
+### Scope: five source files at least 8KB
 
-**对应 PROPOSAL**：`确认改动/已审批/PROP-001-2026-05-08-拆分大文件.md`
-**等级**：L3（多文件 + 不动 schema/架构）
-**方案**：B3 全拆（zlbdh 2026-05-08 选定），分阶段
+- `{{APP_REPO_DIR}}/src/shared/components.jsx`: 12137B.
+- `{{APP_REPO_DIR}}/src/features/home/Home.jsx`: 13208B.
+- `{{APP_REPO_DIR}}/src/features/timeline/Timeline.jsx`: 9594B.
+- `{{APP_REPO_DIR}}/src/features/health/Health.jsx`: 9133B.
+- `{{APP_REPO_DIR}}/src/features/profile/Profile.jsx`: 8579B.
 
-### 范围（5 个 ≥ 8KB 源文件）
-- `{{APP_REPO_DIR}}/src/shared/components.jsx` (12137B)
-- `{{APP_REPO_DIR}}/src/features/home/Home.jsx` (13208B)
-- `{{APP_REPO_DIR}}/src/features/timeline/Timeline.jsx` (9594B)
-- `{{APP_REPO_DIR}}/src/features/health/Health.jsx` (9133B)
-- `{{APP_REPO_DIR}}/src/features/profile/Profile.jsx` (8579B)
+### Stage 1: components.jsx split into six files, completed
 
-### 阶段 1：components.jsx 拆 6 文件（已完成）
-
-| 新文件 | 含组件 | 预估大小 | imports |
+| New file | Components | Estimated size | Imports |
 |---|---|---:|---|
-| `components.jsx` (核心) | Card / PageHeader / SectionTitle / EmptyState | ~1.9KB | C |
+| `components.jsx`, core | Card / PageHeader / SectionTitle / EmptyState | ~1.9KB | C |
 | `buttons.jsx` | PillButton / PrimaryButton / GhostButton | ~1.1KB | C |
 | `inputs.jsx` | TextInput / TextArea | ~0.6KB | C |
 | `stats.jsx` | StatRow / Stat | ~1.3KB | C |
-| `MonthCalendar.jsx` | MonthCalendar + 内部 helpers | ~3.8KB | useMemo, useState, ChevronLeft/Right, C |
+| `MonthCalendar.jsx` | MonthCalendar and internal helpers | ~3.8KB | useMemo, useState, ChevronLeft/Right, C |
 | `TaskDetailModal.jsx` | TaskDetailModal | ~2.7KB | useEffect, X, C |
 
-### import 影响范围
+### Import impact
 
-所有 `features/*` 文件里 `from '../shared/components.jsx'` 需要按用到的组件细分。
-- 5 个 features 文件 + 可能 AppShell.jsx
-- TaskDetailModal 只用在 Home
-- MonthCalendar 用在 Health/Timeline/Profile
+Update `from '../shared/components.jsx'` in all `features/*` files according to the components used:
 
-### 验证
+- Five feature files and possibly AppShell.jsx.
+- TaskDetailModal is used only in Home.
+- MonthCalendar is used in Health / Timeline / Profile.
 
-- 沙箱：括号平衡 + import 路径解析 + 各文件大小 < 6KB
-- Windows：`npm test`（33 tests 全过）+ `npm run build`（0 error）
+### Verification
 
-### 阶段 2-6
+- Sandbox: balanced brackets, import path resolution, and each file below 6KB.
+- Windows: `npm test`, all 33 tests pass; `npm run build`, 0 errors.
 
-已完成：Home.jsx → Timeline → Health → Profile → Accounting.jsx。每阶段拆分后独立做静态检查，最终统一跑 `npm test` 和 `npm run build`。
+### Stages 2–6
 
-最终状态：`{{APP_REPO_DIR}}/src/` 下暂无 ≥6500B 源码文件，最大文件约 6.3KB。
+Completed in order: Home.jsx → Timeline → Health → Profile → Accounting.jsx. Run independent static checks after each split, then a combined `npm test` and `npm run build`.
+
+Final status recorded here: no source file under `{{APP_REPO_DIR}}/src/` is at least 6500B; the largest is approximately 6.3KB.

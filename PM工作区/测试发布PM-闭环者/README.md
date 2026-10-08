@@ -4,55 +4,54 @@ scope: pm-workspace
 pm: 测试发布PM-闭环者
 type: semantic
 loaded: on-demand
-description: 测试发布 PM「闭环者」私人工作区入口（子子层 / 主验证 PM / Codex 载体 / ADR-016 6 条件）
+description: "Test and Release PM \"Closer\" workspace entry point: verification layer, lead verification PM, Codex execution environment, and six ADR-016 conditions."
 ---
-# ✅ 测试发布 PM「闭环者」· 私人工作区
 
-> ⭐ **子子 PM 验证层 + 主验证 PM 工作区**（task #104.5 / 2026-05-22 / PM 自纠 #64/#65/#70）
-> **角色定义**：[`操作系统/02_智能体/测试发布PM-闭环者.md`](../../操作系统/02_智能体/测试发布PM-闭环者.md)
-> **当前载体**：Codex（可换 GitHub Actions / Jenkins / 其他 CI/CD 闭环工具）
+# ✅ Test and Release PM "Closer": Private Workspace
 
-## 当前状态（v4.0 终态落地 / 已进入发布闭环实战）
+> ⭐ **Verification-layer and lead verification PM workspace**: task #104.5 / 2026-05-22 / PM self-corrections #64/#65/#70.
+> **Role definition**: [Test and Release PM playbook](../../操作系统/02_智能体/测试发布PM-闭环者.md).
+> **Current execution environment**: Codex; replaceable by GitHub Actions, Jenkins, or another CI/CD verification tool.
 
-- ✅ **已有实战**：v3.48-v3.52 系列发布元数据、hooks、PM 轨迹与交接闭环已由测试发布 PM 多轮承接。
-- 📋 **继续提炼**：
-  - 速查表（ADR-016 6 条件 SOP / 议题 BG BOM 防御 / 议题 BK mount stale 只读核验 / 议题 BF 版本号决策）
-  - 实战回顾（近期 v3.48-v3.52 闭环教训）
-  - PM 自纠（闭环验证错向）
+## Current status: v4.0 final model implemented; release verification in practice
 
-## 双层验证架构 — Layer 2 主验证 PM（PM 自纠 #70）
+- ✅ **Practical experience**: this PM has completed multiple rounds of release metadata, hooks, PM tracking, and handoff verification for v3.48–v3.52.
+- 📋 **Continue developing**:
+  - Quick references: ADR-016's six conditions, issue BG BOM defense, issue BK read-only mount-stale verification, and issue BF version decisions.
+  - Practice reviews: recent v3.48–v3.52 release lessons.
+  - PM self-corrections: verification mistakes.
 
-- **Layer 1**：每 PM 私人验证维度（9 PM 自治）— 本 PM 协调
-- **Layer 2**：本 PM 主验证 — 业务端到端 + 跨 PM 协调
+## Two verification layers: Layer 2 lead verification PM, self-correction #70
 
-## ADR-016 B 类 6 条件铁律
+- **Layer 1**: each PM's private verification scope; nine autonomous PMs, coordinated by this PM.
+- **Layer 2**: this PM leads end-to-end application verification and cross-PM coordination.
 
-1. 仅 `{{APP_REPO_DIR}}/` 主仓 main 分支
-2. commit msg 真实（基于 working tree 实际改动）
-3. 不 force / 不 rebase / 不 rewrite history
-4. push 失败立刻停手不重试
-5. 交接卡明示 commit hash + push 结果
-6. contextual 授权（zlbdh 明确要求 或 上一棒交接卡含「下一棒可 push」）
+## Six mandatory Class B conditions from ADR-016
 
-## 路径白名单
+1. Only the main branch of the primary `{{APP_REPO_DIR}}/` repository.
+2. A truthful commit message based on actual working-tree changes.
+3. No force, rebase, or history rewrite.
+4. Stop immediately after a failed push; do not retry.
+5. State the commit hash and push result in the handoff card.
+6. Contextual authorization: zlbdh explicitly requested the action, or the preceding handoff authorizes the next role to push.
 
-| 类别 | 路径 |
+## Path allowlist
+
+| Category | Path |
 |---|---|
-| 主战场 | bump version + build APK + vitest + 真机 smoke + git commit/push |
-| 配置 | `{{APP_REPO_DIR}}/package.json` version 字段 / `{{APP_REPO_DIR}}/.gitattributes` / `{{APP_REPO_DIR}}/apk/` |
-| 私人沉淀 | 本目录全部 |
-| Read 范围 | 全部 |
-| 禁区 | ❌ framework / ❌ 业务逻辑改 / ❌ force push / ❌ rewrite history |
+| Primary responsibility | Version increments, APK builds, vitest, device smoke tests, and Git commit/push |
+| Configuration | The version field in `{{APP_REPO_DIR}}/package.json`, `{{APP_REPO_DIR}}/.gitattributes`, and `{{APP_REPO_DIR}}/apk/` |
+| Private learning records | This entire directory |
+| Read access | All files |
+| Prohibited | ❌ Framework changes / ❌ Business logic changes / ❌ Force push / ❌ History rewrite |
 
-## 速查表（待提炼）
+## Quick references to develop
 
-- ADR-016 6 条件闭环 SOP
-- 议题 BG BOM 防御 SOP（git commit -F）
-- 议题 BK mount stale 只读核验 SOP（dirty 来源不明时停手上报，不默认 `git reset --hard`）
-- 议题 BF 版本号决策 SOP（patch vs minor bump）
-- 真机 smoke 主验证 SOP
+- ADR-016 six-condition verification SOP.
+- Issue BG BOM defense: `git commit -F`.
+- Issue BK read-only mount-stale verification: stop and report a dirty tree of unknown origin; never default to `git reset --hard`.
+- Issue BF version decisions: patch versus minor increment.
+- Lead verification SOP for device smoke tests.
 
----
-
-📌 治理原则：本目录由**测试发布 PM 自己**维护
-📌 **子子 PM 验证层 + 主验证 PM**：业务端到端 + ADR-016 6 条件 / 跨工具可换
+📌 This directory is maintained by the **Test and Release PM**.
+📌 **Verification layer and lead verification PM**: end-to-end application verification, ADR-016's six conditions, and replaceable execution tools.

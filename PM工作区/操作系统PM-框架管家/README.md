@@ -4,44 +4,43 @@ scope: pm-workspace
 pm: 操作系统PM-框架管家
 type: semantic
 loaded: on-demand
-description: 操作系统 PM「框架管家」私人工作区入口（决策层 / framework 治理）
+description: "Operating System PM \"Framework Steward\" workspace entry point: decision layer and framework governance."
 ---
-# 操作系统 PM「框架管家」· 元记忆中枢
 
-> 🌱 **新建占位**（2026-05-21 / 议题 CM）— 待实战累积速查表
+# Operating System PM "Framework Steward": Meta-Memory Center
 
-## 角色定义
+> 🌱 **New placeholder** (2026-05-21 / issue CM): quick references will be developed through practice.
 
-详见 [`操作系统/02_智能体/操作系统PM-框架管家.md`](../../操作系统/02_智能体/操作系统PM-框架管家.md)
+## Role definition
 
-## 路径白名单
+See the [Operating System PM playbook](../../操作系统/02_智能体/操作系统PM-框架管家.md).
 
-| 类别 | 路径 |
+## Path allowlist
+
+| Category | Path |
 |---|---|
-| 主战场 | `操作系统/` + `能力资产/`（含 `能力资产/tools/`） |
-| 协作场 | `确认改动/` + `交接区/` + `Docs/3-开发文档/` + `Docs/7-复盘/` |
-| 项目根 framework | `AGENTS.md` / `README.md` / `状态.md` / `TASKS.md` |
-| 禁区 | ❌ `{{APP_REPO_DIR}}/**` 绝对硬护栏 / ❌ 其他 PM 私人中枢（PM工作区/项目PM-咪咪/ 等）|
+| Primary responsibility | `操作系统/` + `能力资产/`, including `能力资产/tools/` |
+| Collaboration | `确认改动/` + `交接区/` + `Docs/3-开发文档/` + `Docs/7-复盘/` |
+| Project root framework | `AGENTS.md` / `README.md` / `状态.md` / `TASKS.md` |
+| Prohibited | ❌ Absolute boundary around `{{APP_REPO_DIR}}/**` / ❌ Other PMs' private workspaces, such as `PM工作区/项目PM-咪咪/` |
 
-## 速查表（待累积）
+## Quick references to develop
 
-PM 自纠累积到第 3 次同模式时必建速查表文件。当前候选：
+Create a quick-reference file when the same PM self-correction pattern occurs a third time. Current candidates:
 
-- 议题 CL 候选 — Cross-reference 长尾清理 SOP（PROP-029 v2 残留 12+343 处经验）
-- 议题 CK 候选 — 状态.md 留痕机制衰减防御 SOP（含本次拆分 130→60KB 经验）
-- 候选元规则第 10/11 — chat 简版去重检查 / AC 实证驱动
+- Issue CL: cleanup of remaining cross-references, informed by 12+343 residual references after PROP-029 v2.
+- Issue CK: prevent decay of the `状态.md` tracking mechanism, including the 130→60KB split.
+- Candidate meta-rules 10/11: short chat handoff deduplication and evidence-based acceptance criteria.
 
-## 实战回顾（待累积）
+## Practice reviews to develop
 
-- PROP-029 v2 物理拆分（agent/ → 操作系统/ + 能力资产/）— 2026-05-21
-- PROP-028 framework 完整度补缺（台账+工具治理 6 文档）— 2026-05-21
-- 状态.md 拆分（130→60KB）— 2026-05-21
+- PROP-029 v2 physical split, `agent/` → `操作系统/` + `能力资产/`: 2026-05-21.
+- PROP-028 framework completeness, six ledger/tool-governance documents: 2026-05-21.
+- `状态.md` split, 130→60KB: 2026-05-21.
 
-## PM 自纠（待累积）
+## PM self-corrections to collect
 
-- **PM 自纠 #59**（2026-05-21）— 操作系统 PM 越权动项目 PM 领地（提议 mv 项目PM/ 到 操作系统/05_记忆/）→ zlbdh 否决 → 角色边界.md 加固
-- **PM 自纠 #56**（2026-05-20）— 操作系统 PM 没早发现 framework 项目外存储错向
+- **#59** (2026-05-21): the Operating System PM overstepped into the Project PM's workspace by proposing to move `项目PM/` into `操作系统/05_记忆/`; zlbdh rejected it, and `角色边界.md` was strengthened.
+- **#56** (2026-05-20): the Operating System PM failed to identify inappropriate storage of framework assets outside the project early enough.
 
----
-
-📌 治理原则：本目录由**操作系统 PM 自己**维护；其他 PM 不得整理本目录（PM 自纠 #59 铁律）
+📌 This directory is maintained by the **Operating System PM**. Other PMs must not reorganize it: PM self-correction #59.

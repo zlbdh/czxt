@@ -3,117 +3,107 @@ name: mcp-installed
 scope: project
 type: semantic
 loaded: on-demand
-description: 项目 MCP/连接器能力声明（单一信息源）— 核心/按需/未用能力矩阵、跨运行时一致性约定与维护 SOP，议题 CG 项目外存储治理落地。
+description: Single project MCP/connector declaration, core and optional capabilities, cross-runtime consistency, and maintenance under issue CG.
 ---
 
-# INSTALLED.md · 项目 MCP/连接器能力声明（项目外存储治理 / 议题 CG）
+# Project MCP and Connector Declaration
 
-> **🎯 单一信息源原则**：项目需要或历史使用过的 MCP / 连接器 / plugin 统一登记在此。
-> **边界**：本文件不是各客户端的实时安装回显；真实可用工具以当前运行时暴露的 tools/plugins 为准。
->
-> **2026-05-20 立**（C 强化版 framework 自检 / PROP-026 / 议题 CG）
+**Single source of truth:** register capabilities required by this project or used historically here.
 
----
+**Boundary:** this is not a live installation report. Actual availability follows tools and plugins exposed by the current runtime.
 
-## 一、为什么需要这份清单
+Established May 20, 2026, during the enhanced Class C framework self-check, PROP-026 / issue CG on storage outside the project.
 
-Cowork / Codex / Claude Code 等运行时各自有 MCP / plugin / connector 安装机制，但项目侧若无记录，会出现：
+## 1. Why keep this inventory?
 
-- 换设备 / 重装工具后丢失
-- 跨运行时不知道哪些能力是项目必需
-- 新 PM / 新对话看不到完整 MCP / 连接器矩阵
-- 无 Git 版本化（与 AppData memory 同模式 framework 错向）
+Cowork, Codex, and Claude Code each manage MCP, plugin, and connector installations. Without a project record:
 
-→ 本文件作为项目 MCP / 连接器**声明文档**（不替代实际安装配置；当前运行时是否已安装需现场核验）
+- Configuration knowledge is lost after device changes or reinstalls.
+- Required project capabilities are unclear across runtimes.
+- New PMs and conversations lack the complete capability matrix.
+- The record is not versioned in Git, repeating the framework-storage problem seen with AppData memory.
 
----
+This is a **declaration document**. It does not replace installation configuration, and current availability requires verification.
 
-## 二、项目侧 MCP / 连接器能力矩阵
+## 2. Capability matrix
 
-> ⚠️ 以下按项目需求和历史使用维护，不声明“此刻已安装”。实际配置在各客户端 / connector / plugin 管理处。
+The matrix reflects requirements and historical use. It does not assert that anything is installed now. Actual configuration belongs to each client, connector, or plugin manager.
 
-### 🔴 项目核心能力需求（运行时等价，不等于同名 MCP 必装）
+### Core requirements: equivalent capabilities, not mandatory same-named MCPs
 
-| 能力 | 典型实现 | 触发场景 |
+| Capability | Typical implementation | Trigger |
 |---|---|---|
-| **本机文件/命令执行** | Codex shell / Claude Code shell / Cowork workspace | 文件检查、脚本体检、构建测试 |
-| **浏览器/桌面控制** | Codex Browser / Chrome / Computer Use / Cowork computer-use | 真机 smoke、截图、页面操控 |
-| **自动化提醒** | Codex automation / scheduled-tasks 等运行时能力 | PM 提醒、定时 ship 卡 |
-| **历史上下文回看** | 当前运行时 thread/session 能力；必要时读项目内状态/交接卡 | 历史对话回看、跨 session 续接 |
-| **文件分享/产物展示** | 当前运行时 artifact / present / connector 能力 | 交付截图、文档、报告 |
+| Local files and command execution | Codex shell / Claude Code shell / Cowork workspace | File inspection, script health checks, builds, tests |
+| Browser or desktop control | Codex Browser / Chrome / Computer Use / Cowork computer-use | Device smoke tests, screenshots, page interaction |
+| Automated reminders | Runtime automation or scheduled-tasks | PM reminders, scheduled shipping cards |
+| Historical context | Runtime thread/session features; project status and handoff files as needed | Prior conversations and cross-session continuation |
+| File sharing and artifact presentation | Runtime artifact, present, or connector capabilities | Screenshots, documents, reports |
 
-### 🟡 项目偶尔使用（按需）
+### Occasional, on-demand use
 
-| MCP | 用途 | 触发场景 |
+| MCP | Purpose | Trigger |
 |---|---|---|
-| **brand-voice** | 品牌词典 + 内容生成 | 议题 BI 运营咪咪 v0.1 候选 |
-| **slack-by-salesforce** | Slack 集成 | 远期：议题 BI 团队协作 |
-| **figma** | Figma 操作 | 远期：F-SHARE-1 视觉设计 |
-| **canvas-design / theme-factory** | 视觉设计 / 主题 | 远期：UI 设计辅助 |
+| brand-voice | Brand dictionary and content generation | Issue BI, Operations Mimi v0.1 candidate |
+| slack-by-salesforce | Slack integration | Future issue BI team collaboration |
+| figma | Figma operations | Future F-SHARE-1 visual design |
+| canvas-design / theme-factory | Visual design and themes | Future UI design assistance |
 
-### 🟢 历史 / 外部运行时曾见但项目当前不要求
+### Seen historically or in external runtimes, not currently required
 
-| MCP / plugin 类别 | 状态 |
+| MCP / plugin category | Status |
 |---|---|
-| **bio-research** (biorxiv / c-trials / chembl / consensus / pubmed / ot) | 不相关（健康 App 走小米 MiMo，不需要生物医学库）|
-| **finance / sales / marketing / data / hr 等业务 plugin** | 不相关 |
-| **adobe-for-creativity / cloudinary** | 远期可能（Sprint-9+ F-SHARE-1）|
-| **legal / engineering / design / pdf-viewer** | 不相关 |
-| **daloopa / lseg / bigdata / sp-global / zoominfo / common-room** | 不相关（金融 / 销售类）|
-| **zoom / docusign / box / sanity / miro / intercom** | 不相关 |
-| **brightdata / postiz / fastly / cockroachdb / prisma** | 不相关 |
-| **searchfit-seo / customer-support / operations / finance** | 不相关 |
-| **product-tracking / common-room / apollo** | 不相关 |
+| bio-research: biorxiv / c-trials / chembl / consensus / pubmed / ot | Unrelated in the historical health-app context, which used Xiaomi MiMo rather than biomedical databases |
+| finance / sales / marketing / data / hr business plugins | Unrelated |
+| adobe-for-creativity / cloudinary | Possible future use, Sprint-9+ F-SHARE-1 |
+| legal / engineering / design / pdf-viewer | Unrelated |
+| daloopa / lseg / bigdata / sp-global / zoominfo / common-room | Unrelated finance/sales capabilities |
+| zoom / docusign / box / sanity / miro / intercom | Unrelated |
+| brightdata / postiz / fastly / cockroachdb / prisma | Unrelated |
+| searchfit-seo / customer-support / operations / finance | Unrelated |
+| product-tracking / common-room / apollo | Unrelated |
 
-→ **大量历史 / 外部运行时能力与项目无关** — 未来 zlbdh 可按实际客户端清理（议题 CH 候选 — MCP 清理）
+Many historical or external-runtime capabilities are unrelated to the project. zlbdh may later clean up actual clients as appropriate; issue CH tracks this candidate.
 
----
+## 3. Usage agreements
 
-## 三、项目 MCP 使用约定
+### Cross-runtime consistency
 
-### 跨运行时一致性
-
-| 工具 | MCP 配置位置 | 建议 |
+| Tool | Configuration location | Guidance |
 |---|---|---|
-| Cowork | Cowork 用户设置 | 历史主要工作环境 |
-| Codex | Codex 配置 / Codex app plugin/connector | 以当前 tools/plugins 为准，保持项目核心能力可替代 |
-| Claude Code | Claude Code 配置 | 以当前 tools/plugins 为准，保持项目核心能力可替代 |
+| Cowork | Cowork user settings | Historical primary working environment |
+| Codex | Codex configuration / app plugins and connectors | Follow current tools/plugins; keep core capabilities replaceable |
+| Claude Code | Claude Code configuration | Follow current tools/plugins; keep core capabilities replaceable |
 
-连接器能力可以等价替代，但 lifecycle hooks 不等价；Codex / Claude Code 事件差异以 [`操作系统/06_工具治理/hooks-事件矩阵.md`](../../操作系统/06_工具治理/hooks-事件矩阵.md) 为准。
+Equivalent connectors can substitute for capabilities, but lifecycle hooks are not interchangeable. Follow the [hook event matrix](../../操作系统/06_工具治理/hooks-事件矩阵.md) for Codex / Claude Code differences.
 
-### 项目核心能力清单（用于跨运行时对齐）
+### Core alignment checklist
 
-新工作环境配置 Codex / Claude Code 时，应至少确认具备这些能力；不要求同名 MCP：
+When configuring a new Codex or Claude Code environment, confirm these capabilities without requiring identical MCP names:
 
-- ✅ 本机 shell / 文件读写 / 脚本执行
-- ✅ 浏览器或桌面操控（真机 smoke / 截图时）
-- ✅ 自动化提醒能力（如需定时）
-- ✅ 历史上下文回看能力；缺失时以 `状态.md` + `交接区/` 续接
+- Local shell, file access, and script execution.
+- Browser or desktop interaction when device smoke tests or screenshots require it.
+- Automated reminders when scheduling is needed.
+- Historical context access; otherwise continue from `状态.md` and `交接区/`.
 
-历史 Cowork 专属能力（不是 Codex / Claude Code 必装项）：
-- computer-use / cowork mount / present 等按当前运行时等价能力替代
+Historical Cowork-specific features such as computer-use, mounts, and present are replaceable with current runtime equivalents; they are not mandatory Codex or Claude Code installations.
 
-选择边界：本地网页 / localhost 优先 Codex Browser；依赖用户 Chrome 登录态用 Chrome；Windows 桌面 App 才用 Computer Use。
+Selection boundaries: prefer Codex Browser for local pages or localhost; use Chrome when the user's Chrome login session is needed; use Computer Use for Windows desktop apps.
 
----
+## 4. Maintenance
 
-## 四、维护 SOP
+When installing or uninstalling an MCP:
 
-### 新装 / 卸载 MCP 时
+1. Update this inventory.
+2. For a core capability, record its purpose and trigger.
+3. Use the PROP process for major changes, such as removing a core integration.
 
-1. 更新本文件清单
-2. 如属项目核心使用，标注用途 + 触发场景
-3. 重大变更（如卸载核心 MCP）走 PROP 流程
+For device synchronization:
 
-### 跨设备同步
+- Version this declaration in Git so a new device can use it as a configuration reference after cloning.
+- Business runtime API keys belong only in `{{APP_REPO_DIR}}/.env.local` under ADR-022 safeguards. Connector/OAuth tokens stay in client credential storage. Writing any local secret requires explicit user confirmation; secrets never enter tracked files.
 
-- 本文件 Git 化 → 新设备 clone 后可参考本文件配置 MCP
-- 业务运行时 API key 仅在 `{{APP_REPO_DIR}}/.env.local` 且满足 ADR-022 护栏；connector / OAuth token 留在客户端密钥存储；任何本地 secret 写入需用户明确确认，绝不进 tracked 文件。
+## 5. Version history
 
----
+- v1, May 20, 2026: Operating System PM framework self-check and external-storage governance, PROP-026 / issue CG.
 
-## 五、版本
-
-- **v1**（2026-05-20）— 操作系统 PM 自检 framework 项目外存储治理（PROP-026 / 议题 CG）首次落地
-
-→ 详见 [操作系统/05_记忆/INDEX.md](../../操作系统/05_记忆/INDEX.md) §二第 6 行为规则
+See behavior rule 6 in section 2 of the [memory index](../../操作系统/05_记忆/INDEX.md).

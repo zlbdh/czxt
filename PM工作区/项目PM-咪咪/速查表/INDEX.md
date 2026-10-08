@@ -4,85 +4,80 @@ scope: pm-workspace
 pm: 项目PM-咪咪
 type: procedural
 loaded: always
-description: 项目 PM 速查表索引（条件加载入口）。PM 切角色帽子前先读本文件，按 description 决定加载哪个速查表。
+description: "Project PM quick-reference index for conditional loading. Read before switching roles and use each description to choose the relevant reference."
 ---
 
-# 项目 PM 速查表索引 · Progressive Context Loading
+# Project PM Quick-Reference Index: Progressive Context Loading
 
-> 📚 **PROP-031 落地**（2026-05-21 / task #83）— 7 速查表升级为 SKILL.md 模式
-> **设计哲学**：永远先读本索引（~2KB），根据 trigger 匹配再决定加载具体速查表（每个 ~2KB）
+> 📚 **PROP-031 implemented**: 2026-05-21 / task #83; seven quick references adopt the SKILL.md pattern.
+> **Design**: always read this approximately 2KB index first, then load the approximately 2KB references whose triggers match.
 
-## 当前 7 速查表（按 trigger 字典序）
+## Seven current references: trigger index
 
-| 名字 | description | trigger | 来源 PM 自纠 |
+| Name | Description | Trigger | Source self-correction |
 |---|---|---|---|
-| [chat-summary-dedup](chat简版去重检查.md) | 写完 chat 简版 ①-⑦ 后扫一遍防同段重复 | 写完 chat 简版输出前 | #48 |
-| [capacitor-version-verify](Capacitor版本核对.md) | 引入 @capacitor/* 前必先 Read package.json 确认主版本 | 准备引入 @capacitor/XXX 新依赖时 | #46 |
-| [capacitor-plugin-defense](plugin集成防御.md) | Capacitor plugin 集成 3 项防御（静态 import / NotificationChannel / cap sync）| 写 Capacitor plugin 集成 handoff 卡前 | #47 |
-| [changelog-header-check](CHANGELOG-header规则.md) | 写 handoff 列 CHANGELOG 改动前必查 header 规则 | 写 handoff 卡列 CHANGELOG.md 改动前 | #43 |
-| [pm-role-boundary-check](ADR-022决定5-4类角色铁律.md) | 检查 PM 应切哪顶帽子（路径归属判定）| 写 handoff/PROP/chat 时 / 判定路径归属时 | #41/#42 |
-| [prop-status-semantics](PROP状态字段语义.md) | PROP 状态字段语义边界（pending/approved/in_progress/completed/rejected）| 改 PROP 状态字段时 | #44 |
-| [web-api-source-selection](议题AT矩阵速查.md) | web API（navigator/Intl/window）选型矩阵 + WebView 兼容性 | 选 web API 作业务信源前 | — |
+| [chat-summary-dedup](chat简版去重检查.md) | Check chat handoff items ①–⑦ for duplicate sections | After drafting and before sending a short chat handoff | #48 |
+| [capacitor-version-verify](Capacitor版本核对.md) | Read package.json to confirm the major version before adding @capacitor/* | Before adding an @capacitor/XXX dependency | #46 |
+| [capacitor-plugin-defense](plugin集成防御.md) | Three integration safeguards: static import, NotificationChannel, cap sync | Before a Capacitor plugin integration handoff | #47 |
+| [changelog-header-check](CHANGELOG-header规则.md) | Check header rules before listing CHANGELOG changes | Before listing CHANGELOG.md changes in a handoff | #43 |
+| [pm-role-boundary-check](ADR-022决定5-4类角色铁律.md) | Determine the correct PM role from path ownership | Handoff / PROP / chat writing or path ownership decisions | #41/#42 |
+| [prop-status-semantics](PROP状态字段语义.md) | PROP status boundaries: pending/approved/in_progress/completed/rejected | Before changing a PROP status | #44 |
+| [web-api-source-selection](议题AT矩阵速查.md) | Web API selection matrix and WebView compatibility for navigator/Intl/window | Before selecting a Web API as an application data source | — |
 
-## 加载策略
+## Loading strategy
 
-### Always-load（始终加载）
+### Always load
 
-- 本 INDEX（你正在读 / ~2KB）
-- `操作系统/05_记忆/INDEX.md` 起手必读
+- This INDEX, approximately 2KB.
+- `操作系统/05_记忆/INDEX.md`, required at startup.
 
-### 条件加载（按 trigger 匹配）
+### Conditional loading by trigger
 
-PM 在 decision-checkpoint Q1-Q3 之后加 **Q4「描述匹配的速查表」**：
+After decision-checkpoint Q1–Q3, add Q4: match the current task to quick-reference descriptions.
 
-```
-Q4 当前任务匹配哪个速查表 trigger？
-  - 描述 → 匹配 1+ 个 trigger 关键词
-  - 加载对应 .md（~2KB）
-  - 无匹配 → 跳过
-```
+1. Match the description to one or more trigger keywords.
+2. Load the corresponding .md file, approximately 2KB each.
+3. Skip references when no trigger matches.
 
-### Cost 对比
+### Historical cost comparison
 
-| 模式 | 30 速查表 × 2KB | 总 context |
+| Mode | Thirty references × 2KB | Total context |
 |---|---|---|
-| Always-load（旧）| 全 load | ~60KB / 60K tokens |
-| Progressive（新）| INDEX 2KB + 平均匹配 1-2 个 = 4-6KB | ~6KB / **10x 节省** |
+| Always-load, old | Load all references | ~60KB / 60K tokens |
+| Progressive, new | 2KB INDEX plus an average of 1–2 matches: 4–6KB | ~6KB / 10× savings |
 
-## 新增速查表 SOP
+## Adding a quick reference
 
-1. 该 PM 自纠累积同模式到第 3 次时 → 立速查表
-2. 文件命名：场景关键词.md（中文可读 / 不强制英文）
-3. 加 YAML front matter（4 字段 / 见下方模板）
-4. 加 1 行到本 INDEX 表格
-5. 该 PM 工作区 README 加引用
+1. Create one when the same PM self-correction pattern occurs a third time.
+2. Name it for scenario keywords: the existing convention allows readable Chinese names and does not require English.
+3. Add the four-field YAML frontmatter shown below.
+4. Add a row to this INDEX.
+5. Add a reference to the PM workspace README.
 
-## YAML front matter 模板
+## YAML frontmatter template
 
 ```yaml
 ---
-name: kebab-case-唯一标识
-description: 一句话描述用途 + 防什么 PM 自纠 # 触发条件
-trigger: 当 X 时 / 准备 Y 时 / 判定 Z 时
-loaded: 条件加载（按 trigger 匹配时由 PM 调度）
+name: unique-kebab-case-id
+description: One sentence explaining its purpose, the PM self-correction prevented, and its trigger.
+trigger: When X happens, before Y, or when deciding Z.
+loaded: Conditional; the PM loads it when a trigger matches.
 ---
 ```
 
-## 跨 PM 速查表
+## Cross-PM references
 
-| PM 子角色 | 速查表目录 | 状态 |
+| PM role | Quick-reference directory | Status |
 |---|---|---|
-| 项目 PM「咪咪」| `PM工作区/项目PM-咪咪/速查表/` | ✅ 7 文件 + 本 INDEX |
-| 沉淀 PM「沉淀者」| `PM工作区/沉淀PM-沉淀者/速查表/` | ✅ 有 INDEX + 11 条 |
-| 操作系统 PM「框架管家」| `PM工作区/操作系统PM-框架管家/速查表/` | ✅ 有 INDEX / 待提炼 |
-| 产品 PM「需求拆解者」| `PM工作区/产品PM-需求拆解者/速查表/` | ✅ 有 INDEX / 待提炼 |
-| 技术 PM「修复决策者」| `PM工作区/技术PM-修复决策者/速查表/` | ✅ 有 INDEX / 待提炼 |
-| 测试 PM「质量门户」| `PM工作区/测试PM-质量门户/速查表/` | ✅ 有 INDEX / 待提炼 |
-| 运营 PM「运营咪咪」| `PM工作区/运营PM-运营咪咪/速查表/` | ✅ 有 INDEX / 待提炼 |
-| 开发 PM「实施者」| `PM工作区/开发PM-实施者/速查表/` | ✅ 有 INDEX |
-| 测试发布 PM「闭环者」| `PM工作区/测试发布PM-闭环者/速查表/` | ✅ 有 INDEX |
+| Project PM "Mimi" | `PM工作区/项目PM-咪咪/速查表/` | ✅ Seven files plus this INDEX |
+| Knowledge PM "Curator" | `PM工作区/沉淀PM-沉淀者/速查表/` | ✅ INDEX and 11 rules |
+| Operating System PM "Framework Steward" | `PM工作区/操作系统PM-框架管家/速查表/` | ✅ INDEX; references to develop |
+| Product PM "Requirements Analyst" | `PM工作区/产品PM-需求拆解者/速查表/` | ✅ INDEX; references to develop |
+| Technical PM "Fix Strategist" | `PM工作区/技术PM-修复决策者/速查表/` | ✅ INDEX; references to develop |
+| Test PM "Quality Gate" | `PM工作区/测试PM-质量门户/速查表/` | ✅ INDEX; references to develop |
+| Operations PM "Operations Mimi" | `PM工作区/运营PM-运营咪咪/速查表/` | ✅ INDEX; references to develop |
+| Development PM "Implementer" | `PM工作区/开发PM-实施者/速查表/` | ✅ INDEX |
+| Test and Release PM "Closer" | `PM工作区/测试发布PM-闭环者/速查表/` | ✅ INDEX |
 
----
-
-📌 **PROP-031 v1 落地**（2026-05-21）— 7 速查表加 YAML front matter + 本 INDEX 总入口 + 加载策略说明
-📌 **议题 CO 候选**：Progressive Context Loading 机制化 — 待后续 RETRO 评估 ADR 升级
+📌 **PROP-031 v1 implemented**, 2026-05-21: YAML frontmatter for seven references, this INDEX entry point, and the loading strategy.
+📌 **Issue CO candidate**: formalize Progressive Context Loading; evaluate promotion to an ADR in a later RETRO.

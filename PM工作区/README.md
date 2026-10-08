@@ -3,81 +3,70 @@ name: pm-workspace-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 9 PM 私人工作区总入口（v4.0 / 主 1 + 元-层 1 + 决策 5 + 子子 2）
----
-# PM工作区 · 9 PM 私人领地（v4.0 终态）
-
-> 📦 **9 PM 私人工作领地**（PROP-023 v4 / 议题 CM + PM 自纠 #60/#72 / v4.0 task #104.5 升 9 PM）
-> 治理原则：每个 PM 自治自己目录 — 跨 PM 不得整理 / 移动 / 重命名其他 PM 私人目录（**PM 自纠 #59 铁律**）
-> 架构：v4.0 9 PM × 4 层（主 1 / 元-层 1 / 决策 5 / 子子 2）/ 详见 [`../操作系统/02_智能体/README.md`](../操作系统/02_智能体/README.md)
-
+description: "Entry point for nine private PM workspaces: v4.0, one lead, one meta-layer, five decision, and two implementation roles."
 ---
 
-## 名字演化
+# PM Workspaces: Nine Private Work Areas, Final v4.0 Model
 
-- **v1**（2026-05-15 / PROP-023）— `项目PM/` 单目录（议题 BE 防御 / 仅项目 PM 有元记忆）
-- **v2**（2026-05-21 早 / 议题 CM）— `中枢/` 6 PM 子目录（zlbdh 拍板"建立元记忆中枢"）
-- **v2.1**（2026-05-21 中 / zlbdh 命名建议）— `中枢/` → `PM记忆中枢/`（自解释 + 与 操作系统/05_记忆/ 对齐）
-- **v3**（2026-05-21 晚 / PM 自纠 #60）— `PM记忆中枢/` → `PM工作区/` + 合并 `运营PM/`（命名跟不上设计 — 不止"记忆"还有"工作内容"）
+> 📦 **Nine private PM workspaces**: PROP-023 v4 / issue CM / PM self-corrections #60/#72 / v4.0 task #104.5 expansion to nine PMs.
+> Each PM governs their own directory. A PM must not reorganize, move, or rename another PM's private directory: **self-correction #59**.
+> Architecture: nine PMs across four layers—one lead, one meta-layer, five decision, and two implementation roles. See the [role directory](../操作系统/02_智能体/README.md).
 
----
+## Naming history
 
-## 9 PM 完整清单（v4.0 / 主 1 + 元-层 1 + 决策 5 + 子子 2）
+- **v1**, 2026-05-15 / PROP-023: one `项目PM/` directory; issue BE defense, with meta-memory only for the Project PM.
+- **v2**, early 2026-05-21 / issue CM: six PM directories under `中枢/`, after zlbdh approved a meta-memory center.
+- **v2.1**, midday 2026-05-21 / zlbdh's naming suggestion: `中枢/` → `PM记忆中枢/`, making the name self-explanatory and consistent with `操作系统/05_记忆/`.
+- **v3**, evening 2026-05-21 / self-correction #60: `PM记忆中枢/` → `PM工作区/`, incorporating `运营PM/`. The old name no longer covered both memory and work materials.
 
-| PM 子角色 | 目录 | 触发 | 状态 |
+## Nine PM roles: final v4.0 model
+
+| PM role | Directory | Trigger | Status |
 |---|---|---|---|
-| 项目 PM「咪咪」（编排者） | [项目PM-咪咪/](项目PM-咪咪/) | 默认对话入口 | ✅ 实战累积 7 速查表 |
-| 操作系统 PM「框架管家」 | [操作系统PM-框架管家/](操作系统PM-框架管家/) | framework 治理 | ✅ hooks / 体检 / agent 调度治理已实战 |
-| 产品 PM「需求拆解者」 | [产品PM-需求拆解者/](产品PM-需求拆解者/) | 业务需求审 PRD | 🌱 私有沉淀待提炼 |
-| 技术 PM「修复决策者」 | [技术PM-修复决策者/](技术PM-修复决策者/) | bug 诊断 / 技术选型 | 🌱 私有沉淀待提炼 |
-| 测试 PM「质量门户」 | [测试PM-质量门户/](测试PM-质量门户/) | 测试策略 / 验收设计 | 🌱 私有沉淀待提炼 |
-| 运营 PM「运营咪咪」 | [运营PM-运营咪咪/](运营PM-运营咪咪/) | GTM / 推广 / 内容（议题 BI） | 🌱 模板占位，不默认携带具体项目运营资料 |
-| 🪞 沉淀 PM「沉淀者」 | [沉淀PM-沉淀者/](沉淀PM-沉淀者/) | **元-层 PM** / 议题 AJ + PM 自纠 + RETRO + 元规则池 | ✅ 速查表与 PM 轨迹监督已实战 |
-| 🔨 开发 PM「实施者」 | [开发PM-实施者/](开发PM-实施者/) | 业务代码实施 + 部分决策（Claude Code 载体） | 🌱 业务实施私有沉淀待提炼 |
-| ✅ 测试发布 PM「闭环者」 | [测试发布PM-闭环者/](测试发布PM-闭环者/) | 闭环验证 + 发布决策 + **主验证 PM**（Codex 载体）| ✅ v3.48-v3.52 发布闭环已实战 |
+| Project PM "Mimi", orchestrator | [Project PM](项目PM-咪咪/) | Default conversation entry point | ✅ Seven quick references accumulated through practice |
+| Operating System PM "Framework Steward" | [Operating System PM](操作系统PM-框架管家/) | Framework governance | ✅ Practical hooks, health-check, and agent-scheduling governance |
+| Product PM "Requirements Analyst" | [Product PM](产品PM-需求拆解者/) | Business requirements and PRD review | 🌱 Private lessons awaiting synthesis |
+| Technical PM "Fix Strategist" | [Technical PM](技术PM-修复决策者/) | Bug diagnosis and technology selection | 🌱 Private lessons awaiting synthesis |
+| Test PM "Quality Gate" | [Test PM](测试PM-质量门户/) | Test strategy and acceptance design | 🌱 Private lessons awaiting synthesis |
+| Operations PM "Operations Mimi" | [Operations PM](运营PM-运营咪咪/) | GTM, promotion, and content; issue BI | 🌱 Template placeholder; no project-specific operations content by default |
+| 🪞 Knowledge PM "Curator" | [Knowledge PM](沉淀PM-沉淀者/) | Meta-layer PM: issue AJ, PM self-corrections, RETROs, and the meta-rule pool | ✅ Quick references and PM tracking oversight used in practice |
+| 🔨 Development PM "Implementer" | [Development PM](开发PM-实施者/) | Application implementation and some decisions; Claude Code environment | 🌱 Private implementation lessons awaiting synthesis |
+| ✅ Test and Release PM "Closer" | [Test and Release PM](测试发布PM-闭环者/) | Final verification, release decisions, and lead verification; Codex environment | ✅ Practical v3.48–v3.52 release verification |
 
----
+## Workspace contents
 
-## 工作区可装什么（不限"记忆"）
+Each private PM workspace may contain more than memory:
 
-每个 PM 子角色的私人工作区可包含：
-
-| 子目录 | 装什么 | 实例 |
+| Subdirectory or content | Purpose | Example |
 |---|---|---|
-| `速查表/` | 元规则陷阱档案 + 防御检查清单；目录存在时必须有 `INDEX.md` 最小导航 | `项目PM-咪咪/速查表/` 7 文件 |
-| `实战回顾/` | 该 PM 主导的关键事件完整时间线 | （待累积） |
-| `PM自纠/` | 该 PM 自纠按日期累积 | （待累积） |
-| **工作内容** | PRD 草稿 / 战略 / 内容日历 / 素材池 / 选题库 / 互动模板 / 草稿 / 已发布 等 | 项目实例内按需创建；模板根只保留骨架 |
-| **待决议** | 跨 PM 协调待项目 PM 决断的提议 | （待累积） |
+| `速查表/` | Meta-rule pitfalls and defensive checklists; an existing directory must contain an `INDEX.md` navigation entry point | Seven files in `项目PM-咪咪/速查表/` |
+| `实战回顾/` | Full timelines of important events led by this PM | To develop |
+| `PM自纠/` | PM self-corrections accumulated by date | To develop |
+| Work materials | PRD drafts, strategy, content calendars, asset pools, topic ideas, interaction templates, drafts, and published material | Create as needed in project instances; the template root keeps scaffolding only |
+| Pending decisions | Cross-PM proposals awaiting a Project PM decision | To develop |
 
----
+## Mandatory cross-workspace boundary: self-correction #59, May 21, 2026
 
-## ⭐ 跨界禁令（PM 自纠 #59 铁律 / 2026-05-21）
+1. No PM may reorganize, move, rename, or merge another PM's private workspace.
+2. Framework consistency does not override PM role boundaries.
+3. Cross-PM coordination of private directory changes requires PROP governance and the owning PM's decision.
+4. The Project PM may ask another PM to organize their own directory, but must not move it directly.
 
-1. ❌ 任一 PM 子角色**不得**整理 / 移动 / 重命名 / 合并其他 PM 子角色的私人工作区
-2. ❌ 不得以"framework 一致性"压"PM 角色边界"
-3. ✅ 跨 PM 协调私人目录改动 → 走 PROP 治理 + 该 PM 自决
-4. ✅ 项目 PM 可调度其他 PM 整理自己的目录，但不直接 mv
+See the private-workspace boundary section in [role boundaries](../操作系统/01_架构/角色边界.md).
 
-详见 [`操作系统/01_架构/角色边界.md`](../操作系统/01_架构/角色边界.md) §「PM 私人工作区跨界禁令」
+## Relationship to `操作系统/05_记忆/`
 
----
-
-## 与 `操作系统/05_记忆/` 的关系
-
-| 维度 | `PM工作区/` | `操作系统/05_记忆/` |
+| Dimension | `PM工作区/` | `操作系统/05_记忆/` |
 |---|---|---|
-| 用途 | 各 PM 私人速查表 + 工作内容 + 待决议 | 项目全局起手元记忆入口（用户偏好 + 行为反思附录 + 项目历史指针）|
-| 谁治理 | 每个 PM 自己 | 操作系统 PM |
-| 起手必读 | 否（仅切角色帽子前查）| **是**（每个新 chat / 新 PM 接手必读）|
-| 可否跨 PM 整理 | ❌ 不可，除非走 PROP + 该 PM 自决 | ✅ 操作系统 PM 统一维护 |
+| Purpose | Private quick references, work materials, and pending decisions for each PM | Project-wide startup memory: user preferences, behavioral reflections, and project-history pointers |
+| Governance | Each PM independently | Operating System PM |
+| Required startup reading | No; consult before switching roles | Yes; every new conversation or PM handoff |
+| Cross-PM reorganization | Prohibited without a PROP and the owning PM's decision | Maintained centrally by the Operating System PM |
 
----
+## Related
 
-## 关联
-
-- [`操作系统/00_总入口.md`](../操作系统/00_总入口.md) — 操作系统总入口
-- [`操作系统/01_架构/角色边界.md`](../操作系统/01_架构/角色边界.md) — 9 PM 路径白名单与跨界禁令
-- [`操作系统/01_架构/子agent调度机制.md`](../操作系统/01_架构/子agent调度机制.md) — PM 职责层与子 agent 执行层分离
-- [`操作系统/02_智能体/README.md`](../操作系统/02_智能体/README.md) — 9 PM playbook
-- [`操作系统/05_记忆/INDEX.md`](../操作系统/05_记忆/INDEX.md) — 项目全局起手记忆索引（细则仍属项目全局记忆，不是 PM 私人区）
+- [Operating system entry point](../操作系统/00_总入口.md).
+- [Role boundaries](../操作系统/01_架构/角色边界.md): nine-PM path allowlists and workspace boundaries.
+- [Agent scheduling](../操作系统/01_架构/子agent调度机制.md): separate PM responsibilities from agent execution.
+- [Role playbooks](../操作系统/02_智能体/README.md).
+- [Project startup memory](../操作系统/05_记忆/INDEX.md): project-wide rules, not a private PM workspace.

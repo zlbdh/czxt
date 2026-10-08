@@ -23,28 +23,32 @@ $expectedModules = @(
   "07_完整工作流/"
 )
 
-$moduleMatches = @([regex]::Matches($entry, '(?m)^\| \[`(?<dir>\d{2}_[^`]+/)`\]\((?<target>[^)]+)\) \|'))
+$englishModuleLabels = @(
+  "Change records", "Architecture", "Agents", "Handoffs",
+  "Ledgers", "Memory", "Tool governance", "Complete workflows"
+)
+$moduleMatches = @([regex]::Matches($entry, '(?m)^\| \[(?<label>[^\]]+)\]\((?<target>\d{2}_[^)]*/)\) \|'))
 if ($moduleMatches.Count -ne $expectedModules.Count) {
   Add-Failure "00_总入口 8 个编号模块数量异常：$($moduleMatches.Count)"
 } else {
   for ($i = 0; $i -lt $expectedModules.Count; $i++) {
-    $dir = $moduleMatches[$i].Groups["dir"].Value
+    $label = $moduleMatches[$i].Groups["label"].Value.Trim([char]96)
     $target = $moduleMatches[$i].Groups["target"].Value
-    if ($dir -ne $expectedModules[$i] -or $target -ne $expectedModules[$i]) {
-      Add-Failure "00_总入口 8 模块顺序/链接异常：第 $($i + 1) 项为 $dir -> $target"
+    if (($label -ne $expectedModules[$i] -and $label -ne $englishModuleLabels[$i]) -or $target -ne $expectedModules[$i]) {
+      Add-Failure "00_总入口 8 模块顺序/链接异常：第 $($i + 1) 项为 $label -> $target"
     }
   }
 }
 
 $expectedStart = @(
   '\[`?AGENTS\.md`?\]\(\.\./AGENTS\.md\)',
-  '\[`?状态\.md`?\]\(\.\./状态\.md\)',
-  '\[`?05_记忆/INDEX\.md`?\]\(05_记忆/INDEX\.md\)',
-  '\[`?01_架构/角色边界\.md`?\]\(01_架构/角色边界\.md\)',
-  '\[`?07_完整工作流/decision-checkpoint\.md`?\]\(07_完整工作流/decision-checkpoint\.md\)',
+  '\[(?:`?状态\.md`?|Status)\]\(\.\./状态\.md\)',
+  '\[(?:`?05_记忆/INDEX\.md`?|Memory index)\]\(05_记忆/INDEX\.md\)',
+  '\[(?:`?01_架构/角色边界\.md`?|Role boundaries)\]\(01_架构/角色边界\.md\)',
+  '\[(?:`?07_完整工作流/decision-checkpoint\.md`?|Decision checkpoint)\]\(07_完整工作流/decision-checkpoint\.md\)',
   '`交接区/待接手/`',
-  '`../能力资产/skills/项目体检\.md`',
-  '`状态\.md` 末尾 PM 轨迹 5 行'
+  '(?:`../能力资产/skills/项目体检\.md`|\[Project health check\]\(\.\./能力资产/skills/项目体检\.md\))',
+  '(?:`状态\.md` 末尾 PM 轨迹 5 行|Last five PM transition rows in `状态\.md`)'
 )
 
 $startMatches = @([regex]::Matches($entry, '(?m)^(?<num>[1-8])\. ✅ (?<body>.+)$'))
@@ -60,7 +64,7 @@ if ($startMatches.Count -ne $expectedStart.Count) {
   }
 }
 
-if ($entry -notmatch 'AGENTS\.md 是\*\*5 秒指引\*\*' -or $entry -notmatch '本文件是\*\*深入目录导航\*\*') {
+if ($entry -notmatch '(?:AGENTS\.md 是\*\*5 秒指引\*\*|AGENTS\.md is the \*\*five-second guide\*\*)' -or $entry -notmatch '(?:本文件是\*\*深入目录导航\*\*|This file provides \*\*detailed navigation\*\*)') {
   Add-Failure "00_总入口 未明确 AGENTS 5 秒指引 / 本文件深入目录导航分工"
 }
 
@@ -68,7 +72,7 @@ if ($agents -notmatch 'Full rules are in `操作系统/00_总入口\.md`' -or $a
   Add-Failure "AGENTS.md 未保持指向 00_总入口 的互补起手关系"
 }
 
-if ($entry -notmatch '除项目 PM 主会话外，每个 PM 的实际工作默认实例化为真实 agent') {
+if ($entry -notmatch '(?:除项目 PM 主会话外，每个 PM 的实际工作默认实例化为真实 agent|Except for the Project PM.s main session, each PM.s actual work defaults to a real agent)') {
   Add-Failure "00_总入口 子 agent 调度速记缺默认真实 agent 机制"
 }
 

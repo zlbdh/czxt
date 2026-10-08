@@ -1,7 +1,7 @@
 ﻿$script:P4kToolSubjectWorkflowChecks = @(
-    @{ Path = "能力资产/tools/依赖矩阵.md"; Pattern = 'Claude Code 实施|Codex ship'; Label = "依赖矩阵仍用工具名定义新增依赖实施/ship 阶段" },
+    @{ Path = "能力资产/tools/依赖矩阵.md"; Pattern = 'Claude Code 实施|Codex ship|(?i:Claude Code implementation)'; Label = "依赖矩阵仍用工具名定义新增依赖实施/ship 阶段" },
     @{ Path = "操作系统/01_架构/三类行为铁律-附录.md"; Pattern = '仅允许绑定 Codex 发布闭环'; Label = "三类行为铁律附录仍把版本 tag 责任绑定到工具而非测试发布 PM" },
-    @{ Path = "操作系统/07_完整工作流/decision-checkpoint-附录.md"; Pattern = '外部工具战场'; Label = "decision-checkpoint 附录仍使用外部工具战场口径" },
+    @{ Path = "操作系统/07_完整工作流/decision-checkpoint-附录.md"; Pattern = '外部工具战场|(?i:external-tool battlefield)'; Label = "decision-checkpoint 附录仍使用外部工具战场口径" },
     @{ Path = "操作系统/02_智能体/项目PM-咪咪.md"; Pattern = '外部工具回流|给外部工具|写交接卡给 Claude Code|写交接卡给 Codex|仍现行.*Claude Code|Claude Code/Codex 该怎么跑测试'; Label = "项目 PM playbook 仍把工具当交接对象或现行责任真源" },
     @{ Path = "操作系统/02_智能体/项目PM-咪咪-附录.md"; Pattern = '外部工具回流|给外部工具|写交接卡给 Claude Code|写交接卡给 Codex|仍现行.*Claude Code|Claude Code/Codex 该怎么跑测试'; Label = "项目 PM 附录仍把工具当交接对象或现行责任真源" },
     @{ Path = "操作系统/02_智能体/技术PM-修复决策者.md"; Pattern = '路由外部工具|手术 = Claude Code|写交接卡给 Claude Code|受众 = Claude Code|→ Claude Code（外部）|Claude Code 按|Claude Code 实施规范'; Label = "技术 PM playbook 仍把工具当实施主体或受众" },

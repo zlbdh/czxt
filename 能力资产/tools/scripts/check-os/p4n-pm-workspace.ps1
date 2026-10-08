@@ -51,8 +51,22 @@ $roleText = Read-Text "操作系统/01_架构/角色边界.md"
 if ($null -eq $roleText) {
   $failures.Add("操作系统/01_架构/角色边界.md 缺失，无法核对 9 PM 角色名")
 } else {
+  $roleAliases = @{
+    '项目 PM「咪咪」' = 'Project PM “Mimi”'
+    '沉淀 PM「沉淀者」' = 'Knowledge PM “Curator”'
+    '操作系统 PM「框架管家」' = 'Operating System PM “Framework Steward”'
+    '产品 PM「需求拆解者」' = 'Product PM “Requirements Analyst”'
+    '技术 PM「修复决策者」' = 'Technical PM “Fix Strategist”'
+    '测试 PM「质量门户」' = 'Test PM “Quality Gate”'
+    '运营 PM「运营咪咪」' = 'Operations PM “Operations Mimi”'
+    '开发 PM「实施者」' = 'Development PM “Implementer”'
+    '测试发布 PM「闭环者」' = 'Test and Release PM “Closer”'
+  }
   foreach ($role in ($pms | ForEach-Object { To-Role $_ })) {
-    if ($roleText -notmatch [regex]::Escape($role)) { $failures.Add("角色边界.md 缺 $role，9 PM 角色清单不同步") }
+    $hasLegacyRole = $roleText -match [regex]::Escape($role)
+    $hasEnglishRole = $roleAliases.ContainsKey($role) -and
+      ($roleText -match [regex]::Escape($roleAliases[$role]))
+    if (-not $hasLegacyRole -and -not $hasEnglishRole) { $failures.Add("角色边界.md 缺 $role，9 PM 角色清单不同步") }
   }
 }
 
@@ -87,15 +101,15 @@ if ($null -eq $selfIndex) {
 }
 
 $checks = @(
-  @{ P = "PM工作区/项目PM-咪咪/PM自纠/INDEX.md"; R = '当前累积（21\+|下一次 PM 自纠（#64\+'; L = "PM自纠 INDEX 旧入口" },
-  @{ P = "PM工作区/项目PM-咪咪/README.md"; R = '项目PM/速查表/|单文件 ≤ 2KB'; L = "项目PM README 旧路径/硬大小" },
-  @{ P = "PM工作区/项目PM-咪咪/速查表/INDEX.md"; R = '待 Sprint-8|PM工作区/运营PM-运营咪咪/速查表/`\s*\|\s*🌱 待累积'; L = "项目PM INDEX 旧 Sprint/6PM" },
-  @{ P = "PM工作区/项目PM-咪咪/速查表/ADR-022决定5-4类角色铁律.md"; R = '\|\s*\*\*Claude Code\*\*\s*\||\|\s*\*\*Codex\*\*\s*\||交接卡给 Claude Code'; L = "ADR-022 工具作主语" },
+  @{ P = "PM工作区/项目PM-咪咪/PM自纠/INDEX.md"; R = '当前累积（21\+|下一次 PM 自纠（#64\+|Current total \(21\+|Next PM self-correction \(#64\+'; L = "PM自纠 INDEX 旧入口" },
+  @{ P = "PM工作区/项目PM-咪咪/README.md"; R = '项目PM/速查表/|单文件 ≤ 2KB|Single file ≤ 2KB'; L = "项目PM README 旧路径/硬大小" },
+  @{ P = "PM工作区/项目PM-咪咪/速查表/INDEX.md"; R = '待 Sprint-8|Pending Sprint-8|PM工作区/运营PM-运营咪咪/速查表/`\s*\|\s*🌱 (待累积|To develop)'; L = "项目PM INDEX 旧 Sprint/6PM" },
+  @{ P = "PM工作区/项目PM-咪咪/速查表/ADR-022决定5-4类角色铁律.md"; R = '\|\s*\*\*Claude Code\*\*\s*\||\|\s*\*\*Codex\*\*\s*\||交接卡给 Claude Code|Handoff card to Claude Code'; L = "ADR-022 工具作主语" },
   @{ P = "PM工作区/操作系统PM-框架管家/README.md"; R = '`tools/`|`Docs/3/`|`Docs/7/`'; L = "框架管家路径旧口径" },
-  @{ P = "PM工作区/运营PM-运营咪咪/README.md"; R = '当前状态（2026-05-21）|草稿/` \| 各平台草稿（待建|Docs/1-需求文档/` 增长相关|交接区/分支间|已 ship 内容：（空'; L = "运营 README 旧状态/越界" },
-  @{ P = "PM工作区/沉淀PM-沉淀者/速查表/INDEX.md"; R = '9 条'; L = "沉淀 INDEX 旧计数" },
-  @{ P = "PM工作区/开发PM-实施者/README.md"; R = '待 Sprint-8 启动后'; L = "开发 README 旧 Sprint" },
-  @{ P = "PM工作区/README.md"; R = '每文件 ≤ 2KB'; L = "PM工作区硬大小阈值" }
+  @{ P = "PM工作区/运营PM-运营咪咪/README.md"; R = '当前状态（2026-05-21）|Current status \(2026-05-21\)|草稿/` \| 各平台草稿（待建|草稿/` \| Platform drafts \(to create|Docs/1-需求文档/` (增长相关|Growth-related)|交接区/分支间|已 ship 内容：（空|Published content: \(empty'; L = "运营 README 旧状态/越界" },
+  @{ P = "PM工作区/沉淀PM-沉淀者/速查表/INDEX.md"; R = '9 条|\b9 rules\b'; L = "沉淀 INDEX 旧计数" },
+  @{ P = "PM工作区/开发PM-实施者/README.md"; R = '待 Sprint-8 启动后|After Sprint-8 starts'; L = "开发 README 旧 Sprint" },
+  @{ P = "PM工作区/README.md"; R = '每文件 ≤ 2KB|Each file ≤ 2KB'; L = "PM工作区硬大小阈值" }
 )
 foreach ($c in $checks) { Add-Hits $c.P $c.R $c.L }
 

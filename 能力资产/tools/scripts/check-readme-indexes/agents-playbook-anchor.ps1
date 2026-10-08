@@ -54,7 +54,7 @@ Assert-Contains "操作系统\02_智能体\QA-测试.md" '历史样例：3 层�
 Assert-Contains "操作系统\02_智能体\PM-产品经理.md" '历史旧路径样例' "历史产品经理旧路径边界"
 
 Assert-Contains "操作系统\01_架构\角色边界.md" 'commit/push/tag' "角色边界发布 tag"
-Assert-Contains "操作系统\01_架构\角色边界.md" '项目只读；`PM工作区/运营PM-运营咪咪/` 写；分支间待处理卡例外' "角色边界运营 PM 分支例外"
+Assert-Contains "操作系统\01_架构\角色边界.md" '项目只读；`PM工作区/运营PM-运营咪咪/` 写；分支间待处理卡例外|Read-only project access; write `PM工作区/运营PM-运营咪咪/`; exception for pending cross-branch cards' "角色边界运营 PM 分支例外"
 
 if ($failures.Count -gt 0) {
   exit 10

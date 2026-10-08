@@ -35,11 +35,11 @@ function Assert-BorrowingEntryIsMinimal {
 }
 
 # 根级外部证据层：不扩成第 9 个操作系统模块，也不复制执行规则。
-Assert-Contains "操作系统\00_总入口.md" '借鉴区.*根级外部证据层' `
+Assert-Contains "操作系统\00_总入口.md" '借鉴区.*根级外部证据层|借鉴区/.*Root-level external evidence' `
   "总入口声明借鉴区层级"
-Assert-Contains "操作系统\00_总入口.md" '向谁学、学了什么' `
+Assert-Contains "操作系统\00_总入口.md" '向谁学、学了什么|whom we learn from and what we learn' `
   "总入口声明借鉴区回答的问题"
-Assert-Contains "操作系统\00_总入口.md" '不是第 9 个操作系统模块' `
+Assert-Contains "操作系统\00_总入口.md" '不是第 9 个操作系统模块|It is not a ninth operating system module' `
   "总入口保持八模块边界"
 Assert-Contains "README.md" '借鉴区/.*根级外部证据层|借鉴区/.*External evidence: sources and lessons learned' `
   "根 README 声明借鉴区"
@@ -48,27 +48,27 @@ Assert-Contains "Docs\3-开发文档\项目结构.md" '借鉴区/.*外部证据�
 
 # 9 PM 路径白名单与并行边界。
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '(?m)^\| framework 内务 \|[^\r\n]*`借鉴区/`' `
+  '(?m)^\| (?:framework 内务|Framework maintenance) \|[^\r\n]*`借鉴区/`' `
   "framework 内务纳入借鉴区"
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '(?m)^\| 操作系统 PM「框架管家」[^\r\n]*`借鉴区/`' `
+  '(?m)^\| (?:操作系统 PM「框架管家」|Operating System PM “Framework Steward”)[^\r\n]*`借鉴区/`' `
   "操作系统 PM 白名单纳入借鉴区"
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '操作系统 PM.*来源卡.*事项卡.*骨架.*唯一落笔' `
+  '操作系统 PM.*来源卡.*事项卡.*骨架.*唯一落笔|Operating System PM is the sole writer of source cards, item cards, and scaffolding' `
   "借鉴卡片唯一抽象 PM 写权"
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '目标决策 PM.*只读.*领域评估.*操作系统 PM.*记录' `
+  '目标决策 PM.*只读.*领域评估.*操作系统 PM.*记录|The target decision PM has read-only card access and provides domain assessments; the Operating System PM records them' `
   "目标决策 PM 只评估不写卡"
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '不同.*来源/<id>/<capture>.*事项/<id>.*worker.*写集互斥' `
+  '不同.*来源/<id>/<capture>.*事项/<id>.*worker.*写集互斥|Separate `来源/<id>/<capture>` and `事项/<id>` paths may be assigned to workers inheriting Operating System PM permissions, with disjoint write sets' `
   "借鉴 worker 互斥路径并行"
-Assert-Contains "操作系统\01_架构\角色边界.md" '同一.*卡.*单写' `
+Assert-Contains "操作系统\01_架构\角色边界.md" '同一.*卡.*单写|A given card has one writer' `
   "同一卡片单写"
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '实际落地.*目标路径.*既有.*责任 PM' `
+  '实际落地.*目标路径.*既有.*责任 PM|Actual implementation returns to the existing owner of the target path' `
   "采纳落地回到既有责任 PM"
 Assert-Contains "操作系统\01_架构\角色边界.md" `
-  '事项卡.*不得.*扩大.*白名单' `
+  '事项卡.*不得.*扩大.*白名单|An item card must not expand any path allowlist' `
   "事项卡不得扩权"
 Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" `
   '`借鉴区/`.*来源卡.*事项卡.*骨架' `

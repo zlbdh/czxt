@@ -3,47 +3,47 @@ name: pm-specialized-mode-capability-layer
 scope: project
 type: semantic
 loaded: on-demand
-description: 9 PM 不扩编时承载需求/设计/前端/后端/硬件等专业方向的 mode、plugin、worker 分层规则
+description: Rules for specialized modes, plugins, and workers covering requirements, design, frontend, backend, and hardware without expanding the nine PM roles.
 ---
 
-# PM 专业 mode / 能力层
+# Specialized PM Modes and Capabilities
 
-> 最优口径：**PM 管责任边界，mode 管专业视角，plugin / worker 管执行能力**。
-> 只有新的责任边界才升级成 PM；只是专业技能时，先挂到现有 PM 的 mode、插件或 worker。
+> **PMs define responsibility boundaries; modes provide specialized perspectives; plugins and workers provide execution capabilities.**
+> Only a new responsibility boundary justifies a new PM. For specialized skills, first use an existing PM's mode, plugin, or worker.
 
-## 一、当前不扩编
+## 1. Keep the current nine PMs
 
-保持 9 PM 主体，不新增“需求 PM / 设计 PM / 前端 PM / 后端 PM / 硬件 PM”。
+Retain the nine-PM structure. Do not add separate Requirements, Design, Frontend, Backend, or Hardware PMs.
 
-| 专业方向 | 当前承载 | 落地口径 |
+| Specialty | Current owner | Implementation approach |
 |---|---|---|
-| 需求 PM | 产品 PM「需求拆解者」· 需求拆解 mode | 写 PRD、需求边界、验收口径 |
-| 设计 PM | 产品 PM「需求拆解者」· 体验设计 mode | 可调用 `product-design` 插件做体验、信息架构、原型和视觉探索 |
-| 前端 PM | 开发 PM「实施者」worker + 技术 PM explorer | 前端实现归开发；复杂方案先技术诊断 |
-| 后端 PM | 开发 PM「实施者」worker + 技术 PM explorer | 后端实现归开发；架构/接口/数据风险先技术诊断 |
-| 硬件 PM | 技术 PM sub-mode + 开发 PM worker | 仅真实进入设备/固件/BOM/量产测试链路后评估扩编 |
+| Requirements PM | Product PM “Requirements Analyst,” requirements analysis mode | PRDs, requirements boundaries, and acceptance criteria |
+| Design PM | Product PM “Requirements Analyst,” experience design mode | May use the `product-design` plugin for experience, information architecture, prototypes, and visual exploration |
+| Frontend PM | Development PM “Implementer” worker + Technical PM explorer | Development owns frontend implementation; complex approaches receive technical diagnosis first |
+| Backend PM | Development PM “Implementer” worker + Technical PM explorer | Development owns backend implementation; architecture, interface, and data risks receive technical diagnosis first |
+| Hardware PM | Technical PM sub-mode + Development PM worker | Consider adding a PM only after actual work enters the device, firmware, BOM, or production-test workflow |
 
-## 二、产品 PM 双 mode
+## 2. The Product PM's two modes
 
-产品 PM「需求拆解者」默认含两个 mode：
+Product PM “Requirements Analyst” includes two modes by default:
 
-| mode | 触发 | 输出 |
+| Mode | Trigger | Output |
 |---|---|---|
-| 需求拆解 mode | “我要/能不能/这里不好用/加一个功能” | PRD 条目、AC、优先级、边界情况 |
-| 体验设计 mode | “界面怎么做/信息架构/原型/视觉/交互体验” | 体验方案、IA、原型说明、设计探索结论 |
+| Requirements analysis | “I want,” “Can we,” “This is difficult to use,” or “Add a feature” | PRD entries, acceptance criteria, priorities, and edge cases |
+| Experience design | Interface design, information architecture, prototypes, visuals, or interaction experience | Experience proposals, IA, prototype descriptions, and design exploration findings |
 
-调用 `product-design` 插件不改变写入白名单；插件只是产品 PM 的能力工具，不自动生成新 PM，也不自动派 agent。
+Using the `product-design` plugin does not change the path allowlist. It is a Product PM capability tool; it neither creates a new PM nor dispatches an agent automatically.
 
-## 三、扩编触发
+## 3. Conditions for adding a PM
 
-任何专业方向想升格为独立 PM，仍必须回到 [`演化哲学.md`](演化哲学.md) 的扩编三问：
+A specialty seeking an independent PM role must still satisfy the three expansion questions in [evolution philosophy](演化哲学.md):
 
-1. 同类边界冲突或错向有不少于 3 次实证。
-2. 频次达到每周至少 1 次。
-3. 现有 PM 的 sub-mode / plugin / worker / explorer 已经覆盖不了。
+1. At least three documented instances of the same boundary conflict or misrouting.
+2. A frequency of at least once per week.
+3. Existing PM sub-modes, plugins, workers, and explorers cannot cover it.
 
-任一不满足：不加 PM，先沉淀为 mode、插件能力或 worker brief 模板。
+If any condition is unmet, do not add a PM. First capture the capability as a mode, plugin capability, or worker brief template.
 
-## 四、一句话
+## 4. Role summary
 
-> **9 PM 是骨架，专业 mode 是视角，plugin 是工具，worker/explorer 是一次性执行实例。**
+> **Nine PMs provide the structure; specialized modes provide perspectives; plugins provide tools; workers and explorers are temporary execution instances.**

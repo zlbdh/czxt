@@ -4,17 +4,17 @@ scope: pm-workspace
 pm: 测试发布PM-闭环者
 type: procedural
 loaded: on-demand
-description: 测试发布 PM-闭环者 速查表索引（待累积 / 子子 PM 验证层 / 主验证 PM / Codex 载体）
+description: "Test and Release PM \"Closer\" quick-reference index. References to develop for the verification layer and lead verification PM; Codex execution environment."
 ---
 
-# 测试发布PM-闭环者 速查表索引
+# Test and Release PM "Closer": Quick-Reference Index
 
-> 🌱 **新建占位**（task #104.5 / 2026-05-22 / v4.0 最终方案落地）
+> 🌱 **New placeholder**: task #104.5 / 2026-05-22 / final v4.0 model implemented.
 
-## 待累积速查表
+## Quick references to develop
 
-详见 [README.md](../README.md) §速查表（待累积）段
+See the quick-reference section in [README.md](../README.md).
 
-## 加载策略（Progressive Context Loading）
+## Progressive Context Loading
 
-参考项目 PM「咪咪」速查表 INDEX 模式：[`PM工作区/项目PM-咪咪/速查表/INDEX.md`](../../项目PM-咪咪/速查表/INDEX.md)
+Follow the [Project PM "Mimi" index pattern](../../项目PM-咪咪/速查表/INDEX.md).

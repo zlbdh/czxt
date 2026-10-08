@@ -17,11 +17,11 @@ $checks = @(
     @{ Path = "能力资产/skills/状态推断-推断项.md"; Pattern = 'Sprint-1需求清单\.md'; Label = "状态推断基础项仍硬编码 Sprint-1 需求清单" },
     @{ Path = "能力资产/skills/状态推断-跨session监控.md"; Pattern = 'ls -t apk/\*\.apk|Sprint-1需求清单\.md'; Label = "状态推断完整跑法仍使用旧 APK 路径或 Sprint-1 硬编码" },
     @{ Path = "能力资产/skills/状态推断-跨session监控-附录.md"; Pattern = 'ls -t apk/\*\.apk|Sprint-1需求清单\.md'; Label = "状态推断跨 session 附录仍使用旧 APK 路径或 Sprint-1 硬编码" },
-    @{ Path = "能力资产/skills/状态推断-跨session监控-附录.md"; Pattern = '\[ "\$卡数" -ge 3 \]'; Label = "状态推断跨 session 附录仍把 3 张待接手误判为积压" },
+    @{ Path = "能力资产/skills/状态推断-跨session监控-附录.md"; Pattern = '\[ "\$(?:卡数|pending_count)" -ge 3 \]'; Label = "状态推断跨 session 附录仍把 3 张待接手误判为积压" },
     @{ Path = "能力资产/skills/项目体检-检查项-5-6.md"; Pattern = 'Sprint-1需求清单\.md'; Label = "项目体检 5-6 仍硬编码 Sprint-1 需求清单" },
-    @{ Path = "能力资产/skills/项目体检-检查项.md"; Pattern = '检查项 [0-9] / 6'; Label = "项目体检 1-4 仍使用旧 6 项分母" },
-    @{ Path = "能力资产/skills/项目体检-检查项-5-6.md"; Pattern = '检查项 [0-9] / 6'; Label = "项目体检 5-6 仍使用旧 6 项分母" },
-    @{ Path = "能力资产/skills/项目体检-附录.md"; Pattern = '(?s)【8 / 9】状态\.md 新鲜度(?:(?!【9 / 9】Mount 缓存陷阱提醒).)*—— 整体'; Label = "项目体检附录报告模板缺第 9 项 Mount 缓存提醒" },
+    @{ Path = "能力资产/skills/项目体检-检查项.md"; Pattern = '(?:检查项|Check) [0-9] / 6'; Label = "项目体检 1-4 仍使用旧 6 项分母" },
+    @{ Path = "能力资产/skills/项目体检-检查项-5-6.md"; Pattern = '(?:检查项|Check) [0-9] / 6'; Label = "项目体检 5-6 仍使用旧 6 项分母" },
+    @{ Path = "能力资产/skills/项目体检-附录.md"; Pattern = '(?s)【8 / 9】状态\.md 新鲜度(?:(?!【9 / 9】Mount 缓存陷阱提醒).)*—— 整体|(?s)\[8 / 9\] 状态\.md freshness(?:(?!\[9 / 9\] Mount-cache warning).)*Overall:'; Label = "项目体检附录报告模板缺第 9 项 Mount 缓存提醒" },
     @{ Path = "能力资产/skills/项目体检-附录.md"; Pattern = 'PROP:\s*0/0/4/0/0\s+ADR:\s*7\s+RETRO:\s*2'; Label = "项目体检附录仍含旧 PROP/ADR/RETRO 样例计数" },
     @{ Path = "能力资产/skills/项目体检-检查项-1-4-附录.md"; Pattern = 'find __CZXT_APP_REPO_DIR_REGEX__/src 操作系统 能力资产 -type f[^\r\n]+-exec wc -c'; Label = "项目体检 1-4 附录 P4b 粗扫命令未排除历史归档/状态归档" },
     @{ Path = "能力资产/skills/项目体检-检查项-1-4-附录.md"; Pattern = '(?s)find __CZXT_APP_REPO_DIR_REGEX__/src 操作系统 能力资产 -type f(?:(?!\*\.ps1).)*xargs -r wc -c'; Label = "项目体检 1-4 附录 P4b 粗扫命令未覆盖 ps1/json 工具文件" },
@@ -35,8 +35,8 @@ $checks = @(
     @{ Path = "能力资产/skills/跑测试.md"; Pattern = '28 passed|2229 modules transformed'; Label = "跑测试 skill 仍含旧测试/构建数字样例" },
     @{ Path = "能力资产/skills/出APK.md"; Pattern = '28 测试|23 语法|\b28 tests\b|\b23 syntax checks\b'; Label = "出APK skill 标准回复仍含旧测试数字" },
     @{ Path = "能力资产/skills/出APK.md"; Pattern = 'release APK（v3\.0）|release APK \(v3\.0\)|(?m)^\s*git (tag -a|push origin) vX\.Y\.Z'; Label = "出APK skill release/tag 旧口径" },
-    @{ Path = "能力资产/skills/README.md"; Pattern = '项目体检\.md\)\s*\|\s*9 项检查'; Label = "skills README 项目体检旧 9 项口径" },
-    @{ Path = "能力资产/skills/README.md"; Pattern = '\| 打 APK \|[^\r\n]*build-apk\.bat'; Label = "skills README 仍把 build-apk.bat 作为打 APK 推荐入口" }
+    @{ Path = "能力资产/skills/README.md"; Pattern = '项目体检\.md\)\s*\|\s*(?:9 项检查|9 checks\b)'; Label = "skills README 项目体检旧 9 项口径" },
+    @{ Path = "能力资产/skills/README.md"; Pattern = '\| (?:打 APK|Build an APK) \|[^\r\n]*build-apk\.bat'; Label = "skills README 仍把 build-apk.bat 作为打 APK 推荐入口" }
 )
 
 $appLiteral = [regex]::Escape('{{APP_REPO_DIR}}')

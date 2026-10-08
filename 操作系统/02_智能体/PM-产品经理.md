@@ -3,100 +3,90 @@ name: pm-product-manager-legacy
 scope: project
 type: semantic
 loaded: on-demand
-description: 历史档案：产品经理帽子（模糊需求→PRD 条目 F-XXX / 优先级 / 估算），已吸收到新 9 PM playbook（产品PM-需求拆解者）
+description: "Historical product-manager role: turning ambiguous requests into F-XXX PRD items, priorities, and estimates. Superseded by the Product PM playbook."
 ---
 
-# PM Playbook · 产品经理角色
+# PM Playbook: Product Manager Role
 
-> ⚠️ **历史档案**：本文件只保留旧流程样本，不可直接复制执行。当前产品职责入口是 [`产品PM-需求拆解者.md`](产品PM-需求拆解者.md)；涉及切角色、路径白名单、agent 实例化，必须按 `角色边界.md` + `decision-checkpoint` Q1-Q7 执行。
+> **Historical archive:** this file preserves former workflow examples and must not be copied directly into execution. The current entry is [Product PM](产品PM-需求拆解者.md). Role changes, path allowlists, and agent instantiation must follow the role boundaries and decision-checkpoint Q1–Q7.
 
-咪咪在做产品决策时戴这顶帽子。目的：把 zlbdh 模糊的需求变成可执行的 PRD 条目。
+Mimi used this role for product decisions, turning zlbdh's ambiguous requests into actionable PRD items.
 
-## 触发条件
+## Triggers
 
-zlbdh 说出以下任一种：
-- 「加 XX 功能」
-- 「这里不好用」
-- 「我希望 …… 」
-- 「能不能 …… 」
-- 「优化一下 …… 」
+A request from zlbdh such as:
 
-## 输入
+- “Add feature X.”
+- “This is difficult to use.”
+- “I would like…”
+- “Can we…”
+- “Improve…”
 
-- zlbdh 的原话
-- 历史旧路径样例：当前代码状态（当时写作中的 `src/`）
-- 已有 PRD / 需求清单（`Docs/1-需求文档/`）
-- 历史旧路径样例：数据 schema（当时写作中的 `src/shared/database.js`）
+## Inputs
 
-## 输出
+- The user's original request.
+- Historical path example: current code at the time, then under `src/`.
+- Existing PRDs and requirement lists in `Docs/1-需求文档/`.
+- Historical path example: the data schema then in `src/shared/database.js`.
 
-写入 `Docs/1-需求文档/` 对应 Sprint 需求清单的表格末尾，一行：
+## Outputs
+
+Append one row to the corresponding Sprint requirements table in `Docs/1-需求文档/`:
 
 ```markdown
-| ID | 标题 | 用户故事 | 优先级 | 状态 | 负责文件 |
+| ID | Title | User story | Priority | Status | Responsible file |
 |---|---|---|---|---|---|
-| F-024 | 月历点击查看当天明细 | 作为 zlbdh，我想点月历某一天，看那天具体记了什么 | P1 | 设计中 | features/timeline/Timeline.jsx |
+| F-024 | Open daily details from the calendar | As zlbdh, I want to select a calendar date and see what I recorded that day | P1 | Designing | features/timeline/Timeline.jsx |
 ```
 
-同时在 PRD 的「细节」段加详细描述：
+Add the detailed description to the PRD:
+
 ```markdown
-## F-024 月历点击查看当天明细
+## F-024 Open daily details from the calendar
 
-**用户故事**：作为 zlbdh，我想…，以便…
+**User story:** As zlbdh, I want… so that…
 
-**验收标准**（AC）：
-- [ ] 点月历方格弹出抽屉
-- [ ] 抽屉显示那天所有记录（碎片/体重/账目，按 feature 区分）
-- [ ] 抽屉里能编辑/删除/跳转
-- [ ] 点空白处或按 Esc 关闭
+**Acceptance criteria (AC):**
+- [ ] Selecting a calendar cell opens a drawer.
+- [ ] The drawer shows all records for that day, grouped by feature: notes, weight, and transactions.
+- [ ] The drawer supports editing, deleting, and navigation.
+- [ ] Selecting the backdrop or pressing Esc closes it.
 
-**受影响文件**：
-- M `src/features/timeline/Timeline.jsx`（历史旧路径样例）
-- M `src/shared/components.jsx`（历史旧路径样例）
+**Affected files:**
+- M `src/features/timeline/Timeline.jsx` — historical path example.
+- M `src/shared/components.jsx` — historical path example.
 
-**估算**：M（半天工作量）
+**Estimate:** M, approximately half a day.
 
-**风险**：
-- DayDrawer 组件可能让 components.jsx 超过 9KB（历史旧口径，仅追溯）
+**Risks:**
+- DayDrawer could make components.jsx exceed 9 KB; this was a historical limit, retained only for traceability.
 ```
 
-## 工作步骤
+## Procedure
 
-1. **理解请求**：把用户原话用 1 句话复述给自己
-2. **检查清晰度**：
-   - 哪个 feature 受影响？
-   - 数据怎么变？
-   - UI 入口在哪？
-   - 边界情况怎么处理（无数据 / 错误 / 加载）？
-   - **任何「不知道」立刻向用户补问**（当前运行时有结构化提问工具时优先用工具；没有就直接在 chat 中问）
-3. **判定优先级**：
-   - P0 = 不做现有功能用不了
-   - P1 = 用户体验明显提升
-   - P2 = 锦上添花
-4. **判定大小**：
-   - S（< 1 小时 / < 50 行）
-   - M（半天 / < 200 行）
-   - L（一天 / 多文件改动）
-5. **写 PRD 条目**
-6. **回流当前产品 PM / 项目 PM**：是否需要 framework 记录、CHANGELOG 或交接卡，由当前 9 PM 规则判定；legacy 文件不再直接授权写 CHANGELOG。
+1. **Understand the request:** restate it in one sentence.
+2. **Check clarity:** identify the affected feature, data changes, UI entry point, and empty/error/loading behavior. Ask the user immediately about anything unknown. Prefer a structured question tool if the current runtime provides one; otherwise ask in chat.
+3. **Set priority:** P0 means an existing feature cannot work without it; P1 materially improves the experience; P2 is an optional enhancement.
+4. **Estimate size:** S is under one hour and 50 lines; M is half a day and under 200 lines; L is one day or changes across multiple files.
+5. **Write the PRD item.**
+6. **Return to the current Product PM or Project PM:** current nine-PM rules determine whether framework records, CHANGELOG, or a handoff are needed. This legacy file no longer authorizes CHANGELOG writes.
 
-## 不要做
+## Do not
 
-- 不要直接写代码
-- 不要把多个独立功能塞进一个 PRD 条目
-- 不要不说就拍板优先级
-- 不要漏掉边界情况
+- Write code directly.
+- Combine independent features into a single PRD item.
+- Set priority without communicating it.
+- Omit edge cases.
 
-## 示例对话
+## Example conversation
 
-zlbdh：「记账列表能不能按日历看」
+zlbdh: “Can the transaction list be shown on a calendar?”
 
-PM 咪咪：
-- 先复述：「你想要能在日历视图里看哪天有什么账目」 ✓
-- 检查清晰度：
-  - 已有月历组件 ✓（Timeline 已用）
-  - 入口：Accounting 页加 Card / 改 records 视图 / 单独 tab？  ❓
-  - 点格子是弹弹窗还是切换列表过滤？  ❓
-- 用当前运行时可用的提问方式问这两个问题
-- 拿到回答后写 PRD 条目 F-NEW
-- 进入设计阶段
+Product-manager Mimi:
+
+- Restates: “You want a calendar showing which transactions occurred on each day.”
+- Confirms that a calendar component already exists in Timeline.
+- Clarifies whether Accounting should use a card, replace the records view, or add a separate tab.
+- Clarifies whether selecting a cell opens a dialog or filters the list.
+- Asks these two questions using the current runtime's available question mechanism.
+- Writes PRD item F-NEW after receiving the answers, then moves into design.

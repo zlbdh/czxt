@@ -71,13 +71,13 @@ Assert-Contains "操作系统\01_架构\角色边界.md" `
   '事项卡.*不得.*扩大.*白名单|An item card must not expand any path allowlist' `
   "事项卡不得扩权"
 Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" `
-  '`借鉴区/`.*来源卡.*事项卡.*骨架' `
+  '(?:`借鉴区/`.*来源卡.*事项卡.*骨架|`借鉴区/`[^\r\n]*Sole writing role for source cards, item cards, and scaffolding)' `
   "操作系统 PM playbook 借鉴区写权"
 Assert-Contains "操作系统\02_智能体\操作系统PM-框架管家.md" `
-  '不同.*来源/<id>/<capture>.*事项/<id>.*写集互斥' `
+  '(?:不同.*来源/<id>/<capture>.*事项/<id>.*写集互斥|Different\ `来源/<id>/<capture>`\ and\ `事项/<id>`\ paths\ may\ use\ workers\ with\ disjoint\ write\ sets;\ each\ card\ has\ one\ writer\.)' `
   "操作系统 PM playbook 并行边界"
 Assert-Contains "操作系统\02_智能体\项目PM-咪咪.md" `
-  '借鉴.*路由.*操作系统 PM' `
+  '(?:借鉴.*路由.*操作系统 PM|Route\ borrowing,\ reference,\ and\ benchmarking\ requests\ to\ Operating\ System\ PM\ through\ the)' `
   "项目 PM 借鉴路由"
 
 # 全局 A/B/C 入口必须覆盖来源读取、捕获与采纳，但不重复治理规则正文。

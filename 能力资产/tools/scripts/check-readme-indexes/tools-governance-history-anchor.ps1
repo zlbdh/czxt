@@ -46,7 +46,7 @@ if (($tail -match "起手 S") -and ($panorama -notmatch "残篇")) {
   $ok = $false
 }
 
-Assert-Match "操作系统\06_工具治理\README.md" "不参与 P4b/P4c/P4o 活跃体检，P4q 只守首屏历史边界与残篇声明" "06 README 历史归档体检边界缺失"
+Assert-Match "操作系统\06_工具治理\README.md" "不参与 P4b/P4c/P4o 活跃体检，P4q 只守首屏历史边界与残篇声明|Excluded from active P4b/P4c/P4o checks; P4q checks only the first-screen historical boundary and fragment notice" "06 README 历史归档体检边界缺失"
 Assert-Match "操作系统\04_台账\逐文件审计覆盖台账.md" "操作系统/06_工具治理" "06_工具治理覆盖台账登记缺失"
 
 if (-not $ok) { exit 10 }

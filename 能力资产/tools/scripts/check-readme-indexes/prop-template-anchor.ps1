@@ -34,7 +34,7 @@ if ($template -notmatch '```powershell' -or $template -match '```bash|grep PROP-
 }
 
 $readme = Read-Text "确认改动\README.md"
-if ($readme -notmatch "已批未收口" -or $readme -notmatch "待排期 / 待重审 / 外部能力跟踪") {
+if ($readme -notmatch "已批未收口|Approved · Open" -or $readme -notmatch "待排期 / 待重审 / 外部能力跟踪|await scheduling, rereview, external capability tracking, or reassessment") {
   Add-Failure "确认改动 README 仍把进行中简化为纯实施中"
 }
 

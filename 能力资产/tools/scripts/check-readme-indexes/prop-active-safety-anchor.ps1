@@ -38,7 +38,7 @@ foreach ($file in Get-ChildItem -LiteralPath $activeDir -Filter "PROP-*.md" -Fil
 $readmePath = Join-Path $Root "确认改动\README.md"
 if (Test-Path -LiteralPath $readmePath -PathType Leaf) {
   $readme = Get-Content -LiteralPath $readmePath -Raw -Encoding UTF8
-  if ($readme -notmatch "已审批·未收口" -or $readme -notmatch "待重估") {
+  if ($readme -notmatch "已审批·未收口|Approved · Open" -or $readme -notmatch "待重估|await scheduling, rereview, external capability tracking, or reassessment") {
     Add-Failure "确认改动 README 未把进行中目录说明为已审批·未收口 / 待重估"
   }
   if ($readme -match "PROP-012.*git tag / 发版 / API key 仍 C 类" -and $readme -notmatch "现行见.*三类行为铁律|当前.*三类行为铁律") {

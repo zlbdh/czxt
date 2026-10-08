@@ -25,7 +25,7 @@ if (Test-Path -LiteralPath $osEntryPath) {
 $toolsGovReadmePath = Join-Path $Root "操作系统\06_工具治理\README.md"
 if (Test-Path -LiteralPath $toolsGovReadmePath) {
   $text = Get-Content -LiteralPath $toolsGovReadmePath -Raw -Encoding UTF8
-  if ($text -match '按\s*7\s*检查项核查|7\s*检查项\s*\+\s*报告模板') {
+  if ($text -match '按\s*7\s*检查项核查|7\s*检查项\s*\+\s*报告模板|check against\s*7\s*items|7\s*check items\s*\+\s*report template') {
     Add-Failure "06_工具治理 README 仍把旧 7 项手动体检当当前入口"
   } else {
     Write-Host "  ✅ 06_工具治理 README 未回退到旧 7 项手动体检口径"
@@ -45,7 +45,7 @@ if (Test-Path -LiteralPath $toolsGovReadmePath) {
 $frameworkHealthPath = Join-Path $Root "操作系统\06_工具治理\framework体检.md"
 if (Test-Path -LiteralPath $frameworkHealthPath) {
   $text = Get-Content -LiteralPath $frameworkHealthPath -Raw -Encoding UTF8
-  if (($text -match '7\s*项检查清单|手动跑\s*/\s*不是\s*cron|按上\s*7\s*检查项') -and ($text -notmatch '历史指针')) {
+  if (($text -match '7\s*项检查清单|手动跑\s*/\s*不是\s*cron|按上\s*7\s*检查项|7-item checklist|manual run\s*/\s*not cron|follow the above\s*7\s*checks') -and ($text -notmatch '历史指针|historical pointer')) {
     Add-Failure "framework体检.md 仍是旧体检正文且未标历史指针"
   } else {
     Write-Host "  ✅ framework体检.md 已是历史指针或未含旧当前口径"

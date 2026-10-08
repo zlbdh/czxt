@@ -55,7 +55,7 @@ foreach ($file in $propFiles) {
 $propReadme = Join-Path $Root "确认改动\README.md"
 if (Test-Path -LiteralPath $propReadme -PathType Leaf) {
   $readmeText = Get-Content -LiteralPath $propReadme -Raw -Encoding UTF8
-  if ($readmeText -match "谁都可以往这里放|zlbdh\s*/\s*咪咪\s*/\s*测试|已审批\s*·\s*实施中|状态字段改\s*\r?\n\s*「实施中」") {
+  if ($readmeText -match "谁都可以往这里放|zlbdh\s*/\s*咪咪\s*/\s*测试|已审批\s*·\s*实施中|状态字段改\s*\r?\n\s*「实施中」|Anyone may place a proposal here|zlbdh\s*/\s*Mimi\s*/\s*Testing|Approved\s*·\s*Implementing|set the status to\s*\r?\n\s*Implementing") {
     Add-Failure "确认改动/README.md 仍含绕过角色边界的写权或旧实施中状态口径"
   }
   foreach ($state in $propStates) {
@@ -80,7 +80,7 @@ if (Test-Path -LiteralPath $propReadme -PathType Leaf) {
 $propTemplate = Join-Path $Root "确认改动\_模板.md"
 if (Test-Path -LiteralPath $propTemplate -PathType Leaf) {
   $templateText = Get-Content -LiteralPath $propTemplate -Raw -Encoding UTF8
-  if ($templateText -match "已审批\s*·\s*实施中|已审批\s*·\s*进行中|咪咪\s*/\s*测试发现") {
+  if ($templateText -match "已审批\s*·\s*实施中|已审批\s*·\s*进行中|咪咪\s*/\s*测试发现|Approved\s*·\s*Implementing|Approved\s*·\s*In progress|Mimi\s*/\s*Testing findings") {
     Add-Failure "确认改动/_模板.md 仍含旧实施中状态或绕过 PM 白名单的提议人示例"
   }
 }

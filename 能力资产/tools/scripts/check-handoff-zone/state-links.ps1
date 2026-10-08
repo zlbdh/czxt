@@ -37,7 +37,7 @@ function Get-HandoffStateIssues {
         if (-not (Test-Path -LiteralPath $path)) {
           $fileName = Split-Path -Leaf $rel
           $actual = @(Get-ChildItem -LiteralPath (Join-Path $Root "交接区") -Recurse -File -Filter $fileName -ErrorAction SilentlyContinue | Select-Object -First 1)
-          $to = if ($actual.Count -gt 0) { $actual[0].FullName.Substring($Root.Length).TrimStart('\') -replace '\\', '/' } else { "<未找到同名文件>" }
+          $to = if ($actual.Count -gt 0) { $actual[0].FullName.Substring($Root.Length).TrimStart('\') -replace '\\', '/' } else { "<no file with the same name found>" }
           $stateBrokenLinks += [PSCustomObject]@{
             Line = $i + 1
             From = $rel
@@ -53,14 +53,14 @@ function Get-HandoffStateIssues {
       if ($topText -notmatch [regex]::Escape($latestPending.Name)) {
         $stateTopIssues += [PSCustomObject]@{
           File = $latestPending.Name
-          Issue = "状态.md 顶部 80 行未指向最新待接手卡"
+          Issue = "The first 80 lines of 状态.md do not point to the latest pending card"
         }
       }
     } else {
       if ($topText -match '交接区[\\/]待接手[\\/][^\s`)\]]+\.md') {
         $stateTopIssues += [PSCustomObject]@{
-          File = "无待接手"
-          Issue = "待接手目录为空，但状态.md 顶部 80 行仍出现待接手卡路径"
+          File = "No pending handoffs"
+          Issue = "The pending directory is empty, but the first 80 lines of 状态.md still contain a pending-card path"
         }
       }
 
@@ -69,10 +69,10 @@ function Get-HandoffStateIssues {
         $latestDone = Get-ChildItem -LiteralPath $doneDir -File -Filter "*.md" -ErrorAction SilentlyContinue |
           Sort-Object @{ Expression = { Get-HandoffSortValue $_ }; Descending = $true }, Name -Descending |
           Select-Object -First 1
-        if ($null -ne $latestDone -and $topText -notmatch [regex]::Escape($latestDone.Name) -and $topText -notmatch '无待接手|待接手\s*[:：]\s*0') {
+        if ($null -ne $latestDone -and $topText -notmatch [regex]::Escape($latestDone.Name) -and $topText -notmatch '无待接手|待接手\s*[:：]\s*0|No pending handoffs|Pending handoffs\s*:\s*0') {
           $stateTopIssues += [PSCustomObject]@{
             File = $latestDone.Name
-            Issue = "状态.md 顶部 80 行未指向最新已接手卡，也未明确无待接手"
+            Issue = "The first 80 lines of 状态.md neither point to the latest accepted card nor explicitly state that no handoffs are pending"
           }
         }
       }

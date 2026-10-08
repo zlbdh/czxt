@@ -18,17 +18,24 @@ function Read-Text([string]$Rel) {
 }
 
 $readme = Read-Text "Docs/7-复盘/README.md"
+$readmeAliases = @{
+  '历史安全覆盖说明' = 'Historical safety override:'
+  'RETRO 正文记录当时事实，不等于当前 SOP' = 'RETRO bodies record facts at the time; they are not current operating procedures.'
+  'Q1-Q7' = 'Q1–Q7'
+  '①-⑦' = '①–⑦'
+  'Framework PROP' = 'framework PROP'
+  '9 PM' = 'nine-PM/agent scheduling model'
+}
 foreach ($required in @(
-  "历史安全覆盖说明",
-  "RETRO 正文记录当时事实，不等于当前 SOP",
-  "git reset --hard HEAD",
-  "git push origin master",
-  "Q1-Q7",
-  "①-⑦",
-  "Framework PROP",
-  "9 PM"
+  "历史安全覆盖说明", "RETRO 正文记录当时事实，不等于当前 SOP",
+  "git reset --hard HEAD", "git push origin master", "Q1-Q7", "①-⑦",
+  "Framework PROP", "9 PM"
 )) {
-  if ($readme -notmatch [regex]::Escape($required)) {
+  $pattern = [regex]::Escape($required)
+  if ($readmeAliases.ContainsKey($required)) {
+    $pattern += '|' + [regex]::Escape($readmeAliases[$required])
+  }
+  if ($readme -notmatch $pattern) {
     Add-Failure "Docs/7-复盘/README.md 缺少历史覆盖说明锚点：$required"
   }
 }
@@ -41,13 +48,13 @@ if (Test-Path -LiteralPath $retroDir -PathType Container) {
   if ($indexedRows -ne $officialRetros.Count) {
     Add-Failure "RETRO README 索引行数不一致：README $indexedRows vs 文件 $($officialRetros.Count)"
   }
-  if ($readme -notmatch "P4i / readme-index") {
+  if ($readme -notmatch "P4i / readme-index|P4i, and README-index checks jointly compare this index with actual RETRO files\.") {
     Add-Failure "RETRO README 未声明 P4i / readme-index 共同守索引"
   }
 }
 
 $template = Read-Text "Docs/7-复盘/_模板.md"
-if ($template -match "agent/workflows|agent/skills|5 个必问") {
+if ($template -match "agent/workflows|agent/skills|5 个必问|five mandatory questions") {
   Add-Failure "RETRO 模板仍含旧路径或旧 5 问口径"
 }
 
@@ -63,25 +70,25 @@ if (Test-Path -LiteralPath $tasksHeadPath -PathType Leaf) {
 }
 
 $retro009 = Read-Text "Docs/7-复盘/RETRO-009-2026-05.md"
-if ($retro009 -match "git reset --hard HEAD|预批路径" -and $retro009 -notmatch "当前安全覆盖说明") {
+if ($retro009 -match "git reset --hard HEAD|预批路径|preapproved path" -and $retro009 -notmatch "当前安全覆盖说明|Current safety override(?:\*\*)?:") {
   Add-Failure "RETRO-009 含 reset 预批旧口径但缺当前安全覆盖说明"
 }
 
 $retro010 = Read-Text "Docs/7-复盘/RETRO-010-2026-05.md"
-if ($retro010 -match "git reset --hard HEAD|预批" -and $retro010 -notmatch "当前安全覆盖说明") {
+if ($retro010 -match "git reset --hard HEAD|预批|preapproved" -and $retro010 -notmatch "当前安全覆盖说明|Current safety override(?:\*\*)?:") {
   Add-Failure "RETRO-010 含 reset 预批旧口径但缺当前安全覆盖说明"
 }
-if ($retro010 -match "git push origin master" -and $retro010 -notmatch "当前分支覆盖说明") {
+if ($retro010 -match "git push origin master" -and $retro010 -notmatch "当前分支覆盖说明|Current branch override:") {
   Add-Failure "RETRO-010 含 master 旧口径但缺当前分支覆盖说明"
 }
 
 $retro013 = Read-Text "Docs/7-复盘/RETRO-013-2026-05.md"
-if ($retro013 -match "git reset --hard|预批 git reset" -and $retro013 -notmatch "当前安全覆盖说明") {
+if ($retro013 -match "git reset --hard|预批 git reset|preapproved git reset" -and $retro013 -notmatch "当前安全覆盖说明|Current safety override(?:\*\*)?:") {
   Add-Failure "RETRO-013 含 reset 旧口径但缺当前安全覆盖说明"
 }
 
 $retro009Candidate = Read-Text "Docs/7-复盘/RETRO-009-候选议题.md"
-if ($retro009Candidate -match "agent/" -and $retro009Candidate -notmatch "历史链接说明") {
+if ($retro009Candidate -match "agent/" -and $retro009Candidate -notmatch "历史链接说明|Historical links:") {
   Add-Failure "RETRO-009 候选议题含 agent/ 旧链接但缺历史链接说明"
 }
 

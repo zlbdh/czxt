@@ -1,55 +1,55 @@
-# PROP-001 · 路径白名单 / C 类铁律加 PreToolUse 软门禁（ask 不 deny）
+# PROP-001 · PreToolUse Soft Gates for Path Allowlists and Class C Rules
 
-- **状态**：已审批 · 已完成（2026-06-22 实施完毕，见 CHANGELOG 2026-06-22）
-- **日期**：2026-06-22
-- **提议人**：操作系统 PM「框架管家」（dogfood 多维审计 rank-4 落档；项目 PM「咪咪」调度）
-- **预估等级**：L3（动 hooks 拦截语义 / framework 守卫）
-- **实施记录**：2026-06-22 项目 PM 派 操作系统 PM worker agent 实现两份 `pre-write-guard.ps1` 路径软门禁 + hooks-smoke fixture；主会话验收 + readme-index / hooks-smoke / 体检 gate 全绿。详见 CHANGELOG 2026-06-22。
+- **Status**: Approved · Completed (implemented 2026-06-22, as recorded in CHANGELOG for that date)
+- **Date**: 2026-06-22.
+- **Proposed by**: Operating System PM "Framework Steward"; recorded from rank 4 of the multidimensional dogfood audit, scheduled by Project PM "Mimi".
+- **Estimated level**: L3; changes hook interception semantics and framework guards.
+- **Implementation record**: On 2026-06-22, Project PM assigned an Operating System PM worker to implement path soft gates in both `pre-write-guard.ps1` files and hooks-smoke fixtures. The main session reviewed the work; README/index, hooks-smoke, and health gates all passed. See CHANGELOG for 2026-06-22.
 
-> 📌 发布 / git 边界：本 PROP 实现**不含**任何 commit/push/tag/version 动作；正文提到的 git `--force`/`rebase`/`tag` 仅作 Plan C 范围说明。实施产生的 commit/push 由**测试发布 PM「闭环者」**按 **ADR-016** 6 条件、主会话单点收口（push 失败即停手不重试）。
+> **Publication and Git boundary:** this proposal's implementation excludes commit, push, tag, and version actions. Git `--force`, `rebase`, and `tag` below describe only the scope of option C. Implementation commits and pushes must be finalized at a single point in the main session by Test and Release PM "Closer", subject to ADR-016's six conditions. Stop after a failed push; do not retry.
 
-## 一句话
+## One sentence
 
-把"写 `Docs/6-历史归档/**` 和已存在 `apk/**`"这类 C 类边界，从**只靠 AI 自觉**升级为 `pre-write-guard.ps1` 的**机械软门禁（permissionDecision=ask，绝不 deny）**，让"三道护栏"名实相符。
+Turn Class C boundaries such as writing `Docs/6-历史归档/**` and existing `apk/**` files into mechanical soft gates in `pre-write-guard.ps1`, using `permissionDecision=ask`, never deny, so the claimed three safeguards have an operational foundation beyond AI remembering the rules.
 
-## 背景 / 动机
+## Background and motivation
 
-- 触发场景：本轮 dogfood 多维审计（2026-06-22）头号主线——框架自称"三道护栏（Q1-Q7 / 路径白名单 / 三类铁律）"，但**路径白名单 / C 类铁律在写入时零机械门禁**，全靠 AI 记得 grep `三类行为铁律.md`。
-- 框架自己的 PM 自纠 #88（"PM 也会忘"）、#91（"软规则失守 = 终极自动化 Hooks"）早已论证：只靠自觉这条路走不通。
-- 现状证据：`能力资产/tools/hooks/claude|codex/pre-write-guard.ps1` 当前**只**检测"密钥写入非 .env 文件 → ask"，对路径类 C 类边界（`Docs/6-历史归档/`、历史 `apk/`）**无任何拦截**。
-- 这是名副其实的 dogfooding 自指漏洞：规则写在纸上，没有门禁兜底。修它即"用操作系统优化操作系统"。
+- The main finding of the 2026-06-22 multidimensional dogfood audit was that the framework claimed three safeguards—Q1–Q7, path allowlists, and three-class rules—but provided no mechanical write-time enforcement of the latter two. It relied on the AI remembering to search `三类行为铁律.md`.
+- PM self-corrections 88, "PMs also forget," and 91, "soft-rule failure requires automated hooks," had already demonstrated that memory alone was insufficient.
+- Both `能力资产/tools/hooks/claude|codex/pre-write-guard.ps1` files detected only secret writes to files other than .env and asked for confirmation. They did not intercept Class C paths such as `Docs/6-历史归档/` or historical `apk/` files.
+- This was a self-hosting gap: written rules lacked an operational gate. Fixing it used the operating system to improve itself.
 
-## 建议怎么做
+## Proposed approach
 
-复用现有 `pre-write-guard.ps1` 已验证的设计（**只 ask 不 deny + 全程 fail-safe**），在密钥检测之后追加**路径裁决**：
+Reuse the proven design of `pre-write-guard.ps1`: ask without denying, with fail-safe behavior throughout. Add path decisions after secret detection:
 
-- Edit/Write 目标命中 `Docs/6-历史归档/**` → `permissionDecision=ask`，引用 C 类"历史归档不动"。
-- 写**已存在**的 `apk/**` 文件 → `ask`，引用 C 类"改历史 APK"。
-- 一律 **ask 不 deny**；任何不确定 / 解析失败一律放行（continue），与现有密钥门禁同款 fail-safe。
-- claude + codex **两份** `pre-write-guard.ps1` 同步改（互斥写集，按调度纪律派 worker 实现，主会话验收）。
-- 同步 `能力资产/tools/hooks/tests/hooks-smoke.ps1` 加正 / 负向 fixture，体检 gate 验证。
+- An Edit/Write target under `Docs/6-历史归档/**` produces `permissionDecision=ask`, citing the Class C rule against changing historical archives.
+- A write to an **existing** `apk/**` file asks for confirmation, citing the historical-APK rule.
+- Always ask, never deny. Uncertainty and parse failures continue without blocking, matching the existing secret gate's fail-safe behavior.
+- Update both Claude and Codex versions using disjoint worker write sets and main-session review.
+- Add positive and negative fixtures to `能力资产/tools/hooks/tests/hooks-smoke.ps1` and verify the health gate.
 
-## 影响 / 代价（粗估）
+## Estimated impact and cost
 
-- 工作量：S–M
-- 影响文件数：~3–4（claude/codex 两份 hook + hooks-smoke fixture +（如计数变动）hooks README / 事件矩阵）
-- 风险：**低**——这两类路径日常几乎不写，ask 不会造成 prompt 疲劳；只 ask 不 deny，误判也不阻断真实工作；fail-safe 保证 hook 出错时不挡路。
-- 是否改 schema：否
+- Effort: S–M.
+- Affected files: approximately 3–4; both hooks, smoke fixtures, and the hooks README/event matrix if counts change.
+- Risk: low. These paths are rarely written, minimizing prompt fatigue. False positives ask without blocking legitimate work, and hook errors remain fail-safe.
+- Schema change: No.
 
-## 备选方案
+## Alternatives
 
-- **A（本提案）**：先做"历史归档 + 历史 APK"两类高价值、低噪声路径。
-- **B**：连"单源禁并行文件（`状态.md`/`CHANGELOG` 等）"也加 ask —— ❌ **不建议**：这些文件每个 sprint 都写（本会话已写 5+ 次），ask 会造成严重 prompt 疲劳；并发风险靠调度纪律 + C 类规则管，不靠 per-write hook。
-- **C**：再加 git `--force`/`reset --hard`/`rebase`/`tag -d` 命令级提醒（user-prompt-submit 或 Bash PreToolUse）—— 可作 **Phase 2**，本 PROP 先不含，避免 scope 膨胀和"rebase"等词的误报。
+- **A, this proposal:** begin with the two high-value, low-noise groups: historical archives and historical APKs.
+- **B:** also ask on single-source files that prohibit parallel writing, such as `状态.md` and CHANGELOG. **Not recommended:** these change every sprint and had been edited more than five times in this session. Per-write prompts would create fatigue. Scheduling discipline and Class C rules govern concurrency.
+- **C:** add command-level warnings for Git `--force`, `reset --hard`, `rebase`, and `tag -d` through user-prompt-submit or Bash PreToolUse. Reserve this for Phase 2 to avoid scope growth and false positives for words such as "rebase."
 
-## 拒绝的话理由会是什么
+## Likely reasons for rejection
 
-- "这两类路径本来就很少写，加门禁收益边际"——但护栏价值正在于"忘记时兜底"，零成本兜底优于零兜底。
-- 或希望先把 git 命令级 C 类（force/rebase）一起做再统一上（→ 选 Plan C 合并）。
+- The two path groups are rarely written, so the marginal benefit may appear small. The safeguard is specifically for forgotten rules; a low-cost fallback is preferable to none.
+- zlbdh may prefer to cover Git command-level Class C actions at the same time, which would combine this work with option C.
 
-## 不在范围
+## Out of scope
 
-- 不做 deny（永远 ask）。
-- 不动单源禁并行文件的 ask 门禁（Plan B，本轮不做）。
-- 不做 git 命令级拦截（Plan C / Phase 2）。
-- 不改 C 类清单本身、不改路径白名单语义——只给"已立规则"加机械兜底。
+- Deny behavior; the hook always asks.
+- Ask gates for single-source files, option B.
+- Git command interception, option C / Phase 2.
+- Changing the Class C list or path-allowlist semantics. This adds mechanical support for existing rules only.

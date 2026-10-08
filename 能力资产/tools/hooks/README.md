@@ -3,86 +3,86 @@ name: hooks-index
 scope: project
 type: procedural
 loaded: on-demand
-description: 操作系统 hooks 入口 — manifest / runner / git wrapper / Codex / Claude / watch / scheduled
+description: Operating system hooks entry point — manifest, runner, Git wrappers, Codex, Claude, watchers, and scheduled tasks.
 ---
 
-# 能力资产/tools/hooks · 操作系统 Hooks
+# Capability Tools — Operating System Hooks
 
-> 执行层入口。设计真说明见 `操作系统/06_工具治理/hooks-设计.md`；事件矩阵见 `操作系统/06_工具治理/hooks-事件矩阵.md` + `操作系统/06_工具治理/hooks-事件矩阵-附录.md`；命令级 SOP 见 `操作系统/07_完整工作流/hooks-运行SOP.md` + `操作系统/07_完整工作流/hooks-运行SOP-附录.md`。
+> Execution entry point. Authoritative design: `操作系统/06_工具治理/hooks-设计.md`. Event matrix: `操作系统/06_工具治理/hooks-事件矩阵.md` and `操作系统/06_工具治理/hooks-事件矩阵-附录.md`. Command-level procedures: `操作系统/07_完整工作流/hooks-运行SOP.md` and `操作系统/07_完整工作流/hooks-运行SOP-附录.md`.
 
-## 目录
+## Directory
 
-| 路径 | 职责 |
+| Path | Responsibility |
 |---|---|
-| `manifest.json` | hooks 清单，定义 id / trigger / script / 允许退出码 |
-| `run-hooks.ps1` | 统一 runner，按 trigger 执行 hooks |
-| `install-hooks.ps1` | 安装/检查本地 `{{APP_REPO_DIR}}/.git/hooks/pre-commit` + `pre-push` wrapper；Check 发现缺失或漂移会失败 |
-| `.codex/hooks.json` | Codex 原生 lifecycle hooks 入口（项目根配置） |
-| `.codex/invoke-hook.ps1` | Codex 命令分发器；入口用 quote-free `EncodedCommand` 向上绑定最近的 CZXT 根标记，再调用固定白名单脚本 |
-| `.claude/settings.json` | Claude Code 原生 lifecycle hooks 入口（项目根配置） |
-| `codex/` / `claude/` | 两个运行时的 lifecycle 适配层 |
-| `chat-output/` | chat 简版收尾检查脚本 |
-| `scheduled/` / `watch/` | Windows 计划任务与 ADR README watcher |
-| `tests/` | hooks smoke；`tests/support/` 为内部契约模块；smoke 会临时创建并删除一张 `_hooks-smoke-*` 交接 fixture |
+| `manifest.json` | Hook inventory: ID, trigger, script, and allowed exit codes |
+| `run-hooks.ps1` | Shared runner that executes hooks by trigger |
+| `install-hooks.ps1` | Install/check local `{{APP_REPO_DIR}}/.git/hooks/pre-commit` and `pre-push` wrappers; Check fails if they are missing or have drifted |
+| `.codex/hooks.json` | Native Codex lifecycle hooks entry in the project root |
+| `.codex/invoke-hook.ps1` | Codex command dispatcher: a quote-free `EncodedCommand` bootstrap searches upward for the nearest CZXT root marker, then calls a fixed allowlist of scripts |
+| `.claude/settings.json` | Native Claude Code lifecycle hooks entry in the project root |
+| `codex/` / `claude/` | Lifecycle adapters for the two runtimes |
+| `chat-output/` | Compact chat-completion checks |
+| `scheduled/` / `watch/` | Windows scheduled tasks and ADR README watcher |
+| `tests/` | Hooks smoke tests; `tests/support/` contains internal contract modules. Smoke tests temporarily create and delete one `_hooks-smoke-*` handoff fixture |
 
-## 快速命令
+## Quick commands
 
 ```powershell
-# framework 改动后的轻量检查
+# Lightweight checks after framework changes.
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/run-hooks.ps1 -Trigger manual -Mode Check -Hook readme-index-check
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/run-hooks.ps1 -Trigger manual -Mode Check -Hook handoff-zone-check
 
-# hook 框架 smoke
+# Hook framework smoke test.
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/tests/hooks-smoke.ps1
 
-# 本地 git hooks / Windows scheduled / ADR watcher 检查
+# Check local Git hooks, Windows scheduled tasks, and the ADR watcher.
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/install-hooks.ps1 -Mode Check
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/scheduled/install-scheduled-task.ps1 -Mode Check
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/watch/install-adr-watch-task.ps1 -Mode Check
 ```
 
-完整 manual 会触发 `pre-release-check`（`npm test` + `npm run build`），较重；需要时再跑：
+A full manual run triggers the heavier `pre-release-check` (`npm test` and `npm run build`). Run it when needed:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/hooks/run-hooks.ps1 -Trigger manual -Mode Check
 ```
 
-## 当前 hooks（9 个 / 真源头 manifest.json）
+## Current hooks (9 total; source of truth: manifest.json)
 
-本节只保留计数锚点，防 README 漂移。逐项事件、trigger、写入权限见 `操作系统/06_工具治理/hooks-事件矩阵.md`，适配细节见 `操作系统/06_工具治理/hooks-事件矩阵-附录.md`。
+This section retains count anchors to prevent README drift. Individual events, triggers, and write permissions are in `操作系统/06_工具治理/hooks-事件矩阵.md`; adapter details are in `操作系统/06_工具治理/hooks-事件矩阵-附录.md`.
 
-| 类别 | Hook |
+| Category | Hook |
 |---|---|
-| 索引/状态 | `readme-index-check` / `adr-readme-dry-run` / `pm-tracking-check` / `handoff-zone-check` / `chat-summary-check` |
-| 安装/健康 | `hook-install-check` / `framework-health-check` |
-| 发布/沉淀 | `pre-release-check` / `retro-cadence-check` |
+| Index/state | `readme-index-check` / `adr-readme-dry-run` / `pm-tracking-check` / `handoff-zone-check` / `chat-summary-check` |
+| Installation/health | `hook-install-check` / `framework-health-check` |
+| Release/knowledge retention | `pre-release-check` / `retro-cadence-check` |
 
-`hook-install-check` 的 Check 模式会把本地 Git wrapper 缺失或内容漂移判为失败；需要修复时再运行 `install-hooks.ps1 -Mode Apply`。
+The `hook-install-check` Check mode fails if local Git wrappers are missing or their content has drifted. Run `install-hooks.ps1 -Mode Apply` only when repair is needed.
 
-## Codex 原生 hooks（5 个事件）
+## Native Codex hooks (5 events)
 
-项目级入口：`.codex/hooks.json`。Codex UI「钩子」页读取该配置；项目 `.codex/` 配置层必须先受信任，新增或变更定义后还需 review/trust。命令通过 quote-free PowerShell bootstrap 从 session cwd 向上查找最近且**恰好一个** `.czxt-template-root` / `.czxt-project-root` 的根，确认同根 `.codex/hooks.json` 与 `.codex/invoke-hook.ps1` 后再分发；双标记冲突立即静默停止，不越过到外层根，也不依赖 Git 或不可执行的模板路径占位符。
+Project entry: `.codex/hooks.json`. The Codex Hooks UI reads this configuration. The project `.codex/` configuration layer must be trusted, and new or changed definitions require review/trust. A quote-free PowerShell bootstrap starts at the session cwd and finds the nearest root with exactly one `.czxt-template-root` or `.czxt-project-root` marker. It verifies `.codex/hooks.json` and `.codex/invoke-hook.ps1` belong to that root before dispatch. Conflicting dual markers stop execution silently and immediately; the search does not continue to an outer root. It depends on neither Git nor non-executable template path placeholders.
 
-| 事件 | 用途 |
+| Event | Purpose |
 |---|---|
-| `SessionStart` / `UserPromptSubmit` | 注入项目治理上下文与敏感操作提醒 |
-| `Stop` | 疑似实施收尾时检查 chat 交接卡 |
-| `PostToolUse` / `PreToolUse` | framework 改动快检 + 业务大文件触碰软提醒 / 疑似密钥写入软提醒 |
+| `SessionStart` / `UserPromptSubmit` | Inject project governance context and sensitive-action reminders |
+| `Stop` | Check the chat handoff when implementation appears to be concluding |
+| `PostToolUse` / `PreToolUse` | Quick framework checks and advisory warnings for touching large business files / suspected secret writes |
 
-## Claude Code 原生 hooks（6 个事件）
+## Native Claude Code hooks (6 events)
 
-项目级入口：`.claude/settings.json`。新增或改动后需 `/hooks` 重载或重启 session。
+Project entry: `.claude/settings.json`. After additions or changes, reload with `/hooks` or restart the session.
 
-| 事件 | 用途 |
+| Event | Purpose |
 |---|---|
-| `SessionStart` / `UserPromptSubmit` | 与 Codex 共用治理上下文注入 |
-| `Stop` | Claude transcript 适配后复用 chat 交接卡检查 |
-| `PostToolUse` / `PreToolUse` / `PreCompact` | framework 改动快检 + 业务大文件触碰软提醒 / 密钥写入 ask / 压缩前留痕提醒 |
+| `SessionStart` / `UserPromptSubmit` | Share governance context injection with Codex |
+| `Stop` | Adapt the Claude transcript and reuse the chat handoff check |
+| `PostToolUse` / `PreToolUse` / `PreCompact` | Quick framework checks and large-business-file warnings / ask before suspected secret writes / remind the agent to record context before compaction |
 
-## 边界
+## Boundaries
 
-- `.git/hooks` 不是真源头，只放本目录 wrapper 的安装副本。
-- `.codex/hooks.json`、`.codex/invoke-hook.ps1` 和 `.claude/settings.json` 只做运行时 lifecycle 适配，不承载业务逻辑。
-- Stop / chat-output hook 只检查并阻断不合格收尾，不会替 agent 改写最终回复、移动交接卡或补 PM 轨迹。
-- 自动写入仅限确定性索引，例如 ADR README 表格；语义型摘要先输出报告或 patch。
-- `PreToolUse` 只覆盖疑似密钥结构提醒，不替代 `baseUrl`、用户数据删除、真实密钥外传等 C/B 类边界判断。
+- `.git/hooks` is not the source of truth; it holds installed copies of this directory's wrappers.
+- `.codex/hooks.json`, `.codex/invoke-hook.ps1`, and `.claude/settings.json` adapt runtime lifecycle events only; they contain no business logic.
+- Stop / chat-output hooks check and block incomplete handoffs only. They do not rewrite the agent's final response, move handoff cards, or add PM tracking records.
+- Automatic writes are limited to deterministic indexes, such as the ADR README table. Semantic summaries first produce a report or patch.
+- `PreToolUse` only flags suspected secret structures. It does not replace Class B/C decisions about `baseUrl`, deleting user data, disclosing real secrets, or similar boundaries.

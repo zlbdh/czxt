@@ -3,133 +3,97 @@ name: changes-approval-index
 scope: project
 type: semantic
 loaded: on-demand
-description: PROP 治理入口 — 待审批 / 已审批(已完成+进行中+已弃用) / 拒绝
+description: Proposal governance; pending approval, approved work, completed or abandoned records, and rejected proposals.
 ---
-# 确认改动 / Proposals
+# Proposals
 
-📋 这里存所有改动建议的「档案库」——从初提议到最终结局的全生命周期。
+This archive records every change proposal throughout its lifecycle, from the initial idea to its final disposition.
 
-不在这里的都不许进 `Docs/1-需求文档/`，**避免咪咪自作主张写需求文档污染 PRD**。
+Ideas not recorded here must not enter `Docs/1-需求文档/`. This prevents Mimi from independently adding requirements and contaminating the PRD.
 
-## 目录结构
+## Directory structure and stages
 
-```
-确认改动/
-├── 待审批/              ← zlbdh 可提出；AI 由产品 PM/操作系统 PM 按白名单落档，等 zlbdh review
-├── 已审批/              ← zlbdh 同意的提议（按状态分 3 子目录）
-│   ├── 进行中/          ← 已批未收口（正在做 / 待排期 / 待重审 / 外部能力跟踪 / 待重估）
-│   ├── 已完成/          ← 实施完毕（永久存档，含 ADR 引用）
-│   └── 已弃用/          ← 实施中途决定不做（含弃用原因）
-└── 拒绝/                ← review 时直接 pass 的（不删，留档防重复劳动）
-```
-
-## 各阶段含义
-
-| 阶段 | 路径 | 谁能放 | 下一步 |
+| Stage | Path | Who may place a proposal here | Next step |
 |---|---|---|---|
-| 待审批 | `待审批/` | zlbdh 可提出；产品 PM/操作系统 PM 按路径白名单落档 | zlbdh review |
-| 已审批·未收口 | `已审批/进行中/` | review 通过后移入 | 责任 PM 按 DoD 闭环；也可暂处待排期 / 待重审 / 外部能力跟踪 / 待重估 |
-| 已审批·已完成 | `已审批/已完成/` | DoD 全过 + ADR 写完 | 永久存档 |
-| 已审批·已弃用 | `已审批/已弃用/` | 中途方案错了 | 永久存档（含原因） |
-| 拒绝 | `拒绝/` | review 时直接 pass | 永久存档（含原因） |
+| Pending approval | `待审批/` | zlbdh may propose; Product PM or Operating System PM records proposals within the path allowlist | zlbdh reviews |
+| Approved · Open | `已审批/进行中/` | Move here after approval | Responsible PM completes the DoD; work may await scheduling, rereview, external capability tracking, or reassessment |
+| Approved · Completed | `已审批/已完成/` | All DoD checks pass and the ADR is written | Permanent archive |
+| Approved · Abandoned | `已审批/已弃用/` | An approved approach is abandoned during implementation | Permanent archive, including the reason |
+| Rejected | `拒绝/` | Rejected during review | Permanent archive, including the reason; retain to avoid repeated work |
 
-⭐ **状态转换全在 [`操作系统/07_完整工作流/审批与归档.md`](../操作系统/07_完整工作流/审批与归档.md)**——AI 收到 zlbdh 审批信号后照着做。
+All status transitions are defined in [approval and archiving](../操作系统/07_完整工作流/审批与归档.md). Follow that workflow after receiving zlbdh's approval signal.
 
-## PROP 文件头状态字段写法
+## Proposal header status field
 
-```yaml
-- **状态**：待审批
-- **状态**：已审批 · 未收口 / 待排期（YYYY-MM-DD 起，对应 ADR-XXX 待写）
-- **状态**：已审批 · 已完成（YYYY-MM-DD 实施完毕，对应 ADR-XXX）
-- **状态**：已审批 · 已弃用（YYYY-MM-DD 弃用，原因：……）
-- **状态**：拒绝（YYYY-MM-DD，原因：……）
+```text
+- **Status**: Pending approval
+- **Status**: Approved · Open / Awaiting scheduling (since YYYY-MM-DD; ADR-XXX pending)
+- **Status**: Approved · Completed (implemented YYYY-MM-DD; ADR-XXX)
+- **Status**: Approved · Abandoned (YYYY-MM-DD; reason: ...)
+- **Status**: Rejected (YYYY-MM-DD; reason: ...)
 ```
 
-文件挪到对应子目录时，**同时**改这一行。两边状态一致。
+When moving a file to its corresponding directory, update this line at the same time. The directory and header must agree.
 
-## 文件命名
+## Naming
 
-```
-PROP-XXX-YYYY-MM-DD-一句话标题.md
-（例：PROP-007-2026-05-15-体重图X轴重叠修复.md）
-```
+Use `PROP-XXX-YYYY-MM-DD-one-sentence-title.md`, for example `PROP-007-2026-05-15-weight-chart-x-axis-overlap.md`.
 
-格式 = `PROP-编号-日期-一句话标题.md`
+Numbers increase without reuse or gaps. **Run `ls` to find the highest existing number before assigning a new one.** See [approval and archiving](../操作系统/07_完整工作流/审批与归档.md), section C.
 
-编号递增、不复用、不跳号。**写新编号前必跑 `ls` 查最大值**（详见 [`操作系统/07_完整工作流/审批与归档.md`](../操作系统/07_完整工作流/审批与归档.md) §C）。
+## Template
 
-## 模板
+See `_模板.md`.
 
-见 `_模板.md`。
+## Complete workflow
 
-## 完整流程
+1. Record an idea in `待审批/PROP-XXX-...md`.
+2. zlbdh reviews it.
+3. If rejected, set the status to Rejected and move it to `拒绝/` for permanent archiving.
+4. If approved, set the status to Approved · Open and its applicable substatus, then move it to `已审批/进行中/`.
+5. The responsible PM implements, schedules, rereviews, tracks external capabilities, or reassesses it.
+6. When all DoD checks pass, set the status to Approved · Completed and move it to `已审批/已完成/`. If abandoned during implementation, set the status to Approved · Abandoned and move it to `已审批/已弃用/`.
+7. Retain the final record permanently.
 
-```
-谁有想法 → 待审批/PROP-XXX-...md
-              ↓
-       zlbdh review
-              ↓
-      ┌───────┴───────┐
-      ↓               ↓
-    通过             不通过
-      ↓               ↓
-  状态字段改          状态字段改「拒绝」
-  「未收口/子状态」   → mv 到 拒绝/
-  → mv 到 进行中/
-              ↓
-   责任 PM 推进 / 排期 / 重审 / 外部能力跟踪 / 重估
-              ↓
-       DoD 全过？
-              ↓
-      ┌───────┴───────┐
-      ↓               ↓
-     是              中途弃用
-      ↓               ↓
-  状态改「已完成」   状态改「已弃用」
-  → mv 到 已完成/    → mv 到 已弃用/
-              ↓
-        永久存档
-```
+## Prohibited shortcuts
 
-## 不要做
+- Do not bypass a PROP and edit the PRD directly.
+- Do not move an AI-authored proposal to `已审批/` without notifying zlbdh and receiving approval.
+- Do not create duplicate proposals; search `已完成/`, `已弃用/`, and `拒绝/` first.
+- Do not make a proposal excessively long. This stage evaluates whether the idea deserves further work; it is not the final specification.
+- **Do not delete any PROP.** Rejected, abandoned, and completed proposals are all historical decision records.
+- Do not guess the next number from memory; run `ls`.
 
-- ❌ 跳过 PROP 直接改 PRD
-- ❌ AI 写完 PROP 不通知 zlbdh 就移到 已审批/
-- ❌ 同一个想法重复写多份（先搜一下 `已完成/` `已弃用/` `拒绝/`）
-- ❌ PROP 写得很长——这阶段是"看看值不值得继续"，不是终稿
-- ❌ **删除任何 PROP**（拒绝、弃用、完成的都是历史决策档案）
-- ❌ 凭记忆猜下一个编号（必跑 `ls`）
+## Current counts: template root
 
-## 当前（模板根）
-
-| 待审批 | 进行中 | 已完成 | 已弃用 | 拒绝 |
+| Pending approval | In progress | Completed | Abandoned | Rejected |
 |---:|---:|---:|---:|---:|
 | 1 | 0 | 3 | 0 | 0 |
 
-当前 `D:\WGKJ\操作系统` 是产品化模板根。来源项目的历史 PROP 仍归来源项目保存；模板根只保留 PROP 状态机、命名规则、目录结构和 `_模板.md`，以及 czxt 自身产品化产生的 PROP（编号从 PROP-001 起新开）。
+The recorded `D:\WGKJ\操作系统` directory is the productized template root. Historical proposals from the source project remain with that project. The template root retains the proposal state machine, naming rules, directory structure, `_模板.md`, and proposals created for czxt's own productization, with a fresh numbering sequence beginning at PROP-001.
 
-### 待审批
+### Pending approval
 
-- [PROP-002](待审批/PROP-002-2026-06-22-演化收敛闸.md) · 演化收敛闸：演化体征轻仪表 + 收敛硬规则（治"只增不减"）— 2026-06-22 / L3 / 操作系统 PM「框架管家」+ 沉淀 PM 监督
+- [PROP-002](待审批/PROP-002-2026-06-22-演化收敛闸.md): evolution convergence gate, a lightweight metrics view and convergence rule addressing unchecked growth — 2026-06-22 / L3 / Operating System PM "Framework Steward", supervised by Knowledge PM.
 
-### 进行中（已审批·未收口）
+### In progress: approved and open
 
-暂无。
+None.
 
-### 已完成（已审批·已完成）
+### Completed: approved and completed
 
-- [PROP-001](已审批/已完成/PROP-001-2026-06-22-路径C类铁律加PreToolUse软门禁.md) · 路径白名单 / C 类铁律加 PreToolUse 软门禁（ask 不 deny）— 2026-06-22 / L3 / 操作系统 PM「框架管家」
-- [PROP-003](已审批/已完成/PROP-003-2026-07-10-模板真值与hooks自清理收敛.md) · 模板真值边界 + P4s 语义守卫 + hooks fixture 自清理 — 2026-08-24 已入库，2026-09-04 补齐收档 / L3 / 操作系统 PM「框架管家」
-- [PROP-004](已审批/已完成/PROP-004-2026-07-18-完整借鉴闭环.md) · 统一借鉴区 + 来源版本卡 + 借鉴卡 + 离线 P4t 守卫 — 2026-07-18 / L4 / 操作系统 PM「框架管家」
+- [PROP-001](已审批/已完成/PROP-001-2026-06-22-路径C类铁律加PreToolUse软门禁.md): PreToolUse soft gates for path allowlists and Class C rules, asking rather than denying — 2026-06-22 / L3 / Operating System PM "Framework Steward".
+- [PROP-003](已审批/已完成/PROP-003-2026-07-10-模板真值与hooks自清理收敛.md): template truth boundaries, P4s semantic guards, and hook-fixture cleanup — committed 2026-08-24; archive closure completed 2026-09-04 / L3 / Operating System PM "Framework Steward".
+- [PROP-004](已审批/已完成/PROP-004-2026-07-18-完整借鉴闭环.md): unified borrowing area, source capture cards, borrowing cards, and the offline P4t guard — 2026-07-18 / L4 / Operating System PM "Framework Steward".
 
-### 已弃用
+### Abandoned
 
-暂无。
+None.
 
-### 拒绝
+### Rejected
 
-暂无。
+None.
 
-## 来源项目历史说明
+## Source-project history
 
-本模板从真实项目实践抽取而来，历史 ADR / RETRO 仅用于解释规则来源。PROP 正文不作为模板必备资产复制，避免模板根误报“项目实例历史档案缺失”。公开模板应优先保留抽象规则和脱敏样例，不默认携带具体项目配置。
+This template was extracted from real project practice. Historical ADRs and RETROs explain where rules came from. Proposal bodies are not copied as mandatory template assets, preventing false reports of missing project-instance history. Public templates should favor abstract rules and sanitized examples and should not include concrete project configurations by default.

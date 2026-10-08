@@ -3,92 +3,88 @@ name: agents-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 9 PM × 主-元-决策-实施四层架构入口（v4.0 终态 / ADR-027）— 各 PM playbook + 路径白名单
+description: Nine PM playbooks and path allowlists across the lead, meta, decision, and implementation layers; final v4.0 model under ADR-027.
 ---
 
-# 操作系统/02_智能体/ — 9 PM 角色 playbook
+# Nine PM Role Playbooks
 
-⭐ **任何 PM 切角色帽子前必读 [`../01_架构/角色边界.md`](../01_架构/角色边界.md)**（9 PM 路径白名单 + 三类行为铁律）
+**Before changing PM roles, read the [role boundaries](../01_架构/角色边界.md)** for the nine-PM path allowlist and three-class behavior rules.
 
-## v4.0 9 PM × 4 层架构（ADR-023 + ADR-027 + ADR-031）
+## Nine PMs across four layers: v4.0
 
-```
-🎩 主 PM(1)     项目 PM「咪咪」(唯一对外身份 / ADR-031)
-       │
-🪞 元-层 PM(1) 沉淀 PM「沉淀者」(紧贴主 PM / 跨 PM 监督 / 元规则池治理)
-       │
-🧠 决策 PM(5) 操作系统 / 产品 / 技术 / 测试 / 运营 (策略编排；白名单内写活按 Q7 派 agent)
-       │
-🔨 实施 PM(2) 开发 PM「实施者」 + ✅ 测试发布 PM「闭环者」
-```
+ADR-023, ADR-027, and ADR-031 define:
 
-## PM 与子 agent 的关系
+- Lead (1): Project PM “Mimi,” the sole external identity.
+- Meta (1): Knowledge PM “Curator,” working closely with the lead PM on cross-PM oversight and meta-rule governance.
+- Decision (5): Operating System, Product, Technical, Test, and Operations PMs. They coordinate strategy and dispatch allowlisted writing through Q7.
+- Implementation (2): Development PM “Implementer” and Test and Release PM “Closer.”
 
-⭐ **PM 是职责层，子 agent 是执行实例**。9 PM 不等于 9 个常驻自动运行 agent；除项目 PM 主会话外，真实子 agent 由项目 PM「咪咪」统一调度、限定路径、验收结果。
+## PMs and agents
 
-| 场景 | 机制 |
+**PMs define responsibilities; agents are execution instances.** Nine PMs do not imply nine permanent autonomous agents. Except for the Project PM's main session, real agents are centrally dispatched, path-limited, and accepted by Project PM “Mimi.”
+
+| Scenario | Mechanism |
 |---|---|
-| 新增功能 / 多文件实现 | 项目 PM 默认派 worker，映射为开发 PM「实施者」实例 |
-| 技术诊断 / 测试策略 | 项目 PM 默认派 explorer，只读输出结论 |
-| 发布闭环 / 状态交接 | 测试发布 PM「闭环者」由主会话单点收口 |
-| framework / hooks | 操作系统 PM「框架管家」主控；非单源写活默认 worker，只读诊断默认 explorer，单源禁并行文件只起草、主会话落笔 |
+| New features or implementation across files | The Project PM normally dispatches a worker as the Development PM |
+| Technical diagnosis or test strategy | The Project PM normally dispatches an explorer for read-only findings |
+| Release completion or status/handoff finalization | The Test and Release PM closes the work at a single point in the main session |
+| Framework or hooks | The Operating System PM coordinates; non-single-source writes normally use workers, read-only diagnosis uses explorers, and restricted single-source files receive drafts with final writes by the main session |
 
-详见 [`../01_架构/子agent调度机制.md`](../01_架构/子agent调度机制.md)；完整映射和历史解释见 [`子agent调度机制-附录.md`](../01_架构/子agent调度机制-附录.md)。
+See [agent scheduling](../01_架构/子agent调度机制.md) and its [mapping and historical appendix](../01_架构/子agent调度机制-附录.md).
 
-借鉴请求统一进入 [借鉴 Skill](../../能力资产/skills/借鉴.md)：操作系统 PM 管卡片，目标决策 PM 只读评估；本入口不复制执行规则。
+Route borrowing requests through the [borrowing skill](../../能力资产/skills/借鉴.md). The Operating System PM manages cards; the target decision PM provides read-only assessments. This index does not duplicate execution rules.
 
-## 专业 mode / 插件能力层
+## Specialist modes and plugin capabilities
 
-9 PM 不按现实岗位继续膨胀。需求、设计、前端、后端、硬件等专业方向先挂到现有 PM 的 mode、plugin 或 worker/explorer；只有责任边界长期高频冲突时才按扩编三问评估新 PM。当前详见 [`../01_架构/PM专业mode能力层.md`](../01_架构/PM专业mode能力层.md)。
+Do not expand the nine-PM model simply to mirror real-world job titles. Requirements, design, frontend, backend, hardware, and other specialties should first use existing PM modes, plugins, workers, or explorers. Assess a new PM through the three expansion questions only when responsibility conflicts are persistent and frequent. See [specialist modes](../01_架构/PM专业mode能力层.md).
 
-## 文件清单
+## File inventory
 
-| 文件 | 抽象身份 | 大类 | 层级 |
+| Playbook | Responsibility | Category | Layer |
 |---|---|---|---|
-| [项目PM-咪咪.md](项目PM-咪咪.md) ⭐ + [附录](项目PM-咪咪-附录.md) | 编排者 / 唯一对外 | 主 | **主** |
-| [沉淀PM-沉淀者.md](沉淀PM-沉淀者.md) ⭐ | 跨 PM 监督 / 元规则治理 | 沉淀 | **元-层** |
-| [操作系统PM-框架管家.md](操作系统PM-框架管家.md) + [附录](操作系统PM-框架管家-附录.md) | framework 治理 | 决策 | 决策 |
-| [产品PM-需求拆解者.md](产品PM-需求拆解者.md) + [附录](产品PM-需求拆解者-附录.md) | PRD 起稿 | 决策 | 决策 |
-| [技术PM-修复决策者.md](技术PM-修复决策者.md) + [附录](技术PM-修复决策者-附录.md) | bug 诊断 + 技术选型 | 决策 | 决策 |
-| [测试PM-质量门户.md](测试PM-质量门户.md) + [附录](测试PM-质量门户-附录.md) | 验收策略 | 决策 | 决策 |
-| [运营PM-运营咪咪.md](运营PM-运营咪咪.md) + [附录](运营PM-运营咪咪-附录.md) | GTM 决策 | 决策 | 决策 |
-| [开发PM-实施者.md](开发PM-实施者.md) | 业务代码实施 | 执行 | 实施 |
-| [测试发布PM-闭环者.md](测试发布PM-闭环者.md) | 闭环验证 + 发布 / 主验证 PM | 验证 | 实施 |
-| [共享技能/INDEX.md](共享技能/INDEX.md) | 跨 PM 共享 SOP：`git撤销恢复.md` / `mount-stale防御.md` / `真机smoke清单.md` / `handoff卡-verify清单.md` / `PM自纠-trigger.md` | — | — |
-| [PM-产品经理.md](PM-产品经理.md) | 历史档案（吸收到 产品PM-需求拆解者.md / ADR-007 保留） | 历史 | — |
-| [Dev-开发.md](Dev-开发.md) | 历史执行载体档案（Claude Code） | 历史 | — |
-| [QA-测试.md](QA-测试.md) | 历史执行载体档案（测试执行） | 历史 | — |
+| [Project PM](项目PM-咪咪.md) and [appendix](项目PM-咪咪-附录.md) | Coordination and sole external identity | Lead | Lead |
+| [Knowledge PM](沉淀PM-沉淀者.md) | Cross-PM oversight and meta-rule governance | Knowledge | Meta |
+| [Operating System PM](操作系统PM-框架管家.md) and [appendix](操作系统PM-框架管家-附录.md) | Framework governance | Decision | Decision |
+| [Product PM](产品PM-需求拆解者.md) and [appendix](产品PM-需求拆解者-附录.md) | PRD drafting | Decision | Decision |
+| [Technical PM](技术PM-修复决策者.md) and [appendix](技术PM-修复决策者-附录.md) | Bug diagnosis and technology selection | Decision | Decision |
+| [Test PM](测试PM-质量门户.md) and [appendix](测试PM-质量门户-附录.md) | Acceptance strategy | Decision | Decision |
+| [Operations PM](运营PM-运营咪咪.md) and [appendix](运营PM-运营咪咪-附录.md) | Go-to-market decisions | Decision | Decision |
+| [Development PM](开发PM-实施者.md) | Business code implementation | Execution | Implementation |
+| [Test and Release PM](测试发布PM-闭环者.md) | Completion verification and release; primary verification PM | Verification | Implementation |
+| [Shared skills index](共享技能/INDEX.md) | Cross-PM SOPs: Git recovery, mount-stale defense, physical-device smoke, handoff verification, and PM self-correction | — | — |
+| [Legacy Product Manager](PM-产品经理.md) | Historical archive absorbed into Product PM; retained under ADR-007 | Historical | — |
+| [Legacy Dev](Dev-开发.md) | Historical execution runtime: Claude Code | Historical | — |
+| [Legacy QA](QA-测试.md) | Historical testing execution runtime | Historical | — |
 
-## PM 切角色帽子工作流（统一协议）
+## Common role-switching protocol
 
-```
-切角色前 → 跑 [decision-checkpoint](../07_完整工作流/decision-checkpoint.md) Q1-Q7
-  Q1 这事属于哪个 PM？
-  Q2 路径白名单允许吗？
-  Q3 越界怎么办？
-  Q4 速查表 trigger 匹配？（PROP-031）
-  Q5 Scale L1-L4 判定？（PROP-033）
-  Q6 跨 PM 调度判定？（v4.0 新增）
-  Q7 agent 实例化判定（该不该派 agent / ADR-038）
-  ↓
-按角色边界白名单动手 → 主会话按当前 PM 帽子与白名单收口 `状态.md` 留痕 → chat 简版 ①-⑦
-```
+Before switching, run [decision-checkpoint](../07_完整工作流/decision-checkpoint.md) Q1–Q7:
 
-## 跟其他分组的区别
+1. Which PM owns the task?
+2. Does the path allowlist permit it?
+3. How should an out-of-scope task be handled?
+4. Which quick-reference triggers match? See PROP-031.
+5. What is its L1–L4 scale? See PROP-033.
+6. Does it require cross-PM coordination? Added in v4.0.
+7. Should an agent be instantiated? See ADR-038.
 
-- **操作系统/02_智能体/**：PM 角色身份 + 边界（你是**谁**）
-- **操作系统/01_架构/**：架构规则（**怎么组织**）
-- **能力资产/skills/**：可执行 SOP（**怎么做**）
-- **能力资产/workflows/**：步骤编排（**按什么顺序**）
-- **能力资产/rules/**：硬规则（**必遵守什么**）
-- **PM工作区/<X PM>/**：每个 PM 私人速查表 + 自纠 + 实战回顾
+Work within the role's allowlist. The main session finalizes the trace in `状态.md` under its current PM role and allowlist, then provides the seven-part chat handoff.
 
-## 关联
+## Directory responsibilities
 
-- [`../01_架构/角色边界.md`](../01_架构/角色边界.md) — 9 PM 完整路径白名单 + 四层职责图
-- [`../01_架构/子agent调度机制.md`](../01_架构/子agent调度机制.md) — PM 职责层与子 agent 执行层分离
-- [`../01_架构/元规则池.md`](../01_架构/元规则池.md) — 永久铁律（单一信息源 · 当前数以其为准）
-- [`../01_架构/工具载体矩阵.md`](../01_架构/工具载体矩阵.md) — PM 抽象 vs 工具载体解耦（ADR-026）
-- [`../01_架构/三类行为铁律.md`](../01_架构/三类行为铁律.md) — A 自动 / B 必问 / C 永不动
-- [`../07_完整工作流/decision-checkpoint.md`](../07_完整工作流/decision-checkpoint.md) — PM 切角色硬检查协议
-- [`../../PM工作区/`](../../PM工作区/) — 9 PM 私人工作区
+- `操作系统/02_智能体/`: PM identities and boundaries — who you are.
+- `操作系统/01_架构/`: architecture rules — how work is organized.
+- `能力资产/skills/`: executable SOPs — how to act.
+- `能力资产/workflows/`: step orchestration — in what order.
+- `能力资产/rules/`: mandatory rules — what must be followed.
+- `PM工作区/<X PM>/`: each PM's private quick references, self-corrections, and practical reviews.
+
+## Related references
+
+- [Role boundaries](../01_架构/角色边界.md): complete allowlists and the four-layer model.
+- [Agent scheduling](../01_架构/子agent调度机制.md): separation of PM responsibilities and agent execution.
+- [Meta-rule pool](../01_架构/元规则池.md): authoritative permanent rules and current count.
+- [Tool/runtime matrix](../01_架构/工具载体矩阵.md): PM abstraction independent of execution tools, ADR-026.
+- [Three-class behavior rules](../01_架构/三类行为铁律.md): Class A automatic, Class B requires asking, Class C prohibited.
+- [Decision checkpoint](../07_完整工作流/decision-checkpoint.md): mandatory role-switching checks.
+- [PM workspaces](../../PM工作区/): nine private PM workspaces.

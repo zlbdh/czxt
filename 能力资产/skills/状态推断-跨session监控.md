@@ -3,103 +3,103 @@ name: state-inference-cross-session-monitor
 scope: project
 type: procedural
 loaded: triggered
-trigger: session 起手 / 跨 session 交接 / PROP 卡进行中 / 实施触碰需升级规范关键词 / 出现"破例"字样时
-description: 状态推断推断项 5-9 主入口 — 跨 session 交接卡、PROP 卡告警、规范升级触发、破例计数器、RETRO 索引一致性。
+trigger: Session startup / cross-session handoff / an in-progress PROP / implementation keywords that may require rule updates / an exception is mentioned
+description: Main entry for state inference checks 5–9 — cross-session handoffs, PROP alerts, rule-update triggers, exception counting, and RETRO index consistency.
 ---
 
-# 状态推断 — 推断 5-9（跨 session + 监控）
+# State Inference — Checks 5–9: Cross-Session Monitoring
 
-> 主文件见 [`状态推断.md`](状态推断.md)。推断 1-4 见 [`状态推断-推断项.md`](状态推断-推断项.md)。
-> 本文件保留推断 5-9 的高频判断契约；完整 Bash/GNU fallback 跑法见 [`状态推断-跨session监控-附录.md`](状态推断-跨session监控-附录.md)。
+> Main entry: [State inference](状态推断.md). Checks 1–4: [Basic reconciliation](状态推断-推断项.md).
+> This file keeps the frequently used decision rules for checks 5–9. Full Bash/GNU fallbacks are in the [monitoring appendix](状态推断-跨session监控-附录.md).
 
-## 起手顺序
+## Startup order
 
-1. 先完成 AGENTS 5 步：`状态.md`、`操作系统/00_总入口.md`、`角色边界.md`、最新待接手卡、项目体检 + Q1-Q7。
-2. 本 skill 再补跑推断 5-9 的必要检查；若发现 stale、积压、进行中 PROP 卡住、同方向破例、RETRO 索引不一致，先处理或交接清楚。
-3. 只把结果当“建议 / 风险信号”，不直接替用户拍板，也不替代正式 ①-⑦ / PM 轨迹留痕。
+1. Complete the five AGENTS startup steps first: `状态.md`, `操作系统/00_总入口.md`, `角色边界.md`, the latest pending handoff card, and the project health check plus Q1–Q7.
+2. Run the necessary checks from items 5–9. Address or clearly hand off stale records, backlogs, stalled PROPs, repeated exceptions of the same kind, and RETRO index mismatches.
+3. Treat findings as recommendations or risk signals. Do not decide on the user's behalf or replace the formal ①–⑦ handoff and PM tracking records.
 
-## 推断 5：跨 session 交接卡
+## Check 5: Cross-session handoff cards
 
-**逻辑**：优先读 `交接区/待接手/` 最新文件作上次交接卡；fallback 读 `状态.md` 顶部摘要。
+**Logic**: Prefer the newest file in `交接区/待接手/` as the previous handoff. Fall back to the summary at the top of `状态.md`.
 
-检查点：
+Check:
 
-- 最新卡是否存在。
-- 待接手卡是否为完整 ①-⑥，涉及 PM 轨迹时是否含 ⑦。
-- `状态.md` 顶部是否链接最新待接手卡。
-- 待接手卡是否比近期代码 / framework 改动明显 stale。
-- `交接区/待接手/` 是否积压（当前体检阈值见 `check-handoff-zone.ps1`）。
+- Whether the latest card exists.
+- Whether the pending card includes complete sections ①–⑥, plus ⑦ when PM tracking applies.
+- Whether the top of `状态.md` links to the latest pending handoff.
+- Whether the handoff is substantially older than recent code or framework changes.
+- Whether `交接区/待接手/` has a backlog; use the current threshold in `check-handoff-zone.ps1`.
 
-输出格式：
+Output format:
 
 ```text
-📍 上次交接卡（YYYY-MM-DD HH:MM，从 <A> → <B>）：
-   ① 任务：……
-   ② 文件变更：N 新建 / M 修改（含 ≥6500B 警告：……）
-   ③ 测试：vitest ✅/❌ | build ✅/❌ | APK ✅/❌ | smoke ✅/❌
-   ④ 你的待办：……
-   ⑤ 警戒：……
-   ⑥ Q&A：……
-   ⑦ PM 切换轨迹 / 下一步：……（如卡内提供）
+📍 Previous handoff (YYYY-MM-DD HH:MM, from <A> to <B>):
+   ① Task: …
+   ② File changes: N new / M modified (including ≥6500B warnings: …)
+   ③ Tests: vitest ✅/❌ | build ✅/❌ | APK ✅/❌ | smoke ✅/❌
+   ④ Your next steps: …
+   ⑤ Alerts: …
+   ⑥ Q&A: …
+   ⑦ PM transitions / next step: … (if included in the card)
 ```
 
-如 stale，AI 主动跑推断 1-4 重新对账，不直接用 `状态.md` 数据。旧 3 段卡可兼容读取，但提示下次升级到基础 ①-⑥。
+If stale, rerun checks 1–4 to reconcile the facts instead of directly trusting `状态.md`. Legacy three-section cards remain readable, but recommend upgrading the next card to the base ①–⑥ format.
 
-## 推断 6：PROP 卡进行中告警
+## Check 6: Stalled in-progress PROP alerts
 
-**逻辑**：`确认改动/已审批/进行中/PROP-*.md` 的 mtime 超过 7 天，提示是否弃用、拆分或继续推进。
+**Logic**: When the modification time of a `确认改动/已审批/进行中/PROP-*.md` file is more than seven days old, ask whether to deprecate, split, or continue it.
 
-输出：
+Output:
 
-- ✅ 无长期进行中 PROP。
-- 🟡 `PROP-XXX` 卡了 N 天，建议确认是继续、拆分还是移动到 `已弃用/`。
+- ✅ No long-running in-progress PROP.
+- 🟡 `PROP-XXX` has been stalled for N days. Confirm whether to continue, split it, or move it to `已弃用/`.
 
-## 推断 7：规范升级触发监控
+## Check 7: Rule-update trigger monitoring
 
-**逻辑**：实施触碰高风险关键词时，主动检查对应规范是否需要升级；已填实文件不再提示“填实”，而是按风险补专项规则或 PROP/ADR。
+**Logic**: When implementation touches high-risk keywords, proactively check whether the corresponding rules need updating. For an already completed rules file, recommend focused rules or a PROP/ADR according to risk, rather than asking to populate it again.
 
-| 规范文件 | 触发关键词 | 动作 |
+| Rules file | Trigger keywords | Action |
 |---|---|---|
-| `操作系统/07_完整工作流/git流程.md` | git commit / git push / commit message / branch / tag | 复核 ADR-016 6 条件；如有新分支/tag/release 场景，升级 git 流程 |
-| `能力资产/rules/安全与隐私.md` | API key / token / 用户隐私 / 备份 / 上云 | 按风险补专项安全规则或起 PROP/ADR |
-| `能力资产/mcp/README.md` + `INSTALLED.md` | MCP / mcp 接入 / claude-in-chrome / cowork-mcp | 更新 MCP 清单与敏感动作边界 |
+| `操作系统/07_完整工作流/git流程.md` | git commit / git push / commit message / branch / tag | Recheck all six ADR-016 conditions; update the Git workflow for new branch, tag, or release scenarios |
+| `能力资产/rules/安全与隐私.md` | API key / token / user privacy / backup / cloud upload | Add focused security rules or open a PROP/ADR according to risk |
+| `能力资产/mcp/README.md` + `INSTALLED.md` | MCP / MCP integration / claude-in-chrome / cowork-mcp | Update the MCP inventory and sensitive-action boundaries |
 
-## 推断 8：破例计数器
+## Check 8: Exception counter
 
-**逻辑**：扫交接卡 / `状态.md` 历史里的“破例 / exception / 一次性放行”等字样。同方向 ≥2 次，立刻提 PROP 治理，不等第 3 次。
+**Logic**: Scan handoff cards and `状态.md` history for exceptions and one-time allowances, including legacy terms. Two or more exceptions in the same direction require an immediate governance PROP; do not wait for a third.
 
-方向粗分：
+Broad categories:
 
-- git / push / commit 类。
-- version / bump / package.json 类。
-- 其他同类流程破例。
+- git / push / commit.
+- version / bump / package.json.
+- Other repeated process exceptions.
 
-输出：
+Output:
 
-- 🔴 同方向 ≥2 次：立即提 PROP 治理。
-- 🟡 1 次：记录并警惕复发。
-- ✅ 0 次：无动作。
+- 🔴 At least two in the same direction: open a governance PROP immediately.
+- 🟡 One: record it and watch for recurrence.
+- ✅ Zero: no action.
 
-## 推断 9：RETRO README 索引一致性
+## Check 9: RETRO README index consistency
 
-**逻辑**：实际 `Docs/7-复盘/RETRO-*.md` 文件数 vs `Docs/7-复盘/README.md` 索引行数不一致时告警。
+**Logic**: Warn when the number of actual `Docs/7-复盘/RETRO-*.md` files differs from the number of index rows in `Docs/7-复盘/README.md`.
 
-输出：
+Output:
 
-- ✅ RETRO 索引一致。
-- 🔴 文件数 / 索引数不一致：立刻补 README 索引。
+- ✅ RETRO index is consistent.
+- 🔴 File and index counts differ: complete the README index immediately.
 
-## 当前实现入口
+## Current implementation entry points
 
-- 交接区健康：`能力资产/tools/scripts/check-handoff-zone.ps1`
-- PM 轨迹新鲜度：`能力资产/tools/scripts/check-pm-tracking.ps1`
-- 全量体检：`能力资产/tools/scripts/check-operating-system.ps1`
-- Bash/GNU 旧环境 fallback：[`状态推断-跨session监控-附录.md`](状态推断-跨session监控-附录.md)
+- Handoff health: `能力资产/tools/scripts/check-handoff-zone.ps1`
+- PM tracking freshness: `能力资产/tools/scripts/check-pm-tracking.ps1`
+- Full health check: `能力资产/tools/scripts/check-operating-system.ps1`
+- Legacy Bash/GNU fallback: [Monitoring appendix](状态推断-跨session监控-附录.md)
 
-## 关联
+## Related references
 
-- [`状态推断.md`](状态推断.md) — 10 项推断总入口
-- [`状态推断-推断项.md`](状态推断-推断项.md) — 推断 1-4
-- [`状态推断-跨session监控-附录.md`](状态推断-跨session监控-附录.md) — Bash/GNU fallback 和完整示例
-- [`../../操作系统/03_交接/交接卡格式.md`](../../操作系统/03_交接/交接卡格式.md) — 交接卡 ①-⑦ 契约
-- [`../tools/scripts/check-handoff-zone.ps1`](../tools/scripts/check-handoff-zone.ps1) — 推断 5 的当前项目检查器
+- [State inference](状态推断.md) — entry point for all ten checks
+- [Basic reconciliation](状态推断-推断项.md) — checks 1–4
+- [Monitoring appendix](状态推断-跨session监控-附录.md) — Bash/GNU fallbacks and complete examples
+- [Handoff format](../../操作系统/03_交接/交接卡格式.md) — the ①–⑦ contract
+- [Handoff checker](../tools/scripts/check-handoff-zone.ps1) — current implementation of check 5

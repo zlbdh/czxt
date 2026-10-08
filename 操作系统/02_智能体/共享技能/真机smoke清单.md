@@ -1,55 +1,64 @@
 ---
 name: real-device-smoke-checklist
-description: 真机 smoke 必跑 N 项清单 / 议题 CC 已升 ADR-030 与第 13 元规则「vitest ≠ 真机」/ Sprint-6+7 累积 5 次教训
-trigger: 测试发布 PM 闭环前 / 开发 PM 完成代码后仅作交接自查引用 / W-3 v1→v2 / F-NIGHT v1→v2 类教训
-loaded: 条件加载
+description: Required physical-device smoke checks under ADR-030 and meta-rule 13; five lessons across Sprints 6 and 7 show that unit tests do not prove device behavior.
+trigger: Before Test and Release PM completion; Development PM may reference it only for handoff risk checks; lessons include W-3 and F-NIGHT v1-to-v2.
+loaded: on-demand
 ---
 
-# 真机 smoke 必跑清单
+# Required Physical-Device Smoke Checklist
 
-> 执行 owner 是测试发布 PM「闭环者」。开发 PM 只可在交接前引用本清单自查风险，不执行真机 smoke、commit、tag、APK 或发布闭环。
+> The execution owner is Test and Release PM “Closer.” Development PM may reference this checklist before handoff to assess risk; it does not execute physical-device smoke, commit, tag, APK, or release completion.
 
-## 痛点（议题 CC 已永久化）
+## Why this exists — permanent issue CC rule
 
-「**单测过 ≠ 真机过**」— 跨 Sprint 累积 5 次教训：
-- F-NIGHT-1 v1 单测 879 ✅ / 真机 AC2 fail（70 字超 50 字限）
-- W-3 v1 单测 900 ✅ / 真机普通聊天未走 buildPersonaPrompt 路径
-- F-DEVIATION-3 单测 771 ✅ / git 损坏 .git/index 紧急恢复（议题 BK v1）
-- F-WEEKLY-1 单测 820 ✅ / 真机 recharts 渲染问题
-- 议题 BV W-4 / 真机 timelineBuilder 早晚餐显示验证
+**Passing unit tests does not prove physical-device behavior.** Five cross-Sprint lessons:
 
-## 必跑清单（7 项）
+- F-NIGHT-1 v1: 879 unit tests passed, but device AC2 failed because 70 characters exceeded a 50-character limit.
+- W-3 v1: 900 passed, but ordinary chat did not use buildPersonaPrompt on the device.
+- F-DEVIATION-3: 771 passed, followed by emergency Git index recovery under BK v1.
+- F-WEEKLY-1: 820 passed, but Recharts rendered incorrectly on the device.
+- Issue BV W-4: device verification of breakfast/dinner display in timelineBuilder.
 
-### 1. AC 三层一致核验
-- [ ] 设计层（PRD AC #N）
-- [ ] 测试层（vitest 真实路径覆盖，不是辅助路径）
-- [ ] UI 层（真机 smoke 走端到端用户流）
-- ✅ 三层一致 → AC 通过
+## Seven required checks
 
-### 2. 关键路径手动走一遍（不是 grep）
-- [ ] 用户主流程（如聊天 / 记账 / 训练）
-- [ ] 边界场景（议题 P 三态边界 / 空状态 / 设置开关）
+### 1. Align three acceptance layers
 
-### 3. 议题 BG / BH 防御
-- [ ] commit msg 无 BOM 前缀（git commit -F 模式）
-- [ ] .bat 文件无 CRLF/LF 异常
+- [ ] Design: PRD AC #N.
+- [ ] Tests: vitest covers the actual path, not just a helper.
+- [ ] UI: physical-device smoke exercises the end-to-end user flow.
+- Acceptance requires consistency across all three.
 
-### 4. 议题 BK mount stale 起手核验
-- [ ] git status --short 干净
-- [ ] HEAD hash 与测试发布 PM 闭环报告一致
+### 2. Exercise critical paths manually
 
-### 5. 议题 BR AI 模型确认
-- [ ] LLM 调通 + 内容合规（MiMo / 国内）
+- [ ] Main user flows such as chat, accounting, and training.
+- [ ] Issue P's three-state boundaries, empty states, and settings toggles.
+- Searching code alone does not replace these checks.
 
-### 6. APK 路径单源
-- [ ] {{APP_REPO_DIR}}/apk/ 单源（议题 BQ 永久关闭）
+### 3. Issues BG/BH
 
-### 7. Sprint 全棒回归
-- [ ] 已 ship 棒不破坏
-- [ ] vitest N/N 通过
+- [ ] BOM-free commit message using `git commit -F`.
+- [ ] No incorrect CRLF/LF handling in .bat files.
 
-## 真知识源
+### 4. Issue BK stale-mount startup check
 
-- ADR-030 / 第 13 元规则：议题 CC 已永久化；本清单是执行型 SOP
-- RETRO-010/011 PM 自纠 #51/#52/#54 案例
-- 状态.md PM 切换轨迹 5/19-5/21
+- [ ] Clean `git status --short`.
+- [ ] HEAD matches Test and Release PM's completion report.
+
+### 5. Issue BR AI-model verification
+
+- [ ] LLM calls work and content meets the recorded project requirements, including the MiMo / domestic-market context.
+
+### 6. One APK path
+
+- [ ] `{{APP_REPO_DIR}}/apk/` remains the single source under permanently closed issue BQ.
+
+### 7. Regression across the Sprint
+
+- [ ] Previously shipped work still functions.
+- [ ] Actual vitest N/N pass.
+
+## Authoritative sources
+
+- ADR-030 and meta-rule 13: issue CC is permanent; this checklist is the execution SOP.
+- RETRO-010/011 self-correction cases #51/#52/#54.
+- Status role-transition records from May 19–21.

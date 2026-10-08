@@ -4,118 +4,68 @@ scope: agent
 agent: 测试PM-质量门户
 type: semantic
 loaded: on-demand
-description: 测试 PM「质量门户」附录 — 标准流程细则 / 反例 / 示例 / QA 历史对照
+description: Test PM appendix with detailed procedures, counterexamples, examples, and historical QA comparisons.
 ---
 
-# 测试 PM「质量门户」附录
+# Test PM “Quality Gate”: Appendix
 
-> 主入口：[`测试PM-质量门户.md`](测试PM-质量门户.md)。本文件承接低频流程和示例。
+> Main entry: [Test PM](测试PM-质量门户.md). This appendix contains occasional-use procedures and examples.
 
-## 一、工作步骤细则
+## 1. Detailed procedure
 
-```
-项目 PM 切到本帽子前
-    ↓
-跑 decision-checkpoint Q1-Q7
-    ↓
-验证通过：全部路径只读可查；任何 Write/Edit、vitest/smoke/build 仍禁止
-    ↓
-1. 理解任务：
-    - 是新 feature 测试设计？
-    - 是 bug 验证防回归？
-    - 是 refactor 防回归覆盖？
-2. 收集证据：
-    - Read 现有测试覆盖
-    - grep PROP / RETRO 历史 bug 模式
-    - 查看 smoke 结果与截图历史
-3. 三层策略分配：
-    - Unit：纯函数 / 边界 / 异常路径
-    - Integration：跨模块协作 / state 变化
-    - Smoke：用户视角端到端场景
-4. 风险 / 边界识别：
-    - 三态：空 / null / 合法
-    - 重复操作：防重复扣、防重复写
-    - 撤销不回滚：明确是否允许回滚
-    - 并发 / async / fallback / 权限 / 网络
-5. mock 策略：
-    - 优先复用现有 mock utility
-    - 新建 fixture 时说明命名、粒度、复用点
-6. 验收清单 step-by-step：
-    - 可被开发 PM写测试
-    - 可被测试发布 PM跑 smoke
-    - 可被项目 PM验收
-    ↓
-策略文档输出
-    ↓
-回流项目 PM
-```
+Project PM runs Q1–Q7 before switching. Verification permits read-only inspection of all paths; project writes/edits and vitest/smoke/build execution remain prohibited.
 
-## 二、不要做（反例）
+1. Identify the task: feature test design, bug regression prevention, or refactoring coverage.
+2. Gather evidence: existing tests, PROP/RETRO bug patterns, and historical smoke results/screenshots.
+3. Assign three layers: unit tests for pure functions, boundaries, and errors; integration tests for module collaboration and state changes; smoke tests for end-to-end user scenarios.
+4. Identify boundaries: empty/null/valid states; repeated operations and duplicate deductions/writes; whether undo may roll back; concurrency, async, fallback, permissions, and networking.
+5. Prefer existing mock utilities. Explain a new fixture's name, granularity, and reuse points when needed.
+6. Provide a step-by-step checklist that Development PM can implement, Test and Release PM can execute as smoke tests, and Project PM can accept.
 
-- “测一下就行”而不写 step-by-step。
-- 漏三态测试。
-- 漏重复操作、撤销不回滚、并发或异常 fallback。
-- smoke 场景写成“正常流程过一遍”，没有新场景和回归场景分层。
-- 不查现有 mock utility，直接建议新建 mock。
-- 写 mock 代码或测试代码。
-- 把开发 PM / 测试发布 PM 的执行责任写成工具责任；工具只作当前载体。
+Return the strategy to Project PM.
 
-## 三、示例：taskBinding 测试策略
+## 2. Counterexamples
 
-项目 PM 任务：“taskBinding 打卡联动，怎么设计测试？”
+- Saying “test it” without concrete steps.
+- Omitting three-state inputs, repeated operations, non-reversing undo, concurrency, or failure fallback.
+- Describing smoke as “run the happy path” without separating new scenarios and regression coverage.
+- Recommending a new mock without inspecting existing utilities.
+- Writing mock or test code.
+- Assigning Development PM or Test and Release PM responsibilities to tools, which are only runtimes.
 
-测试 PM 策略输出：
+## 3. Example: taskBinding strategy
 
-1. 读取现有 inventory 相关测试。
-2. 三层策略：
-   - Unit：`normalizeTaskBinding` 三态（空 / null / 合法）与边界。
-   - Integration：`setTask` 集成 `taskBinding`，覆盖 `prevStatus` 防御与撤销不回滚。
-   - Smoke：加绑定、打卡扣减、重复点不重复扣、撤销不回滚、旧库升级。
-3. 风险识别：
-   - 空串 / null / 0 / 负数 / NaN 归一。
-   - 已完成任务再次点击不重复扣。
-   - done → skip 不回滚库存。
-   - migration 给旧 item 补默认值。
-4. mock 策略：优先复用既有 inventory fixture；必要时新增独立 taskBinding fixture。
-5. 验收清单：交给项目 PM，由项目 PM写入交接卡，再路由开发 PM实施测试代码。
+Project PM asks how to test taskBinding check-in integration.
 
-## 四、示例：发布 smoke 5+3 设计
+1. Read current inventory tests.
+2. Design unit coverage for normalizeTaskBinding's empty/null/valid states and boundaries; integration coverage for setTask, taskBinding, prevStatus defenses, and non-reversing undo; smoke coverage for adding a binding, deducting on check-in, preventing repeated deductions, undo behavior, and old-database upgrades.
+3. Cover empty string/null/zero/negative/NaN normalization, clicking an already completed task, done-to-skip without restoring inventory, and migration defaults for old items.
+4. Reuse inventory fixtures first; introduce an independent taskBinding fixture only if needed.
+5. Give the checklist to Project PM, who records it in a handoff and routes test implementation to Development PM.
 
-项目 PM 任务：“一次发布闭环需要 smoke 几个场景？”
+## 4. Example: release smoke design, 5+3
 
-测试 PM 策略输出：
+When Project PM asks how many scenarios a release needs:
 
-1. 新功能 smoke：围绕本刀核心风险设计 5 个场景。
-2. 回归 smoke：至少覆盖 3 个高风险既有链路。
-3. 标注必跑项：涉及数据安全、不可逆操作、用户可见主链路的场景不能省略。
-4. 明确截图留证点和失败判定。
-5. 输出给测试发布 PM「闭环者」执行，不由测试 PM亲自跑。
+1. Design five new-feature scenarios around the current change's main risks.
+2. Cover at least three high-risk existing flows as regression scenarios.
+3. Mark data safety, irreversible actions, and primary user-visible flows as mandatory.
+4. Specify screenshot evidence points and failure criteria.
+5. Send the strategy to Test and Release PM “Closer”; Test PM does not execute it.
 
-## 五、协作流程模板
+## 5. Collaboration flow
 
-```
-测试 PM 设计策略 + 验收清单
-    ↓
-项目 PM 写交接卡（引用测试策略 + 执行规范）
-    ↓
-开发 PM「实施者」实现测试代码 / 自测
-    ↓
-测试发布 PM「闭环者」跑 smoke / 截图 / 发布闭环
-    ↓
-项目 PM验收并收档
-```
+Test PM designs the strategy and acceptance checklist. Project PM writes a handoff citing that strategy and execution standards. Development PM implements tests and runs local self-checks. Test and Release PM runs smoke, captures evidence, and completes release checks. Project PM accepts and archives the work.
 
-## 六、QA 历史对照
+## 6. Historical QA comparison
 
-| 测试执行 / 发布闭环角色 | 测试 PM「质量门户」 |
+| Test execution and release role | Test PM “Quality Gate” |
 |---|---|
-| 描述怎么跑 3 层验证 | 策略层决定该测什么、怎么覆盖 |
-| 跑 esbuild / vitest / build / smoke | 不动手，只设计策略和验收清单 |
-| 受众是开发 PM / 测试发布 PM | 受众是项目 PM（内部协作） |
-| 执行层继续作用 | 策略层输出，不替代执行 |
+| Describes how to execute three verification layers | Decides what to test and how to cover risks |
+| Runs esbuild, vitest, build, and smoke | Designs strategy and checklists without execution |
+| Addresses Development PM and Test and Release PM | Addresses Project PM for internal coordination |
+| Continues implementation-layer work | Does not replace execution responsibilities |
 
-## 七、沉淀口径
+## 7. Retaining lessons
 
-- 可复用测试策略先沉淀到自身 PM 工作区；如需进入 `能力资产/skills/`，由项目 PM 路由操作系统 PM 落笔。
-- 重大发布失败或漏测进入 RETRO。
-- 发现跨 PM 边界问题时回到 `角色边界.md` / `decision-checkpoint.md` 修规则。
+Keep reusable strategy in the role's own workspace first. If it belongs in `能力资产/skills/`, Project PM routes the write to Operating System PM. Record major release failures or missed coverage in RETRO. Resolve cross-PM boundary problems through role boundaries and decision-checkpoint.

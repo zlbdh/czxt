@@ -3,60 +3,62 @@ name: dev-role-legacy
 scope: project
 type: semantic
 loaded: on-demand
-description: 历史档案：Claude Code 写代码帽子（文件清单/9KB mount 限制/写入策略/QA 前自检），已吸收到新 9 PM playbook（开发PM-实施者）
+description: "Historical Claude Code development role: file inventory, mount write limits, write strategy, and pre-QA checks. Superseded by the Development PM playbook."
 ---
 
-# Dev Playbook · 开发角色
+# Dev Playbook: Development Role
 
-> 历史档案：当前开发 PM 真入口是 [`开发PM-实施者.md`](开发PM-实施者.md)。本文保留旧 Dev 帽子样本，不作为现行执行规则；文内命令和写入流程不可直接复制执行。
+> Historical archive: the current Development PM entry is [Development PM](开发PM-实施者.md). This file preserves the former Dev role as a historical example, not current execution policy. Do not copy its commands or write procedures into current execution.
 
-咪咪写代码时戴这顶帽子。目的：稳定、可验证地落地 PRD。
+Mimi used this role while writing code. Its purpose was reliable, verifiable implementation of the PRD.
 
-## 触发条件
+## Trigger
 
-PRD 条目状态从「设计中」→「实施中」时。
+A PRD item moves from “Designing” to “Implementing.”
 
-## 输入
+## Inputs
 
-- 一个 PRD 条目（带 AC 清单和受影响文件列表）
-- 设计文档段落
+- A PRD item with acceptance criteria (AC) and affected files.
+- The corresponding design document section.
 
-## 输出
+## Outputs
 
-- 修改后的源文件
-- 新增/更新的测试
-- 历史样例：旧流程曾更新 CHANGELOG；当前开发 PM 不写 framework
+- Modified source files.
+- New or updated tests.
+- Historical example: the old workflow also updated CHANGELOG. The current Development PM does not write framework files.
 
-## 标准步骤
+## Standard procedure
 
-### 步骤 1：历史样例 — 列文件清单（不可复制执行）
+### Step 1: Historical file inventory — do not copy into execution
 
-按受影响文件列表，逐个确认大小（避开 mount 写入坑）：
+Check each affected file's size to avoid mount write problems:
+
 ```bash
 wc -lc src/features/xxx/Xxx.jsx src/shared/yyy.jsx
 ```
 
-### 步骤 2：历史样例 — 旧写入策略（不可复制执行）
+### Step 2: Historical write strategy — do not copy into execution
 
+```text
+< 6 KB: Write directly to the target.
+6–8 KB: Write to outputs/X.jsx, then use bash cp -f.
+> 8 KB: Write part1 and part2 to outputs, then concatenate into the target.
+Small edits: Python re.sub in place was the most reliable option.
 ```
-< 6 KB:    Write 直接到目标
-6-8 KB:    Write 到 outputs/X.jsx, bash cp -f
-> 8 KB:    Write 拆 part1+part2 到 outputs, cat 拼接到目标
-小改动:    Python re.sub in-place（最稳）
-```
 
-### 步骤 3：写代码
+### Step 3: Write code
 
-- 先改数据层（database.js / defaults.js / 共享 helpers）
-- 再改组件层（components.jsx）
-- 最后改 feature（features/*.jsx）
-- **每改一个文件立刻 `tail -3` + `wc -lc` 验证完整**
+- Change the data layer first: database.js, defaults.js, and shared helpers.
+- Then change the component layer: components.jsx.
+- Finally change features: features/*.jsx.
+- **Immediately verify each modified file with `tail -3` and `wc -lc`.**
 
-### 步骤 4：写测试
+### Step 4: Write tests
 
-每个新增的纯函数都要有 vitest 测试。位置：与源同目录的 `*.test.js`。
+Each new pure function requires a vitest test in a neighboring `*.test.js` file.
 
-模板：
+Template:
+
 ```js
 import { describe, expect, it } from 'vitest';
 import { newFn } from './newFile.js';
@@ -71,35 +73,35 @@ describe('newFn', () => {
 });
 ```
 
-### 步骤 5：历史样例 — 旧 docs 同步（不可复制执行）
+### Step 5: Historical documentation synchronization — do not copy into execution
 
-- CHANGELOG.md：旧流程会写；当前开发 PM 不写 framework CHANGELOG
-- 受影响 README.md / docs 段落更新
+- CHANGELOG.md: the former workflow updated this file; the current Development PM does not write the framework CHANGELOG.
+- Update affected README.md files and documentation sections.
 
-## 反模式（不要这样）
+## Anti-patterns
 
-- ❌ 一次改 5 个文件 不验证就跑测试
-- ❌ 文件超 9KB 不察觉，直接 Write 截断
-- ❌ 改逻辑不写测试
-- ❌ 忽略 vite build warning
+- Changing five files and running tests without verifying the files first.
+- Overlooking a file above 9 KB and truncating it through a direct Write.
+- Changing logic without tests.
+- Ignoring vite build warnings.
 
-## 历史样例：旧 9KB 写入限制铁则（不可复制执行）
+## Historical 9 KB write-limit rule — do not copy into execution
 
+```text
+Observed behavior: Write/Edit tools had an approximately 9,105-byte hard limit on mount paths.
+They could report success after writing only part of a file, truncating at a UTF-8 boundary.
+Symptoms: an incomplete tail or a file size stuck at 9,105 bytes.
+
+Workarounds, in descending order of reliability:
+1. Python re.sub in place: most reliable for small edits.
+2. Write to outputs/ and copy with bash cp -f: outputs also had limits, but sometimes worked.
+3. Write part1 and part2, then concatenate with bash cat: the only reliable large-file method.
+4. Direct Write: only for files below 6 KB.
 ```
-现象：Write/Edit 工具对 mount 路径有 ~9105 字节硬限制
-报告"成功"但实际只写了一半，文件被截断在 UTF-8 边界
-表现：tail 看末尾不完整 / 文件大小停在 9105
 
-解决方案（按可靠性排序）：
-1. Python re.sub in-place — 最稳，对小改动
-2. Write 到 outputs/ + bash cp -f — outputs 也有限制但偶尔能过
-3. Write 拆 part1+part2 + bash cat 拼接 — 大文件唯一可靠路
-4. 直接 Write — 仅 < 6KB 文件
-```
+## Verification checklist before step 5
 
-## 验证清单（步骤 5 之前）
-
-- [ ] 所有改动文件 `tail -3` 显示合法 JS 结尾
-- [ ] 无 8KB+ 文件被截断
-- [ ] Python 脚本 in-place 修改后 grep 关键 marker 都在
-- [ ] AC 中每条都有对应代码 / 测试
+- [ ] `tail -3` shows a valid JavaScript ending for every modified file.
+- [ ] No file above 8 KB was truncated.
+- [ ] All key markers remain after Python in-place edits.
+- [ ] Every acceptance criterion has corresponding implementation or tests.

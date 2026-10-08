@@ -3,26 +3,29 @@ name: handoff-spec-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 跨 PM 角色交接卡格式规范入口
+description: Entry point for handoff-card formats across PM roles.
 ---
-# 03_交接 · 跨 PM 角色协作层
+# 03 Handoffs · Collaboration Across PM Roles
 
-> 项目 PM / 操作系统 PM / 产品 PM / 技术 PM / 测试 PM / 开发 PM / 测试发布 PM 等职责角色之间的交接层。Cowork / Claude Code / Codex 只是执行载体，正文可注明但不作为新卡主体。
+> Handoffs connect responsibilities such as Project, Operating System, Product, Technical, Test, Development, and Test and Release PMs. Cowork, Claude Code, and Codex are execution tools. They may appear in the body, but are not the primary actors in new cards.
 
-| 文件 | 内容 |
+| File | Purpose |
 |---|---|
-| [交接卡格式.md](交接卡格式.md) | 高频执行入口：完整文件基础 ①-⑥ + 可选文件 ⑦ + chat 简版 ①-⑦ |
-| [交接卡格式-附录.md](交接卡格式-附录.md) | 低频解释：历史触发、失败案例、强制矩阵、自动对齐为何不静默改写 |
+| [Handoff format](交接卡格式.md) | Frequent-use template: full file requires ①-⑥ + optional file section ⑦ + short chat handoff ①-⑦. |
+| [Format appendix](交接卡格式-附录.md) | Historical triggers, failure cases, mandatory-use matrix, and why automation does not silently rewrite content. |
 
-## 实际交接卡位置
-- `交接区/待接手/` — 当前 in-flight 卡
-- `交接区/已接手/` — 已接收 / 已完成暂存
-- `交接区/历史归档/yyyy-mm/` — 长期历史归档
+## Actual card locations
 
-## 议题防御
-- PROP-014 三阶判定（chat 简版 ①-⑦ 强制结构）
-- PROP-029 v2 / O-1：⑤ 警戒段强制 `Status: <STATE>` 字段（5 态）
-- 2026-06-15 守卫增强：`handoff-zone-check` 对待接手卡按 `## ①`→`## ⑥` 标题顺序和 `DONE / BLOCKED / HANDOFF / RISK / OBSERVE` 枚举校验；已接手超期优先按文件名日期判断。
+- `交接区/待接手/`: current in-flight cards.
+- `交接区/已接手/`: temporary storage for accepted/completed cards.
+- `交接区/历史归档/yyyy-mm/`: long-term historical archive.
 
-## 维护
-- 责任：项目 PM 编排者
+## Issue safeguards
+
+- PROP-014's three-level classification requires the seven-part short chat handoff.
+- PROP-029 v2 / O-1 requires `Status: <STATE>` with five states in section ⑤.
+- Guard enhancement on 2026-06-15: `handoff-zone-check` validates pending cards' ordered headings `## ①` through `## ⑥` and the enum `DONE / BLOCKED / HANDOFF / RISK / OBSERVE`. For overdue accepted cards, prefer the date in the filename.
+
+## Maintenance
+
+- Owner: Project PM as coordinator.

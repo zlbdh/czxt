@@ -2,11 +2,11 @@
 
 function Get-PropStateSpecs {
   @(
-    [PSCustomObject]@{ Label = "待审批"; RelPattern = "确认改动\待审批\*"; StatusPattern = "待审批"; DirRel = "确认改动\待审批"; LinkPrefix = "待审批/" },
-    [PSCustomObject]@{ Label = "进行中"; RelPattern = "确认改动\已审批\进行中\*"; StatusPattern = "未收口"; DirRel = "确认改动\已审批\进行中"; LinkPrefix = "已审批/进行中/" },
-    [PSCustomObject]@{ Label = "已完成"; RelPattern = "确认改动\已审批\已完成\*"; StatusPattern = "已完成"; DirRel = "确认改动\已审批\已完成"; LinkPrefix = "已审批/已完成/" },
-    [PSCustomObject]@{ Label = "已弃用"; RelPattern = "确认改动\已审批\已弃用\*"; StatusPattern = "已弃用"; DirRel = "确认改动\已审批\已弃用"; LinkPrefix = "已审批/已弃用/" },
-    [PSCustomObject]@{ Label = "拒绝"; RelPattern = "确认改动\拒绝\*"; StatusPattern = "拒绝"; DirRel = "确认改动\拒绝"; LinkPrefix = "拒绝/" }
+    [PSCustomObject]@{ Label = "待审批"; RelPattern = "确认改动\待审批\*"; StatusPattern = "待审批|\APending approval(?=\s*(?:/|$))"; DirRel = "确认改动\待审批"; LinkPrefix = "待审批/" },
+    [PSCustomObject]@{ Label = "进行中"; RelPattern = "确认改动\已审批\进行中\*"; StatusPattern = "未收口|\AApproved\s*·\s*Open(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\进行中"; LinkPrefix = "已审批/进行中/" },
+    [PSCustomObject]@{ Label = "已完成"; RelPattern = "确认改动\已审批\已完成\*"; StatusPattern = "已完成|\AApproved\s*·\s*Completed(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\已完成"; LinkPrefix = "已审批/已完成/" },
+    [PSCustomObject]@{ Label = "已弃用"; RelPattern = "确认改动\已审批\已弃用\*"; StatusPattern = "已弃用|\AApproved\s*·\s*Abandoned(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\已弃用"; LinkPrefix = "已审批/已弃用/" },
+    [PSCustomObject]@{ Label = "拒绝"; RelPattern = "确认改动\拒绝\*"; StatusPattern = "拒绝|\ARejected(?=\s*(?:/|$))"; DirRel = "确认改动\拒绝"; LinkPrefix = "拒绝/" }
   )
 }
 
@@ -30,9 +30,9 @@ function Get-PropHeaderStatus {
     $line = $lines[$i]
     if ($line -match '^\s*(?:[-*]|\>)?\s*(?:\*\*)?(当前状态|历史状态|处置状态|状态机|状态字段|状态层|职责状态)') { continue }
 
-    $match = [regex]::Match($line, '^\s*[-*]\s*(?:\*\*)?状态(?:\*\*)?\s*[：:]\s*(?<raw>.+)$')
+    $match = [regex]::Match($line, '^\s*[-*]\s*(?:\*\*)?(?:状态|Status)(?:\*\*)?\s*[：:]\s*(?<raw>.+)$')
     if (-not $match.Success) {
-      $match = [regex]::Match($line, '^\s*>\s*(?:(?:.*?/)\s*)?(?:\*\*)?状态(?:\*\*)?\s*[：:]\s*(?<raw>.+)$')
+      $match = [regex]::Match($line, '^\s*>\s*(?:(?:.*?/)\s*)?(?:\*\*)?(?:状态|Status)(?:\*\*)?\s*[：:]\s*(?<raw>.+)$')
     }
     if ($match.Success) {
       $candidates += [PSCustomObject]@{

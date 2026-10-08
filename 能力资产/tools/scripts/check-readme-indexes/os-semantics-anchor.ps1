@@ -45,7 +45,7 @@ foreach ($rel in @(
   } elseif ($rel -in @("操作系统\00_总入口.md", "操作系统\01_架构\README.md", "操作系统\01_架构\工具载体矩阵.md")) {
     Assert-Contains $rel "主-元-决策-实施|lead, meta, decision, and implementation" "Current nine-PM layer terminology"
   } else {
-    Assert-Contains $rel "主-元-决策-实施" "9 PM 四层现行术语"
+    Assert-Contains $rel "主-元-决策-实施|lead, meta, decision, and implementation" "Current nine-PM layer terminology"
   }
 }
 Assert-NotContains "操作系统\05_记忆\行为反思.md" "chat 简版 ⑥ 必含.*PM 切换轨迹" "chat 简版 PM 轨迹段位"

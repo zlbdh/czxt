@@ -3,48 +3,50 @@ name: qa-role-legacy
 scope: project
 type: semantic
 loaded: on-demand
-description: 历史档案：QA 测试帽子（vitest/vite build/cap sync 3 层验证 + 回归矩阵），已吸收到新 9 PM playbook（测试PM-质量门户 + 测试发布PM-闭环者）
+description: "Historical QA role: three-layer vitest/build/Capacitor verification and a regression matrix. Superseded by the Test PM and Test and Release PM playbooks."
 ---
 
-# QA Playbook · 测试角色
+# QA Playbook: Testing Role
 
-> 历史档案：当前测试入口是 [`测试PM-质量门户.md`](测试PM-质量门户.md) + [`测试发布PM-闭环者.md`](测试发布PM-闭环者.md)。本文保留旧 QA 帽子样本，不作为现行执行规则；文内命令和 QA 流程不可直接复制执行。
+> Historical archive: current testing entries are [Test PM](测试PM-质量门户.md) and [Test and Release PM](测试发布PM-闭环者.md). This file preserves the former QA role, not current execution rules. Do not copy its commands or QA procedures directly into execution.
 
-咪咪验证代码时戴这顶帽子。目的：在 zlbdh 拿到坏 APK 之前抓 bug。
+Mimi used this role to verify code and catch bugs before zlbdh received a broken APK.
 
-## 触发条件
+## Trigger
 
-历史 Dev 步骤 4 完成后曾要求完整 QA；当前执行入口改为测试 PM 定策略、测试发布 PM 跑闭环。
+The old Dev workflow required full QA after step 4. Under current responsibilities, the Test PM sets strategy and the Test and Release PM performs release completion.
 
-## 历史样例：3 层验证（不可复制执行）
+## Historical example: three verification layers — do not copy into execution
 
-### Layer 1：vitest 单元测试
+### Layer 1: vitest unit tests
 
 ```powershell
 cd {{PROJECT_ROOT}}\{{APP_REPO_DIR}}
 npm test -- --run
-# 期望：所有 test files passed, total tests >= last_known_count
+# Expected: all test files passed; total tests >= last_known_count.
 ```
 
-如果有 fail：
-- 修复 → 不把 PRD 标完成
-- 是新功能 break 旧测试？→ 修代码或修测试（看是否符合新 AC）
-- 是新加测试本身错？→ 修测试
-- 常见原因：import 名打错、JSX 标签未闭合、测试契约未同步
+If tests fail:
 
-### Layer 2：vite build 生产构建
+- Fix them before marking the PRD complete.
+- If a new feature breaks an old test, fix the code or test according to the new acceptance criteria.
+- If a new test is incorrect, fix the test.
+- Common causes include incorrect import names, unclosed JSX tags, and outdated test contracts.
+
+### Layer 2: vite production build
 
 ```powershell
 cd {{PROJECT_ROOT}}\{{APP_REPO_DIR}}
 npm run build
-# 期望：✓ built in Xs，无 error
+# Expected: built in X seconds, with no errors.
 ```
 
-警告（warnings）：
-- `Some chunks are larger than 500 kB` — 已知，charts 重，可忽略
-- `Module not found` — 必须修
+Warnings:
 
-### Layer 3：历史样例 — Capacitor 同步 / APK（当前交测试发布 PM）
+- `Some chunks are larger than 500 kB`: a known consequence of heavy chart dependencies in this historical example; it could be ignored.
+- `Module not found`: must be fixed.
+
+### Layer 3: historical Capacitor sync and APK example — now owned by the Test and Release PM
 
 ```powershell
 cd {{PROJECT_ROOT}}\{{APP_REPO_DIR}}
@@ -52,54 +54,55 @@ npx cap sync android
 powershell -NoProfile -ExecutionPolicy Bypass -File .\build-apk.ps1
 ```
 
-发布闭环继续交给测试发布 PM「闭环者」执行真机安装 / CDP smoke / logcat。
+The Test and Release PM “Closer” continues release completion with installation on a physical device, CDP smoke tests, and logcat.
 
-可选 Layer 4：手动 smoke
+Optional layer 4: manual smoke testing.
 
-启动 `npm run dev` 后，手动跑过 5 个 tab：
-1. Home：打卡、+1 喝水、点任务出弹窗、生成 AI 简报、聊聊发一条
-2. Health：填体重、记一餐、记训练、AI 分析（需 key）
-3. Accounting：「午餐35」、看饼图、改预算
-4. Timeline：写一条文字 / 链接、点星标、AI 整理
-5. Profile：改档案、复制 AI key、导出备份、模拟设备
+After starting `npm run dev`, exercise these five tabs:
 
-## 测试报告模板
+1. Home: check in, increment water intake, open a task dialog, generate an AI briefing, and send a chat message.
+2. Health: enter weight, record a meal and workout, and run AI analysis, which requires a key.
+3. Accounting: enter “Lunch 35,” inspect the pie chart, and edit the budget.
+4. Timeline: write a note or link, star an item, and run AI organization.
+5. Profile: edit the profile, copy the AI key, export a backup, and simulate a device.
 
-每次 QA 结束输出：
+## Test report template
+
+Output after each QA run:
 
 ```markdown
-## QA 报告 v3.X
+## QA Report v3.X
 
-- 改动文件：N
-- 新增测试：M
-- Layer 1 vitest：✓ N/N
-- Layer 2 vite build：✓ 在 Xs 完成
+- Modified files: N
+- New tests: M
+- Layer 1 vitest: N/N passed
+- Layer 2 vite build: completed in X seconds
   - JS bundle: XXX KB / gzip XXX KB
-  - 增量 ΔX KB
-- Layer 3 cap sync / APK：✓ / 跳过（说明原因）
-- 手动 smoke：✓ / 跳过
+  - Size change: ΔX KB
+- Layer 3 Capacitor sync / APK: passed / skipped with reason
+- Manual smoke: passed / skipped
 
-风险/已知问题：
+Risks and known issues:
 - ...
 ```
 
-## 回归测试矩阵
+## Regression matrix
 
-每次大改后必跑：
+The historical workflow required this matrix after major changes:
 
-| 流程 | 输入 | 期望 |
+| Flow | Input | Expected result |
 |---|---|---|
-| 首次启动 | 清空 IndexedDB | 看到默认习惯 + 主账本 |
-| Legacy 迁移 | 有 v1 localStorage | profile/任务/聊天迁入 IndexedDB |
-| 离线打卡 | 飞行模式 | 全部本地操作正常 |
-| AI 缺 key | 清掉 LLM_STORAGE_KEY | 显示友好错误，不崩 |
-| 备份导出 | 点导出 | 下载 JSON，包含全部表 |
-| 备份导入 | 粘贴 JSON | 数据全恢复 |
+| First launch | Empty IndexedDB | Default habits and primary ledger appear |
+| Legacy migration | Existing v1 localStorage | Profile, tasks, and chat migrate to IndexedDB |
+| Offline check-in | Airplane mode | All local actions work |
+| Missing AI key | Remove LLM_STORAGE_KEY | Friendly error without a crash |
+| Backup export | Select Export | JSON download contains all tables |
+| Backup import | Paste JSON | All data is restored |
 
-## 不要跳过
+## Checks not to skip
 
-> 以下是旧 QA 执行样例中的提醒，不是现行职责分配；当前开发期本地自测归开发 PM，发布/ship gate 归测试发布 PM。
+> These reminders belong to the historical QA example, not current responsibility assignments. Local development self-tests now belong to the Development PM; release and ship gates belong to the Test and Release PM.
 
-- 不要因为「只是改了样式」就跳过 vitest
-- 不要因为「上次构建过了」就跳过 vite build
-- 不要因为「测试全过」就标 PRD 完成 — 还要确认 AC 全打勾
+- Do not skip vitest because a change “only affects styling.”
+- Do not skip vite build because the previous build passed.
+- Do not mark a PRD complete solely because tests pass: every acceptance criterion must also be checked.

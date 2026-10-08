@@ -19,6 +19,6 @@ foreach ($rel in @(
 }
 
 Assert-NotContains "Docs\7-复盘\README.md" "agent/workflows|agent/rules" "RETRO 活流程旧路径"
-Assert-Contains "Docs\7-复盘\README.md" "ADR-017 分层化" "RETRO 6500B 历史边界"
-Assert-Contains "Docs\7-复盘\README.md" "RETRO-009-候选议题\.md.*不计入正式编号" "RETRO 附属候选文件边界"
-Assert-Contains "Docs\7-复盘\RETRO-022-2026-06.md" "当日补齐.*3 个 lifecycle.*当前事件数以 hooks README / 事件矩阵 / 真实配置为准" "RETRO-022 hooks 当时/当前边界"
+Assert-Contains "Docs\7-复盘\README.md" "ADR-017 分层化|Historical mandatory 6500 B split, now layered by ADR-017" "RETRO 6500B 历史边界"
+Assert-Contains "Docs\7-复盘\README.md" "RETRO-009-候选议题\.md.*(?:不计入正式编号|is not a formal RETRO and does not count toward the numbered series)" "RETRO 附属候选文件边界"
+Assert-Contains "Docs\7-复盘\RETRO-022-2026-06.md" "当日补齐.*3 个 lifecycle.*当前事件数以 hooks README / 事件矩阵 / 真实配置为准|that day, add three lifecycle events, SessionStart/UserPromptSubmit/Stop\. Current event counts come from the hooks README, event matrix, and real configuration\." "RETRO-022 hooks 当时/当前边界"

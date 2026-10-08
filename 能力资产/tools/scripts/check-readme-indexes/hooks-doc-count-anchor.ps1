@@ -12,12 +12,16 @@ function Test-HookDocCount {
   )
   if ($Truth -lt 0) { return }
   $m = [regex]::Match($Text, $Pattern)
-  if (-not $m.Success) { return }
+  if (-not $m.Success) {
+    Write-Host "  🔴 $Label is missing its count anchor" -ForegroundColor Red
+    $script:ok = $false
+    return
+  }
   $claimed = [int]$m.Groups[1].Value
   if ($claimed -eq $Truth) {
-    Write-Host "  ✅ $Label：$claimed = 真实 $Truth"
+    Write-Host "  ✅ ${Label}: $claimed = actual $Truth"
   } else {
-    Write-Host "  🔴 $Label 漂移：声称 $claimed vs 真实 $Truth" -ForegroundColor Red
+    Write-Host "  🔴 $Label drift: claimed $claimed vs actual $Truth" -ForegroundColor Red
     $script:ok = $false
   }
 }
@@ -31,15 +35,15 @@ function Assert-HookDocCount {
   )
   $m = [regex]::Match($Text, $Pattern)
   if (-not $m.Success) {
-    Write-Host "  🔴 $Label 缺少计数锚点" -ForegroundColor Red
+    Write-Host "  🔴 $Label is missing its count anchor" -ForegroundColor Red
     $script:ok = $false
     return
   }
   $claimed = [int]$m.Groups[1].Value
   if ($claimed -eq $Truth) {
-    Write-Host "  ✅ $Label：$claimed = 真实 $Truth"
+    Write-Host "  ✅ ${Label}: $claimed = actual $Truth"
   } else {
-    Write-Host "  🔴 $Label 漂移：声称 $claimed vs 真实 $Truth" -ForegroundColor Red
+    Write-Host "  🔴 $Label drift: claimed $claimed vs actual $Truth" -ForegroundColor Red
     $script:ok = $false
   }
 }
@@ -68,15 +72,15 @@ try {
 $hooksReadmePath = Join-Path $Root "能力资产\tools\hooks\README.md"
 if (Test-Path -LiteralPath $hooksReadmePath) {
   $hrText = Get-Content -LiteralPath $hooksReadmePath -Raw -Encoding UTF8
-  Test-HookDocCount $hrText "hooks README 当前 hooks 数(vs manifest)" '当前 hooks（(\d+) 个' $manifestN
-  Test-HookDocCount $hrText "hooks README Codex 事件数(vs .codex/hooks.json)" 'Codex 原生 hooks（(\d+) 个事件' $codexN
-  Test-HookDocCount $hrText "hooks README Claude 事件数(vs .claude/settings.json)" 'Claude Code 原生 hooks（(\d+) 个事件' $claudeN
-  $hookTablePattern = '\|\s*类别\s*\|\s*Hook\s*\|\s*\r?\n\|\s*---\s*\|\s*---\s*\|\s*\r?\n\|\s*索引/状态\s*\|[^\r\n]+\|\s*\r?\n\|\s*安装/健康\s*\|[^\r\n]+\|\s*\r?\n\|\s*发布/沉淀\s*\|[^\r\n]+\|'
+  Test-HookDocCount $hrText "hooks README project hook count (vs manifest)" '(?:当前 hooks（|Current hooks \()(\d+)(?: 个| total;)' $manifestN
+  Test-HookDocCount $hrText "hooks README Codex event count (vs .codex/hooks.json)" '(?:Codex 原生 hooks（|Native Codex hooks \()(\d+)(?: 个事件| events\))' $codexN
+  Test-HookDocCount $hrText "hooks README Claude event count (vs .claude/settings.json)" '(?:Claude Code 原生 hooks（|Native Claude Code hooks \()(\d+)(?: 个事件| events\))' $claudeN
+  $hookTablePattern = '\|\s*(?:类别|Category)\s*\|\s*Hook\s*\|\s*\r?\n\|\s*---\s*\|\s*---\s*\|\s*\r?\n\|\s*(?:索引/状态|Index/state)\s*\|[^\r\n]+\|\s*\r?\n\|\s*(?:安装/健康|Installation/health)\s*\|[^\r\n]+\|\s*\r?\n\|\s*(?:发布/沉淀|Release/knowledge retention)\s*\|[^\r\n]+\|'
   if ($hrText -notmatch $hookTablePattern) {
-    Write-Host "  🔴 hooks README 当前 hooks 分类表不连续或缺少三类锚点" -ForegroundColor Red
+    Write-Host "  🔴 hooks README category table is not contiguous or is missing one of three categories" -ForegroundColor Red
     $ok = $false
   } else {
-    Write-Host "  ✅ hooks README 当前 hooks 分类表连续"
+    Write-Host "  ✅ hooks README category table is contiguous"
   }
 }
 
@@ -96,15 +100,15 @@ if (($codexHookNames -contains "PostToolUse") -and ($codexHookNames -contains "P
     }
   }
   if ($designOnly) {
-    Assert-HookDocCount $designOnly "hooks 设计项目 hooks 数(vs manifest)" '现有\s+(\d+)\s+个项目 hook' $manifestN
-    Assert-HookDocCount $designOnly "hooks 设计 Codex 事件数(vs .codex/hooks.json)" 'Codex 原生入口接\s+(\d+)\s+个事件' $codexN
-    Assert-HookDocCount $designOnly "hooks 设计 Claude 事件数(vs .claude/settings.json)" 'Claude Code 原生入口接\s+(\d+)\s+个事件' $claudeN
+    Assert-HookDocCount $designOnly "hooks design project hook count (vs manifest)" '(?:现有\s+|authoritative for the\s+)(\d+)(?:\s+个项目 hook|\s+project hooks)' $manifestN
+    Assert-HookDocCount $designOnly "hooks design Codex event count (vs .codex/hooks.json)" '(?:Codex 原生入口接\s+|Native Codex connects\s+)(\d+)(?:\s+个事件|\s+events)' $codexN
+    Assert-HookDocCount $designOnly "hooks design Claude event count (vs .claude/settings.json)" '(?:Claude Code 原生入口接\s+|native Claude Code connects\s+)(\d+)(?:\s+个事件|\s+events)' $claudeN
   }
-  if ($designText -match 'Codex\s*(?:侧)?\s*(?:PostToolUse/PreToolUse|PostToolUse\s*\+\s*PreToolUse)[^。\r\n]*后续可镜像') {
-    Write-Host "  🔴 hooks 设计文档语义漂移：Codex PostToolUse/PreToolUse 已注册，但仍写后续可镜像" -ForegroundColor Red
+  if ($designText -match 'Codex\s*(?:侧)?\s*(?:PostToolUse/PreToolUse|PostToolUse\s*\+\s*PreToolUse)[^。\r\n]*(?:后续可镜像|can be mirrored later)') {
+    Write-Host "  🔴 hooks design drift: Codex PostToolUse/PreToolUse are registered but described as future mirrors" -ForegroundColor Red
     $ok = $false
   } else {
-    Write-Host "  ✅ hooks 设计语义：Codex PostToolUse/PreToolUse 已注册且主文/附录无后续可镜像旧句"
+    Write-Host "  ✅ hooks design: registered Codex PostToolUse/PreToolUse have no obsolete future-mirroring claim"
   }
 }
 

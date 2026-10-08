@@ -1,56 +1,57 @@
 ---
 name: pm-self-correction-trigger
-description: PM 自纠触发条件 + 立即落地流程（PROP-030 / artifact 化 / 全 PM 通用）
-trigger: 任何 PM 帽子下 / 发现自己错向时 / zlbdh 反问触发
-loaded: 条件加载
+description: Self-correction triggers and immediate durable records under PROP-030, applicable to every PM.
+trigger: Any PM discovers an incorrect direction or receives a corrective question from zlbdh.
+loaded: on-demand
 ---
 
-# PM 自纠 trigger + 立即落地
+# PM Self-Correction: Triggers and Immediate Action
 
-## 触发条件（5 信号）
+## Five signals
 
-1. ⭐ zlbdh 反问「你为什么..?」/「这不是..吗？」
-2. ⭐ 自己发现 5+ 分钟前的决策有误（任何角色帽子下）
-3. RETRO 起稿时识别同模式跨 Sprint 复发
-4. PM 切角色帽子前 decision-checkpoint 任一步触发反思，尤其 Q1-Q3
-5. zlbdh 指令「停下来操作系统自检」
+1. zlbdh asks a corrective question such as “Why did you…?” or “Isn't this…?”.
+2. A PM discovers that a decision made at least five minutes earlier was wrong.
+3. RETRO drafting reveals the same pattern across Sprints.
+4. A role-switch checkpoint prompts reflection, especially Q1–Q3.
+5. zlbdh asks to stop and check the operating system.
 
-## 立即落地流程（PROP-030 落地 / 5 分钟内完成）
+## Immediate procedure — complete within five minutes
 
-### Step 1: 判定归属 + 编号
+### 1. Determine ownership and number
 
-- 项目 PM 对外身份、全局协作、framework 规则、跨 PM 问题 → 查 `PM工作区/项目PM-咪咪/PM自纠/INDEX.md`，新 PM 自纠 = max+1
-- 某 PM 私人沉淀 → 回到对应 `PM工作区/<PM名>/`；若该 PM 尚无 PM自纠目录，由项目 PM 调度该 PM 建立或回流，不硬塞进项目 PM 自纠索引
+For Project PM identity, global collaboration, framework rules, or cross-PM problems, inspect `PM工作区/项目PM-咪咪/PM自纠/INDEX.md` and assign max+1.
 
-### Step 2: 立即留痕（议题 AJ）
-触发 PM 先记录自纠归属与草稿；`状态.md` PM 切换轨迹由项目 PM 主会话，或白名单允许的操作系统 PM，在收口时落笔：
+For private PM knowledge, return to `PM工作区/<PM名>/`. If it lacks a self-correction directory, Project PM dispatches that role to establish one or receives the matter back. Do not force it into Project PM's index.
+
+### 2. Record the trace
+
+The triggering PM records ownership and a draft. Project PM's main session, or an allowlisted Operating System PM, finalizes the role-transition row in `状态.md`:
+
+```text
+| YYYY-MM-DD HH:MM | <from> | <to> | **PM self-correction #N — one sentence** ... | ✅ | ✅ |
 ```
-| YYYY-MM-DD HH:MM | <from> | <to> | **PM 自纠 #N — 一句话** ... | ✅ | ✅ |
-```
 
-### Step 3: 独立 artifact（议题 CN / PROP-030）
-按 Step 1 归属建对应 artifact；项目 PM / 全局问题使用 `PM工作区/项目PM-咪咪/PM自纠/PM自纠-N.md`。结构：
-- 一句话
-- 触发场景（时间 + 步骤）
-- 根因
-- 防御机制（落地位置）
-- 同模式累积
-- 元规则候选
-- 真知识源
+### 3. Create the artifact — issue CN / PROP-030
 
-### Step 4: 更新 INDEX
-对应 PM 的 `PM自纠/INDEX.md` 或工作区 README 加 1 行指针；跨 PM 私人目录改动走项目 PM 调度，不越权整理其他 PM 工作区。
+Use the ownership established in step 1. Global/Project PM issues use `PM工作区/项目PM-咪咪/PM自纠/PM自纠-N.md`.
 
-### Step 5: 评估元规则升级
-- 同模式 3+ 次 → 候选元规则池
-- 已落地路径 → 直接铁律（不入元规则池）
+Include a one-sentence summary, trigger with time and step, root cause, implemented defense and location, recurrence evidence, candidate meta-rule, and authoritative source.
 
-## chat 简版必含 ⑦ 段（PROP-027 v2 简化版）
+### 4. Update the index
 
-「⑦ PM 切换轨迹：本次 session 加 N 行（状态.md L<line>）」
+Add one pointer to that PM's self-correction index or workspace README. Project PM dispatches cross-PM private-directory work; do not reorganize another PM's workspace without authority.
 
-## 真知识源
+### 5. Assess escalation
 
-- `PM工作区/项目PM-咪咪/PM自纠/INDEX.md`
-- `操作系统/03_交接/交接卡格式.md` §⑦ 段
-- `操作系统/05_记忆/INDEX.md` §二反思 7
+- Three or more recurrences of the same pattern: candidate meta-rule pool.
+- A rule already implemented in its authoritative location: direct mandatory rule, without adding it to the pool.
+
+## Required chat section ⑦ — PROP-027 v2
+
+“⑦ PM role transitions: N rows added this session (`状态.md L<line>`).”
+
+## Authoritative sources
+
+- `PM工作区/项目PM-咪咪/PM自纠/INDEX.md`.
+- `操作系统/03_交接/交接卡格式.md`, section ⑦.
+- `操作系统/05_记忆/INDEX.md`, section 2, reflection 7.

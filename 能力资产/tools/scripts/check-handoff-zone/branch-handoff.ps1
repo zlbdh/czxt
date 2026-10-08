@@ -23,25 +23,25 @@
     $readmeText = Get-Content -LiteralPath $readmePath -Raw -Encoding UTF8
     foreach ($needle in @("分支间/", "项目PM→运营咪咪", "运营咪咪→项目PM", "待处理/", "已处理/")) {
       if ($readmeText -notmatch ([regex]::Escape($needle))) {
-        $issues += [pscustomobject]@{ File = "交接区\README.md"; Issue = "分支间结构说明缺少：$needle" }
+        $issues += [pscustomobject]@{ File = "交接区\README.md"; Issue = "Cross-branch structure instructions are missing: $needle" }
       }
     }
     if ($readmeText -match "Dev到QA|QA到zlbdh|PM到Dev") {
-      $issues += [pscustomobject]@{ File = "交接区\README.md"; Issue = "文件命名示例仍使用旧 Dev/QA/PM 工具流口径" }
+      $issues += [pscustomobject]@{ File = "交接区\README.md"; Issue = "Filename examples still use the obsolete Dev/QA/PM tool-flow terminology" }
     }
   } else {
-    $issues += [pscustomobject]@{ File = "交接区\README.md"; Issue = "交接区 README 缺失" }
+    $issues += [pscustomobject]@{ File = "交接区\README.md"; Issue = "Handoff area README is missing" }
   }
 
   if (-not (Test-Path -LiteralPath $branchRoot -PathType Container)) {
-    $issues += [pscustomobject]@{ File = "交接区\分支间"; Issue = "分支间交接根目录缺失" }
+    $issues += [pscustomobject]@{ File = "交接区\分支间"; Issue = "Cross-branch handoff root directory is missing" }
     return [pscustomobject]@{ Issues = @($issues); Warnings = @($warnings); Pending = @(); Processed = @() }
   }
 
   foreach ($relativeDir in $expectedDirs) {
     $dir = Join-Path $branchRoot $relativeDir
     if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
-      $issues += [pscustomobject]@{ File = "交接区\分支间\$relativeDir"; Issue = "分支间交接目录缺失" }
+      $issues += [pscustomobject]@{ File = "交接区\分支间\$relativeDir"; Issue = "Cross-branch handoff directory is missing" }
       continue
     }
 
@@ -54,14 +54,14 @@
   }
 
   if ($pendingCards.Count -gt $MaxPending) {
-    $issues += [pscustomobject]@{ File = "交接区\分支间"; Issue = "分支间待处理卡 $($pendingCards.Count) 张，超过上限 $MaxPending" }
+    $issues += [pscustomobject]@{ File = "交接区\分支间"; Issue = "There are $($pendingCards.Count) pending cross-branch cards, exceeding the limit $MaxPending" }
   }
 
   $threshold = (Get-Date).AddDays(-1 * $OldPendingDays)
   foreach ($card in $pendingCards) {
     $sortValue = Get-HandoffSortValue $card
     if ($sortValue -lt $threshold) {
-      $issues += [pscustomobject]@{ File = $card.FullName; Issue = "分支间待处理卡超过 $OldPendingDays 天未处理" }
+      $issues += [pscustomobject]@{ File = $card.FullName; Issue = "Cross-branch pending card has remained unprocessed for more than $OldPendingDays days" }
     }
   }
 

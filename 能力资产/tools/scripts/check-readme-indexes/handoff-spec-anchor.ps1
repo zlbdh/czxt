@@ -31,11 +31,11 @@ Assert-Contains "交接区\README.md" '接手者 / 当前 session|Recipient/curr
 Assert-Contains "交接区\README.md" '不会静默移动文件|do not silently move files' "Handoff-area README hooks do not move cards"
 Assert-NotContains "交接区\README.md" '下一个工具|next tool' "Handoff-area README obsolete tool actor"
 
-Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '待接手卡 frontmatter status 应为 pending' "handoff guard pending frontmatter"
-Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '缺少完整交接卡基础标题' "Handoff guard sections ①-⑥"
+Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '(?:待接手卡 frontmatter status 应为 pending|Pending card frontmatter status must be pending)' "handoff guard pending frontmatter"
+Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '(?:缺少完整交接卡基础标题|Required base handoff card headings are missing)' "Handoff guard sections ①-⑥"
 Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" 'DONE\|BLOCKED\|HANDOFF\|RISK\|OBSERVE' "Handoff guard five Status states"
-Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '已接手卡 frontmatter 仍为 status: pending' "handoff guard accepted metadata"
-Assert-Contains "能力资产\tools\scripts\check-handoff-zone\file-list.ps1" '② 文件变更路径不存在' "Handoff guard section ② path exists"
+Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '(?:已接手卡 frontmatter 仍为 status: pending|Accepted card frontmatter still has status: pending)' "handoff guard accepted metadata"
+Assert-Contains "能力资产\tools\scripts\check-handoff-zone\file-list.ps1" '(?:② 文件变更路径不存在|② Changed file path does not exist)' "Handoff guard section ② path exists"
 
 Assert-Contains "能力资产\tools\hooks\chat-output\check-chat-summary.ps1" '交接区\\待接手\\' "chat guard pending path"
 Assert-Contains "能力资产\tools\hooks\chat-output\check-chat-summary.ps1" '交接区\\已接手\\' "chat guard accepted done path"

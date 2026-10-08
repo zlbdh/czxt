@@ -151,7 +151,7 @@ function Get-PmTrackingGitFrameworkChanges {
   if ($status.ExitCode -ne 0) {
     return [pscustomobject]@{
       StatusAvailable = $false
-      ChangedPaths = @("<Git 状态不可读：$($status.Output -join ' ')>")
+      ChangedPaths = @("<Git status unreadable: $($status.Output -join ' ')>")
     }
   }
 
@@ -195,7 +195,7 @@ function Get-PmTrackingFrameworkChangeProbe {
         Method = "git-error"
         StatusAvailable = $false
         FrameworkChanged = $true
-        ChangedPaths = @("<Git 根不可读：$($topLevelResult.Output -join ' ')>")
+        ChangedPaths = @("<Git root unreadable: $($topLevelResult.Output -join ' ')>")
       }
     }
   } elseif ($ownGitMarker) {
@@ -203,7 +203,7 @@ function Get-PmTrackingFrameworkChangeProbe {
       Method = "git-error"
       StatusAvailable = $false
       FrameworkChanged = $true
-      ChangedPaths = @("<Git 命令不可用，无法确认独立 Git 根是否 clean>")
+      ChangedPaths = @("<Git command unavailable; cannot determine whether the independent Git root is clean>")
     }
   }
 

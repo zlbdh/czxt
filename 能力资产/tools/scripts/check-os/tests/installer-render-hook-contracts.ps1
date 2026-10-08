@@ -19,7 +19,7 @@ try {
   $manifest.hooks = @($manifest.hooks | Where-Object { $_.id -eq 'chat-summary-check' })
   Write-CzxtNoBomText (Join-Path $fixtureRoot '能力资产/tools/hooks/manifest.json') ($manifest | ConvertTo-Json -Depth 20)
   foreach ($kind in @('codex', 'claude')) {
-    Invoke-CzxtContract ($kind + ': 嵌套业务目录的Stop真实检查和临时文件清理') {
+    Invoke-CzxtContract ($kind + ': real Stop checks and temporary-file cleanup for nested application directories') {
       $relative = '能力资产/tools/hooks/' + $kind + '/stop-chat-summary.ps1'
       $source = [IO.File]::ReadAllText((Join-Path $sourceRoot $relative))
       $text = ConvertTo-CzxtInstallerRenderedText $source '.ps1' @{ PROJECT_NAME='我的"项目'; APP_REPO_DIR='frontend/app' }
@@ -44,20 +44,20 @@ try {
         }
         finally { [Console]::InputEncoding = $previousInputEncoding }
         $stdout=$process.StandardOutput.ReadToEndAsync(); $stderr=$process.StandardError.ReadToEndAsync()
-        # WinPS 5.1没有StandardInputEncoding，启动时显式绑定无BOM编码。
+        # WinPS 5.1 lacks StandardInputEncoding; explicitly bind BOM-free encoding at startup.
         $inputBytes = [Text.Encoding]::ASCII.GetBytes('{"last_assistant_message":"\u5df2\u4fee\u6539\u6587\u4ef6\uff0c\u6d4b\u8bd5\u901a\u8fc7\u3002"}')
         $process.StandardInput.BaseStream.Write($inputBytes, 0, $inputBytes.Length)
         $process.StandardInput.BaseStream.Close()
         if (-not $process.WaitForExit(15000)) {
           $null = Stop-CzxtTimedOutProcessTree $process $stdout $stderr
-          throw 'Stop hook超时'
+          throw 'Stop hook timed out'
         }
         $output=Receive-CzxtAsyncText $stdout 'stdout'; $errorText=Receive-CzxtAsyncText $stderr 'stderr'
-        Assert-CzxtEqual 0 $process.ExitCode ('Stop退出失败: ' + $errorText)
+        Assert-CzxtEqual 0 $process.ExitCode ('Stop exited unsuccessfully: ' + $errorText)
         $result = $output | ConvertFrom-Json
-        Assert-CzxtEqual 'block' $result.decision ('未实际检查缺失交接卡: ' + $output + '; stderr=' + $errorText)
-        Assert-CzxtTrue ($result.reason.Contains('我的"项目')) 'Stop理由中的名称未逐字保留'
-        Assert-CzxtEqual 0 @(Get-ChildItem -LiteralPath $tempRoot -Force).Count 'Stop泄漏了临时文件'
+        Assert-CzxtEqual 'block' $result.decision ('Missing handoff card was not actually checked: ' + $output + '; stderr=' + $errorText)
+        Assert-CzxtTrue ($result.reason.Contains('我的"项目')) 'Name in the Stop reason was not preserved literally'
+        Assert-CzxtEqual 0 @(Get-ChildItem -LiteralPath $tempRoot -Force).Count 'Stop leaked temporary files'
       }
       finally { $process.Dispose() }
     }

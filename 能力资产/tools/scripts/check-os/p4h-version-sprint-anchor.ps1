@@ -18,7 +18,7 @@ $statePathH = Join-Path $repoRoot "状态.md"
 $sotSprint = $null
 if (Test-Path -LiteralPath $statePathH) {
     $stateRaw = Get-Content -LiteralPath $statePathH -Raw -ErrorAction SilentlyContinue
-    $mSp = [regex]::Match($stateRaw, "3 秒起手速查（[^）]*?Sprint-(\d+)")
+    $mSp = [regex]::Match($stateRaw, '3 秒起手速查（[^）]*?Sprint-(?<sprint>\d+)|(?m:^## 3-Second Startup Reference \(Sprint-(?<sprint>\d+)\)[ \t]*\r?$)')
     if ($mSp.Success) { $sotSprint = $mSp.Groups[1].Value }
 }
 
@@ -34,7 +34,7 @@ $readmePathH = Join-Path $repoRoot "README.md"
 if ((Test-Path -LiteralPath $readmePathH) -and ($null -ne $sotVersion)) {
     $rmRaw = Get-Content -LiteralPath $readmePathH -Raw -ErrorAction SilentlyContinue
 
-    $mRmVer = [regex]::Match($rmRaw, "当前最新[^\r\n]*?v(\d+\.\d+\.\d+)")
+    $mRmVer = [regex]::Match($rmRaw, '当前最新[^\r\n]*?v(?<version>\d+\.\d+\.\d+)|(?m:^\| `v(?<version>\d+\.\d+\.\d+)` \| Current version anchor \|[ \t]*\r?$)')
     if ($mRmVer.Success) {
         if ($mRmVer.Groups[1].Value -eq $sotVersion) {
             Write-Host "  ✅ README latest version: v$($mRmVer.Groups[1].Value) = package.json" -ForegroundColor Green
@@ -57,7 +57,7 @@ if ((Test-Path -LiteralPath $readmePathH) -and ($null -ne $sotVersion)) {
     }
 
     if ($null -ne $sotSprint) {
-        $mRmSp = [regex]::Match($rmRaw, "当前 Sprint[\*\s：:]*Sprint-(\d+)")
+        $mRmSp = [regex]::Match($rmRaw, '当前 Sprint[\*\s：:]*Sprint-(?<sprint>\d+)|(?m:^\| `Sprint-(?<sprint>\d+)` \| Current sprint anchor \|[ \t]*\r?$)')
         if ($mRmSp.Success) {
             if ($mRmSp.Groups[1].Value -eq $sotSprint) {
                 Write-Host "  ✅ README current Sprint: Sprint-$($mRmSp.Groups[1].Value) = 状态.md" -ForegroundColor Green

@@ -47,7 +47,7 @@ $statePath = Join-Path $repoRoot "状态.md"
 $sotSprint = $null
 if (Test-Path -LiteralPath $statePath -PathType Leaf) {
     $stateText = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8
-    $m = [regex]::Match($stateText, "3 秒起手速查（[^）]*?Sprint-(\d+)")
+    $m = [regex]::Match($stateText, '3 秒起手速查（[^）]*?Sprint-(?<sprint>\d+)|(?m:^## 3-Second Startup Reference \(Sprint-(?<sprint>\d+)\)[ \t]*\r?$)')
     if ($m.Success) { $sotSprint = "Sprint-$($m.Groups[1].Value)" }
 }
 

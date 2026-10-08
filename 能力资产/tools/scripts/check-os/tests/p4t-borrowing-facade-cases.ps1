@@ -67,7 +67,7 @@ try {
           -ArgumentList @('-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass',
             '-File', $script:P4tFacadePath, '-Root', $root) -WindowStyle Hidden -PassThru `
           -RedirectStandardOutput $out -RedirectStandardError $err
-        # WinPS 5.1 需先物化 Handle，否则重定向进程结束后 ExitCode 可能保持 null。
+        # WinPS 5.1 must materialize Handle first; otherwise ExitCode may remain null after a redirected process exits.
         [void]$process.Handle
         $processes += $process
         $index++

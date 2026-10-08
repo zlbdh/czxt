@@ -36,14 +36,14 @@ function Get-PendingHandoffCardIssues {
     if (-not $frontmatter.HasFrontmatter -or $frontmatter.Status -ne "pending") {
       $pendingFormatIssues += [PSCustomObject]@{
         File = $card.Name
-        Issue = "待接手卡 frontmatter status 应为 pending"
+        Issue = "Pending card frontmatter status must be pending"
       }
     }
 
     if (-not (Test-HandoffTimestampName -File $card)) {
       $pendingFormatIssues += [PSCustomObject]@{
         File = $card.Name
-        Issue = "文件名缺少 YYYY-MM-DD-HHMM 前缀"
+        Issue = "Filename is missing the YYYY-MM-DD-HHMM prefix"
       }
     }
 
@@ -62,7 +62,7 @@ function Get-PendingHandoffCardIssues {
     if ($missingMarkers.Count -gt 0) {
       $pendingFormatIssues += [PSCustomObject]@{
         File = $card.Name
-        Issue = "缺少完整交接卡基础标题：$($missingMarkers -join ', ')"
+        Issue = "Required base handoff card headings are missing: $($missingMarkers -join ', ')"
       }
     } else {
       $lastIndex = -1
@@ -70,7 +70,7 @@ function Get-PendingHandoffCardIssues {
         if ([int]$headingMap[$marker] -le $lastIndex) {
           $pendingFormatIssues += [PSCustomObject]@{
             File = $card.Name
-            Issue = "交接卡基础标题顺序异常：$marker"
+            Issue = "Base handoff card headings are out of order: $marker"
           }
           break
         }
@@ -84,16 +84,16 @@ function Get-PendingHandoffCardIssues {
     if (-not $statusMatch.Success) {
       $pendingFormatIssues += [PSCustomObject]@{
         File = $card.Name
-        Issue = "⑤ 警戒段缺少合法 Status 字段（DONE / BLOCKED / HANDOFF / RISK / OBSERVE）"
+        Issue = "⑤ Warning section is missing a valid Status field (DONE / BLOCKED / HANDOFF / RISK / OBSERVE)"
       }
     }
 
     $mentionsFramework = $text -match '操作系统/|能力资产/|状态\.md|交接区/'
-    $mentionsSizeRule = $text -match '6500B|8KB|大文件|字节|PROP-013|ADR-017'
+    $mentionsSizeRule = $text -match '6500B|8KB|大文件|字节|PROP-013|ADR-017|\blarge files?\b|\bbytes\b'
     if ($mentionsFramework -and -not $mentionsSizeRule) {
       $pendingWarnings += [PSCustomObject]@{
         File = $card.Name
-        Issue = "涉及 framework 路径但未提及文件大小/PROP-013/ADR-017 复核；当前仅提示，不阻断"
+        Issue = "Framework paths are involved but file-size/PROP-013/ADR-017 review is not mentioned; warning only, nonblocking"
       }
     }
   }
@@ -115,7 +115,7 @@ function Get-DoneHandoffMetadataIssues {
     if ($frontmatter.HasFrontmatter -and $frontmatter.Status -eq "pending") {
       $donePendingMetadata += [PSCustomObject]@{
         File = $card.Name
-        Issue = "已接手卡 frontmatter 仍为 status: pending"
+        Issue = "Accepted card frontmatter still has status: pending"
       }
     }
 
@@ -123,12 +123,12 @@ function Get-DoneHandoffMetadataIssues {
     $todoMatch = [regex]::Match($text, '(?ms)^##\s*④.*?(?=^##\s*[⑤⑥⑦]|\z)')
     $todoText = if ($todoMatch.Success) { $todoMatch.Value } else { "" }
     $activeReceiveTodos = @($todoText -split "`n" | Where-Object {
-      $_ -match '^\s*-\s*\[\s\].*(接收本卡时|接收本卡后|如果接收|待接收改成已接收|当前唯一待接手卡是本卡)'
+      $_ -match '^\s*-\s*\[\s\].*(接收本卡时|接收本卡后|如果接收|待接收改成已接收|当前唯一待接手卡是本卡|\bwhen receiving this card\b|\bafter receiving this card\b|\bif receiving this card\b|\bchange pending to accepted\b|\bthis is the only pending card\b)'
     })
     if ($activeReceiveTodos.Count -gt 0) {
       $doneReceiveLanguage += [PSCustomObject]@{
         File = $card.Name
-        Issue = "已接手卡仍含未完成的待接收动作提示"
+        Issue = "Accepted card still contains an unfinished pending-receipt action prompt"
       }
     }
   }

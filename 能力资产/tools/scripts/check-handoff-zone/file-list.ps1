@@ -25,7 +25,7 @@ function Get-HandoffFileListIssues {
         if (-not (Test-Path -LiteralPath $path)) {
           $issues += [PSCustomObject]@{
             File = $card.Name
-            Issue = "② 文件变更路径不存在：$rel"
+            Issue = "② Changed file path does not exist: $rel"
           }
         }
       }

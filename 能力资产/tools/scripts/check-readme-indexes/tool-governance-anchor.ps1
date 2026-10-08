@@ -16,9 +16,9 @@ if (Test-Path -LiteralPath $osEntryPath) {
   $text = Get-Content -LiteralPath $osEntryPath -Raw -Encoding UTF8
   $line = [regex]::Match($text, '(?m)^\| (?:\[`06_工具治理/`\]|\[Tool governance\]\(06_工具治理/\)).*$')
   if ($line.Success -and ($line.Value -match 'hooks') -and ($line.Value -match '体检|health checks')) {
-    Write-Host "  ✅ 00_总入口 06_工具治理 摘要包含 hooks + 体检"
+    Write-Host "  ✅ Main-entry tool-governance summary includes hooks and health checks"
   } else {
-    Add-Failure "00_总入口 06_工具治理 摘要未覆盖 hooks + 体检"
+    Add-Failure "Main-entry tool-governance summary omits hooks or health checks"
   }
 }
 
@@ -26,19 +26,19 @@ $toolsGovReadmePath = Join-Path $Root "操作系统\06_工具治理\README.md"
 if (Test-Path -LiteralPath $toolsGovReadmePath) {
   $text = Get-Content -LiteralPath $toolsGovReadmePath -Raw -Encoding UTF8
   if ($text -match '按\s*7\s*检查项核查|7\s*检查项\s*\+\s*报告模板|check against\s*7\s*items|7\s*check items\s*\+\s*report template') {
-    Add-Failure "06_工具治理 README 仍把旧 7 项手动体检当当前入口"
+    Add-Failure "Tool-governance README still treats the obsolete seven-item manual health check as current"
   } else {
-    Write-Host "  ✅ 06_工具治理 README 未回退到旧 7 项手动体检口径"
+    Write-Host "  ✅ Tool-governance README avoids obsolete seven-item manual health-check guidance"
   }
   if ($text -match '能力资产/tools/hooks/tests/hooks-smoke\.ps1') {
-    Write-Host "  ✅ 06_工具治理 README hooks-smoke 路径完整"
+    Write-Host "  ✅ Tool-governance README includes the full hooks-smoke path"
   } else {
-    Add-Failure "06_工具治理 README 未写明 hooks-smoke 完整路径"
+    Add-Failure "Tool-governance README omits the full hooks-smoke path"
   }
   if ($text -match 'check-plan\.ps1' -and $text -match 'check-plan-assert\.ps1') {
-    Write-Host "  ✅ 06_工具治理 README 维护 SOP 包含 check-plan 表驱动入口"
+    Write-Host "  ✅ Tool-governance README maintenance SOP includes the table-driven check-plan entry"
   } else {
-    Add-Failure "06_工具治理 README 维护 SOP 未提醒同步 check-plan/check-plan-assert"
+    Add-Failure "Tool-governance README maintenance SOP omits the check-plan/check-plan-assert synchronization reminder"
   }
 }
 
@@ -46,14 +46,14 @@ $frameworkHealthPath = Join-Path $Root "操作系统\06_工具治理\framework�
 if (Test-Path -LiteralPath $frameworkHealthPath) {
   $text = Get-Content -LiteralPath $frameworkHealthPath -Raw -Encoding UTF8
   if (($text -match '7\s*项检查清单|手动跑\s*/\s*不是\s*cron|按上\s*7\s*检查项|7-item checklist|manual run\s*/\s*not cron|follow the above\s*7\s*checks') -and ($text -notmatch '历史指针|historical pointer')) {
-    Add-Failure "framework体检.md 仍是旧体检正文且未标历史指针"
+    Add-Failure "Framework health document retains obsolete instructions without a historical-pointer label"
   } else {
-    Write-Host "  ✅ framework体检.md 已是历史指针或未含旧当前口径"
+    Write-Host "  ✅ Framework health document is a historical pointer or contains no obsolete current guidance"
   }
   if ($text -match 'decision-checkpoint' -and $text -match 'Q1-Q7') {
-    Write-Host "  ✅ framework体检.md 写明脚本体检后仍需 Q1-Q7 自检"
+    Write-Host "  ✅ Framework health document requires Q1-Q7 self-checks after scripted checks"
   } else {
-    Add-Failure "framework体检.md 未写明 check-operating-system 后仍需 decision-checkpoint Q1-Q7"
+    Add-Failure "Framework health document omits decision-checkpoint Q1-Q7 after check-operating-system"
   }
 }
 
@@ -61,9 +61,9 @@ $visionEntryPath = Join-Path $Root "操作系统\06_工具治理\操作系统终
 if (Test-Path -LiteralPath $visionEntryPath) {
   $text = Get-Content -LiteralPath $visionEntryPath -Raw -Encoding UTF8
   if ($text -match 'decision-checkpoint\.md') {
-    Write-Host "  ✅ 06_工具治理 v4 历史愿景入口包含 Q1-Q7 当前真源"
+    Write-Host "  ✅ Tool-governance v4 historical vision entry includes the current Q1-Q7 authority"
   } else {
-    Add-Failure "06_工具治理 v4 历史愿景入口缺 decision-checkpoint 当前真源"
+    Add-Failure "Tool-governance v4 historical vision entry lacks the current decision-checkpoint authority"
   }
 }
 
@@ -71,19 +71,19 @@ $memoryIndexPath = Join-Path $Root "操作系统\05_记忆\INDEX.md"
 if (Test-Path -LiteralPath $memoryIndexPath) {
   $text = Get-Content -LiteralPath $memoryIndexPath -Raw -Encoding UTF8
   if ($text -match 'Claude\s*起手必读|Claude\s*startup required reading') {
-    Add-Failure "05_记忆 INDEX 仍使用 Claude 起手必读单工具主语"
+    Add-Failure "Memory INDEX still uses Claude-only startup wording"
   } else {
-    Write-Host "  ✅ 05_记忆 INDEX 已使用多运行时/新会话中性入口口径"
+    Write-Host "  ✅ Memory INDEX uses neutral multi-runtime and new-session entry wording"
   }
 }
 
 $memoryReflectionPath = Join-Path $Root "操作系统\05_记忆\行为反思.md"
 if (Test-Path -LiteralPath $memoryReflectionPath) {
   $text = Get-Content -LiteralPath $memoryReflectionPath -Raw -Encoding UTF8
-  if ($text -match 'Claude\s*起手必读|Claude\s*startup required reading|Cowork\s*↔\s*Codex\s*↔\s*Claude Code\s*三角协作') {
-    Add-Failure "05_记忆 行为反思仍使用旧单工具/工具三角入口口径"
+  if ($text -match 'Claude\s*起手必读|Claude\s*startup required reading|Cowork\s*↔\s*Codex\s*↔\s*Claude Code\s*三角协作|Cowork\s*↔\s*Codex\s*↔\s*Claude Code\s*triangle collaboration') {
+    Add-Failure "Behavioral reflections still use obsolete single-tool or tool-triangle entry wording"
   } else {
-    Write-Host "  ✅ 05_记忆 行为反思未回退到旧单工具/工具三角入口口径"
+    Write-Host "  ✅ Behavioral reflections avoid obsolete single-tool and tool-triangle entry wording"
   }
 }
 

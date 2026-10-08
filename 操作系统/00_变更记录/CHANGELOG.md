@@ -3,70 +3,66 @@ name: changelog
 scope: project
 type: episodic
 loaded: on-demand
-description: 开发操作系统（framework + 元规则）改动的轻量时间线日志 — PROP/ADR/RETRO 的补充，按时间倒序追加
+description: Lightweight reverse-chronological log of development operating-system changes, supplementing PROP/ADR/RETRO.
 ---
 
-# 操作系统演进日志（CHANGELOG）
+# Operating-System Evolution Log — CHANGELOG
 
-按时间倒序记录**开发操作系统**改动。
+Record development operating-system changes in reverse chronological order.
 
-⚠️ **业务代码**改动走 `{{APP_REPO_DIR}}/` git history，**不进本文件**。
-⚠️ **本文件是 PROP/ADR/RETRO 的轻量补充**，不替代主档案；事件追加一行便于浏览。
-⚠️ **历史已归档**：2026-06-22 及更早条目见 `CHANGELOG-2026-06-22-较早条目.md`、`CHANGELOG-2026-06-18-较早条目.md`、`CHANGELOG-2026-06-16-较早条目.md`、`CHANGELOG-2026-06-15-较早条目.md`、`CHANGELOG-2026-05-21至06-14-较早条目.md`、`CHANGELOG-2026H1.md`。
+**Business-code changes** belong in `{{APP_REPO_DIR}}/` Git history, outside this file.
+**This log supplements PROP/ADR/RETRO**; it does not replace those records. Add one-line event pointers for browsing.
+**Archived history:** entries from 2026-06-22 and earlier are in `CHANGELOG-2026-06-22-较早条目.md`, `CHANGELOG-2026-06-18-较早条目.md`, `CHANGELOG-2026-06-16-较早条目.md`, `CHANGELOG-2026-06-15-较早条目.md`, `CHANGELOG-2026-05-21至06-14-较早条目.md`, and `CHANGELOG-2026H1.md`.
 
-> 引入由 PROP-017 / ADR-021 — 学姐妹项目「账号管理 / srm 服务器管理」的「改进日志」机制。
+> Introduced through PROP-017 / ADR-021, borrowing the improvement-log mechanism from the sibling Account Management and SRM Server Management projects.
 
----
+## Relationship to PROP / ADR / RETRO
 
-## 跟 PROP / ADR / RETRO 的分工
-
-| 改动类型 | 主档案 | CHANGELOG 追加？ |
+| Change | Primary record | Add to CHANGELOG? |
 |---|---|---|
-| 重大架构决策 / 元规则演进（L4）| PROP + ADR | ✅ 追加一行索引 |
-| Sprint 复盘 | RETRO | ✅ 追加一行索引 |
-| 中等改动（L3）| PROP | ✅ 追加一行索引 |
-| **小动作 / L1-L2 / 顺手活** | **本文件主记** | ✅ 滚动近况可单行压缩；复杂项用 4 行格式 |
-| 死代码删除 / 文件改名 / 引用修复 / 注释优化 | 本文件主记 | ✅ |
-| 跨项目反向学习吸收 | 本文件主记 + 新增 PROP（如影响大）| ✅ |
+| Major architecture decisions / meta-rule evolution, L4 | PROP + ADR | Yes, one-line pointer |
+| Sprint retrospective | RETRO | Yes, one-line pointer |
+| Medium changes, L3 | PROP | Yes, one-line pointer |
+| Small actions / L1-L2 / incidental work | This file | Yes; compact rolling entries or four lines for complex items |
+| Dead-code removal, renaming, reference fixes, comment improvements | This file | Yes |
+| Learning brought back from other projects | This file + new PROP if substantial | Yes |
 
-**格式**：滚动近况优先单行压缩；复杂项用 4 行格式：
+Prefer one-line rolling entries. Use four lines for complex items:
 ```
-- **改了啥**：……
-- **触发原因**：……
-- **验收结果**：……
-- **后续影响**：……
+- **Change**: ...
+- **Trigger**: ...
+- **Acceptance result**: ...
+- **Follow-up impact**: ...
 ```
 
-**写作铁律**：日期 + 一句话标题 + 必要验收证据，单条 ≤ 10 行。
-
----
+**Writing rule:** date, a one-sentence title, and necessary acceptance evidence; no more than ten lines per entry.
 
 ## 2026-09-21
 
-- **四项回归根因修复（L2）**：实例化参数改为 JSON 数据序列化、PowerShell 上下文编码及字面正则，支持特殊字符名称与多层业务目录；最终 JSON/PS 校验先于成功 marker。PM 轨迹在独立 Git 根读取真实状态，兼容 CP936、worktree、失败阻断和非 Git 回退；ADR 数量从文件及索引状态计算；PROP-003 按既有入库证据补齐已完成收档。RED/GREEN、专项复审与恢复后的实测明细见 `交接区/待接手/2026-09-04-1643-四项回归修复-操作系统PM到项目PM.md`；最终提交前复审同步收敛 ADR 测试临时目录的本轮所有权。
+- **Four regression root causes fixed, L2:** instantiation parameters now use JSON data serialization, PowerShell-context encoding and literal regexes, supporting special-character names and nested business directories. Final JSON/PS validation precedes success markers. PM traces read actual status from independent Git roots, supporting CP936, worktrees, failure blocking and non-Git fallback. ADR counts derive from files and indexed status; PROP-003 archival now reflects existing publication evidence. RED/GREEN, focused review and resumed-run details: `交接区/待接手/2026-09-04-1643-四项回归修复-操作系统PM到项目PM.md`. Final precommit review also restricted ADR-test temporary-directory ownership to this run.
 
 ## 2026-08-24
 
-- **capture 事务安全终审（PROP-004 / ADR-039 / L4）**：补齐 staging→capture 树账本、repair 双移动封印、同字节 ABA、rename committed 对账、cleanup 后终检、真实 ADS/unknown 保留、初次与 post-move Git 精确清理及 P4t preflight 句柄生命周期；树 seal 改为流式 SHA-256 与逐成员 DFS，固定 `20000` 成员 / `536870912` 字节预算。fresh WinPS 362/362、assets 6/6、scaffold 63/63、docs 148/148、capture 8/8、hooks-smoke PASS；独立安全复审 P0/P1/P2=0。编码 `4ee4686`、功能 `7bf9ce4`、交接 `cda4339` 已按 ADR-016 正常 push，核验 main 分叉 `0/0`。
+- **Capture transaction safety review, PROP-004 / ADR-039 / L4:** completed staging→capture tree ledgers, repair's two-move seal, same-byte ABA, rename-committed reconciliation, post-cleanup checks, real ADS/unknown preservation, exact initial/post-move Git cleanup, and P4t preflight handle lifetimes. Tree seals use streaming SHA-256 and per-member DFS with budgets of `20000` members / `536870912` bytes. Fresh WinPS 362/362, assets 6/6, scaffold 63/63, docs 148/148, capture 8/8, hooks-smoke PASS; independent safety review P0/P1/P2=0. Encoding `4ee4686`, functionality `7bf9ce4`, and handoff `cda4339` were normally pushed under ADR-016; main divergence verified `0/0`.
 
-- **Codex 项目 hooks 恢复（L2）**：补回模板根用户级可信项目配置，并将 5 个 `.codex/hooks.json` 命令改为 quote-free PowerShell bootstrap；bootstrap 只接受最近且唯一的 CZXT 根标记并绑定 `.codex/invoke-hook.ps1`，双标记冲突即停，不依赖 Git 或绝对模板路径，规避 Windows `cmd.exe /C` 嵌套引号问题。TDD 覆盖 dispatcher 缺失、`.cmd`/Git 根误绑、独立非 Git、外层 Git 内嵌与双标记冲突；hooks-smoke PASS，Codex `hooks/list` 5/5 enabled+trusted、0 warning、0 error。
+- **Codex project hooks restored, L2:** restored the template root's user-level trusted-project configuration and changed five `.codex/hooks.json` commands to quote-free PowerShell bootstrap. Bootstrap accepts only the nearest unique CZXT root marker, binds `.codex/invoke-hook.ps1`, stops on dual-marker conflict, and requires neither Git nor an absolute template path, avoiding nested `cmd.exe /C` quoting. TDD covers a missing dispatcher, incorrect .cmd/Git-root binding, independent non-Git roots, nested outer Git roots and dual-marker conflict. Hooks-smoke PASS; Codex hooks/list showed 5/5 enabled+trusted, zero warnings and errors.
 
 ## 2026-07-22
 
-- **完整借鉴闭环终审加固（PROP-004 / ADR-039 / L4）**：以句柄绑定与严格 TDD 收口安装器/封存/关闭事务的 reparse、hardlink、ABA、状态轨迹删除/目录替换及不可逆提交边界，并修复 hooks 敌对输出编码；最终 WinPS 349/349、骨架 63/63、文档 148/148、capture 8/8、P4t 10/10、seal 20/20、close x64/x86 各 31/31。既有 dogfood 单次 Force 保留状态前缀与 211 个保护文件，全新实例 `借鉴闭环终验-20260722-164424` 首装及 P4a-P4t 通过；模板 P4a 284、P4t 0/0，基线 57/57 与旧脏 42/42 对账完整。未 commit / push / 发布。
+- **Borrowing-lifecycle final hardening, PROP-004 / ADR-039 / L4:** handle binding and strict TDD closed installer/seal/closure reparse, hard-link, ABA, status-trace deletion/directory-replacement and irreversible-commit boundaries; fixed hostile hook-output encoding. Final WinPS 349/349, scaffold 63/63, docs 148/148, capture 8/8, P4t 10/10, seal 20/20, close x64/x86 each 31/31. One Force upgrade preserved the existing dogfood status prefix and 211 protected files. Fresh instance `借鉴闭环终验-20260722-164424` passed first installation and P4a-P4t. Template P4a 284, P4t 0/0; baseline 57/57 and preexisting dirty paths 42/42 fully reconciled. No commit, push or publication.
 
 ## 2026-07-19
 
-- **完整借鉴闭环现行（PROP-004 / ADR-039 / L4）**：建立统一 `借鉴区/`、不可变来源 capture、双卡状态机、九维权限、唯一借鉴 Skill、可信关闭事务、只读离线 P4t 与 Git/local/web 捕获 façade；两轮独立审查与最终 dogfood 补齐 tracked 全 sink 凭据检测、`borrowing-evidence/v1`、P4t 后正式卡锁、公开 leaf 模式防伪、cwd 相对路径隔离、逐目标 junction 守卫及 `-Force` 原位升级。Gate 0、骨架 21/21、文档 137/137、capture 8/8、P4t 7/7、真实实例和模板/generic project 双端 P4a-P4t 均通过；基线 57/57 工件与 42/42 旧脏路径对账完整。未 commit / push / 发布。
+- **Borrowing lifecycle established, PROP-004 / ADR-039 / L4:** unified 借鉴区/, immutable source captures, dual-card state machine, nine permission dimensions, one borrowing Skill, trusted closure transaction, read-only offline P4t and Git/local/web capture façade. Two independent reviews and final dogfood completed credential detection across every tracked destination, borrowing-evidence/v1, post-P4t official-card locks, public-leaf mode checks, cwd-relative isolation, per-target junction guards and Force in-place upgrades. Gate 0, scaffold 21/21, docs 137/137, capture 8/8, P4t 7/7, real instances and template/generic-project P4a-P4t all passed. Baseline artifacts 57/57 and preexisting dirty paths 42/42 reconciled. No commit, push or publication.
 
 ## 2026-07-10
 
-- **模板真值与 hooks 自清理收敛（PROP-003 / RETRO-024 / L3）**：纠正 P1 已完成、P2 未完成与 ADR 35 现行 + 3 被替代口径；开发文档、依赖/品牌/构建入口改为项目实例真值模板，P4s 加定向守卫；hooks-smoke 用唯一 TempRoot + 并发 sentinel 完成 RED/GREEN，最终 PASS 且 temp 9→9、fixture 无残留；状态推断补 ADR-033 同值状态元数据并触发 RETRO-024；终审推动 06-22 全节无损切档，主 CHANGELOG 7125→2999B。framework / 交接 / 索引 / 状态推断门禁均通过；未 fetch / commit / push。
+- **Template truth and hook cleanup, PROP-003 / RETRO-024 / L3:** corrected P1 complete/P2 incomplete and ADR 35 current + 3 superseded. Development, dependency, brand and build entries now reflect project-instance truth templates; P4s adds targeted guards. Hooks-smoke used a unique TempRoot and concurrent sentinel for RED/GREEN; final PASS, temp count 9→9 and no fixture residue. Status inference gained ADR-033 same-value metadata and triggered RETRO-024. Final review safely archived the complete June 22 section; main CHANGELOG shrank 7125→2999B. Framework, handoff, index and status-inference gates passed. No fetch, commit or push.
 
 ## 2026-06-28
 
-- **PM 专业 mode / 能力层落地（L2）**：保持 9 PM 不扩编，新增 `PM专业mode能力层.md`，明确需求/设计/前端/后端/硬件先挂产品/技术/开发 PM 的 mode、plugin、worker/explorer；`product-design` 作为产品 PM 体验设计能力，不单设设计 PM。
+- **PM professional-mode capability layer, L2:** retained nine PMs and added PM专业mode能力层.md. Requirements, design, frontend, backend and hardware first attach as modes, plugins, workers/explorers under Product, Technical and Development PMs. product-design is Product PM's experience-design capability; no separate Design PM.
 
-## 2026-06-22 及更早
+## 2026-06-22 and earlier
 
-- 详见 `CHANGELOG-2026-06-22-较早条目.md`（2026-06-22）、`CHANGELOG-2026-06-18-较早条目.md`（2026-06-17~18）、`CHANGELOG-2026-06-16-较早条目.md` 及上方头部所列更早归档。
+- See `CHANGELOG-2026-06-22-较早条目.md` for June 22, `CHANGELOG-2026-06-18-较早条目.md` for June 17-18, `CHANGELOG-2026-06-16-较早条目.md`, and the earlier archives listed above.

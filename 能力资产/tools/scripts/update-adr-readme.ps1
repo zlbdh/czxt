@@ -54,8 +54,8 @@ function Parse-ExistingRows {
 
 $adrDir = Join-Path $Root "Docs\3-开发文档\adr"
 $readmePath = Join-Path $adrDir "README.md"
-if (-not (Test-Path -LiteralPath $adrDir)) { throw "找不到 ADR 目录：$adrDir" }
-if (-not (Test-Path -LiteralPath $readmePath)) { throw "找不到 ADR README：$readmePath" }
+if (-not (Test-Path -LiteralPath $adrDir)) { throw "Cannot find ADR directory: $adrDir" }
+if (-not (Test-Path -LiteralPath $readmePath)) { throw "Cannot find ADR README: $readmePath" }
 
 $readmeLines = Get-Content -LiteralPath $readmePath -Encoding UTF8
 $existingRows = Parse-ExistingRows $readmeLines
@@ -80,7 +80,7 @@ for ($i = 0; $i -lt $readmeLines.Count; $i++) {
     break
   }
 }
-if ($tableStart -lt 0) { throw "ADR README 中找不到索引表头" }
+if ($tableStart -lt 0) { throw "Cannot find the ADR README index table header" }
 
 $tableEnd = $tableStart
 while ($tableEnd + 1 -lt $readmeLines.Count -and $readmeLines[$tableEnd + 1] -match '^\|') {
@@ -116,14 +116,14 @@ $changed = $needsUpdate -or $descriptionChanged
 if ($changed -and $Mode -eq "Apply") {
   $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
   [System.IO.File]::WriteAllText($readmePath, (($newLines.ToArray()) -join "`r`n") + "`r`n", $utf8NoBom)
-  Write-Host "✅ ADR README 已更新：$($adrFiles.Count) 个 ADR"
+  Write-Host "✅ ADR README updated: $($adrFiles.Count) ADRs"
   exit 0
 }
 
 if ($changed) {
-  Write-Host "🔴 ADR README 需要更新：$($adrFiles.Count) 个 ADR（运行 -Mode Apply 写入）" -ForegroundColor Red
+  Write-Host "🔴 ADR README needs an update: $($adrFiles.Count) ADRs (run -Mode Apply to write)" -ForegroundColor Red
   exit 10
 }
 
-Write-Host "✅ ADR README 已同步：$($adrFiles.Count) 个 ADR"
+Write-Host "✅ ADR README is synchronized: $($adrFiles.Count) ADRs"
 exit 0

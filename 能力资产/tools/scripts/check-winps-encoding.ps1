@@ -45,7 +45,7 @@ function Get-TargetScripts {
             $relative = Get-WorkspaceRelativePath -RootPath $RootPath -FullPath $rootScript
             if (-not (Test-ExcludedPath $relative)) { $paths[$relative] = $rootScript }
         }
-        catch { $errors.Add(("实例化项目.ps1: 发现失败: {0}" -f $_.Exception.Message)) }
+        catch { $errors.Add(("实例化项目.ps1: discovery failed: {0}" -f $_.Exception.Message)) }
     }
 
     foreach ($scope in @('.claude', '.codex', '能力资产')) {
@@ -58,7 +58,7 @@ function Get-TargetScripts {
                 if (-not (Test-ExcludedPath $relative)) { $paths[$relative] = $file.FullName }
             }
         }
-        catch { $errors.Add(("{0}: 发现失败: {1}" -f $scope, $_.Exception.Message)) }
+        catch { $errors.Add(("{0}: discovery failed: {1}" -f $scope, $_.Exception.Message)) }
     }
 
     [string[]]$relativePaths = @($paths.Keys)
@@ -84,12 +84,12 @@ try {
     $rootPath = [IO.Path]::GetFullPath($Root)
 }
 catch {
-    Write-Failure ("[FAIL] Root 无效: {0}" -f $_.Exception.Message)
+    Write-Failure ("[FAIL] Invalid Root: {0}" -f $_.Exception.Message)
     exit 10
 }
 
 if (-not (Test-Path -LiteralPath $rootPath -PathType Container)) {
-    Write-Failure ("[FAIL] Root 不存在或不是目录: {0}" -f $rootPath)
+    Write-Failure ("[FAIL] Root does not exist or is not a directory: {0}" -f $rootPath)
     exit 10
 }
 
@@ -97,7 +97,7 @@ try {
     $discovery = Get-TargetScripts -RootPath $rootPath
 }
 catch {
-    Write-Failure ("[FAIL] 文件发现失败: {0}" -f $_.Exception.Message)
+    Write-Failure ("[FAIL] File discovery failed: {0}" -f $_.Exception.Message)
     exit 10
 }
 
@@ -115,13 +115,13 @@ $failureCount = 0
 foreach ($file in $discovery.Files) {
     try {
         if (-not (Test-Utf8Bom -Path $file.FullPath)) {
-            Write-Failure ("[FAIL] {0}: 缺少 UTF-8 BOM (EF BB BF)" -f $file.RelativePath)
+            Write-Failure ("[FAIL] {0}: missing UTF-8 BOM (EF BB BF)" -f $file.RelativePath)
             $failureCount++
             continue
         }
     }
     catch {
-        Write-Failure ("[FAIL] {0}: 读取失败: {1}" -f $file.RelativePath, $_.Exception.Message)
+        Write-Failure ("[FAIL] {0}: read failed: {1}" -f $file.RelativePath, $_.Exception.Message)
         $failureCount++
         continue
     }
@@ -137,13 +137,13 @@ foreach ($file in $discovery.Files) {
         foreach ($parseError in @($parseErrors)) {
             $line = $parseError.Extent.StartLineNumber
             $column = $parseError.Extent.StartColumnNumber
-            Write-Failure ("[FAIL] {0}: 语法错误 L{1}:C{2}: {3}" -f
+            Write-Failure ("[FAIL] {0}: syntax error L{1}:C{2}: {3}" -f
                 $file.RelativePath, $line, $column, $parseError.Message)
             $failureCount++
         }
     }
     catch {
-        Write-Failure ("[FAIL] {0}: 读取失败: {1}" -f $file.RelativePath, $_.Exception.Message)
+        Write-Failure ("[FAIL] {0}: read failed: {1}" -f $file.RelativePath, $_.Exception.Message)
         $failureCount++
     }
 }

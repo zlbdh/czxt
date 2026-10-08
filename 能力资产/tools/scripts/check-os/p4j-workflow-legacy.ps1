@@ -9,7 +9,7 @@ $checks = @(
     @{ Path = "AGENTS.md"; Pattern = "decision-checkpoint[^\r\n]{0,80}(3\s*问|三问|Q1-Q6)" },
     @{ Path = "状态.md"; Pattern = "decision-checkpoint[^\r\n]{0,80}(3\s*问|三问|Q1-Q6)" },
     @{ Path = "操作系统/05_记忆/INDEX.md"; Pattern = "decision-checkpoint[^\r\n]{0,80}(3\s*问|三问|Q1-Q6|3\s*questions|three questions)" },
-    @{ Path = "操作系统/05_记忆/行为反思.md"; Pattern = "decision-checkpoint[^\r\n]{0,80}(3\s*问|三问|Q1-Q6)" },
+    @{ Path = "操作系统/05_记忆/行为反思.md"; Pattern = "decision-checkpoint[^\r\n]{0,80}(3\s*问|三问|Q1-Q6|3\s*questions|three questions)" },
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint.md"; Pattern = "Q7\s*检查[^\r\n]{0,40}Q1-Q6" },
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint.md"; Pattern = "\*\*decision-checkpoint\*\*[^\r\n]{0,80}(3\s*问|三问|Q1-Q6)" },
     @{ Path = "操作系统/07_完整工作流/decision-checkpoint-判定细则.md"; Pattern = "Q7\s*检查[^\r\n]{0,40}Q1-Q6|decision-checkpoint[^\r\n]{0,80}(3\s*问|三问|Q1-Q6)" },

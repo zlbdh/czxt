@@ -19,7 +19,7 @@ if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
     Add-Failure "The 00_变更记录/README.md file is missing"
   } else {
     $indexText = Get-Content -LiteralPath $indexPath -Raw -Encoding UTF8
-    if (-not $indexText.Contains('除 `CHANGELOG.md` 外') -or -not $indexText.Contains("不作为当前执行流程或当前真相源")) {
+    if ((-not $indexText.Contains('除 `CHANGELOG.md` 外') -and -not $indexText.Contains('Except for `CHANGELOG.md`')) -or (-not $indexText.Contains("不作为当前执行流程或当前真相源") -and -not $indexText.Contains("not current execution procedures or current sources of truth"))) {
       Add-Failure "00_变更记录/README.md lacks the directory-wide historical boundary"
     }
   }

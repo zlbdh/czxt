@@ -116,7 +116,7 @@ function New-AdrFixtureRoot {
   )
 
   $root = Join-Path $fixtureParent ([guid]::NewGuid().ToString('N'))
-  # 创建成功才登记所有权；finally 只清本轮登记项，保留同父历史与并发现场。
+  # Register ownership only after creation succeeds; finally removes only this run's registered items, preserving historical and concurrent siblings.
   [void](New-Item -ItemType Directory -Path $root -ErrorAction Stop)
   $script:AdrOwnedFixtureRoots.Add($root)
   Initialize-MinimalTemplateRoot -Root $root -EntryTotal $EntryTotal -EntryCurrent $EntryCurrent -EntryReplaced $EntryReplaced

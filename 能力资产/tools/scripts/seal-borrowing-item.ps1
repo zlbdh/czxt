@@ -13,7 +13,7 @@ foreach ($dependency in @(
     'borrowing-item-cards.ps1')) {
   $dependencyPath = Join-Path $p4tRoot $dependency
   if (-not (Test-Path -LiteralPath $dependencyPath -PathType Leaf)) {
-    throw ('seal 缺少受信依赖：' + $dependency)
+    throw ('seal is missing a trusted dependency: ' + $dependency)
   }
   . $dependencyPath
 }
@@ -37,7 +37,7 @@ $transactionNames = @(
 foreach ($transactionName in $transactionNames) {
   $transactionPath = Join-Path $sealScriptRoot $transactionName
   if (-not (Test-Path -LiteralPath $transactionPath -PathType Leaf)) {
-    throw ('seal 缺少事务依赖：' + $transactionName)
+    throw ('seal is missing a transaction dependency: ' + $transactionName)
   }
   . $transactionPath
 }
@@ -51,9 +51,9 @@ function Get-BsiFormalTarget {
   $expectedPath = Join-Path (Join-Path $items.CanonicalPath $card.BorrowId) '借鉴卡.md'
   $expected = Get-BorrowingSafePathInfo $expectedPath File seal source-unsafe
   Assert-BsiCondition (Test-BsiSamePath $requested.CanonicalPath $expected.CanonicalPath) `
-    'seal 目标不是正式事项卡路径'
+    'seal target is not a formal item card path'
   Assert-BsiCondition ($requested.IdentityKey -ceq $expected.IdentityKey) `
-    'seal 目标身份与正式事项卡不一致'
+    'seal target identity does not match the formal item card'
   return [pscustomobject]@{
     Path = $expected.CanonicalPath
     Card = $card
@@ -62,11 +62,11 @@ function Get-BsiFormalTarget {
 
 function Get-BsiSealedBytes {
   param($Card)
-  Assert-BsiCondition ($Card.ClosureSeal.Length -eq 0) '事项卡已经 seal'
+  Assert-BsiCondition ($Card.ClosureSeal.Length -eq 0) 'Item card is already sealed'
   $seal = Get-BpiClosureSeal $Card.Text
   $pattern = '(?m)^closure_seal_sha256: ""$'
   Assert-BsiCondition ([regex]::Matches($Card.Text, $pattern).Count -eq 1) `
-    '空 seal 行不唯一'
+    'Empty seal line is not unique'
   $sealedText = [regex]::Replace(
     $Card.Text, $pattern, ('closure_seal_sha256: ' + $seal), 1)
   $encoding = New-Object Text.UTF8Encoding($false, $true)
@@ -78,21 +78,21 @@ $replacement = $null
 try {
   $mode = Invoke-BorrowingP4tModeCheck -Root $Root
   Assert-BsiCondition ($mode.ExitCode -eq 0 -and $mode.Mode -ceq 'project') `
-    'seal 只允许 project-only Root'
+    'seal permits only a project-only Root'
   $safeRoot = Resolve-BorrowingP4tSafeRoot $Root
   $formal = Get-BsiFormalTarget $safeRoot $CardPath
 
   $sourceState = Invoke-BorrowingP4tSourceCheck -Root $safeRoot -Mode project
-  Assert-BsiCondition ($sourceState.ExitCode -eq 0) '来源检查未通过'
+  Assert-BsiCondition ($sourceState.ExitCode -eq 0) 'Source validation failed'
   $validation = Invoke-BpiSingleItemValidation -Root $safeRoot `
     -CardPath $formal.Path -SourceState $sourceState -AllowEmptyClosedSeal
-  Assert-BsiCondition $validation.IsValid '事项卡除 seal 外合同无效'
-  Assert-BsiCondition ($validation.Card.Status -ceq 'closed') '事项卡尚未 closed'
-  Assert-BsiCondition ($validation.Card.ClosureSeal.Length -eq 0) '事项卡已经 seal'
+  Assert-BsiCondition $validation.IsValid 'Item card contract is invalid apart from the seal'
+  Assert-BsiCondition ($validation.Card.Status -ceq 'closed') 'Item card is not yet closed'
+  Assert-BsiCondition ($validation.Card.ClosureSeal.Length -eq 0) 'Item card is already sealed'
 
   $baseline = Get-BsiStableSnapshot $formal.Path
   Assert-BsiCondition (Test-BcvBytesEqual $validation.Card.Bytes $baseline.Bytes) `
-    '事项卡在校验后改变'
+    'Item card changed after validation'
   [byte[]]$sealedBytes = Get-BsiSealedBytes $validation.Card
   $temporary = New-BsiTemporaryFile (Split-Path -Parent $formal.Path) $sealedBytes
 
@@ -105,11 +105,11 @@ try {
   $sealed = $replacement.Installed
 
   Assert-BsiCondition (Test-BcvBytesEqual $sealedBytes $sealed.Bytes) `
-    'seal 原子替换后的字节不一致'
+    'Bytes differ after atomic seal replacement'
   $postSource = Invoke-BorrowingP4tSourceCheck -Root $safeRoot -Mode project
-  Assert-BsiCondition ($postSource.ExitCode -eq 0) 'seal 后来源检查未通过'
+  Assert-BsiCondition ($postSource.ExitCode -eq 0) 'Post-seal source validation failed'
   $postItem = Invoke-BorrowingP4tItemCheck -Root $safeRoot -SourceState $postSource
-  Assert-BsiCondition ($postItem.ExitCode -eq 0) 'seal 后事项检查失败'
+  Assert-BsiCondition ($postItem.ExitCode -eq 0) 'Post-seal item validation failed'
   $attested = Get-BsiStableSnapshot $formal.Path
   Assert-BsiSnapshotUnchanged $sealed $attested
   $attestationLine = New-BsiSealAttestationLine $validation.Card.BorrowId $attested
@@ -125,6 +125,6 @@ catch {
     catch { }
   }
   Remove-BsiOwnedTemporaryFile $temporary
-  [Console]::Error.WriteLine('[FAIL] seal 借鉴事项失败')
+  [Console]::Error.WriteLine('[FAIL] Failed to seal borrowing item')
   exit 10
 }

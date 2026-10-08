@@ -15,8 +15,8 @@ $stateStale = $false
 $staleReason = ""
 
 Write-Host ""
-Write-Host "🔬 开发操作系统健康检查 — $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor Cyan
-Write-Host "项目根：$root" -ForegroundColor Gray
+Write-Host "🔬 Development operating system health check — $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -ForegroundColor Cyan
+Write-Host "Project root: $root" -ForegroundColor Gray
 
 $plan = @(Get-OsCheckPlan)
 Assert-OsCheckPlan -Plan $plan
@@ -42,7 +42,7 @@ foreach ($section in $plan) {
     Invoke-OsSubcheck @invokeArgs
     if ($check.After -eq "StateStale" -and $script:lastSubcheckExit -eq 5) {
       $stateStale = $true
-      $staleReason = "子检查 warning exit 5"
+      $staleReason = "Child check warning exit 5"
     }
   }
 }

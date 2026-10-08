@@ -1,36 +1,36 @@
 ﻿# 能力资产/tools/scripts/check-retro-cadence.ps1
-# 沉淀节奏闹钟 — 议题 CK / Layer 4 自动化用在「沉淀触发」上（PROP-044 一脉 hooks）
+# Retrospective cadence alert — issue CK / Layer 4 automation for retrospective triggers (PROP-044 hooks lineage)
 #
-# 监控 RETRO 沉淀节奏：距上次 RETRO 后 CHANGELOG 已积累 ≥N 个 framework 活动「天批次」
-# 就提醒**项目 PM 派沉淀 PM 写新 RETRO**（不是让沉淀 PM 自唤醒 — 那破单点）。
-# 与现有 hooks 一脉：pm-tracking 守留痕 / P4h 守锚点 / pre-release 守发布。
+# Monitor RETRO cadence: when CHANGELOG accumulates ≥N framework activity day-batches after the latest RETRO,
+# remind the Project PM to assign the Knowledge PM to write a new RETRO (never let the Knowledge PM self-activate; that breaks the single entry point).
+# Same hooks lineage: pm-tracking protects records / P4h protects anchors / pre-release protects releases.
 #
-# 用法：
+# Usage:
 #   powershell -File 能力资产/tools/scripts/check-retro-cadence.ps1
 #   powershell -File 能力资产/tools/scripts/check-retro-cadence.ps1 -Threshold 3
 #
-# 退出码：0 = 沉淀节奏正常 / 找不到数据(fail-safe) | 5 = 非阻塞提醒（积累 ≥ 阈值）
-# 设计：这是**提醒**不是阻塞，exit 5 = 非阻塞警告（runner allowExitCodes 含 5）。
+# Exit codes: 0 = normal cadence / unavailable data (fail-safe) | 5 = nonblocking reminder (accumulation ≥ threshold)
+# Design: this is a reminder, not a blocker; exit 5 is a nonblocking warning (runner allowExitCodes includes 5).
 
 param(
-    [int]$Threshold = 2   # 距上次 RETRO 后 CHANGELOG 活动「天批次」阈值，默认 2
+    [int]$Threshold = 2   # Threshold for CHANGELOG activity day-batches since the latest RETRO; default 2
 )
 
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new()
 
-# 对齐 check-operating-system.ps1：脚本在 能力资产\tools\scripts\，上溯 3 层到项目根
+# Aligned with check-operating-system.ps1: from 能力资产\tools\scripts\, ascend 3 levels to the project root
 $root = Resolve-Path (Join-Path $PSScriptRoot "..\..\..")
 
 $retroDir = Join-Path $root "Docs\7-复盘"
 $changelogPath = Join-Path $root "操作系统\00_变更记录\CHANGELOG.md"
 
 Write-Host ""
-Write-Host "🔔 沉淀节奏闹钟（议题 CK / Layer 4 — RETRO 沉淀触发）" -ForegroundColor Cyan
+Write-Host "🔔 Retrospective cadence alert (issue CK / Layer 4 — RETRO trigger)" -ForegroundColor Cyan
 
-# ===== Step 1：找最新 RETRO（编号最大）=====
+# ===== Step 1: find the latest RETRO (highest number) =====
 if (-not (Test-Path -LiteralPath $retroDir -PathType Container)) {
-    Write-Host "🟡 找不到复盘目录（$retroDir）— fail-safe 跳过，不误报阻塞" -ForegroundColor Yellow
+    Write-Host "🟡 Cannot find retrospective directory ($retroDir) — fail-safe skip without a false blocking report" -ForegroundColor Yellow
     exit 0
 }
 
@@ -41,7 +41,7 @@ $retroFiles = @(Get-ChildItem -LiteralPath $retroDir -File -Filter "*.md" -Error
     })
 
 if ($retroFiles.Count -eq 0) {
-    Write-Host "🟡 复盘目录下未找到 RETRO-NNN- 文件 — fail-safe 跳过，不误报阻塞" -ForegroundColor Yellow
+    Write-Host "🟡 No RETRO-NNN- files in the retrospective directory — fail-safe skip without a false blocking report" -ForegroundColor Yellow
     exit 0
 }
 
@@ -49,7 +49,7 @@ $latest = $retroFiles | Sort-Object Num -Descending | Select-Object -First 1
 $retroNum = $latest.Num
 $retroFile = $latest.File
 
-# 解析最新 RETRO 的日期：取文件内**第一个** YYYY-MM-DD；解析不到则退回文件名 YYYY-MM + "-01"
+# Parse the latest RETRO date: use the first YYYY-MM-DD in its content; if unavailable, fall back to filename YYYY-MM + "-01"
 $retroDate = $null
 $retroContent = Get-Content -LiteralPath $retroFile.FullName -Raw -ErrorAction SilentlyContinue
 if ($retroContent) {
@@ -59,7 +59,7 @@ if ($retroContent) {
     }
 }
 if ($null -eq $retroDate) {
-    # 退回文件名里的 YYYY-MM 拼 "-01"
+    # Fall back to filename YYYY-MM plus "-01"
     $mName = [regex]::Match($retroFile.Name, '(\d{4}-\d{2})')
     if ($mName.Success) {
         try { $retroDate = [datetime]::ParseExact($mName.Groups[1].Value + "-01", "yyyy-MM-dd", $null) } catch { $retroDate = $null }
@@ -67,15 +67,15 @@ if ($null -eq $retroDate) {
 }
 
 if ($null -eq $retroDate) {
-    Write-Host "🟡 RETRO-$retroNum（$($retroFile.Name)）解析不到日期 — fail-safe 跳过，不误报阻塞" -ForegroundColor Yellow
+    Write-Host "🟡 Cannot parse a date for RETRO-$retroNum ($($retroFile.Name)) — fail-safe skip without a false blocking report" -ForegroundColor Yellow
     exit 0
 }
 
 $retroDateStr = $retroDate.ToString("yyyy-MM-dd")
 
-# ===== Step 2：数「距上次 RETRO 的 CHANGELOG 活动天批次」=====
+# ===== Step 2: count CHANGELOG activity day-batches since the latest RETRO =====
 if (-not (Test-Path -LiteralPath $changelogPath -PathType Leaf)) {
-    Write-Host "🟡 找不到 CHANGELOG（$changelogPath）— fail-safe 跳过，不误报阻塞" -ForegroundColor Yellow
+    Write-Host "🟡 Cannot find CHANGELOG ($changelogPath) — fail-safe skip without a false blocking report" -ForegroundColor Yellow
     exit 0
 }
 
@@ -86,18 +86,18 @@ $sinceDates = @($dateMatches | ForEach-Object {
 } | Where-Object { $_ -ne $null -and $_ -gt $retroDate } | Sort-Object -Unique)
 $sinceCount = @($sinceDates).Count
 
-# ===== Step 3：判定 + 输出（仿 check-pm-tracking 风格）=====
-Write-Host "  最新 RETRO：RETRO-$retroNum（日期 $retroDateStr · $($retroFile.Name)）"
-Write-Host "  距上次 RETRO 的 framework 活动天批次：$sinceCount（阈值 $Threshold）"
+# ===== Step 3: decide and report (following check-pm-tracking style) =====
+Write-Host "  Latest RETRO: RETRO-$retroNum (date $retroDateStr · $($retroFile.Name))"
+Write-Host "  Framework activity day-batches since the latest RETRO: $sinceCount (threshold $Threshold)"
 
 if ($sinceCount -ge $Threshold) {
     Write-Host ""
-    Write-Host "🟡 沉淀节奏提醒：距 RETRO-$retroNum 已积累 $sinceCount 个 framework 活动批次，建议**项目 PM 派沉淀 PM 写新 RETRO**（每 3 个 L3+ 改动复盘一次 / RETRO 节奏）" -ForegroundColor Yellow
+    Write-Host "🟡 Retrospective cadence reminder: since RETRO-$retroNum, $sinceCount framework activity batches have accumulated. Recommend that the Project PM assign the Knowledge PM to write a new RETRO (one retrospective per 3 L3+ changes / RETRO cadence)" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "  补登提示：项目 PM 派沉淀 PM 起草 RETRO-$($retroNum + 1)（覆盖距 RETRO-$retroNum 以来的 $sinceCount 个活动批次）" -ForegroundColor Yellow
+    Write-Host "  Entry prompt: Project PM assigns the Knowledge PM to draft RETRO-$($retroNum + 1), covering the period since RETRO-$retroNum ($sinceCount activity batches)" -ForegroundColor Yellow
     exit 5
 } else {
     Write-Host ""
-    Write-Host "✅ 沉淀节奏正常（距 RETRO-$retroNum 活动批次 $sinceCount < 阈值 $Threshold）" -ForegroundColor Green
+    Write-Host "✅ Retrospective cadence is normal (since RETRO-$retroNum, activity batches $sinceCount < threshold $Threshold)" -ForegroundColor Green
     exit 0
 }

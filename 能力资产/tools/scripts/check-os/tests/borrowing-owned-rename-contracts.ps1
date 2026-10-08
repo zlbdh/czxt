@@ -104,18 +104,18 @@ function New-ContractRoot {
   return $path
 }
 
-Invoke-Contract '目录和文件 lease 暴露 RenameRelative API' {
+Invoke-Contract 'Directory and file leases expose the RenameRelative API' {
   $directoryMethods = @([Czxt.B.AtomicDirectoryLease].GetMethods() |
       Where-Object { $_.Name -ceq 'RenameRelative' })
   $fileMethods = @([Czxt.B.AtomicOwnedFileLease].GetMethods() |
       Where-Object { $_.Name -ceq 'RenameRelative' })
   Assert-Contract ($directoryMethods.Count -eq 1) `
-    'AtomicDirectoryLease 缺少唯一 RenameRelative 方法'
+    'AtomicDirectoryLease lacks a unique RenameRelative method'
   Assert-Contract ($fileMethods.Count -eq 1) `
-    'AtomicOwnedFileLease 缺少唯一 RenameRelative 方法'
+    'AtomicOwnedFileLease lacks a unique RenameRelative method'
 }
 
-Invoke-Contract '目录跨父级重命名保持身份并更新 FinalPath' {
+Invoke-Contract 'Moving a directory between parents preserves identity and updates FinalPath' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -138,14 +138,14 @@ Invoke-Contract '目录跨父级重命名保持身份并更新 FinalPath' {
 
     $expected = [IO.Path]::GetFullPath((Join-Path $destinationPath 'after'))
     Assert-Contract (-not [IO.Directory]::Exists(
-        (Join-Path $sourcePath 'before'))) '目录旧路径仍然存在'
-    Assert-Contract ([IO.Directory]::Exists($expected)) '目录新路径不存在'
+        (Join-Path $sourcePath 'before'))) 'Old directory path still exists'
+    Assert-Contract ([IO.Directory]::Exists($expected)) 'New directory path does not exist'
     Assert-Contract ($owned.VolumeSerialNumber -eq $volume -and
         $owned.FileIndexHigh -eq $indexHigh -and
-        $owned.FileIndexLow -eq $indexLow) '目录 identity 在重命名后改变'
+        $owned.FileIndexLow -eq $indexLow) 'Directory identity changed after rename'
     Assert-Contract ([string]::Equals(
         (ConvertFrom-NativeLeasePath $owned.FinalPath), $expected,
-        [StringComparison]::OrdinalIgnoreCase)) '目录 FinalPath 未更新'
+        [StringComparison]::OrdinalIgnoreCase)) 'Directory FinalPath was not updated'
     $owned.Verify()
     $destinationParent.Verify()
     $owned.DeleteCreated()
@@ -163,7 +163,7 @@ Invoke-Contract '目录跨父级重命名保持身份并更新 FinalPath' {
   }
 }
 
-Invoke-Contract '目录重命名禁止覆盖现有目标' {
+Invoke-Contract 'Directory rename must not overwrite an existing target' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -184,11 +184,11 @@ Invoke-Contract '目录重命名禁止覆盖现有目标' {
     catch { $failure = Get-RootException $_.Exception }
 
     Assert-Contract ($failure -is [ComponentModel.Win32Exception]) `
-      '目录覆盖未以 Win32 错误拒绝'
+      'Directory overwrite was not rejected with a Win32 error'
     Assert-Contract ([IO.Directory]::Exists(
-        (Join-Path $sourcePath 'owned'))) '目录覆盖失败后源对象丢失'
+        (Join-Path $sourcePath 'owned'))) 'Source object was lost after directory overwrite failed'
     Assert-Contract ([IO.Directory]::Exists(
-        (Join-Path $destinationPath 'taken'))) '目录覆盖失败后目标对象丢失'
+        (Join-Path $destinationPath 'taken'))) 'Target object was lost after directory overwrite failed'
     $owned.Verify()
     $owned.DeleteCreated()
     $owned = $null
@@ -205,7 +205,7 @@ Invoke-Contract '目录重命名禁止覆盖现有目标' {
   }
 }
 
-Invoke-Contract '关闭后代 lease 后父目录重命名保持身份和内容' {
+Invoke-Contract 'Renaming the parent after closing descendant leases preserves identity and content' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -231,7 +231,7 @@ Invoke-Contract '关闭后代 lease 后父目录重命名保持身份和内容' 
     try { $ownedDirectory.RenameRelative($destinationParent, 'tree-after') }
     catch { $blocked = Get-RootException $_.Exception }
     Assert-Contract ($blocked -is [ComponentModel.Win32Exception]) `
-      '强共享文件 lease 打开时父目录重命名未被拒绝'
+      'Parent rename was not rejected while a restrictive file-sharing lease was open'
     $ownedFile.Verify()
     $ownedFile.Dispose()
     $ownedFile = $null
@@ -241,17 +241,17 @@ Invoke-Contract '关闭后代 lease 后父目录重命名保持身份和内容' 
     $expectedDirectory = Join-Path $destinationPath 'tree-after'
     $expectedFile = Join-Path $expectedDirectory 'child.bin'
     Assert-Contract ([IO.Directory]::Exists($expectedDirectory)) `
-      '关闭后代 lease 后父目录未完成重命名'
+      'Parent rename did not complete after descendant leases were closed'
     Assert-Contract ([IO.File]::Exists($expectedFile)) `
-      '父目录重命名后子文件不存在'
+      'Child file is missing after parent rename'
     Assert-Contract ($ownedDirectory.VolumeSerialNumber -eq $volume -and
         $ownedDirectory.FileIndexHigh -eq $indexHigh -and
         $ownedDirectory.FileIndexLow -eq $indexLow) `
-      '父目录重命名后根目录 identity 改变'
+      'Root directory identity changed after parent rename'
     Assert-Contract ([Convert]::ToBase64String(
         [IO.File]::ReadAllBytes($expectedFile)) -ceq
         [Convert]::ToBase64String($bytes)) `
-      '父目录重命名后子文件内容改变'
+      'Child file content changed after parent rename'
     $ownedDirectory.Verify()
     $ownedDirectory.Dispose()
     $ownedDirectory = $null
@@ -271,7 +271,7 @@ Invoke-Contract '关闭后代 lease 后父目录重命名保持身份和内容' 
   }
 }
 
-Invoke-Contract '文件跨父级重命名保持身份、长度、内容并更新 FinalPath' {
+Invoke-Contract 'Moving a file between parents preserves identity, length, and content and updates FinalPath' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -297,22 +297,22 @@ Invoke-Contract '文件跨父级重命名保持身份、长度、内容并更新
     $expected = [IO.Path]::GetFullPath(
       (Join-Path $destinationPath 'after.bin'))
     Assert-Contract (-not [IO.File]::Exists(
-        (Join-Path $sourcePath 'before.bin'))) '文件旧路径仍然存在'
-    Assert-Contract ([IO.File]::Exists($expected)) '文件新路径不存在'
+        (Join-Path $sourcePath 'before.bin'))) 'Old file path still exists'
+    Assert-Contract ([IO.File]::Exists($expected)) 'New file path does not exist'
     Assert-Contract ($owned.VolumeSerialNumber -eq $volume -and
         $owned.FileIndexHigh -eq $indexHigh -and
         $owned.FileIndexLow -eq $indexLow -and
-        $owned.Length -eq $length) '文件 identity 或长度在重命名后改变'
+        $owned.Length -eq $length) 'File identity or length changed after rename'
     Assert-Contract ([string]::Equals(
         (ConvertFrom-NativeLeasePath $owned.FinalPath), $expected,
-        [StringComparison]::OrdinalIgnoreCase)) '文件 FinalPath 未更新'
+        [StringComparison]::OrdinalIgnoreCase)) 'File FinalPath was not updated'
     $owned.Verify()
     $destinationParent.Verify()
     $owned.Dispose()
     $owned = $null
     Assert-Contract ([Convert]::ToBase64String(
         [IO.File]::ReadAllBytes($expected)) -ceq
-        [Convert]::ToBase64String($bytes)) '文件内容在重命名后改变'
+        [Convert]::ToBase64String($bytes)) 'File content changed after rename'
     [IO.File]::Delete($expected)
   }
   finally {
@@ -327,7 +327,7 @@ Invoke-Contract '文件跨父级重命名保持身份、长度、内容并更新
   }
 }
 
-Invoke-Contract '文件重命名禁止覆盖现有目标' {
+Invoke-Contract 'File rename must not overwrite an existing target' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -349,12 +349,12 @@ Invoke-Contract '文件重命名禁止覆盖现有目标' {
     catch { $failure = Get-RootException $_.Exception }
 
     Assert-Contract ($failure -is [ComponentModel.Win32Exception]) `
-      '文件覆盖未以 Win32 错误拒绝'
+      'File overwrite was not rejected with a Win32 error'
     Assert-Contract ([IO.File]::Exists(
-        (Join-Path $sourcePath 'owned.bin'))) '文件覆盖失败后源对象丢失'
+        (Join-Path $sourcePath 'owned.bin'))) 'Source object was lost after file overwrite failed'
     Assert-Contract ([Convert]::ToBase64String(
         [IO.File]::ReadAllBytes($collisionPath)) -ceq 'CQgH') `
-      '文件覆盖失败后目标内容改变'
+      'Target content changed after file overwrite failed'
     $owned.Verify()
     $owned.DeleteCreated()
     $owned = $null
@@ -371,7 +371,7 @@ Invoke-Contract '文件重命名禁止覆盖现有目标' {
   }
 }
 
-Invoke-Contract '文件重命名在进入系统调用前拒绝跨卷目标' {
+Invoke-Contract 'File rename rejects cross-volume targets before entering the system call' {
   $sourceRoot = New-ContractRoot
   $crossRoot = $null
   $sourceParent = $null
@@ -382,7 +382,7 @@ Invoke-Contract '文件重命名在进入系统调用前拒绝跨卷目标' {
     $repoDrive = [IO.Path]::GetPathRoot($repoRoot)
     if ([string]::Equals(
         $sourceDrive, $repoDrive, [StringComparison]::OrdinalIgnoreCase)) {
-      Write-Host '[SKIP] 当前环境没有可写的第二卷'
+      Write-Host '[SKIP] No writable second volume is available in this environment'
       return
     }
     $sourcePath = Join-Path $sourceRoot 'source'
@@ -401,11 +401,11 @@ Invoke-Contract '文件重命名在进入系统调用前拒绝跨卷目标' {
 
     Assert-Contract ($failure -is [IO.IOException] -and
         $failure.Message -match 'different volume') `
-      '跨卷文件重命名未被同卷护栏拒绝'
+      'Same-volume guard did not reject the cross-volume file rename'
     Assert-Contract ([IO.File]::Exists(
-        (Join-Path $sourcePath 'owned.bin'))) '跨卷拒绝后源文件丢失'
+        (Join-Path $sourcePath 'owned.bin'))) 'Source file was lost after cross-volume rejection'
     Assert-Contract (-not [IO.File]::Exists(
-        (Join-Path $crossRoot 'moved.bin'))) '跨卷拒绝后创建了目标文件'
+        (Join-Path $crossRoot 'moved.bin'))) 'Target file was created after cross-volume rejection'
     $owned.Verify()
     $owned.DeleteCreated()
     $owned = $null
@@ -425,7 +425,7 @@ Invoke-Contract '文件重命名在进入系统调用前拒绝跨卷目标' {
   }
 }
 
-Invoke-Contract '目录和文件 lease 可从同一 handle 刷新提交后的真值' {
+Invoke-Contract 'Directory and file leases refresh committed state from the same handle' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -452,10 +452,10 @@ Invoke-Contract '目录和文件 lease 可从同一 handle 刷新提交后的真
     Assert-Contract (('{0:x8}:{1:x8}:{2:x8}' -f `
           $ownedDirectory.VolumeSerialNumber, $ownedDirectory.FileIndexHigh,
           $ownedDirectory.FileIndexLow) -ceq $directoryIdentity) `
-      '目录同句柄刷新改变了 identity'
+      'Same-handle directory refresh changed identity'
     Assert-Contract ((ConvertFrom-NativeLeasePath $ownedDirectory.FinalPath) -ceq
         (Join-Path $destinationPath 'directory-after')) `
-      '目录同句柄刷新未同步真实 FinalPath'
+      'Same-handle directory refresh did not synchronize the actual FinalPath'
     $ownedDirectory.Verify()
 
     $ownedFile = [Czxt.B.AtomicOwnedFileLease]::CreateRelative(
@@ -470,10 +470,10 @@ Invoke-Contract '目录和文件 lease 可从同一 handle 刷新提交后的真
     Assert-Contract (('{0:x8}:{1:x8}:{2:x8}' -f `
           $ownedFile.VolumeSerialNumber, $ownedFile.FileIndexHigh,
           $ownedFile.FileIndexLow) -ceq $fileIdentity) `
-      '文件同句柄刷新改变了 identity'
+      'Same-handle file refresh changed identity'
     Assert-Contract ((ConvertFrom-NativeLeasePath $ownedFile.FinalPath) -ceq
         (Join-Path $destinationPath 'file-after.bin')) `
-      '文件同句柄刷新未同步真实 FinalPath'
+      'Same-handle file refresh did not synchronize the actual FinalPath'
     $ownedFile.Verify()
 
     $ownedFile.DeleteCreated(); $ownedFile = $null
@@ -492,7 +492,7 @@ Invoke-Contract '目录和文件 lease 可从同一 handle 刷新提交后的真
   }
 }
 
-Invoke-Contract '目录 rename 已提交后异常会对账 ownership 并标记 committed' {
+Invoke-Contract 'An exception after directory rename commits reconciles ownership and marks committed' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -543,17 +543,17 @@ Invoke-Contract '目录 rename 已提交后异常会对账 ownership 并标记 c
 
     $expected = Join-Path $destinationPath 'after'
     Assert-Contract ($failure.Message -ceq 'directory-injected-after-commit') `
-      ("目录提交后注入异常未原样抛出：{0}; exists={1}; final={2}; expected={3}" -f `
+      ("Injected post-commit directory exception was not propagated unchanged: {0}; exists={1}; final={2}; expected={3}" -f `
         $failure.Message, [IO.Directory]::Exists($expected),
         $owned.Native.FinalPath, $expected)
     Assert-Contract ($failure.Data['BorrowingRenameCommitted'] -eq $true) `
-      '目录提交后异常未标记 committed'
-    Assert-Contract ([IO.Directory]::Exists($expected)) '目录原生 rename 未提交'
+      'Post-commit directory exception was not marked committed'
+    Assert-Contract ([IO.Directory]::Exists($expected)) 'Native directory rename did not commit'
     Assert-Contract ($owned.Path -ceq $expected -and
-        $owned.CanonicalPath -ceq $expected) '目录 wrapper 未对账真实路径'
+        $owned.CanonicalPath -ceq $expected) 'Directory wrapper did not reconcile the actual path'
     Assert-Contract ($ownership.DirectoryLeases.ContainsKey($expected) -and
         -not $ownership.DirectoryLeases.ContainsKey(
-          (Join-Path $sourcePath 'before'))) '目录 ownership index 未对账'
+          (Join-Path $sourcePath 'before'))) 'Directory ownership index was not reconciled'
     $owned.Native.Verify()
     $owned.Native.DeleteCreated(); $owned.Native = $null
   }
@@ -568,7 +568,7 @@ Invoke-Contract '目录 rename 已提交后异常会对账 ownership 并标记 c
   }
 }
 
-Invoke-Contract '文件 rename 已提交后异常会对账 ownership 并标记 committed' {
+Invoke-Contract 'An exception after file rename commits reconciles ownership and marks committed' {
   $root = New-ContractRoot
   $sourceParent = $null
   $destinationParent = $null
@@ -620,15 +620,15 @@ Invoke-Contract '文件 rename 已提交后异常会对账 ownership 并标记 c
 
     $expected = Join-Path $destinationPath 'after.bin'
     Assert-Contract ($failure.Message -ceq 'file-injected-after-commit') `
-      ("文件提交后注入异常未原样抛出：{0}" -f $failure.Message)
+      ("Injected post-commit file exception was not propagated unchanged: {0}" -f $failure.Message)
     Assert-Contract ($failure.Data['BorrowingRenameCommitted'] -eq $true) `
-      '文件提交后异常未标记 committed'
-    Assert-Contract ([IO.File]::Exists($expected)) '文件原生 rename 未提交'
+      'Post-commit file exception was not marked committed'
+    Assert-Contract ([IO.File]::Exists($expected)) 'Native file rename did not commit'
     Assert-Contract ($owned.Path -ceq $expected -and
-        $owned.CanonicalPath -ceq $expected) '文件 wrapper 未对账真实路径'
+        $owned.CanonicalPath -ceq $expected) 'File wrapper did not reconcile the actual path'
     Assert-Contract ($ownership.FileLeases.ContainsKey($expected) -and
         -not $ownership.FileLeases.ContainsKey(
-          (Join-Path $sourcePath 'before.bin'))) '文件 ownership index 未对账'
+          (Join-Path $sourcePath 'before.bin'))) 'File ownership index was not reconciled'
     $owned.Native.Verify()
     $owned.Native.DeleteCreated(); $owned.Native = $null
   }

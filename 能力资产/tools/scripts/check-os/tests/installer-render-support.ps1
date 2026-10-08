@@ -67,13 +67,13 @@ function Assert-InstallerRenderSyntax {
   foreach ($file in Get-ChildItem -LiteralPath $Root -Recurse -File) {
     if ($file.Extension -eq '.json') {
       try { $null = [IO.File]::ReadAllText($file.FullName) | ConvertFrom-Json -ErrorAction Stop }
-      catch { throw ('JSON无效: ' + $file.Name) }
+      catch { throw ('Invalid JSON: ' + $file.Name) }
     }
     if ($file.Extension -eq '.ps1') {
       $tokens=$null; $errors=$null
       $null = [Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref]$tokens, [ref]$errors)
-      Assert-CzxtEqual 0 @($errors).Count ('PS1语法无效: ' + $file.Name)
-      Assert-CzxtTrue (Test-CzxtUtf8Bom $file.FullName) ('BOM缺失: ' + $file.Name)
+      Assert-CzxtEqual 0 @($errors).Count ('Invalid PS1 syntax: ' + $file.Name)
+      Assert-CzxtTrue (Test-CzxtUtf8Bom $file.FullName) ('Missing BOM: ' + $file.Name)
     }
   }
 }

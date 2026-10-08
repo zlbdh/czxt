@@ -1,34 +1,34 @@
 ﻿# 能力资产/tools/scripts/check-pm-tracking.ps1
-# 改进 2 完整版 — PM 切换轨迹自动检查（PROP-027 v2 升完整版）
-# 借鉴 Kiro Hooks 模式 — 检测状态.md 末尾 PM 轨迹时间戳，超时报警
+# Full improvement 2 — automatic PM transition history check (PROP-027 v2 upgraded to the full version)
+# Adapted from the Kiro Hooks pattern: check the PM history timestamp at the end of 状态.md and alert when overdue
 #
-# 用法：
+# Usage:
 #   powershell -File 能力资产/tools/scripts/check-pm-tracking.ps1
 #   powershell -File 能力资产/tools/scripts/check-pm-tracking.ps1 -Threshold 10
 #
-# 输出：
-#   ✅ PM 轨迹同步：距上次 X 分钟（< 阈值）
-#   🔴 PM 轨迹崩塌：距上次 X 分钟（> 阈值）+ git 有改动 → 补登提示
+# Output:
+#   ✅ PM history synchronized: X minutes since the last entry (< threshold)
+#   🔴 PM history collapse: X minutes since the last entry (> threshold) + Git changes → prompt to add an entry
 #
-# ⚠️ FIX 2026-05-29：$projectRoot 上溯由 1 层改 3 层 —— task #109 把脚本挪进
-#    能力资产\tools\scripts\ 后，旧的 Split-Path -Parent $PSScriptRoot 落在 能力资产\tools，
-#    导致找不到 状态.md（exit 1），P4f 形同虚设。现上溯 3 层到项目根。
+# ⚠️ FIX 2026-05-29: change $projectRoot ascent from 1 level to 3; task #109 moved the script into
+#    能力资产\tools\scripts\, so the old Split-Path -Parent $PSScriptRoot resolved to 能力资产\tools,
+#    could not find 状态.md (exit 1), and made P4f ineffective. Now ascend 3 levels to the project root.
 
 param(
     [string]$Root = "",
-    [int]$Threshold = 30  # 阈值（分钟），默认 30
+    [int]$Threshold = 30  # Threshold in minutes; default 30
 )
 
 $ErrorActionPreference = "Stop"
 if ([string]::IsNullOrWhiteSpace($Root)) {
-    # FIX: 能力资产\tools\scripts → 上溯 3 层到项目根
+    # FIX: 能力资产\tools\scripts → ascend 3 levels to the project root
     $projectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
 } else {
     $projectRoot = [System.IO.Path]::GetFullPath($Root)
 }
 $helperPath = Join-Path $PSScriptRoot "check-pm-tracking\git-status.ps1"
 if (-not (Test-Path -LiteralPath $helperPath -PathType Leaf)) {
-    Write-Host "❌ PM 轨迹 Git 状态 helper 缺失：$helperPath" -ForegroundColor Red
+    Write-Host "❌ PM history Git-status helper is missing: $helperPath" -ForegroundColor Red
     exit 10
 }
 . $helperPath
@@ -36,11 +36,11 @@ if (-not (Test-Path -LiteralPath $helperPath -PathType Leaf)) {
 $stateFile = Join-Path $projectRoot "状态.md"
 
 if (-not (Test-Path $stateFile)) {
-    Write-Host "❌ 找不到 状态.md：$stateFile" -ForegroundColor Red
+    Write-Host "❌ Cannot find 状态.md: $stateFile" -ForegroundColor Red
     exit 1
 }
 
-# Step 1: 找最后一行 PM 切换轨迹（匹配「| 2026-MM-DD HH:MM」且包含 PM，避免被普通时间表误判）
+# Step 1: find the last PM transition history row (match "| 2026-MM-DD HH:MM" plus PM to avoid mistaking ordinary schedules for PM history)
 $content = Get-Content $stateFile -Encoding UTF8
 $lastTrackLine = $null
 $lastTrackLineNum = -1
@@ -55,17 +55,17 @@ for ($i = $content.Count - 1; $i -ge 0; $i--) {
 }
 
 if (-not $lastTrackLine) {
-    Write-Host "⚠️ 状态.md 未找到 PM 切换轨迹时间戳" -ForegroundColor Yellow
+    Write-Host "⚠️ No PM transition history timestamp found in 状态.md" -ForegroundColor Yellow
     exit 2
 }
 
-# Step 2: 计算距离当前的分钟数
+# Step 2: calculate minutes elapsed to the current time
 try {
     $lastTime = [DateTime]::ParseExact($lastTrackTimestamp, "yyyy-MM-dd HH:mm", $null)
     $now = Get-Date
     $diffMinutes = [int]($now - $lastTime).TotalMinutes
 } catch {
-    Write-Host "❌ 时间解析失败：$lastTrackTimestamp" -ForegroundColor Red
+    Write-Host "❌ Failed to parse timestamp: $lastTrackTimestamp" -ForegroundColor Red
     exit 3
 }
 
@@ -74,14 +74,14 @@ $changeProbe = Get-PmTrackingFrameworkChangeProbe -ProjectRoot $projectRoot -Tra
 $frameworkChangedPaths = @($changeProbe.ChangedPaths)
 $frameworkChanged = [bool]$changeProbe.FrameworkChanged
 
-# Step 4: 判定 + 报告
+# Step 4: decide and report
 Write-Host ""
-Write-Host "🔍 PM 切换轨迹自动检查（PROP-027 v2 完整版）" -ForegroundColor Cyan
-Write-Host "  最后轨迹：$lastTrackTimestamp（状态.md L$lastTrackLineNum）"
-Write-Host "  当前时间：$($now.ToString('yyyy-MM-dd HH:mm'))"
-Write-Host "  距上次：$diffMinutes 分钟（阈值 $Threshold 分钟）"
-Write-Host "  framework 改动：$(if ($frameworkChanged) {'✅ 有'} else {'❌ 无'})"
-Write-Host "  检测方式：$(if ($changeProbe.Method -eq 'git') {'Git 工作区/暂存区状态'} elseif ($changeProbe.Method -eq 'mtime') {'mtime 回退'} else {'Git 状态不可读'})"
+Write-Host "🔍 Automatic PM transition history check (PROP-027 v2, full version)" -ForegroundColor Cyan
+Write-Host "  Last entry: $lastTrackTimestamp (状态.md L$lastTrackLineNum)"
+Write-Host "  Current time: $($now.ToString('yyyy-MM-dd HH:mm'))"
+Write-Host "  Elapsed: $diffMinutes minutes (threshold $Threshold minutes)"
+Write-Host "  Framework changes: $(if ($frameworkChanged) {'✅ yes'} else {'❌ no'})"
+Write-Host "  Detection method: $(if ($changeProbe.Method -eq 'git') {'Git working-tree/index status'} elseif ($changeProbe.Method -eq 'mtime') {'mtime fallback'} else {'Git status unreadable'})"
 if ($frameworkChanged) {
     @($frameworkChangedPaths | Sort-Object | Select-Object -First 5) | ForEach-Object {
         Write-Host "    - $_"
@@ -90,26 +90,26 @@ if ($frameworkChanged) {
 
 if (-not $changeProbe.StatusAvailable) {
     Write-Host ""
-    Write-Host "🔴 PM 轨迹检查无法读取 Git 状态 — 不能伪装为 clean" -ForegroundColor Red
-    Write-Host "  请先修复 Git 状态读取问题，再判断是否需要补登 PM 轨迹" -ForegroundColor Red
+    Write-Host "🔴 PM history check cannot read Git status — it must not pretend the tree is clean" -ForegroundColor Red
+    Write-Host "  Fix Git status retrieval before deciding whether to add a PM history entry" -ForegroundColor Red
     exit 10
 }
 
 if ($diffMinutes -gt $Threshold -and $frameworkChanged) {
     Write-Host ""
-    Write-Host "🔴 PM 轨迹崩塌警报 — 议题 AJ 第 10+ 次复发风险" -ForegroundColor Red
-    Write-Host "  距上次轨迹 $diffMinutes 分钟（超阈值 $Threshold 分钟）" -ForegroundColor Red
-    Write-Host "  且 framework 有改动 — 必须立即补登 状态.md 末尾 PM 切换轨迹" -ForegroundColor Red
+    Write-Host "🔴 PM history collapse alert — risk of the 10+ recurrence of issue AJ" -ForegroundColor Red
+    Write-Host "  Last entry was $diffMinutes minutes ago (over the $Threshold minute threshold)" -ForegroundColor Red
+    Write-Host "  Framework changes exist — immediately append PM transition history to 状态.md" -ForegroundColor Red
     Write-Host ""
-    Write-Host "  补登模板：" -ForegroundColor Yellow
-    Write-Host "  | $($now.ToString('yyyy-MM-dd HH:mm')) | 项目 PM | <切到角色> | <任务描述> | ✅ | ✅ |" -ForegroundColor Yellow
+    Write-Host "  Entry template:" -ForegroundColor Yellow
+    Write-Host "  | $($now.ToString('yyyy-MM-dd HH:mm')) | Project PM | <destination role> | <task description> | ✅ | ✅ |" -ForegroundColor Yellow
     exit 10
 } elseif ($diffMinutes -gt $Threshold) {
     Write-Host ""
-    Write-Host "🟡 PM 轨迹时间超阈值但 framework 无改动 — 监控" -ForegroundColor Yellow
+    Write-Host "🟡 PM history is overdue but the framework has no changes — monitor" -ForegroundColor Yellow
     exit 5
 } else {
     Write-Host ""
-    Write-Host "✅ PM 轨迹同步（距上次 $diffMinutes 分钟）" -ForegroundColor Green
+    Write-Host "✅ PM history synchronized ($diffMinutes minutes since the last entry)" -ForegroundColor Green
     exit 0
 }

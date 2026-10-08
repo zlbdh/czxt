@@ -53,45 +53,45 @@ function Remove-SealFixture {
   }
 }
 
-Invoke-Contract '公开树 seal 的创建、断言、关闭与精确删除接口' {
+Invoke-Contract 'Public tree-seal creation, assertion, closure, and exact-removal interfaces' {
   foreach ($name in @(
       'New-BorrowingOwnedTreeSeal', 'Assert-BorrowingOwnedTreeSeal',
       'Close-BorrowingOwnedTreeSeal', 'Remove-BorrowingOwnedTreeSeal'
     )) {
     Assert-Contract ($null -ne (Get-Command $name -CommandType Function `
-          -ErrorAction SilentlyContinue)) ("缺少接口：{0}" -f $name)
+          -ErrorAction SilentlyContinue)) ("Missing interface: {0}" -f $name)
   }
 }
 
-Invoke-Contract '创建 seal 会关闭旧后代 lease 并绑定目录与文件内容' {
+Invoke-Contract 'Creating a seal closes old descendant leases and binds directory and file content' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
-    Assert-Contract ($null -ne $fixture.Directory.Native) '测试目录 lease 未建立'
-    Assert-Contract ($null -ne $fixture.File.Native) '测试文件 lease 未建立'
+    Assert-Contract ($null -ne $fixture.Directory.Native) 'Test directory lease was not established'
+    Assert-Contract ($null -ne $fixture.File.Native) 'Test file lease was not established'
     $seal = New-BorrowingOwnedTreeSeal $fixture.Ownership `
       $fixture.Ownership.StagingPath
 
-    Assert-Contract ($null -eq $fixture.Directory.Native) '旧目录 lease 未关闭'
-    Assert-Contract ($null -eq $fixture.File.Native) '旧文件 lease 未关闭'
-    Assert-Contract ($seal.Directories.Count -eq 1) 'seal 目录清单不精确'
-    Assert-Contract ($seal.Files.Count -eq 1) 'seal 文件清单不精确'
+    Assert-Contract ($null -eq $fixture.Directory.Native) 'Old directory lease was not closed'
+    Assert-Contract ($null -eq $fixture.File.Native) 'Old file lease was not closed'
+    Assert-Contract ($seal.Directories.Count -eq 1) 'Seal directory inventory is not exact'
+    Assert-Contract ($seal.Files.Count -eq 1) 'Seal file inventory is not exact'
     $sealedFile = @($seal.Files.Values)[0]
     Assert-Contract ($sealedFile.Sha256 -ceq `
         (Get-BorrowingSha256Hex $fixture.Bytes)) `
-      'seal 未持有流式 SHA-256 摘要'
+      'Seal lacks a streaming SHA-256 digest'
     Assert-Contract ($null -eq $sealedFile.PSObject.Properties['Bytes']) `
-      'seal 仍将整文件字节常驻内存'
+      'Seal still retains whole-file bytes in memory'
     Assert-BorrowingOwnedTreeSeal $seal
     $writeFailure = $null
     try { [IO.File]::WriteAllBytes($fixture.FilePath, [byte[]](9, 9, 9)) }
     catch { $writeFailure = $_ }
-    Assert-Contract ($null -ne $writeFailure) 'seal 期间文件仍可被写入'
+    Assert-Contract ($null -ne $writeFailure) 'File remained writable while sealed'
   }
   finally { Remove-SealFixture $fixture $seal }
 }
 
-Invoke-Contract 'seal 在分配文件句柄前拒绝超出总字节预算' {
+Invoke-Contract 'Seal rejects total-byte budget overflow before allocating file handles' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -105,9 +105,9 @@ Invoke-Contract 'seal 在分配文件句柄前拒绝超出总字节预算' {
         $fixture.Ownership.StagingPath
     }
     catch { $failure = $_ }
-    Assert-Contract ($null -ne $failure) 'seal 未拒绝超出总字节预算'
+    Assert-Contract ($null -ne $failure) 'Seal did not reject total-byte budget overflow'
     Assert-Contract ($failure.Exception.Data['BorrowingReasonCode'] -ceq `
-        'resource-limit') 'seal 资源越界 reason code 不稳定'
+        'resource-limit') 'Seal resource-limit reason code is unstable'
   }
   finally {
     $script:BorrowingOwnedTreeSealTestLimits = $null
@@ -115,7 +115,7 @@ Invoke-Contract 'seal 在分配文件句柄前拒绝超出总字节预算' {
   }
 }
 
-Invoke-Contract 'seal 逐成员遍历并立即拒绝超出成员预算' {
+Invoke-Contract 'Seal traverses members individually and immediately rejects member-budget overflow' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -129,9 +129,9 @@ Invoke-Contract 'seal 逐成员遍历并立即拒绝超出成员预算' {
         $fixture.Ownership.StagingPath
     }
     catch { $failure = $_ }
-    Assert-Contract ($null -ne $failure) 'seal 未拒绝超出成员预算'
+    Assert-Contract ($null -ne $failure) 'Seal did not reject member-budget overflow'
     Assert-Contract ($failure.Exception.Data['BorrowingReasonCode'] -ceq `
-        'resource-limit') 'seal 成员越界 reason code 不稳定'
+        'resource-limit') 'Seal member-limit reason code is unstable'
   }
   finally {
     $script:BorrowingOwnedTreeSealTestLimits = $null
@@ -139,7 +139,7 @@ Invoke-Contract 'seal 逐成员遍历并立即拒绝超出成员预算' {
   }
 }
 
-Invoke-Contract 'Assert 会拒绝 seal 后新增的树成员' {
+Invoke-Contract 'Assert rejects tree members added after sealing' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -150,14 +150,14 @@ Invoke-Contract 'Assert 会拒绝 seal 后新增的树成员' {
     $failure = $null
     try { Assert-BorrowingOwnedTreeSeal $seal }
     catch { $failure = $_ }
-    Assert-Contract ($null -ne $failure) '新增成员未使 seal 断言失败'
+    Assert-Contract ($null -ne $failure) 'Added member did not cause the seal assertion to fail'
     Assert-Contract ($failure.Exception.Data['BorrowingReasonCode'] -ceq `
-        'source-unsafe') '新增成员失败原因码不稳定'
+        'source-unsafe') 'Added-member failure reason code is unstable'
   }
   finally { Remove-SealFixture $fixture $seal }
 }
 
-Invoke-Contract '创建 seal 的第二次全树对账拒绝并发新增成员' {
+Invoke-Contract 'The second full-tree reconciliation during seal creation rejects concurrent additions' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -173,10 +173,10 @@ Invoke-Contract '创建 seal 的第二次全树对账拒绝并发新增成员' {
         $fixture.Ownership.StagingPath
     }
     catch { $failure = $_ }
-    Assert-Contract ($null -ne $failure) '第二次全树对账未拒绝并发新增成员'
+    Assert-Contract ($null -ne $failure) 'Second full-tree reconciliation did not reject a concurrent addition'
     Assert-Contract ([IO.File]::Exists(
         (Join-Path $fixture.Ownership.StagingPath 'raced.txt'))) `
-      'seal 创建失败时删除了并发新增成员'
+      'Failed seal creation deleted a concurrently added member'
   }
   finally {
     $script:BorrowingOwnedTreeSealTestInjections = $null
@@ -184,7 +184,7 @@ Invoke-Contract '创建 seal 的第二次全树对账拒绝并发新增成员' {
   }
 }
 
-Invoke-Contract 'Close 会释放 seal 持有的文件写入锁' {
+Invoke-Contract 'Close releases the file write lock held by the seal' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -196,21 +196,21 @@ Invoke-Contract 'Close 会释放 seal 持有的文件写入锁' {
         (Join-Path $fixture.Ownership.StagingPath 'renamed'))
     }
     catch { $moveFailure = $_ }
-    Assert-Contract ($null -ne $moveFailure) 'seal 期间目录仍可被改名'
+    Assert-Contract ($null -ne $moveFailure) 'Directory remained renamable while sealed'
     Close-BorrowingOwnedTreeSeal $seal
     [IO.File]::WriteAllBytes($fixture.FilePath, [byte[]](7, 8, 9))
     Assert-Contract ([Convert]::ToBase64String(
         [IO.File]::ReadAllBytes($fixture.FilePath)) -ceq 'BwgJ') `
-      'Close 后文件锁未释放'
+      'File lock was not released after Close'
     $renamed = Join-Path $fixture.Ownership.StagingPath 'renamed'
     [IO.Directory]::Move($fixture.Directory.Path, $renamed)
     Assert-Contract ([IO.Directory]::Exists($renamed)) `
-      'Close 后目录改名锁未释放'
+      'Directory rename lock was not released after Close'
   }
   finally { Remove-SealFixture $fixture $seal }
 }
 
-Invoke-Contract 'Remove 仅按 seal 账本同句柄删除完整树' {
+Invoke-Contract 'Remove deletes the complete tree only through the seal ledger and the same handles' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -218,12 +218,12 @@ Invoke-Contract 'Remove 仅按 seal 账本同句柄删除完整树' {
     $seal = New-BorrowingOwnedTreeSeal $fixture.Ownership $stagingPath
     Remove-BorrowingOwnedTreeSeal $seal
     Assert-Contract (-not [IO.Directory]::Exists($stagingPath)) `
-      'Remove 后 seal 根目录仍存在'
+      'Seal root directory still exists after Remove'
   }
   finally { Remove-SealFixture $fixture $seal }
 }
 
-Invoke-Contract 'Remove 验证后注入 unknown 时保留 unknown 并失败' {
+Invoke-Contract 'Remove preserves unknown data injected after verification and fails' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -241,13 +241,13 @@ Invoke-Contract 'Remove 验证后注入 unknown 时保留 unknown 并失败' {
     $failure = $null
     try { Remove-BorrowingOwnedTreeSeal $seal }
     catch { $failure = $_ }
-    Assert-Contract ($null -ne $failure) 'unknown 注入后 Remove 未失败'
+    Assert-Contract ($null -ne $failure) 'Remove did not fail after unknown data was injected'
     Assert-Contract ($failure.Exception.Data['BorrowingStage'] -ceq 'cleanup' -and
         $failure.Exception.Data['BorrowingReasonCode'] -ceq 'cleanup-failed') `
-      'Remove 清理失败未归一化 stage/reason code'
-    Assert-Contract ([IO.File]::Exists($unknown)) 'Remove 删除了未登记 unknown'
+      'Remove cleanup failure did not normalize the stage/reason code'
+    Assert-Contract ([IO.File]::Exists($unknown)) 'Remove deleted unregistered unknown data'
     Assert-Contract ([IO.File]::ReadAllText($unknown) -ceq 'must-survive') `
-      'Remove 改变了未登记 unknown 内容'
+      'Remove changed unregistered unknown content'
   }
   finally {
     $script:BorrowingOwnedTreeSealTestInjections = $null
@@ -255,7 +255,7 @@ Invoke-Contract 'Remove 验证后注入 unknown 时保留 unknown 并失败' {
   }
 }
 
-Invoke-Contract 'Remove 在删除前识别并保留并发注入的 ADS' {
+Invoke-Contract 'Remove detects and preserves concurrently injected ADS before deletion' {
   $fixture = $null; $seal = $null
   try {
     $fixture = New-SealFixture
@@ -290,13 +290,13 @@ Invoke-Contract 'Remove 在删除前识别并保留并发注入的 ADS' {
     try { Remove-BorrowingOwnedTreeSeal $seal }
     catch { $failure = $_ }
     Assert-Contract $script:BorrowingTreeAdsCreated `
-      ('ADS 并发注入未真实发生: ' + $script:BorrowingTreeAdsError)
-    Assert-Contract ($null -ne $failure) 'ADS 注入后 Remove 未失败'
+      ('Concurrent ADS injection did not actually occur: ' + $script:BorrowingTreeAdsError)
+    Assert-Contract ($null -ne $failure) 'Remove did not fail after ADS injection'
     Assert-Contract ([IO.File]::Exists($fixture.FilePath)) `
-      'Remove 删除了带未登记 ADS 的主文件'
+      'Remove deleted the primary file containing unregistered ADS'
     Assert-Contract (@(Get-Item -LiteralPath $fixture.FilePath `
           -Stream 'injected-unknown').Count -eq 1) `
-      'Remove 删除了未登记 ADS'
+      'Remove deleted unregistered ADS'
   }
   finally {
     $script:BorrowingOwnedTreeSealTestInjections = $null

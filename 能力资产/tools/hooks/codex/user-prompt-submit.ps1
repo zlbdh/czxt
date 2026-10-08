@@ -30,9 +30,9 @@ if ($prompt -notmatch $projectPattern) {
 }
 
 $lines = @(
-  "本轮用户输入触发{{PROJECT_NAME}}项目治理提醒。",
-  "涉及 hooks/操作系统/framework 时：可执行脚本归 能力资产/tools/hooks，治理设计归 操作系统，最终责任归项目 PM「咪咪」。",
-  "涉及 commit/push/version/API key/baseUrl/用户数据删除/_framework 文件时，先按角色边界敏感清单判断。"
+  "This user request triggered a {{PROJECT_NAME}} project governance reminder.",
+  "For hooks, operating-system, or framework work: executable scripts belong in 能力资产/tools/hooks, governance design belongs in 操作系统, and Project PM Mimi retains final responsibility.",
+  "For commit/push/version/API key/baseUrl/user-data deletion or _framework files, check the sensitive-action list in the role boundaries first."
 )
 
 [ordered]@{

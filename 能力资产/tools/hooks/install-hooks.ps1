@@ -20,14 +20,14 @@ $isTemplateRoot = Test-IsTemplateRoot -Root $Root
 
 if (-not (Test-Path -LiteralPath $hooksDir)) {
   if ($isTemplateRoot -and $Mode -eq "Check") {
-    Write-Host "🔎 hooks installer check（模板根模式）"
-    Write-Host "  🟡 模板根未实例化 {{APP_REPO_DIR}}，跳过业务仓库 .git/hooks 检查"
+    Write-Host "🔎 hooks installer check (template root mode)"
+    Write-Host "  🟡 The template root has not instantiated {{APP_REPO_DIR}}; skip the business repository .git/hooks check"
     exit 5
   }
-  throw "找不到 hooks 目录：$hooksDir"
+  throw "Hooks directory not found: $hooksDir"
 }
 
-# wrapper 模板（单引号 here-string = 字面，shell $ 不被 PowerShell 解析）；__TRIGGER__ 占位后替换。
+# Wrapper template: a literal single-quoted here-string prevents PowerShell from expanding shell $ values. Replace __TRIGGER__ afterward.
 $wrapperTemplate = @'
 #!/bin/sh
 ROOT_POSIX="$(cd "$(dirname "$0")/../../.." && pwd)"
@@ -42,7 +42,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ROOT/能力资产/tool
 exit $?
 '@
 
-# 接入的 git lifecycle wrapper：pre-commit（索引/ADR 一致性）+ pre-push（发布门禁 vitest+build）
+# Git lifecycle wrappers: pre-commit checks index/ADR consistency; pre-push runs the vitest/build release gate.
 $triggers = @("pre-commit", "pre-push")
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
@@ -61,24 +61,24 @@ foreach ($trigger in $triggers) {
     if (Test-Path -LiteralPath $target) {
       $existing = Get-Content -LiteralPath $target -Raw -Encoding UTF8
       if ($existing.Trim() -eq $wrapper.Trim()) {
-        Write-Host "  ✅ $trigger wrapper 已安装且一致"
+        Write-Host "  ✅ $trigger wrapper is installed and matches"
       } else {
-        Write-Host "  🟡 $trigger wrapper 已存在但内容不同（运行 -Mode Apply 覆盖）" -ForegroundColor Yellow
-        $issues += "$trigger wrapper 内容不同"
+        Write-Host "  🟡 $trigger wrapper exists with different content (run -Mode Apply to replace it)" -ForegroundColor Yellow
+        $issues += "$trigger wrapper content differs"
       }
     } else {
-      Write-Host "  🟡 $trigger wrapper 尚未安装（运行 -Mode Apply 写入）" -ForegroundColor Yellow
-      $issues += "$trigger wrapper 尚未安装"
+      Write-Host "  🟡 $trigger wrapper is not installed (run -Mode Apply to write it)" -ForegroundColor Yellow
+      $issues += "$trigger wrapper is not installed"
     }
   } else {
     [System.IO.File]::WriteAllText($target, $wrapper + "`n", $utf8NoBom)
-    Write-Host "  ✅ $trigger wrapper 已安装：$target"
+    Write-Host "  ✅ $trigger wrapper installed: $target"
   }
 }
 
 if (($Mode -eq "Check") -and ($issues.Count -gt 0)) {
   Write-Host ""
-  Write-Host "🔴 hooks installer check 发现 $($issues.Count) 项漂移：" -ForegroundColor Red
+  Write-Host "🔴 hooks installer check found $($issues.Count) drift issues:" -ForegroundColor Red
   foreach ($issue in $issues) {
     Write-Host "  - $issue" -ForegroundColor Red
   }

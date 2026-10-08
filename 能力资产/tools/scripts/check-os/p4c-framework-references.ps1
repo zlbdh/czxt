@@ -22,7 +22,7 @@ foreach ($s in $refScope) {
   if (Test-Path -LiteralPath $sp) {
     Get-ChildItem -Recurse -LiteralPath $sp -Filter "*.md" -File -ErrorAction SilentlyContinue | ForEach-Object {
       if (Test-IsFrameworkArchivePath $_.FullName) { return }
-      # WinPS 5.1 默认使用 ANSI；必须显式按 UTF-8 读取无 BOM Markdown 中的中文文件名。
+      # WinPS 5.1 defaults to ANSI; explicitly read BOM-free Markdown as UTF-8 to preserve Unicode filenames.
       $c = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
       $allMd += @{ Path = $_.FullName; Content = $c }
     }
@@ -60,33 +60,33 @@ foreach ($af in $agentFiles) {
   if ($count -ge 10) { $refStats.High++ }
   elseif ($count -ge 5) { $refStats.Mid++ }
   elseif ($count -ge 2) { $refStats.Low++; $lowList.Add("  $rel ($count)") }
-  elseif ($count -eq 1) { $refStats.Min++; $lowList.Add("  $rel ($count 极低)") }
+  elseif ($count -eq 1) { $refStats.Min++; $lowList.Add("  $rel ($count very low)") }
   else { $refStats.Dead++; $deadList.Add("  $rel") }
 }
 
-Write-Host ("  扫描 {0} 个 framework .md 文件（操作系统 + 能力资产）" -f $agentFiles.Count) -ForegroundColor Gray
-Write-Host ("  ⭐ 高活跃 (>=10): {0}" -f $refStats.High) -ForegroundColor Green
-Write-Host ("  ✅ 中频 (5-9): {0}" -f $refStats.Mid) -ForegroundColor Green
-Write-Host ("  🟢 低频 (2-4): {0}" -f $refStats.Low) -ForegroundColor Yellow
-Write-Host ("  🟡 极低频 (1): {0}" -f $refStats.Min) -ForegroundColor Yellow
-Write-Host ("  🔴 0 引用: {0}" -f $refStats.Dead) -ForegroundColor Red
+Write-Host ("  Scanned {0} framework .md files (操作系统 + 能力资产)" -f $agentFiles.Count) -ForegroundColor Gray
+Write-Host ("  ⭐ High activity (>=10): {0}" -f $refStats.High) -ForegroundColor Green
+Write-Host ("  ✅ Medium frequency (5-9): {0}" -f $refStats.Mid) -ForegroundColor Green
+Write-Host ("  🟢 Low frequency (2-4): {0}" -f $refStats.Low) -ForegroundColor Yellow
+Write-Host ("  🟡 Very low frequency (1): {0}" -f $refStats.Min) -ForegroundColor Yellow
+Write-Host ("  🔴 No references: {0}" -f $refStats.Dead) -ForegroundColor Red
 
 if ($deadList.Count -gt 0) {
   Write-Host ""
-  Write-Host "  🔴 0 引用文件清单（考虑删除或修复链接）：" -ForegroundColor Red
+  Write-Host "  🔴 Files with no references (consider removal or link repair):" -ForegroundColor Red
   $deadList | ForEach-Object { Write-Host $_ -ForegroundColor Red }
-  $failureSink.Add("P4c framework 死代码 $($refStats.Dead) 项（0 引用，需删除、合并或修复链接）")
+  $failureSink.Add("P4c found $($refStats.Dead) unreferenced framework files; assess removal, consolidation, or link repair")
 }
 
 if ($ShowLowList -and $lowList.Count -gt 0) {
   Write-Host ""
-  Write-Host "  🟢 低频/极低频文件清单（用于人工审计入口合理性）：" -ForegroundColor Yellow
+  Write-Host "  🟢 Low/very-low-frequency files (manually review entry-point relevance):" -ForegroundColor Yellow
   $lowList | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
 }
 elseif ($refStats.Min -gt 0) {
   Write-Host ""
-  Write-Host "  🟡 极低频文件清单（建议评估整合或补入口）：" -ForegroundColor Yellow
-  $lowList | Where-Object { $_ -match '极低' } | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
+  Write-Host "  🟡 Very-low-frequency files (assess consolidation or additional entry links):" -ForegroundColor Yellow
+  $lowList | Where-Object { $_ -match 'very low' } | ForEach-Object { Write-Host $_ -ForegroundColor Yellow }
 }
 
 if ($localFailures.Count -gt 0) {

@@ -3,7 +3,7 @@
 )
 
 $ErrorActionPreference = "Stop"
-# 子检查会按 Root.Length/Root 前缀计算相对路径，入口必须统一传递绝对根路径。
+# Child checks calculate relative paths from Root.Length or the Root prefix; always pass an absolute root.
 $Root = (Resolve-Path -LiteralPath $Root).Path
 $failures = @()
 $isTemplateRoot = $false
@@ -37,7 +37,7 @@ function Count-PropFiles {
   ).Count
 }
 
-Write-Host "🔎 README / INDEX 一致性检查"
+Write-Host "🔎 README / INDEX consistency check"
 
 $adrDir = Join-Path $Root "Docs\3-开发文档\adr"
 $adrReadme = Join-Path $adrDir "README.md"
@@ -47,9 +47,9 @@ if (Test-Path -LiteralPath $adrDir) {
 }
 $adrRows = Count-Lines -Path $adrReadme -Pattern '^\| ADR-'
 if ($adrFiles.Count -eq $adrRows) {
-  Write-Host "  ✅ ADR README: 文件 $($adrFiles.Count) = README 表 $adrRows"
+  Write-Host "  ✅ ADR README: files $($adrFiles.Count) = README rows $adrRows"
 } else {
-  Add-Failure "ADR README 不一致：文件 $($adrFiles.Count) vs README 表 $adrRows"
+  Add-Failure "ADR README mismatch: files $($adrFiles.Count) vs README rows $adrRows"
 }
 
 $propReadme = Join-Path $Root "确认改动\README.md"
@@ -81,34 +81,34 @@ if (Test-Path -LiteralPath $propReadme) {
     $claimedText = $claimed -join "/"
     $actualText = $actual -join "/"
     if ($claimedText -eq $actualText) {
-      Write-Host "  ✅ PROP README: $claimedText = 真实 $actualText"
+      Write-Host "  ✅ PROP README: $claimedText = actual $actualText"
     } else {
-      Add-Failure "PROP README 不一致：README $claimedText vs 真实 $actualText"
+      Add-Failure "PROP README mismatch: README $claimedText vs actual $actualText"
     }
   } else {
-    Add-Failure "PROP README 未找到五列计数行"
+    Add-Failure "PROP README has no five-column count row"
   }
 } else {
-  Add-Failure "找不到 确认改动/README.md"
+  Add-Failure "Missing 确认改动/README.md"
 }
 
 $poolPath = Join-Path $Root "操作系统\01_架构\元规则池.md"
 if (Test-Path -LiteralPath $poolPath) {
   $poolText = Get-Content -LiteralPath $poolPath -Raw -Encoding UTF8
-  $declaredMatch = [regex]::Match($poolText, '## 二、(\d+) 已永久化元规则')
+  $declaredMatch = [regex]::Match($poolText, '## (?:二、|2\. The )(\d+) (?:已永久化元规则|permanent meta-rules)')
   $declared = if ($declaredMatch.Success) { [int]$declaredMatch.Groups[1].Value } else { -1 }
-  $sectionMatch = [regex]::Match($poolText, '(?s)## 二、.*?(\| 编号 \|.*?)(?:\r?\n## 三、)')
+  $sectionMatch = [regex]::Match($poolText, '(?s)## (?:二、|2\. ).*?(\| (?:编号|ID) \|.*?)(?:\r?\n## (?:三、|3\. ))')
   $poolRows = 0
   if ($sectionMatch.Success) {
     $poolRows = @([regex]::Matches($sectionMatch.Groups[1].Value, '(?m)^\| \*\*')).Count
   }
   if ($declared -eq $poolRows -and $declared -ge 0) {
-    Write-Host "  ✅ 元规则池: 声明 $declared = 表格 $poolRows"
+    Write-Host "  ✅ Meta-rule pool: declared $declared = table rows $poolRows"
   } else {
-    Add-Failure "元规则池不一致：声明 $declared vs 表格 $poolRows"
+    Add-Failure "Meta-rule pool mismatch: declared $declared vs table rows $poolRows"
   }
 } else {
-  Add-Failure "找不到元规则池.md"
+  Add-Failure "Missing 元规则池.md"
 }
 
 $panoramaPaths = @(
@@ -122,9 +122,9 @@ foreach ($panoramaPath in $panoramaPaths) {
   }
 }
 if ($panoramaFound) {
-  Write-Host "  ℹ️ 议题全景 ADR 扫描完成（主文+历史快照；人工语义表不自动阻塞）"
+  Write-Host "  ℹ️ Issue panorama ADR scan complete (current document and historical snapshot; manually maintained semantic tables do not automatically block)"
 } else {
-  Write-Host "  🟡 未找到议题全景.md（信息项）" -ForegroundColor Yellow
+  Write-Host "  🟡 Missing 议题全景.md (informational)" -ForegroundColor Yellow
 }
 
 $templateSkip = @("github-actions-anchor.ps1","docs-edge-ops-anchor.ps1","docs-edge-history-anchor.ps1","product-docs-anchor.ps1","ledger-spec-anchor.ps1","smoke-history-semantics-anchor.ps1","prop-template-anchor.ps1")
@@ -165,23 +165,23 @@ foreach ($helper in @(
   "markdown-links-anchor.ps1"
 )) {
   if ($isTemplateRoot -and ($templateSkip -contains $helper)) {
-    Write-Host "  ℹ️ 模板根跳过 $helper 来源项目锚点" -ForegroundColor Gray
+    Write-Host "  ℹ️ Template root skips source-project anchors in $helper" -ForegroundColor Gray
     continue
   }
   $helperPath = Join-Path $PSScriptRoot "check-readme-indexes\$helper"
   if (-not (Test-Path -LiteralPath $helperPath)) {
-    Add-Failure "$helper 缺失"
+    Add-Failure "Missing $helper"
     continue
   }
   & $helperPath -Root $Root
-  if ($LASTEXITCODE -ne 0) { Add-Failure "$helper 检查失败" }
+  if ($LASTEXITCODE -ne 0) { Add-Failure "$helper check failed" }
 }
 
 if ($failures.Count -gt 0) {
   Write-Host ""
-  Write-Host "🔴 README / INDEX 一致性检查失败：$($failures.Count) 项" -ForegroundColor Red
+  Write-Host "🔴 README / INDEX consistency check failed: $($failures.Count) items" -ForegroundColor Red
   exit 10
 }
 
-Write-Host "✅ README / INDEX 一致性检查通过"
+Write-Host "✅ README / INDEX consistency check passed"
 exit 0

@@ -79,17 +79,17 @@ foreach ($f in $files) {
     if ([string]::IsNullOrWhiteSpace($label)) { $label = $m.Groups[1].Value }
     $refLabel = Normalize-RefLabel $label
     if (-not $refs.ContainsKey($refLabel)) {
-      $issues.Add("$(Get-Rel $f.Path):L$(Get-Line $f.Text $m.Index) 引用定义缺失：[$label]") | Out-Null
+      $issues.Add("$(Get-Rel $f.Path):L$(Get-Line $f.Text $m.Index) reference definition is missing: [$label]") | Out-Null
     }
   }
 }
 
-Write-Host "  扫描活跃 Markdown：$($files.Count) 文件 / $linkCount 相对链接"
+Write-Host "  Scanned active Markdown: $($files.Count) files / $linkCount relative links"
 if ($issues.Count -gt 0) {
-  Write-Host "  🔴 Markdown 相对链接/锚点问题：$($issues.Count) 处" -ForegroundColor Red
+  Write-Host "  🔴 Markdown relative-link/anchor issues: $($issues.Count) matches" -ForegroundColor Red
   $issues | Select-Object -First 40 | ForEach-Object { Write-Host "    - $_" -ForegroundColor Red }
   exit 10
 }
 
-Write-Host "  ✅ 活跃 Markdown 相对链接/锚点可解析" -ForegroundColor Green
+Write-Host "  ✅ Active Markdown relative links and anchors resolve" -ForegroundColor Green
 exit 0

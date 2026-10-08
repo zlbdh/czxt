@@ -36,7 +36,7 @@ foreach ($dependency in @(
     (Join-Path $scriptRoot 'borrowing-close-candidate.ps1'),
     (Join-Path $scriptRoot 'borrowing-close-transaction.ps1'))) {
   if (-not (Test-Path -LiteralPath $dependency -PathType Leaf)) {
-    [Console]::Error.WriteLine('[FAIL] close 缺少受信依赖')
+    [Console]::Error.WriteLine('[FAIL] close requires a trusted dependency')
     exit 10
   }
   . $dependency
@@ -49,7 +49,7 @@ try {
 catch {
   $result = [pscustomobject][ordered]@{
     ExitCode = 10; Result = 'FAIL'; Stage = 'facade'; BorrowId = 'none'
-    CardPath = 'none'; StagingPath = 'none（未创建）'; P4t = 'not-run'
+    CardPath = 'none'; StagingPath = 'none(not-created)'; P4t = 'not-run'
     ReasonCode = 'facade-failed'
   }
 }

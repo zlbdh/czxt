@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptPath = Join-Path (Split-Path -Parent $PSScriptRoot) "check-pm-tracking.ps1"
 if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
-    Write-Host "  ⚠️ check-pm-tracking.ps1 不存在 — PROP-027 v2 完整版未落地" -ForegroundColor Yellow
+    Write-Host "  ⚠️ check-pm-tracking.ps1 is missing; full PROP-027 v2 implementation is absent" -ForegroundColor Yellow
     exit 5
 }
 
@@ -16,7 +16,7 @@ if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
 $pmTrackingExit = $LASTEXITCODE
 
 if ($pmTrackingExit -eq 5) {
-    Write-Host "  🟡 PM 轨迹时间超阈值但 framework 无改动 — 监控" -ForegroundColor Yellow
+    Write-Host "  🟡 PM trace age exceeds the threshold without framework changes; monitor" -ForegroundColor Yellow
     exit 0
 }
 

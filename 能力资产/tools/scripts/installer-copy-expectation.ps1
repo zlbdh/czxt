@@ -15,21 +15,21 @@ function New-CzxtInstallerCopyPlanEntry {
   if ($sourceItem.PSIsContainer) {
     $targetExists = Test-Path -LiteralPath $TargetPath
     if ($targetExists -and -not $Force) {
-      throw "目标已存在：$TargetPath。若确认覆盖，请加 -Force。"
+      throw "Target already exists: $TargetPath. Add -Force if you confirm overwriting."
     }
     $expectAbsentTree = $false
     $treePlan = New-CzxtInstallerTreePlan -ProjectRoot $ProjectRoot `
       -SourcePath $SourcePath -TargetPath $TargetPath
   } else {
     $expectedSource = Get-CzxtInstallerFileState -Path $SourcePath `
-      -Context ("复制来源 {0}" -f $Item)
+      -Context ("Copy source {0}" -f $Item)
     $expectation = Get-CzxtInstallerTargetExpectation -ProjectRoot $ProjectRoot `
-      -TargetPath $TargetPath -Context ("复制目标 {0}" -f $Item) -AllowExisting:$Force
+      -TargetPath $TargetPath -Context ("Copy target {0}" -f $Item) -AllowExisting:$Force
     $expectAbsentTree = $expectation.Mode -eq 'ExpectAbsent'
     $expected = $expectation.State
     Assert-CzxtInstallerFileStateStable $expectedSource `
-      (Get-CzxtInstallerFileState -Path $SourcePath -Context ("复制来源 {0}" -f $Item)) `
-      ("复制来源 {0}" -f $Item)
+      (Get-CzxtInstallerFileState -Path $SourcePath -Context ("Copy source {0}" -f $Item)) `
+      ("Copy source {0}" -f $Item)
   }
   return [pscustomobject]@{
     Item = $Item
@@ -53,7 +53,7 @@ function Copy-CzxtInstallerBoundFile {
   )
   $expectation = Get-CzxtInstallerTargetExpectation -ProjectRoot $ProjectRoot `
     -TargetPath $TargetPath -Context $Context -AllowExisting:$AllowExisting
-  $sourceState = Get-CzxtInstallerFileState -Path $SourcePath -Context ($Context + '来源')
+  $sourceState = Get-CzxtInstallerFileState -Path $SourcePath -Context ($Context + ' source')
   Copy-CzxtInstallerFile -ProjectRoot $ProjectRoot -SourcePath $SourcePath `
     -TargetPath $TargetPath -Context $Context `
     -ExpectAbsent:($expectation.Mode -eq 'ExpectAbsent') `

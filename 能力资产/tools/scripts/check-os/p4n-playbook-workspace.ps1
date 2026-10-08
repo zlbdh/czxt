@@ -19,21 +19,21 @@ $failures = New-Object System.Collections.Generic.List[string]
 foreach ($item in $items) {
   $path = Join-Path $Root $item.Playbook
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    $failures.Add("$($item.Playbook) 缺失")
+    $failures.Add("$($item.Playbook) is missing")
     continue
   }
   $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
   $workspace = "PM工作区/$($item.PM)/"
   if ($text -notmatch [regex]::Escape($workspace)) {
-    $failures.Add("$($item.Playbook) 未显式指向自身 $workspace")
+    $failures.Add("$($item.Playbook) does not explicitly link its own $workspace")
   }
 }
 
 if ($failures.Count -gt 0) {
-  Write-Host "  🔴 PM playbook 私人工作区入口未对齐：$($failures.Count) 处" -ForegroundColor Red
+  Write-Host "  🔴 PM playbook private-workspace entries are misaligned: $($failures.Count) matches" -ForegroundColor Red
   foreach ($failure in $failures) { Write-Host "    - $failure" -ForegroundColor Red }
   exit 10
 }
 
-Write-Host "  ✅ 9 PM playbook 私人工作区入口对齐" -ForegroundColor Green
+Write-Host "  ✅ All nine PM playbooks link their own private workspaces" -ForegroundColor Green
 exit 0

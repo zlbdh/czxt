@@ -12,15 +12,15 @@ function Add-Failure([string]$Message) {
 
 $dir = Join-Path $Root "操作系统\00_变更记录"
 if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
-  Add-Failure "缺少 00_变更记录目录"
+  Add-Failure "The 00_变更记录 directory is missing"
 } else {
   $indexPath = Join-Path $dir "README.md"
   if (-not (Test-Path -LiteralPath $indexPath -PathType Leaf)) {
-    Add-Failure "缺少 00_变更记录/README.md"
+    Add-Failure "The 00_变更记录/README.md file is missing"
   } else {
     $indexText = Get-Content -LiteralPath $indexPath -Raw -Encoding UTF8
     if (-not $indexText.Contains('除 `CHANGELOG.md` 外') -or -not $indexText.Contains("不作为当前执行流程或当前真相源")) {
-      Add-Failure "00_变更记录/README.md 缺目录级历史边界"
+      Add-Failure "00_变更记录/README.md lacks the directory-wide historical boundary"
     }
   }
 
@@ -32,14 +32,14 @@ if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
       $rel = $_.FullName.Substring($Root.Length).TrimStart('\')
 
       if ($head -notmatch "历史安全边界" -or $head -notmatch "不可直接复制执行") {
-        Add-Failure "$rel 首屏缺历史安全边界 / 不可直接复制执行"
+        Add-Failure "$rel lacks a historical safety boundary or prohibition on copying into execution near the top"
       }
 
       $boundaryIndex = $text.IndexOf("历史安全边界")
       foreach ($term in @("下次归档触发", "新会话", "当前活的导航路径全部从 agent", "唯一入口")) {
         $termIndex = $text.IndexOf($term)
         if ($termIndex -ge 0 -and ($boundaryIndex -lt 0 -or $termIndex -lt $boundaryIndex)) {
-          Add-Failure "$rel 在历史安全边界前出现可能误读为现行的旧口径：$term"
+          Add-Failure "$rel contains potentially misleading current-sounding language before the historical safety boundary: $term"
         }
       }
     }
@@ -49,10 +49,10 @@ $readmeSpecPath = Join-Path $Root "操作系统\01_架构\README设计规范.md"
 if (Test-Path -LiteralPath $readmeSpecPath -PathType Leaf) {
   $readmeSpecText = Get-Content -LiteralPath $readmeSpecPath -Raw -Encoding UTF8
   if ($readmeSpecText -match "历史归档/2026-05/议题全景-2026-05-22-历史快照\.md.*(?:ADR 永久现行表|permanent/current ADR table)") {
-    Add-Failure "README设计规范.md 将议题全景历史快照误列为当前 ADR 永久现行表"
+    Add-Failure "README设计规范.md incorrectly presents the issue-panorama historical snapshot as the current permanent-ADR table"
   }
   if ($readmeSpecText -notmatch "历史快照只作追溯抽检|Historical snapshots support traceability spot checks") {
-    Add-Failure "README设计规范.md 缺历史快照只作追溯抽检|Historical snapshots support traceability spot checks说明"
+    Add-Failure "README设计规范.md lacks the historical-snapshots-for-traceability-only explanation"
   }
 }
 
@@ -77,5 +77,5 @@ foreach ($rel in @("操作系统\01_架构\工具载体矩阵.md", "操作系统
 }
 
 if ($failures.Count -gt 0) { exit 10 }
-Write-Host "  ✅ 00_变更记录历史归档首屏边界对齐" -ForegroundColor Green
+Write-Host "  ✅ Change-record archive boundaries near document tops aligned" -ForegroundColor Green
 exit 0

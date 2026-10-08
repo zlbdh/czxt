@@ -2,43 +2,43 @@
 
 $installerPathSafetyPath = Join-Path $PSScriptRoot 'installer-path-safety.ps1'
 if (-not (Test-Path -LiteralPath $installerPathSafetyPath -PathType Leaf)) {
-  throw ("实例化路径安全 helper 缺失：{0}" -f $installerPathSafetyPath)
+  throw ("Missing installer path-safety helper: {0}" -f $installerPathSafetyPath)
 }
 . $installerPathSafetyPath
 
 $installerFileSafetyPath = Join-Path $PSScriptRoot 'installer-file-safety.ps1'
 if (-not (Test-Path -LiteralPath $installerFileSafetyPath -PathType Leaf)) {
-  throw ("实例化文件安全 helper 缺失：{0}" -f $installerFileSafetyPath)
+  throw ("Missing installer file-safety helper: {0}" -f $installerFileSafetyPath)
 }
 . $installerFileSafetyPath
 $installerSourceCopyPath = Join-Path $PSScriptRoot 'installer-source-copy.ps1'
 if (-not (Test-Path -LiteralPath $installerSourceCopyPath -PathType Leaf)) {
-  throw ("实例化来源复制 helper 缺失：{0}" -f $installerSourceCopyPath)
+  throw ("Missing installer source-copy helper: {0}" -f $installerSourceCopyPath)
 }
 . $installerSourceCopyPath
 $installerHandleLeasePath = Join-Path $PSScriptRoot 'installer-handle-lease.ps1'
 if (-not (Test-Path -LiteralPath $installerHandleLeasePath -PathType Leaf)) {
-  throw ("实例化句柄租约 helper 缺失：{0}" -f $installerHandleLeasePath)
+  throw ("Missing installer handle-lease helper: {0}" -f $installerHandleLeasePath)
 }
 . $installerHandleLeasePath
 $installerReplaceTransactionPath = Join-Path $PSScriptRoot 'installer-replace-transaction.ps1'
 if (-not (Test-Path -LiteralPath $installerReplaceTransactionPath -PathType Leaf)) {
-  throw ("实例化替换事务 helper 缺失：{0}" -f $installerReplaceTransactionPath)
+  throw ("Missing installer replacement-transaction helper: {0}" -f $installerReplaceTransactionPath)
 }
 . $installerReplaceTransactionPath
 $installerOutputManifestPath = Join-Path $PSScriptRoot 'installer-output-manifest.ps1'
 if (-not (Test-Path -LiteralPath $installerOutputManifestPath -PathType Leaf)) {
-  throw ("实例化输出 manifest helper 缺失：{0}" -f $installerOutputManifestPath)
+  throw ("Missing installer output-manifest helper: {0}" -f $installerOutputManifestPath)
 }
 . $installerOutputManifestPath
 $installerTreePlanPath = Join-Path $PSScriptRoot 'installer-tree-plan.ps1'
 if (-not (Test-Path -LiteralPath $installerTreePlanPath -PathType Leaf)) {
-  throw ("实例化树计划 helper 缺失：{0}" -f $installerTreePlanPath)
+  throw ("Missing installer tree-plan helper: {0}" -f $installerTreePlanPath)
 }
 . $installerTreePlanPath
 $installerCopyExpectationPath = Join-Path $PSScriptRoot 'installer-copy-expectation.ps1'
 if (-not (Test-Path -LiteralPath $installerCopyExpectationPath -PathType Leaf)) {
-  throw ("实例化复制预期 helper 缺失：{0}" -f $installerCopyExpectationPath)
+  throw ("Missing installer copy-expectation helper: {0}" -f $installerCopyExpectationPath)
 }
 . $installerCopyExpectationPath
 
@@ -64,28 +64,28 @@ function Copy-CzxtInstallerTree {
   if ($null -ne $TreePlan) { $modeCount++ }
   if ($null -ne $ExpectedPresentState) { $modeCount++ }
   if ($modeCount -ne 1) {
-    throw '实例化复制必须且只能声明 ExpectAbsentTree、TreePlan 或 ExpectedPresentState。'
+    throw 'Installer copy must declare exactly one of ExpectAbsentTree, TreePlan, or ExpectedPresentState.'
   }
 
   $template = Get-CzxtBorrowingFullPath $TemplateRoot
   $source = Get-CzxtBorrowingFullPath $SourcePath
   if (-not (Test-CzxtBorrowingPathWithinRoot $source $template)) {
-    throw ("实例化来源越出 TemplateRoot：{0}" -f $source)
+    throw ("Installer source is outside TemplateRoot: {0}" -f $source)
   }
   $sourceItem = Get-Item -LiteralPath $source -Force -ErrorAction Stop
   if (($sourceItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
-    throw ("实例化来源含 reparse point：{0}" -f $source)
+    throw ("Installer source contains a reparse point: {0}" -f $source)
   }
   $target = Get-CzxtBorrowingFullPath $TargetPath
   if (-not (Test-CzxtBorrowingPathWithinRoot $target $ProjectRoot)) {
-    throw ("实例化复制目标路径越出 ProjectRoot：{0}" -f $target)
+    throw ("Installer copy target path is outside ProjectRoot: {0}" -f $target)
   }
 
   if ($sourceItem.PSIsContainer) {
     $target = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-      -CandidatePath $target -Context '实例化复制目标'
+      -CandidatePath $target -Context 'Installer copy target'
     if ($null -ne $ExpectedPresentState) {
-      throw ("实例化目录目标不接受文件快照：{0}" -f $target)
+      throw ("Installer directory target does not accept a file snapshot: {0}" -f $target)
     }
     $node = $null
     if ($null -ne $TreePlan) {
@@ -103,36 +103,36 @@ function Copy-CzxtInstallerTree {
     $expectDirectoryAbsent = $ExpectAbsentTree -or
       ($null -ne $node -and $node.ExpectAbsent)
     if ($expectDirectoryAbsent -and $targetExists) {
-      throw ("实例化目录目标原应不存在，但在落盘前出现：{0}" -f $target)
+      throw ("Installer directory target was expected to be absent but appeared before writing: {0}" -f $target)
     }
     if ($null -ne $node -and -not $node.ExpectAbsent -and -not $targetExists) {
-      throw ("实例化目录目标在绑定后消失：{0}" -f $target)
+      throw ("Installer directory target disappeared after binding: {0}" -f $target)
     }
     if ($targetExists -and -not (Test-Path -LiteralPath $target -PathType Container)) {
-      throw ("实例化目录目标已被文件占用：{0}" -f $target)
+      throw ("Installer directory target is occupied by a file: {0}" -f $target)
     }
     if ($targetExists -and $null -ne $node -and -not $node.ExpectAbsent) {
       $targetState = Get-CzxtInstallerDirectoryState -Path $target `
-        -Context '实例化目标目录'
+        -Context 'Installer target directory'
       Assert-CzxtInstallerDirectoryStateStable $node.ExpectedPresentState `
-        $targetState '实例化目标目录'
+        $targetState 'Installer target directory'
     }
     if (-not $targetExists) {
       [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-        -TargetPath $target -Context '实例化目录目标')
+        -TargetPath $target -Context 'Installer directory target')
     }
     [void](Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-      -CandidatePath $target -Context '实例化目录目标')
+      -CandidatePath $target -Context 'Installer directory target')
     $lockExpected = if ($null -ne $node -and -not $node.ExpectAbsent) {
       $node.ExpectedPresentState
     } else {
-      Get-CzxtInstallerDirectoryState -Path $target -Context '实例化新建目标目录'
+      Get-CzxtInstallerDirectoryState -Path $target -Context 'New installer target directory'
     }
     if ($null -ne $BeforeTargetDirectoryLeaseOpen) {
       & $BeforeTargetDirectoryLeaseOpen $target
     }
     $targetLease = Open-CzxtInstallerDirectoryLease -Path $target `
-      -ExpectedState $lockExpected -Context '实例化目标目录'
+      -ExpectedState $lockExpected -Context 'Installer target directory'
     try {
       if ($null -ne $AfterTargetDirectoryValidation) {
         & $AfterTargetDirectoryValidation $target
@@ -167,10 +167,10 @@ function Copy-CzxtInstallerTree {
   }
   if ($null -eq $expectedSource) {
     $expectedSource = Get-CzxtInstallerFileState -Path $source `
-      -Context '实例化文件来源'
+      -Context 'Installer file source'
   }
   Copy-CzxtInstallerFile -ProjectRoot $ProjectRoot -SourcePath $source `
-    -TargetPath $target -Context '实例化文件目标' -ExpectAbsent:$expectAbsent `
+    -TargetPath $target -Context 'Installer file target' -ExpectAbsent:$expectAbsent `
     -ExpectedPresentState $expected -ExpectedSourceState $expectedSource `
     -InstalledFiles $InstalledFiles `
     -BeforeTargetCommit $BeforeTargetCommit -ParentDirectoryLease $ParentDirectoryLease
@@ -179,31 +179,31 @@ function Copy-CzxtInstallerTree {
 function Resolve-CzxtInstallerLayout {
   param([string]$ProjectRoot, [string]$AppRepoDir)
 
-  if ([string]::IsNullOrWhiteSpace($ProjectRoot)) { throw 'ProjectRoot 不能为空。' }
-  if ([string]::IsNullOrWhiteSpace($AppRepoDir)) { throw 'AppRepoDir 不能为空。' }
-  if ([IO.Path]::IsPathRooted($AppRepoDir)) { throw 'AppRepoDir 必须是项目根内的相对路径。' }
+  if ([string]::IsNullOrWhiteSpace($ProjectRoot)) { throw 'ProjectRoot cannot be empty.' }
+  if ([string]::IsNullOrWhiteSpace($AppRepoDir)) { throw 'AppRepoDir cannot be empty.' }
+  if ([IO.Path]::IsPathRooted($AppRepoDir)) { throw 'AppRepoDir must be a relative path inside the project root.' }
 
   $project = Assert-CzxtBorrowingNoReparseAncestor `
     -Path (Get-CzxtBorrowingFullPath $ProjectRoot) -Context 'ProjectRoot'
   if ((Test-Path -LiteralPath $project) -and
       -not (Test-Path -LiteralPath $project -PathType Container)) {
-    throw ("ProjectRoot 不是目录：{0}" -f $project)
+    throw ("ProjectRoot is not a directory: {0}" -f $project)
   }
   try { $app = Get-CzxtBorrowingFullPath (Join-Path $project $AppRepoDir) }
-  catch { throw ("AppRepoDir 路径无效：{0}" -f $AppRepoDir) }
+  catch { throw ("Invalid AppRepoDir path: {0}" -f $AppRepoDir) }
   if (-not (Test-CzxtBorrowingPathStrictlyWithinRoot $app $project)) {
-    throw ("AppRepoDir 必须严格位于 ProjectRoot 内：{0}" -f $AppRepoDir)
+    throw ("AppRepoDir must be strictly inside ProjectRoot: {0}" -f $AppRepoDir)
   }
   $borrowing = Get-CzxtBorrowingFullPath (Join-Path $project '借鉴区')
   if ((Test-CzxtBorrowingPathWithinRoot $app $borrowing) -or
       (Test-CzxtBorrowingPathWithinRoot $borrowing $app)) {
-    throw ("AppRepoDir 必须与借鉴区互不包含：{0}" -f $AppRepoDir)
+    throw ("AppRepoDir and the borrowing area must not contain one another: {0}" -f $AppRepoDir)
   }
   [void](Assert-CzxtBorrowingNoReparseAncestor -Path $app -Context 'AppRepoDir')
-  [void](Assert-CzxtBorrowingNoReparseAncestor -Path $borrowing -Context '借鉴区目标')
+  [void](Assert-CzxtBorrowingNoReparseAncestor -Path $borrowing -Context 'Borrowing target')
   if ((Test-Path -LiteralPath $app) -and
       -not (Test-Path -LiteralPath $app -PathType Container)) {
-    throw ("AppRepoDir 不是目录：{0}" -f $app)
+    throw ("AppRepoDir is not a directory: {0}" -f $app)
   }
   $relative = $app.Substring($project.Length).TrimStart('\', '/')
   return [pscustomobject]@{
@@ -216,7 +216,7 @@ function Resolve-CzxtInstallerLayout {
 
 $installerBorrowingSkeletonPath = Join-Path $PSScriptRoot 'installer-borrowing-skeleton.ps1'
 if (-not (Test-Path -LiteralPath $installerBorrowingSkeletonPath -PathType Leaf)) {
-  throw ("实例化借鉴区骨架 helper 缺失：{0}" -f $installerBorrowingSkeletonPath)
+  throw ("Missing installer borrowing-scaffolding helper: {0}" -f $installerBorrowingSkeletonPath)
 }
 . $installerBorrowingSkeletonPath
 

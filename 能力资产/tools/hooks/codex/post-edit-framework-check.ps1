@@ -1,8 +1,8 @@
 ﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
-# Codex PostToolUse 适配器（PROP-038 镜像 / 与 claude/post-edit-framework-check.ps1 同源逻辑）：
-# Edit/Write/apply_patch 改 framework/PM 工作区/治理入口后跑 readme-index 快检，**仅漂移时**经 additionalContext（Codex 可靠读取，同 SessionStart 注入）+ systemMessage 软提醒。
-# 普通业务代码静默放行；触碰 {{APP_REPO_DIR}}/src 红/软区大文件时仅软提醒。全程 fail-safe：任何不确定/出错都 {continue:true}，绝不 block。
+# Codex PostToolUse adapter (PROP-038), sharing logic with claude/post-edit-framework-check.ps1.
+# After Edit/Write/apply_patch changes framework, PM workspace, or governance entries, run readme-index. Only drift produces a soft warning through additionalContext and systemMessage, using the verified SessionStart injection mechanism.
+# Ordinary business code passes silently; large red/advisory files under {{APP_REPO_DIR}}/src receive a soft warning. Fail safe: uncertainty or errors return {continue:true}, never block.
 
 $ErrorActionPreference = "Stop"
 try {
@@ -28,7 +28,7 @@ if (-not [string]::IsNullOrEmpty($raw)) { $raw = $raw.TrimStart([char]0xFEFF) }
 if ([string]::IsNullOrWhiteSpace($raw)) { Pass }
 try { $e = $raw | ConvertFrom-Json } catch { Pass }
 
-# 健壮读取 file_path；apply_patch 这类工具没有单独 file_path 时，从 patch header 解析路径。
+# Read file_path defensively; parse patch headers for tools such as apply_patch that lack a separate file_path.
 $paths = New-Object System.Collections.Generic.List[string]
 function Add-CandidatePath {
   param($Value)
@@ -113,7 +113,7 @@ try {
   if ($code -eq 0) { Pass $p4bMsg }
   $txt = ($out -join ' ')
   if ($txt.Length -gt 220) { $txt = $txt.Substring(0, 220) }
-  $msg = "🟡 改 framework 后 readme-index 快检发现索引漂移，收尾前请跑完整体检并修：" + $txt
+  $msg = "🟡 The readme-index quick check found index drift after framework edits. Run the full health check and fix it before completion:" + $txt
   if ($p4bMsg) { $msg = "$msg `n$p4bMsg" }
   Pass $msg
 } catch {

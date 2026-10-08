@@ -3,50 +3,49 @@ name: workflows-index
 scope: project
 type: procedural
 loaded: on-demand
-description: 完整工作流入口 — decision-checkpoint + 实施循环 + DoD + 附录
+description: Complete workflow entry — decision checkpoints, implementation loop, definition of done and appendices.
 ---
-# 操作系统/07_完整工作流/ — 多步骤流程
+# Complete Workflows — Multistep Processes
 
-⭐ **改动收尾前必读 [实施循环.md](实施循环.md) 末尾 DoD 段；低频阶段细则读 [实施循环-附录.md](实施循环-附录.md)；PROP 状态切换必读 [审批与归档.md](审批与归档.md)**
+**Before completing a change, read the DoD section at the end of the [implementation loop](实施循环.md). Read its [appendix](实施循环-附录.md) for less frequent stage details. Read [approval and archival](审批与归档.md) before changing PROP status.**
 
-## 这一组讲什么
+## Purpose
 
-多个 step 有序串联的流程 — 以跨角色为主，按需调用 skill / rules。
-每个 workflow 是一条从 A 到 Z 的路径，强调顺序和阶段产出。
+These workflows sequence multiple steps, usually across roles, calling skills and rules as needed. Each workflow defines a complete path, emphasizing order and stage outputs.
 
-## 文件清单
+## Files
 
-| 文件 | 一句话 |
+| File | Purpose |
 |---|---|
-| ⭐ [decision-checkpoint.md](decision-checkpoint.md) | Q1-Q7 硬检查协议（含 agent 实例化判定）|
-| [decision-checkpoint-判定细则.md](decision-checkpoint-判定细则.md) | Q4-Q7 trigger / scale / 跨 PM / agent 实例化细则 |
-| [decision-checkpoint-附录.md](decision-checkpoint-附录.md) | decision-checkpoint 示例 / 附录，不重复主规则 |
-| ⭐ [实施循环.md](实施循环.md) | 实施循环主入口；保留 session 起手、流程优先、交接矩阵、阶段总览、DoD 速查 |
-| [实施循环-附录.md](实施循环-附录.md) | 实施循环低频细则；设计/代码/测试/APK/smoke/端能力对照 |
-| [实施循环-DoD.md](实施循环-DoD.md) | 收尾 DoD 独立清单（实施循环引用）|
-| ⭐ [审批与归档.md](审批与归档.md) | PROP 5 状态机（待审批 / 进行中 / 已完成 / 已弃用 / 拒绝）+ 编号查询 §C |
-| [需求接收.md](需求接收.md) | 接到新需求怎么开工（7 步） |
-| [发布流程.md](发布流程.md) | 编译 / 测试 / APK / release notes |
-| [git流程.md](git流程.md) | git 仓库边界 / A-B-C 三类权限 / commit-push 6 条件 / commit message / 分支与 tag 规则 |
-| [hooks-运行SOP.md](hooks-运行SOP.md) | hooks 手动/自动运行、真源头、关键边界和验收入口 |
-| [hooks-运行SOP-附录.md](hooks-运行SOP-附录.md) | hooks 低频安装/删除命令、事件表、watcher 健康码和排障细节 |
-| [借鉴闭环.md](借鉴闭环.md) | 借鉴来源接入、评估、落地与审计的角色流、状态流和失败恢复 |
+| [Decision checkpoint](decision-checkpoint.md) | Mandatory Q1-Q7 checks, including agent-instantiation decisions |
+| [Decision criteria](decision-checkpoint-判定细则.md) | Q4-Q7 trigger, scale, cross-PM and agent-instantiation details |
+| [Decision appendix](decision-checkpoint-附录.md) | Examples and supplementary material without duplicating the main rules |
+| [Implementation loop](实施循环.md) | Session startup, workflow priority, handoff matrix, stage overview, and DoD quick reference |
+| [Implementation appendix](实施循环-附录.md) | Less frequent design, code, test, APK, smoke, and runtime-capability details |
+| [Implementation DoD](实施循环-DoD.md) | Separate completion checklist referenced by the implementation loop |
+| [Approval and archival](审批与归档.md) | Five PROP states: pending approval, in progress, completed, abandoned, rejected; ID lookup in section C |
+| [Requirements intake](需求接收.md) | Seven steps for starting a new requirement |
+| [Release workflow](发布流程.md) | Compile, test, APK, release notes |
+| [Git workflow](git流程.md) | Repository boundaries, A/B/C authority, six commit-push conditions, commit messages, branch and tag rules |
+| [Hooks operating procedure](hooks-运行SOP.md) | Manual and automatic operation, sources of truth, key boundaries and acceptance entry |
+| [Hooks appendix](hooks-运行SOP-附录.md) | Less frequent install/removal commands, event tables, watcher health codes, troubleshooting |
+| [Borrowing lifecycle](借鉴闭环.md) | Role flow, state flow and failure recovery for source intake, assessment, implementation and audit |
 
-## 跟其他分组的区别
+## Relationship to other groups
 
-- **workflows/**：多 step 顺序（"按这个顺序跑"）
-- **skills/**：单一能力（"会做这件事"）
-- **rules/**：判断标准（"应该怎样" — 不是过程）
-- **操作系统/02_智能体/**：谁在跑
+- **workflows/**: ordered multistep processes.
+- **skills/**: individual capabilities.
+- **rules/**: decision standards, rather than procedures.
+- **操作系统/02_智能体/**: the responsible actors.
 
-## 速记 — 流程触发表
+## Trigger reference
 
-| 触发 | 进入哪个 workflow |
+| Trigger | Workflow |
 |---|---|
-| 接到新想法 | 需求接收.md |
-| zlbdh 审批 PROP | 审批与归档.md §A |
-| zlbdh 拒绝 PROP | 审批与归档.md §B |
-| 开始 L3/L4 改动 | 实施循环.md |
-| 改动收尾 | 实施循环.md DoD 段 + 实施循环-DoD.md |
-| 准备发版本 | 发布流程.md |
-| 借鉴 / 参考 / 对标 / 吸收 | [借鉴闭环.md](借鉴闭环.md) |
+| New idea | 需求接收.md |
+| zlbdh approves a PROP | 审批与归档.md section A |
+| zlbdh rejects a PROP | 审批与归档.md section B |
+| Start an L3/L4 change | 实施循环.md |
+| Complete a change | 实施循环.md DoD section + 实施循环-DoD.md |
+| Prepare a version release | 发布流程.md |
+| Borrow, reference, compare, or incorporate | [Borrowing lifecycle](借鉴闭环.md) |

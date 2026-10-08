@@ -3,128 +3,109 @@ name: handoff-zone-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 交接区入口 — 待接手 / 已接手 / 分支间 跨 PM 角色交接卡归档
+description: Cross-role handoff records; pending, accepted, cross-branch, and historical cards.
 ---
-# 交接区 — 跨 session / 跨 PM 角色协作的事件流
+# Handoff Area: Events Across Sessions and PM Roles
 
-📋 这里存所有「职责角色切换」时的交接卡——例如开发 PM 到测试发布 PM、操作系统 PM 到项目 PM，必要时在正文注明执行载体 Cowork / Claude Code / Codex。
+Store a handoff card whenever responsibility changes, such as Development PM to Test and Release PM, or Operating System PM to Project PM. When relevant, name the execution tool—Cowork, Claude Code, or Codex—in the body.
 
-跟 `状态.md` 的关系：
-- **状态.md** = 当前快照（"现在到哪"）
-- **交接区/** = 事件流（"过去 N 次切换都发生了什么"）
+`状态.md` records the current snapshot: where work stands now. `交接区/` records the event stream: what happened during previous transitions. Both are needed and serve distinct purposes.
 
-两个并存，职责清晰。
+## Directory structure
 
----
+| Path | Purpose |
+|---|---|
+| `README.md` | This guide |
+| `待接手/` | Cards written after a role completes implementation |
+| `已接手/` | Cards moved here when the recipient completes the work; temporary storage for accepted/completed handoffs |
+| `分支间/项目PM→运营咪咪/待处理/` | Pending Project PM to Operations handoffs |
+| `分支间/项目PM→运营咪咪/已处理/` | Processed Project PM to Operations handoffs |
+| `分支间/运营咪咪→项目PM/待处理/` | Pending Operations to Project PM handoffs |
+| `分支间/运营咪咪→项目PM/已处理/` | Processed Operations to Project PM handoffs |
+| `历史归档/` | Long-term history, grouped by month |
 
-## 目录结构
+Historical cards retain their original form. They may contain obsolete paths, tool names, tasks, commands, or sensitive-incident records. Use them for historical tracing, not as current instructions or copy-and-run commands.
 
-```
-交接区/
-├── README.md              本文件
-├── 待接手/                ← 角色完成实施后写这里
-├── 已接手/                ← 接手者完成实施后 mv 这里（已接收 / 已完成暂存）
-├── 分支间/                ← 项目 PM ↔ 运营咪咪等跨分支交接
-│   ├── 项目PM→运营咪咪/
-│   │   ├── 待处理/
-│   │   └── 已处理/
-│   └── 运营咪咪→项目PM/
-│       ├── 待处理/
-│       └── 已处理/
-└── 历史归档/              ← 长期历史归档（按月分目录）
-```
+## Naming
 
-`历史归档/` 保留旧交接卡原貌，其中可能出现旧路径、旧工具名、旧待办或敏感事故记录；只作历史追溯，不代表当前待办，不可直接复制执行。
+Use `YYYY-MM-DD-HHMM-task-from-role-to-role.md`, for example:
 
-## 文件命名
+- `2026-06-16-0930-F-002-product-pm-to-development-pm.md`
+- `2026-06-16-1100-F-002-development-pm-to-test-and-release-pm.md`
+- `2026-06-16-1430-F-002-test-and-release-pm-to-project-pm.md`
+- `2026-06-16-1608-capability-tool-script-entry-points-os-pm-to-project-pm.md`
 
-```
-YYYY-MM-DD-HHMM-任务-从角色到角色.md
+This sorts chronologically and identifies the task and recipient immediately. Prefer responsibility-role names for new cards; identify tools separately in the body, such as "Execution tool: Codex." Historical tool-flow names such as `Codex到Cowork` and `ClaudeCode到Codex` may remain; do not rewrite the historical event stream merely to rename it. Separate sequence numbers are unnecessary because timestamps are unique.
 
-例：
-2026-06-16-0930-F-002-产品PM到开发PM.md
-2026-06-16-1100-F-002-开发PM到测试发布PM.md
-2026-06-16-1430-F-002-测试发布PM到项目PM.md
-2026-06-16-1608-能力资产工具脚本软区入口化-操作系统PM到项目PM.md
-```
+## Card format
 
-- 排序自然按时间
-- 一眼看出谁交给谁、做的什么任务
-- 新写卡优先使用 PM 职责角色命名；工具名只作执行载体补充，例如 `操作系统PM到项目PM`，正文再写「执行载体：Codex」
-- 历史卡允许保留 `Codex到Cowork`、`ClaudeCode到Codex` 这类工具流命名；不要为了改名批量重写历史事件流
-- 不需要编号（时间戳已唯一）
+Use all six sections in the [handoff format](../操作系统/03_交接/交接卡格式.md). Historical context is in its [appendix](../操作系统/03_交接/交接卡格式-附录.md).
 
-## 卡片内容格式
+1. ① Time and role transition.
+2. ② Changed files.
+3. ③ Test status, with execution-environment capabilities.
+4. ④ Recipient actions as a concrete checklist.
+5. ⑤ Cautions, including `Status: <DONE / BLOCKED / HANDOFF / RISK / OBSERVE>`.
+6. ⑥ Follow-up questions. Keep the heading even when the answer is "None."
 
-完整 6 段（格式见 [`操作系统/03_交接/交接卡格式.md`](../操作系统/03_交接/交接卡格式.md)；历史见 [`操作系统/03_交接/交接卡格式-附录.md`](../操作系统/03_交接/交接卡格式-附录.md)）：
+## Workflow
 
-1. ① 时间 + 角色切换
-2. ② 文件变更清单
-3. ③ 测试状态（端能力对照）
-4. ④ 接手者待办（具体 checklist）
-5. ⑤ 警戒事项（必须含 `Status: <DONE / BLOCKED / HANDOFF / RISK / OBSERVE>`）
-6. ⑥ 追加问答（标题必留，内容可写“暂无”）
+### Delivering role completes implementation
 
-## 流程
+1. Move the card you previously accepted, if any, from `待接手/` to `已接手/`, indicating that your assigned work is complete.
+2. Write a new card in `待接手/YYYY-MM-DD-HHMM-task-from-me-to-next-role.md`.
+3. Update the latest-handoff summary and link at the top of `状态.md`.
+4. Give zlbdh the short handoff format for copying and pasting.
 
-### 交付方完成实施
-1. **mv 自己之前接的卡**（如有）从 `待接手/` → `已接手/`（表示「我接的事做完了」）
-2. **写新卡**到 `待接手/YYYY-MM-DD-HHMM-任务-从我到下一个角色.md`
-3. 更新 `状态.md` 顶部「最近交接卡摘要 + 链接」段
-4. 给 zlbdh **简版交接卡**（用户复制粘贴用）
+### Receiving role starts
 
-### 接手方起手
-1. 读 `状态.md`（看进度速查 / 摘要）
-2. 读 `交接区/待接手/` 最新文件（或用户指定那张）
-3. 自己开始干，**不动那张卡**（实施过程中保留在 待接手/）
-4. 完成时按上面「交付方」流程走
+1. Read the progress summary in `状态.md`.
+2. Read the newest card in `交接区/待接手/`, or the card specified by the user.
+3. Begin work without modifying or moving that card. It remains pending during implementation.
+4. On completion, follow the delivering-role process above.
 
-### zlbdh confirm
-- 收到 Codex / Claude Code 写的「给 zlbdh 的卡」（在 `待接手/`）
-- zlbdh 看完点头 → AI 把卡 mv 到 `已接手/`（表示「zlbdh 接收完毕」）
+### zlbdh confirms receipt
 
-## 谁 mv 卡？— **接手者完成实施时 mv**
+When Codex or Claude Code creates a card addressed to zlbdh in `待接手/`, zlbdh reads and accepts it. The AI then moves it to `已接手/`, recording receipt.
 
-| 状态 | 含义 | 谁 mv | 何时 mv |
+## Who moves a card, and when?
+
+| State | Meaning | Who moves it | When |
 |---|---|---|---|
-| 在 `待接手/` | 等下一棒 PM / 等 zlbdh confirm | — | — |
-| 移到 `已接手/` | 「我接的这张做完了」/「zlbdh 接收完毕」| 接手者 / 当前 session | 实施完成时 / zlbdh confirm 时 |
-| 移到 `历史归档/yyyy-mm/` | 长期历史归档 | 任何 session 顺手做 | 项目体检发现 30 天以上已接手卡时，人工确认后移动 |
+| In `待接手/` | Waiting for the next PM or zlbdh's confirmation | No one yet | Remains here while pending |
+| Moved to `已接手/` | Recipient finished the work or zlbdh accepted it | Recipient/current session | At implementation completion or confirmation |
+| Moved to `历史归档/yyyy-mm/` | Long-term history | Any session performing the archive task | After a health check identifies accepted cards older than 30 days and a person confirms the move |
 
-> 注意：现有 hooks 只报警 / 阻断，不会静默移动文件。实际 `mv` 必须由接手者 / 当前 session 明确执行。
+Existing hooks warn or block; they do not silently move files. The recipient or current session must explicitly perform the move.
 
-## 多 session 防冲突 ⭐
+## Avoiding conflicts between sessions
 
-**天然防冲突**：每个 session 写**不同文件**（时间戳不同）→ 不存在「同时写一个文件」的问题。
+Each session writes a distinct timestamped file, preventing simultaneous edits to one card. If two sessions may be moving the same card, inspect the actual directories with `ls` first.
 
-唯一可能冲突：两个 session 同时尝试 mv 同一张卡 → 用 ls 看实际目录确认。
+## Do not
 
-## 不要做
+- Delete any card; accepted and archived cards are historical records.
+- Skip the handoff and immediately begin unrelated work.
+- Modify cards in `已接手/`; they are historical records.
+- Paste large volumes of screenshots into chat; save them in `Docs/4-测试文档/smoke截图/`.
 
-- ❌ 删除任何卡（已接手 / 历史归档 都保留作历史）
-- ❌ 跳过写交接卡直接干下一件事
-- ❌ 修改 已接手/ 里的卡（历史档案）
-- ❌ 在 chat 里贴大量截图（截图保存到 `Docs/4-测试文档/smoke截图/`）
+## Archiving cadence
 
-## 何时清理 / 归档
+Once per month, zlbdh reviews accepted cards older than 30 days for movement to `历史归档/yyyy-mm/`. The project health check monitors this, implemented under PROP-011.
 
-每月一次 zlbdh 看一下：
-- `已接手/` 超 30 天的卡 → mv 到 `历史归档/yyyy-mm/`
-- 项目体检 加这条监控（PROP-011 已实施）
+## Current state
 
-## 当前状态
-
-当前数量不在 README 里手工维护，避免 stale。以命令输出为准：
+Do not manually maintain counts in this README. Use current command output:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File 能力资产/tools/scripts/check-handoff-zone.ps1
 ```
 
-## 关联
+## References
 
-- [`操作系统/03_交接/交接卡格式.md`](../操作系统/03_交接/交接卡格式.md) — 6 段格式模板与 chat 简版 ①-⑦
-- [`操作系统/03_交接/交接卡格式-附录.md`](../操作系统/03_交接/交接卡格式-附录.md) — 历史触发、失败案例、强制矩阵、自动对齐边界
-- [`操作系统/07_完整工作流/实施循环-DoD.md`](../操作系统/07_完整工作流/实施循环-DoD.md) — DoD「PROP 收档」段引用本机制
-- [`能力资产/skills/状态推断-跨session监控.md`](../能力资产/skills/状态推断-跨session监控.md) 推断 5 — 起手读 交接区/待接手/ 最新卡
-- [`Docs/3-开发文档/adr/ADR-015-交接区机制.md`](../Docs/3-开发文档/adr/ADR-015-交接区机制.md) — 决策记录
-- [`状态.md`](../状态.md) — 当前快照（顶部摘要 + 进度速查）
+- [Handoff format](../操作系统/03_交接/交接卡格式.md): six document sections and seven-part short chat format.
+- [Handoff appendix](../操作系统/03_交接/交接卡格式-附录.md): historical triggers, failures, required matrix, and automatic-alignment limits.
+- [Implementation DoD](../操作系统/07_完整工作流/实施循环-DoD.md): proposal-archiving step references this mechanism.
+- [Cross-session state inference](../能力资产/skills/状态推断-跨session监控.md), inference 5: start with the newest pending handoff.
+- [ADR-015](../Docs/3-开发文档/adr/ADR-015-交接区机制.md): decision record.
+- [Current state](../状态.md): snapshot, top summary, and quick progress view.

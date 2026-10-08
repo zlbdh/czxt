@@ -159,8 +159,8 @@ function Test-CzxtBorrowingAssetPath {
     $Passes.Add($RelativePath)
     return
   }
-  $label = if ($PathType -eq 'Leaf') { '文件' } else { '目录' }
-  $Failures.Add(('🔴 借鉴资产缺必查{0}：{1}' -f $label, $RelativePath))
+  $label = if ($PathType -eq 'Leaf') { 'file' } else { 'directory' }
+  $Failures.Add(('🔴 Borrowing assets lack required {0}: {1}' -f $label, $RelativePath))
 }
 
 function Test-CzxtBorrowingAssets {

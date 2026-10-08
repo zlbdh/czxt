@@ -31,7 +31,7 @@ function ConvertTo-CzxtInstallerJsonData {
     $properties = if ($Node -is [Collections.IDictionary]) { $Node.Keys } else { $Node.PSObject.Properties.Name }
     foreach ($name in $properties) {
       $key = Expand-CzxtInstallerDataTokens ([string]$name) $Values $Pattern
-      if ($result.Contains($key)) { throw ('JSON参数渲染后出现重复字段：' + $key) }
+      if ($result.Contains($key)) { throw ('Duplicate field after rendering JSON parameters: ' + $key) }
       if ($Node -is [Collections.IDictionary]) { $child = $Node[$name] }
       else { $child = $Node.$name }
       $result[$key] = ConvertTo-CzxtInstallerJsonData $child $Values $Pattern
@@ -65,7 +65,7 @@ function ConvertTo-CzxtInstallerPsText {
   param([string]$Text, [Collections.IDictionary]$Values, [regex]$Pattern)
   $tokens = $null; $errors = $null
   $null = [Management.Automation.Language.Parser]::ParseInput($Text, [ref]$tokens, [ref]$errors)
-  if (@($errors).Count -gt 0) { throw 'PowerShell模板语法无效，拒绝渲染。' }
+  if (@($errors).Count -gt 0) { throw 'Invalid PowerShell template syntax; refusing to render.' }
   $allTokens = New-Object 'Collections.Generic.List[object]'
   foreach ($token in $tokens) { $allTokens.Add($token) }
   for ($i=0; $i -lt $allTokens.Count; $i++) {
@@ -78,14 +78,14 @@ function ConvertTo-CzxtInstallerPsText {
     $owner = @($allTokens | Where-Object {
       $_.Extent.StartOffset -le $match.Index -and $_.Extent.EndOffset -ge ($match.Index + $match.Length)
     } | Sort-Object { $_.Extent.EndOffset - $_.Extent.StartOffset } | Select-Object -First 1)
-    if ($owner.Count -ne 1) { throw 'PowerShell占位符位于可执行语法中，拒绝渲染。' }
+    if ($owner.Count -ne 1) { throw 'PowerShell placeholder is in executable syntax; refusing to render.' }
     $token = $owner[0]
     $crossing = @($allTokens | Where-Object {
       $_ -ne $token -and $_.Extent.StartOffset -ge $token.Extent.StartOffset -and
       $_.Extent.EndOffset -le $token.Extent.EndOffset -and
       $_.Extent.StartOffset -lt ($match.Index + $match.Length) -and $_.Extent.EndOffset -gt $match.Index
     })
-    if ($crossing.Count -gt 0) { throw 'PowerShell占位符跨越 nested token，拒绝作为外层字符串渲染。' }
+    if ($crossing.Count -gt 0) { throw 'PowerShell placeholder crosses a nested token; refusing to render it as an outer string.' }
     if ($wholeTokens.Contains($token.Extent.StartOffset)) { continue }
     $value = [string]$Values[$match.Groups['name'].Value]
     $start = $match.Index
@@ -104,7 +104,7 @@ function ConvertTo-CzxtInstallerPsText {
         break
       }
       { $_ -in @('StringExpandable', 'HereStringExpandable') } {
-        # 模板反引号原来只转义占位符的左花括号，不能抵消参数自身的转义。
+        # The template backtick originally escaped only the placeholder opening brace; it must not cancel escaping applied to the parameter itself.
         $backticks = 0
         for ($j=$start-1; $j -ge $token.Extent.StartOffset -and $Text[$j] -eq '`'; $j--) { $backticks++ }
         if (($backticks % 2) -eq 1) {
@@ -128,7 +128,7 @@ function ConvertTo-CzxtInstallerPsText {
         $value.Replace("`r", '\r').Replace("`n", '\n').Replace('#>', '# >')
         break
       }
-      default { throw ('PowerShell占位符不在字符串或注释内：' + $token.Kind) }
+      default { throw ('PowerShell placeholder is outside a string or comment: ' + $token.Kind) }
     }
     $edits[$start] = [pscustomobject]@{ Start=$start; Length=$length; Text=$rendered }
   }
@@ -141,7 +141,7 @@ function ConvertTo-CzxtInstallerPsText {
 function ConvertTo-CzxtInstallerRenderedText {
   param([string]$Text, [string]$Extension, [Collections.IDictionary]$Values)
   if ($Extension.Equals('.json', [StringComparison]::OrdinalIgnoreCase) -and
-      [string]::IsNullOrWhiteSpace($Text)) { throw 'JSON模板不能为空或全空白。' }
+      [string]::IsNullOrWhiteSpace($Text)) { throw 'JSON template cannot be empty or all whitespace.' }
   $pattern = New-CzxtInstallerTokenPattern $Values
   if (-not $pattern.IsMatch($Text)) { return $Text }
   switch ($Extension.ToLowerInvariant()) {
@@ -158,14 +158,14 @@ function Assert-CzxtInstallerRenderedText {
   param([string]$Text, [string]$Extension, [string]$Path)
   switch ($Extension.ToLowerInvariant()) {
     '.json' {
-      if ([string]::IsNullOrWhiteSpace($Text)) { throw ('实例化受管 JSON 为空：' + $Path) }
+      if ([string]::IsNullOrWhiteSpace($Text)) { throw ('Managed installer JSON is empty: ' + $Path) }
       try { $null = ConvertFrom-Json -InputObject $Text -ErrorAction Stop }
-      catch { throw ('实例化受管 JSON 无效：' + $Path) }
+      catch { throw ('Managed installer JSON is invalid: ' + $Path) }
     }
     '.ps1' {
       $tokens=$null; $errors=$null
       $null = [Management.Automation.Language.Parser]::ParseInput($Text, [ref]$tokens, [ref]$errors)
-      if (@($errors).Count -gt 0) { throw ('实例化受管 PowerShell 语法无效：' + $Path) }
+      if (@($errors).Count -gt 0) { throw ('Managed installer PowerShell syntax is invalid: ' + $Path) }
     }
   }
 }

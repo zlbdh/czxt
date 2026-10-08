@@ -11,7 +11,7 @@
 $ErrorActionPreference = "Stop"
 $manifestPath = Join-Path $PSScriptRoot "manifest.json"
 if (-not (Test-Path -LiteralPath $manifestPath)) {
-  throw "找不到 hooks manifest：$manifestPath"
+  throw "Hooks manifest not found: $manifestPath"
 }
 
 $manifest = Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -20,9 +20,9 @@ $selected = @($manifest.hooks | Where-Object {
 })
 
 if ($selected.Count -eq 0) {
-  Write-Host "🟡 没有匹配 hooks：Trigger=$Trigger Hook=$Hook" -ForegroundColor Yellow
+  Write-Host "🟡 No matching hooks: Trigger=$Trigger Hook=$Hook" -ForegroundColor Yellow
   if (-not [string]::IsNullOrWhiteSpace($Hook)) {
-    Write-Host "🔴 显式指定的 hook 不存在或不属于该 trigger：$Hook" -ForegroundColor Red
+    Write-Host "🔴 The explicitly requested hook does not exist or does not belong to this trigger: $Hook" -ForegroundColor Red
     exit 2
   }
   exit 0

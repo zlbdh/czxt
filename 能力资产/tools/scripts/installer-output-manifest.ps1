@@ -15,7 +15,7 @@ function Assert-CzxtInstallerOutputManifest {
       $InstalledFiles.Schema -cne 'czxt-installer-output/v1' -or
       $null -eq $InstalledFiles.Entries -or
       -not ($InstalledFiles.Entries -is [Collections.IDictionary])) {
-    throw '实例化输出 manifest 无效。'
+    throw 'Invalid installer output manifest.'
   }
 }
 
@@ -26,7 +26,7 @@ function Set-CzxtInstallerOutputState {
   if ($null -eq $State -or [string]::IsNullOrWhiteSpace([string]$State.Path) -or
       [string]::IsNullOrWhiteSpace([string]$State.Identity) -or
       [string]::IsNullOrWhiteSpace([string]$State.Sha256)) {
-    throw '实例化输出 state 缺少五元组字段。'
+    throw 'Installer output state is missing fields from the five-element tuple.'
   }
   $path = Get-CzxtBorrowingFullPath $State.Path
   $InstalledFiles.Entries[$path] = [pscustomobject]@{
@@ -43,7 +43,7 @@ function Get-CzxtInstallerOutputState {
   Assert-CzxtInstallerOutputManifest -InstalledFiles $InstalledFiles
   $full = Get-CzxtBorrowingFullPath $Path
   if (-not $InstalledFiles.Entries.Contains($full)) {
-    throw ("目标不属于本事务实例化输出：{0}" -f $full)
+    throw ("Target is not an installer output owned by this transaction: {0}" -f $full)
   }
   return $InstalledFiles.Entries[$full]
 }
@@ -61,9 +61,9 @@ function Open-CzxtInstallerOutputManifestLeases {
   try {
     foreach ($state in @(Get-CzxtInstallerOutputStates -InstalledFiles $InstalledFiles)) {
       $path = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-        -CandidatePath $state.Path -Context '实例化最终输出'
+        -CandidatePath $state.Path -Context 'Final installer output'
       $lease = Open-CzxtInstallerFileLease -Path $path -ExpectedState $state `
-        -Context '实例化最终输出'
+        -Context 'Final installer output'
       [void]$leases.Add($lease.Native)
     }
     return [pscustomobject]@{ Items = [object[]]$leases.ToArray() }
@@ -93,22 +93,22 @@ function Complete-CzxtInstallerOutput {
       $extension = [IO.Path]::GetExtension($state.Path)
       if ($extension -notin @('.json', '.ps1')) { continue }
       $snapshot = Get-CzxtInstallerOutputTextSnapshot -ProjectRoot $ProjectRoot `
-        -InstalledFiles $InstalledFiles -TargetPath $state.Path -Context '实例化最终格式校验'
+        -InstalledFiles $InstalledFiles -TargetPath $state.Path -Context 'Final installer format validation'
       Assert-CzxtInstallerRenderedText -Text $snapshot.Text -Extension $extension -Path $state.Path
     }
     $marker = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
       -CandidatePath (Join-Path $ProjectRoot '.czxt-project-root') `
-      -Context '项目根标记目标'
+      -Context 'Project-root marker target'
     $expectation = Get-CzxtInstallerTargetExpectation -ProjectRoot $ProjectRoot `
-      -TargetPath $marker -Context '项目根标记目标' -AllowExisting:$Force
+      -TargetPath $marker -Context 'Project-root marker target' -AllowExisting:$Force
     Write-CzxtInstallerTextFile -ProjectRoot $ProjectRoot -TargetPath $marker `
       -Content "czxt-root-mode=project`nschema=1`n" -Encoding $Encoding `
-      -Context '项目根标记目标' `
+      -Context 'Project-root marker target' `
       -ExpectAbsent:($expectation.Mode -eq 'ExpectAbsent') `
       -ExpectedPresentState $expectation.State -InstalledFiles $InstalledFiles
     $markerState = Get-CzxtInstallerOutputState -InstalledFiles $InstalledFiles -Path $marker
     $markerLease = Open-CzxtInstallerFileLease -Path $marker `
-      -ExpectedState $markerState -Context '项目根标记最终输出'
+      -ExpectedState $markerState -Context 'Final project-root marker output'
     try { if ($null -ne $OnVerified) { & $OnVerified } }
     finally { $markerLease.Native.Dispose() }
   }
@@ -119,7 +119,7 @@ function Get-CzxtInstallerFileSnapshot {
   param(
     [string]$ProjectRoot,
     [string]$TargetPath,
-    [string]$Context = '实例化文件快照',
+    [string]$Context = 'Installer file snapshot',
     [object]$ExpectedTargetState,
     [scriptblock]$BeforeSnapshotRead,
     [scriptblock]$AfterSnapshotRead
@@ -144,7 +144,7 @@ function Get-CzxtInstallerTextSnapshot {
   param(
     [string]$ProjectRoot,
     [string]$TargetPath,
-    [string]$Context = '实例化文本快照',
+    [string]$Context = 'Installer text snapshot',
     [object]$ExpectedTargetState,
     [scriptblock]$BeforeSnapshotRead,
     [scriptblock]$AfterSnapshotRead
@@ -156,7 +156,7 @@ function Get-CzxtInstallerTextSnapshot {
       $snapshot.Bytes[1] -eq 0xBB -and $snapshot.Bytes[2] -eq 0xBF) { 3 } else { 0 }
   $utf8 = New-Object Text.UTF8Encoding($false, $true)
   try { $text = $utf8.GetString($snapshot.Bytes, $offset, $snapshot.Bytes.Length - $offset) }
-  catch { throw ("{0}不是有效 UTF-8：{1}" -f $Context, $snapshot.State.Path) }
+  catch { throw ("{0} is not valid UTF-8: {1}" -f $Context, $snapshot.State.Path) }
   return [pscustomobject]@{ State = $snapshot.State; Text = $text }
 }
 
@@ -165,7 +165,7 @@ function Get-CzxtInstallerOutputTextSnapshot {
     [string]$ProjectRoot,
     [object]$InstalledFiles,
     [string]$TargetPath,
-    [string]$Context = '实例化输出文本快照'
+    [string]$Context = 'Installer output text snapshot'
   )
   $expected = Get-CzxtInstallerOutputState -InstalledFiles $InstalledFiles -Path $TargetPath
   return Get-CzxtInstallerTextSnapshot -ProjectRoot $ProjectRoot `

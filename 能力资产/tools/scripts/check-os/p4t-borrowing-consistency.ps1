@@ -73,7 +73,7 @@ try {
   $exitCode = [int]$result.ExitCode
 }
 catch {
-  [void]$failures.Add('P4t 借鉴闭环检查未完成')
+  [void]$failures.Add('P4t borrowing completion check did not finish')
   $result = [pscustomobject][ordered]@{
     Mode = $mode; Warnings = [string[]]$warnings.ToArray()
     Failures = [string[]]$failures.ToArray(); ExitCode = 10

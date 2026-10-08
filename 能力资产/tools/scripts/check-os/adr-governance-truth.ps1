@@ -32,14 +32,14 @@ function Get-CzxtAdrGovernanceTruth {
   $indexRecords = @()
 
   if (-not (Test-Path -LiteralPath $adrDir -PathType Container)) {
-    $failures.Add("Docs/3-开发文档/adr 缺失；无法计算 ADR 真源")
+    $failures.Add("Docs/3-开发文档/adr is missing; cannot determine authoritative ADR counts")
   } else {
     $fileRecords = @(
       Get-ChildItem -LiteralPath $adrDir -Filter "ADR-*.md" -File -ErrorAction SilentlyContinue |
         ForEach-Object {
           $match = [regex]::Match($_.Name, '^ADR-(\d{3})-.+\.md$')
           if (-not $match.Success) {
-            $failures.Add(("{0} 文件名不符合 ADR-001-标题.md 格式" -f (Get-CzxtAdrRelativePath $repoRoot $_.FullName)))
+            $failures.Add(("{0} does not follow the ADR-001-title.md filename format" -f (Get-CzxtAdrRelativePath $repoRoot $_.FullName)))
             return
           }
           [pscustomobject]@{
@@ -51,7 +51,7 @@ function Get-CzxtAdrGovernanceTruth {
   }
 
   if (-not (Test-Path -LiteralPath $indexPath -PathType Leaf)) {
-    $failures.Add("Docs/3-开发文档/adr/README.md 缺失；无法计算 ADR 索引状态")
+    $failures.Add("Docs/3-开发文档/adr/README.md is missing; cannot determine ADR index status")
   } else {
     $indexText = Get-Content -LiteralPath $indexPath -Raw -Encoding UTF8
     foreach ($line in ($indexText -split "`r?`n")) {
@@ -66,21 +66,21 @@ function Get-CzxtAdrGovernanceTruth {
       }
     }
     if (@($indexRecords).Count -eq 0) {
-      $failures.Add("Docs/3-开发文档/adr/README.md 未找到 ADR 索引表行")
+      $failures.Add("No ADR index table rows found in Docs/3-开发文档/adr/README.md")
     }
   }
 
   foreach ($group in (@($fileRecords) | Group-Object Number | Where-Object { $_.Count -gt 1 })) {
     $paths = @($group.Group | ForEach-Object { $_.Path }) -join ", "
-    $failures.Add("ADR-$($group.Name) 文件编号重复：$paths")
+    $failures.Add("ADR-$($group.Name) has duplicate file numbers: $paths")
   }
 
   foreach ($group in (@($indexRecords) | Group-Object Number | Where-Object { $_.Count -gt 1 })) {
-    $failures.Add("ADR-$($group.Name) 在 ADR 索引表中重复出现 $($group.Count) 次")
+    $failures.Add("ADR-$($group.Name) appears $($group.Count) times in the ADR index table")
   }
 
   foreach ($record in @($indexRecords | Where-Object { $_.StatusClass -eq 'unknown' })) {
-    $failures.Add("ADR-$($record.Number) 索引状态未知：$($record.Status)；只接受 现行 或 被替代/覆盖")
+    $failures.Add("ADR-$($record.Number) has an unknown index status: $($record.Status); only current or superseded/replaced status is accepted")
   }
 
   $fileNumbers = @($fileRecords | ForEach-Object { $_.Number } | Sort-Object -Unique)
@@ -88,13 +88,13 @@ function Get-CzxtAdrGovernanceTruth {
 
   foreach ($number in $fileNumbers) {
     if ($indexNumbers -notcontains $number) {
-      $failures.Add("ADR-$number 有文件但缺少索引表行")
+      $failures.Add("ADR-$number has a file but no index table row")
     }
   }
 
   foreach ($number in $indexNumbers) {
     if ($fileNumbers -notcontains $number) {
-      $failures.Add("ADR-$number 有索引表行但缺少 ADR 文件")
+      $failures.Add("ADR-$number has an index table row but no ADR file")
     }
   }
 
@@ -123,7 +123,7 @@ function Test-CzxtAdrMainEntryAnchor {
   $entryPath = Join-Path $repoRoot $entryRelative
   $failures = New-Object System.Collections.Generic.List[string]
   if (-not (Test-Path -LiteralPath $entryPath -PathType Leaf)) {
-    $failures.Add("$entryRelative 缺失；无法校验 ADR 计数入口")
+    $failures.Add("$entryRelative is missing; cannot validate the ADR count entry")
     return @($failures)
   }
 
@@ -135,7 +135,7 @@ function Test-CzxtAdrMainEntryAnchor {
     $match = [regex]::Match($entryText, $englishPattern, [Text.RegularExpressions.RegexOptions]::IgnoreCase)
   }
   if (-not $match.Success) {
-    $failures.Add("$entryRelative 未找到 ADR 计数锚点：N ADR 永久档案（N 现行 + N 被替代/覆盖）")
+    $failures.Add("$entryRelative lacks the ADR count anchor: N permanent ADR records (N current + N superseded/replaced)")
     return @($failures)
   }
 
@@ -143,13 +143,13 @@ function Test-CzxtAdrMainEntryAnchor {
   $claimedCurrent = [int]$match.Groups['current'].Value
   $claimedReplaced = [int]$match.Groups['replaced'].Value
   if ($claimedTotal -ne [int]$Truth.Total) {
-    $failures.Add("$entryRelative ADR 总数漂移：$claimedTotal vs 真源 $($Truth.Total)")
+    $failures.Add("$entryRelative ADR total mismatch: $claimedTotal vs authoritative count $($Truth.Total)")
   }
   if ($claimedCurrent -ne [int]$Truth.Current) {
-    $failures.Add("$entryRelative ADR 现行数漂移：$claimedCurrent vs 真源 $($Truth.Current)")
+    $failures.Add("$entryRelative current ADR count mismatch: $claimedCurrent vs authoritative count $($Truth.Current)")
   }
   if ($claimedReplaced -ne [int]$Truth.Replaced) {
-    $failures.Add("$entryRelative ADR 被替代/覆盖数漂移：$claimedReplaced vs 真源 $($Truth.Replaced)")
+    $failures.Add("$entryRelative superseded/replaced ADR count mismatch: $claimedReplaced vs authoritative count $($Truth.Replaced)")
   }
 
   return @($failures)

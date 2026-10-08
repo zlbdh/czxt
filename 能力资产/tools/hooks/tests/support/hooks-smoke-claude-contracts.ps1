@@ -29,7 +29,7 @@ function Invoke-HooksSmokeClaudeContracts {
     } | ConvertTo-Json -Depth 5 -Compress
     $claudePmPostOutput = $pmPostInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $TempRoot
     $claudePmPostJson = $claudePmPostOutput | ConvertFrom-Json
-    Assert-True ($claudePmPostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for PM工作区"
+    Assert-True ($claudePmPostJson.systemMessage -match "fake pm-workspace drift") "Claude PostToolUse should run checker for PM workspace"
 
     $docs7PostInput = [ordered]@{
       hook_event_name = "PostToolUse"

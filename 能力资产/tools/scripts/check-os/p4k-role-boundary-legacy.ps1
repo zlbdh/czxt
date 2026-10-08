@@ -9,7 +9,7 @@ $hits = @()
 foreach ($check in $checks) {
     $path = Join-Path $Root $check.Path
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-        $hits += "$($check.Path) $($check.Label)（守卫目标文件缺失）"
+        $hits += "$($check.Path) $($check.Label) (guard target file missing)"
         continue
     }
     $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
@@ -20,10 +20,10 @@ foreach ($check in $checks) {
 }
 
 if ($hits.Count -gt 0) {
-    Write-Host "  🔴 角色边界/安全旧口径残留：$($hits.Count) 处" -ForegroundColor Red
+    Write-Host "  🔴 Obsolete role-boundary/safety language remains: $($hits.Count) matches" -ForegroundColor Red
     foreach ($hit in $hits) { Write-Host "    - $hit" -ForegroundColor Red }
     exit 10
 }
 
-Write-Host "  ✅ 角色边界 / B-C 类 / 发布 DoD 旧口径未回退" -ForegroundColor Green
+Write-Host "  ✅ Role boundaries, Class B/C rules, and release DoD contain no obsolete language" -ForegroundColor Green
 exit 0

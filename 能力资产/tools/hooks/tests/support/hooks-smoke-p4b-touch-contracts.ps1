@@ -36,17 +36,17 @@ function Invoke-HooksSmokeP4bTouchContracts {
     $smallInput = [ordered]@{ file_path = "{{APP_REPO_DIR}}/src/features/demo/small.js" }
     $codexLarge = (New-PostJson $largeInput) | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.CodexPost -Root $fixtureRoot | ConvertFrom-Json
     Assert-True ($codexLarge.continue -eq $true) "Codex P4b large should continue"
-    Assert-True ($codexLarge.hookSpecificOutput.additionalContext -match "触碰业务大文件") "Codex P4b large missing additionalContext"
+    Assert-True ($codexLarge.hookSpecificOutput.additionalContext -match "Large business files touched") "Codex P4b large missing additionalContext"
 
     $codexSmall = (New-PostJson $smallInput) | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.CodexPost -Root $fixtureRoot | ConvertFrom-Json
     Assert-True (-not $codexSmall.systemMessage) "Codex P4b small should stay quiet"
 
     $patch = "*** Begin Patch`n*** Update File: {{APP_REPO_DIR}}/src/features/demo/large.js`n+touch`n*** End Patch`n"
     $codexPatch = (New-PostJson ([ordered]@{ patch = $patch })) | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.CodexPost -Root $fixtureRoot | ConvertFrom-Json
-    Assert-True ($codexPatch.hookSpecificOutput.additionalContext -match "触碰业务大文件") "Codex P4b apply_patch missing warning"
+    Assert-True ($codexPatch.hookSpecificOutput.additionalContext -match "Large business files touched") "Codex P4b apply_patch missing warning"
 
     $claudeLarge = (New-PostJson $largeInput) | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $fixtureRoot | ConvertFrom-Json
-    Assert-True ($claudeLarge.systemMessage -match "触碰业务大文件") "Claude P4b large missing systemMessage"
+    Assert-True ($claudeLarge.systemMessage -match "Large business files touched") "Claude P4b large missing systemMessage"
 
     $claudeSmall = (New-PostJson $smallInput) | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePost -Root $fixtureRoot | ConvertFrom-Json
     Assert-True (-not $claudeSmall.systemMessage) "Claude P4b small should stay quiet"

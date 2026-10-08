@@ -1,0 +1,1395 @@
+{
+  "schema": "borrowing-doc-language/v1",
+  "relativePath": "\u64cd\u4f5c\u7cfb\u7edf/05_\u8bb0\u5fc6/\u884c\u4e3a\u53cd\u601d.md",
+  "englishHeading": "# Behavior Reflections Appendix",
+  "lines": [
+    {
+      "english": "---",
+      "canonical": "---"
+    },
+    {
+      "english": "name: project-memory-behavior-reflections",
+      "canonical": "name: project-memory-behavior-reflections"
+    },
+    {
+      "english": "scope: project",
+      "canonical": "scope: project"
+    },
+    {
+      "english": "type: semantic",
+      "canonical": "type: semantic"
+    },
+    {
+      "english": "loaded: on-demand",
+      "canonical": "loaded: on-demand"
+    },
+    {
+      "english": "description: Project-memory behavior reflections \u2014 verify inferences, verify handoffs, and prevent trace-recording decay.",
+      "canonical": "description: \u9879\u76ee\u8bb0\u5fc6\u884c\u4e3a\u53cd\u601d\u9644\u5f55 / \u63a8\u65ad\u6838\u5b9e / handoff verify / \u7559\u75d5\u9632\u8870\u51cf"
+    },
+    {
+      "english": "---",
+      "canonical": "---"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "# Behavior Reflections Appendix",
+      "canonical": "# \u884c\u4e3a\u53cd\u601d\u9644\u5f55"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "> Main entry: [`INDEX.md`](INDEX.md). This file holds less frequently used reflections so the always-loaded entry stays small for new sessions.",
+      "canonical": "> \u4e3b\u5165\u53e3\uff1a[`INDEX.md`](INDEX.md)\u3002\u672c\u6587\u4ef6\u627f\u63a5\u4f4e\u9891\u53cd\u601d\u6b63\u6587\uff0c\u907f\u514d\u65b0\u4f1a\u8bdd always-loaded \u5165\u53e3\u8fc7\u5927\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 1 \u2014 PMs must verify before assuming",
+      "canonical": "## \u53cd\u601d 1 \u2014 PM \u4e0d\u9ed8\u8ba4\u63a8\u6d4b\u524d\u5fc5\u5148\u6838\u5b9e"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Historical triggers:** issues BR/BP, three F-DIARY-1 UI mismatches, a ship card's incorrect master branch, and inaccurate APK estimates.",
+      "canonical": "**\u89e6\u53d1\u5386\u53f2**\uff1a\u8bae\u9898 BR/BP\u3001F-DIARY-1 UI 3 \u6b21\u9519\u4f4d\u3001ship \u5361 master \u9519\u4f4d\u3001APK \u4f30\u503c\u9519\u4f4d\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Rules:**",
+      "canonical": "**\u89c4\u5219**\uff1a"
+    },
+    {
+      "english": "- Before inferring underlying behavior from code or interface structure, check documentation, verify, or ask zlbdh.",
+      "canonical": "- \u770b\u5230\u4ee3\u7801\u6216\u63a5\u53e3\u7ed3\u6784\u9ed8\u8ba4\u63a8\u6d4b\u80cc\u540e\u5b9e\u8d28 \u2192 \u5fc5\u5148\u67e5\u6587\u6863 / \u6838\u5b9e / \u95ee zlbdh"
+    },
+    {
+      "english": "- Any \u201cI assumed\u201d should trigger a strong verification signal.",
+      "canonical": "- \u4efb\u4f55\u201c\u6211\u4ee5\u4e3a\u201d\u5e94\u8be5\u6709\u5f3a\u4fe1\u53f7\u53bb verify"
+    },
+    {
+      "english": "- Admit an information gap with \u201cI am not sure\u201d instead of forcing an inference.",
+      "canonical": "- \u8bda\u5b9e\u627f\u8ba4\u4fe1\u606f\u76f2\u533a\u201c\u6211\u4e0d\u786e\u5b9a\u201d > \u5f3a\u884c\u63a8\u6d4b"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 2 \u2014 Verify actual code before deciding UI architecture",
+      "canonical": "## \u53cd\u601d 2 \u2014 PM \u62cd UI \u67b6\u6784\u524d\u5fc5\u5148 verify \u771f\u5b9e\u4ee3\u7801"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Historical trigger:** on 2026-05-20, the F-DIARY-1 decision PM chose the wrong Tab design three times; only a grep confirmed the actual entry.",
+      "canonical": "**\u89e6\u53d1\u5386\u53f2**\uff1a2026-05-20 F-DIARY-1 \u51b3\u7b56 PM \u8fde\u7eed 3 \u6b21\u62cd\u9519 Tab \u65b9\u6848\uff1bgrep \u540e\u624d\u786e\u8ba4\u771f\u5b9e\u5165\u53e3\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Rules:**",
+      "canonical": "**\u89c4\u5219**\uff1a"
+    },
+    {
+      "english": "- Before deciding any Tab, route, module-entry, or five-Tab design, the PM must:",
+      "canonical": "- \u4efb\u4f55\u6d89\u53ca Tab / \u8def\u7531 / \u6a21\u5757\u5165\u53e3 / 5 Tab \u7ed3\u6784\u7684\u65b9\u6848\uff0cPM \u62cd\u524d\u5fc5\u5148\uff1a"
+    },
+    {
+      "english": "  - Read [`INDEX.md`](INDEX.md), section 3 on important project-history entries.",
+      "canonical": "  - read [`INDEX.md`](INDEX.md) \u00a7\u4e09\u300c\u9879\u76ee\u91cd\u8981\u5386\u53f2\u5165\u53e3\u300d"
+    },
+    {
+      "english": "  - Inspect `AppShell.jsx` / routing files with grep to verify the actual state.",
+      "canonical": "  - grep `AppShell.jsx` / \u8def\u7531\u6587\u4ef6 verify \u771f\u5b9e\u72b6\u6001"
+    },
+    {
+      "english": "- If the memory is more than seven days old, verify with grep; do not assume it remains accurate.",
+      "canonical": "- \u5982\u679c memory > 7 \u5929\uff0c\u5fc5 grep verify\uff08\u4e0d\u80fd\u9ed8\u8ba4\u4ecd\u51c6\uff09"
+    },
+    {
+      "english": "- Before recommending a design to zlbdh, state the actual code state already verified.",
+      "canonical": "- \u5bf9 zlbdh \u8bf4\u201c\u63a8\u8350\u65b9\u6848\u201d\u524d\uff0c\u5148\u8bf4\u660e\u201c\u5df2 verify \u771f\u5b9e\u4ee3\u7801\u72b6\u6001\uff1a...\u201d"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 3 \u2014 Keep Codex / Claude Code prompts minimal",
+      "canonical": "## \u53cd\u601d 3 \u2014 \u7ed9 Codex / Claude Code \u7684\u63d0\u793a\u8bcd\u5fc5\u987b\u6781\u7b80"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Historical trigger:** after the W-3 PRD on 2026-05-20, the PM supplied a prompt exceeding 50 lines; zlbdh questioned its length.",
+      "canonical": "**\u89e6\u53d1\u5386\u53f2**\uff1a2026-05-20 W-3 PRD \u540e PM \u7ed9 50+ \u884c\u63d0\u793a\u8bcd\uff0czlbdh \u53cd\u95ee\u8fc7\u957f\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Rules:**",
+      "canonical": "**\u89c4\u5219**\uff1a"
+    },
+    {
+      "english": "- Minimal prompt template, three to five substantive lines:",
+      "canonical": "- \u63d0\u793a\u8bcd\u6a21\u677f\uff08\u6781\u7b80\u7248\uff0c3-5 \u884c\uff09\uff1a"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```text",
+      "canonical": "```text"
+    },
+    {
+      "english": "[Sprint-X, item Y] Take task X",
+      "canonical": "[Sprint-X \u7b2c Y \u68d2] \u63a5 X \u4efb\u52a1"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "cd {{PROJECT_ROOT}}",
+      "canonical": "cd {{PROJECT_ROOT}}"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Task card: [complete handoff-card path]",
+      "canonical": "\u4efb\u52a1\u5361\uff1a[handoff \u5361\u5b8c\u6574\u8def\u5f84]"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Read and execute the card \u2192 return short handoff \u2460-\u2466 on completion",
+      "canonical": "\u8bfb\u5361\u6267\u884c \u2192 \u5b8c\u6210\u56de\u7b80\u7248 \u2460-\u2466"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- Keep cautions, acceptance criteria, phases and issue safeguards in the handoff card; do not duplicate them in the prompt.",
+      "canonical": "- \u4efb\u4f55\u201c\u8b66\u6212 / AC / Phase / \u8bae\u9898\u9632\u5fa1\u201d\u5185\u5bb9\u5168\u90e8\u7559\u5728 handoff \u5361\uff0c\u63d0\u793a\u8bcd\u4e0d\u590d\u5236"
+    },
+    {
+      "english": "- More than eight to ten lines is redundant defensive detail.",
+      "canonical": "- \u8d85\u8fc7 8-10 \u884c\u5c31\u662f\u5197\u4f59\u9632\u5fa1"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 4 \u2014 Verify before drafting handoff or ship cards",
+      "canonical": "## \u53cd\u601d 4 \u2014 PM \u8d77 handoff / ship \u5361\u524d\u5fc5\u8d70 verify checklist"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Historical triggers:** PM self-corrections #51-#54, the ship card's master-branch mismatch, and inaccurate APK estimates.",
+      "canonical": "**\u89e6\u53d1\u5386\u53f2**\uff1aPM \u81ea\u7ea0 #51-#54 + ship \u5361 master \u9519\u4f4d + APK \u4f30\u503c\u9519\u4f4d\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Checklist \u2014 issue CD:**",
+      "canonical": "**checklist\uff08\u8bae\u9898 CD\uff09**\uff1a"
+    },
+    {
+      "english": "- [ ] Verify actual code with grep: caller import style, module entries, Tab configuration and path conventions.",
+      "canonical": "- [ ] \u771f\u5b9e\u4ee3\u7801 grep verify\uff08caller import \u98ce\u683c / \u6a21\u5757\u5165\u53e3 / Tab \u914d\u7f6e / \u8def\u5f84\u98ce\u683c\uff09"
+    },
+    {
+      "english": "- [ ] Ground acceptance-criterion numbers in evidence; do not arbitrarily choose fewer than N characters or N minutes.",
+      "canonical": "- [ ] AC \u6570\u503c\u6709\u5b9e\u8bc1\u57fa\u7840\uff08\u907f\u514d\u4e3b\u89c2\u62cd < N \u5b57 / < N \u5206\u949f\uff09"
+    },
+    {
+      "english": "- [ ] Cross-check internal consistency among procedural steps, hard acceptance constraints and cautions.",
+      "canonical": "- [ ] \u5185\u90e8\u4e00\u81f4\u6027 cross-validate\uff08Step \u6d41\u7a0b + AC \u786c\u7ea6\u675f + \u8b66\u6212\u4e8b\u9879\u4e09\u8005\u4e0d\u77db\u76fe\uff09"
+    },
+    {
+      "english": "- [ ] Use branch main, not master.",
+      "canonical": "- [ ] \u5206\u652f\u540d main \u4e0d\u5199 master"
+    },
+    {
+      "english": "- [ ] Reference a measured historical APK size rather than estimating.",
+      "canonical": "- [ ] APK \u5386\u53f2\u5927\u5c0f\u6709\u53c2\u8003\u503c\uff08\u4e0d\u9760\u4f30\uff09"
+    },
+    {
+      "english": "- [ ] Keep prompts at ten lines or fewer.",
+      "canonical": "- [ ] \u63d0\u793a\u8bcd \u2264 10 \u884c"
+    },
+    {
+      "english": "- [ ] Under the historical v3.0 philosophy, new features require a settings toggle for user control / iron rule 25.",
+      "canonical": "- [ ] \u5386\u53f2\u5f53\u65f6 v3.0 \u54f2\u5b66\u65b0\u529f\u80fd\u5fc5\u52a0 settings \u5f00\u5173\uff08\u7528\u6237\u63a7\u5236\u6743 / \u94c1\u5f8b 25\uff09"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 5 \u2014 Handle large files according to the tool",
+      "canonical": "## \u53cd\u601d 5 \u2014 \u5927\u6587\u4ef6\u6309\u5de5\u5177\u5206\u5c42\u5904\u7406"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Trigger:** issue D / a Cowork mount caused hard truncation at 9105 bytes.",
+      "canonical": "**\u89e6\u53d1**\uff1a\u8bae\u9898 D / cowork mount \u89e6\u53d1 9105 \u5b57\u8282\u786c\u622a\u65ad"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Rule:** for Cowork files over 6500B, use scripts or chunked writes; for Codex/Claude files over 8KB, split responsibilities first. Verify key decisions against Windows-host truth, then check `tail` and byte counts after writing.",
+      "canonical": "**\u89c4\u5219**\uff1aCowork >6500B \u6539\u7528\u811a\u672c/\u5206\u5757\u5199\uff1bCodex/Claude >8KB \u5148\u62c6\u804c\u8d23\u3002\u5173\u952e\u51b3\u7b56\u7528 Windows host \u771f\u503c\u590d\u6838\uff0c\u5199\u540e\u67e5 `tail` / \u5b57\u8282\u6570\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 6 \u2014 Storing framework project truth outside the project is a design error",
+      "canonical": "## \u53cd\u601d 6 \u2014 Framework \u9879\u76ee\u5916\u5b58\u50a8\u662f\u8bbe\u8ba1\u9519\u5411\uff08\u8bae\u9898 CG / PROP-026\uff09"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Historical trigger:** on 2026-05-20, zlbdh noticed AppData memory was outside the project directory; self-review also found external Task lists, MCP configuration, and the then-current 11 candidates. Issues CG / PROP-026.",
+      "canonical": "**\u89e6\u53d1\u5386\u53f2**\uff1a2026-05-20 zlbdh \u53d1\u73b0 AppData memory \u4e0d\u5728\u9879\u76ee\u76ee\u5f55\uff1b\u81ea\u68c0\u53c8\u53d1\u73b0 Task list / MCP \u914d\u7f6e / \u5386\u53f2\u5f53\u65f6 11 candidates \u5916\u7f6e\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Iron rule:** project sources of truth other than secrets and explicit machine-local exceptions must live under `{{PROJECT_ROOT}}\\`, visible to zlbdh and consistent across tools. Versionable content belongs in Git; `.env.local`, real secrets, and machine-local baseUrl/model/apiKey follow the three-class behavior rules and ADR-022.",
+      "canonical": "**\u94c1\u5f8b**\uff1a\u975e\u5bc6\u94a5\u3001\u975e\u672c\u673a\u4f8b\u5916\u7684\u9879\u76ee\u771f\u6e90\uff0c\u5fc5\u987b\u5728 `{{PROJECT_ROOT}}\\` \u5185\uff0czlbdh \u53ef\u89c1\u3001\u8de8\u5de5\u5177\u4e00\u81f4\uff1b\u53ef\u7248\u672c\u5316\u5185\u5bb9\u8fdb Git\uff0c`.env.local` / \u771f\u5b9e\u5bc6\u94a5 / \u672c\u673a baseUrl/model/apiKey \u6309\u4e09\u7c7b\u884c\u4e3a\u94c1\u5f8b\u4e0e ADR-022 \u6267\u884c\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Framework self-check \u2014 required at new-conversation startup and Sprint RETRO:**",
+      "canonical": "**Framework \u81ea\u68c0 checklist\uff08\u65b0\u5bf9\u8bdd\u8d77\u624b + Sprint RETRO \u5fc5\u8dd1\uff09**\uff1a"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "| Candidate | Recorded state | Disposition |",
+      "canonical": "| Candidate | \u73b0\u72b6 | \u5904\u7f6e |"
+    },
+    {
+      "english": "|---|---|---|",
+      "canonical": "|---|---|---|"
+    },
+    {
+      "english": "| 1. Project memory | \u2705 `\u64cd\u4f5c\u7cfb\u7edf/05_\u8bb0\u5fc6/INDEX.md` | Fixed: strengthened option C |",
+      "canonical": "| 1. \u9879\u76ee\u8bb0\u5fc6 | \u2705 `\u64cd\u4f5c\u7cfb\u7edf/05_\u8bb0\u5fc6/INDEX.md` | \u5df2\u4fee\u590d\uff08C \u5f3a\u5316\u7248\uff09 |"
+    },
+    {
+      "english": "| 2. Task list | \u2705 `{{PROJECT_ROOT}}\\TASKS.md` | Fixed by Operating System PM self-review |",
+      "canonical": "| 2. Task list | \u2705 `{{PROJECT_ROOT}}\\TASKS.md` | \u5df2\u4fee\u590d\uff08\u64cd\u4f5c\u7cfb\u7edf PM \u81ea\u68c0\uff09|"
+    },
+    {
+      "english": "| 3. Conversation transcript | \u26a0\ufe0f Cowork internal `.jsonl` | No migration yet: system design; manual reading possible |",
+      "canonical": "| 3. \u5bf9\u8bdd transcript | \u26a0\ufe0f Cowork \u5185\u90e8 `.jsonl` | \u6682\u4e0d\u8fc1\uff08\u7cfb\u7edf\u8bbe\u8ba1 / \u53ef\u624b\u52a8 read\uff09 |"
+    },
+    {
+      "english": "| 4. \u72b6\u6001.md | \u2705 Project directory | Correct |",
+      "canonical": "| 4. \u72b6\u6001.md | \u2705 \u9879\u76ee\u76ee\u5f55 | \u5df2\u5bf9 |"
+    },
+    {
+      "english": "| 5. MCP configuration | \u2705 `\u80fd\u529b\u8d44\u4ea7/mcp/INSTALLED.md` | Fixed through declaration documentation |",
+      "canonical": "| 5. MCP \u914d\u7f6e | \u2705 `\u80fd\u529b\u8d44\u4ea7/mcp/INSTALLED.md` | \u5df2\u4fee\u590d\uff08\u58f0\u660e\u6587\u6863\uff09|"
+    },
+    {
+      "english": "| 6. `.env.local` API key | \u2705 gitignore | Correct design: secrets stay out of Git |",
+      "canonical": "| 6. `.env.local` API key | \u2705 gitignore | \u8bbe\u8ba1\u6b63\u786e\uff08\u5bc6\u94a5\u4e0d\u5165 Git\uff09 |"
+    },
+    {
+      "english": "| 7. PROP / ADR / RETRO | \u2705 `Docs/` | Correct |",
+      "canonical": "| 7. PROP / ADR / RETRO | \u2705 `Docs/` | \u5df2\u5bf9 |"
+    },
+    {
+      "english": "| 8. PM role prompts | \u2705 `\u64cd\u4f5c\u7cfb\u7edf/02_\u667a\u80fd\u4f53/` | Correct |",
+      "canonical": "| 8. PM \u89d2\u8272\u63d0\u793a\u8bcd | \u2705 `\u64cd\u4f5c\u7cfb\u7edf/02_\u667a\u80fd\u4f53/` | \u5df2\u5bf9 |"
+    },
+    {
+      "english": "| 9. Issue backlog | \u2705 RETRO + TASKS.md synchronized | Correct |",
+      "canonical": "| 9. \u8bae\u9898 backlog | \u2705 RETRO + TASKS.md \u540c\u6b65 | \u5df2\u5bf9 |"
+    },
+    {
+      "english": "| 10. Short chat handoff \u2460-\u2466 | \ud83d\udfe1 Separate per conversation | No forced migration: PROP-014 + PROP-027 v2 already mandate structure |",
+      "canonical": "| 10. chat \u7b80\u7248 \u2460-\u2466 | \ud83d\udfe1 \u6bcf\u6b21\u5bf9\u8bdd\u72ec\u7acb | \u4e0d\u5f3a\u8fc1\uff08PROP-014 + PROP-027 v2 \u5df2\u5f3a\u5236\u7ed3\u6784\uff09|"
+    },
+    {
+      "english": "| 11. Stale Cowork mount | \u2705 ADR-025 safeguards | Correct |",
+      "canonical": "| 11. Cowork mount stale | \u2705 ADR-025 \u9632\u5fa1 | \u5df2\u5bf9 |"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Procedure for future candidates:**",
+      "canonical": "**\u672a\u6765\u65b0\u589e candidate \u6d41\u7a0b**\uff1a"
+    },
+    {
+      "english": "1. Identify them under the Operating System PM role.",
+      "canonical": "1. \u64cd\u4f5c\u7cfb\u7edf PM \u5e3d\u5b50\u8bc6\u522b"
+    },
+    {
+      "english": "2. Run decision-checkpoint Q1-Q7.",
+      "canonical": "2. decision-checkpoint Q1-Q7"
+    },
+    {
+      "english": "3. Assess through the PROP / RETRO process.",
+      "canonical": "3. \u8d70 PROP / RETRO \u6d41\u7a0b\u8bc4\u4f30"
+    },
+    {
+      "english": "4. If migration into the project is approved, update this checklist and the INDEX entry.",
+      "canonical": "4. \u5982\u786e\u8ba4\u8fc1\u5165\u9879\u76ee\uff0c\u66f4\u65b0\u672c checklist + \u540c\u6b65 INDEX \u5165\u53e3"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 7 \u2014 Prevent issue AJ trace-recording decay",
+      "canonical": "## \u53cd\u601d 7 \u2014 \u8bae\u9898 AJ \u7559\u75d5\u673a\u5236\u8870\u51cf\u9632\u5fa1\uff08PM \u81ea\u7ea0 #57 / #58\uff09"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Historical trigger:** on 2026-05-20, zlbdh prompted self-review twice before the PM discovered zero PM-trace rows in `\u72b6\u6001.md` during roughly six hours, 09:30-15:30. AJ requires a checkpoint and trace before role changes; adherence decayed during a long session. PM self-corrections #57 / #58.",
+      "canonical": "**\u89e6\u53d1\u5386\u53f2**\uff1a2026-05-20 zlbdh 2 \u6b21\u63d0\u793a\u81ea\u68c0\u540e\uff0cPM \u624d\u53d1\u73b0 09:30-15:30 \u7ea6 6 \u5c0f\u65f6 `\u72b6\u6001.md` PM \u8f68\u8ff9 0 \u884c\u3002AJ \u8981\u6c42\u201c\u5207\u5e3d\u5b50\u524d\u5fc5\u8dd1 + \u5fc5\u7559\u75d5\u201d\uff0c\u957f session \u540e\u8870\u51cf\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Actual cause:**",
+      "canonical": "**\u771f\u56e0**\uff1a"
+    },
+    {
+      "english": "- The decision-checkpoint design was not the problem.",
+      "canonical": "- \u274c \u4e0d\u662f decision-checkpoint \u8bbe\u8ba1\u9519\u3002"
+    },
+    {
+      "english": "- During a long session, the PM stopped actively triggering it and forgot both the checkpoint and status update.",
+      "canonical": "- \u2705 \u662f PM \u957f session \u540e\u6ca1\u4e3b\u52a8 trigger\uff0c\u5fd8\u8dd1 decision-checkpoint / \u5fd8\u8865 `\u72b6\u6001.md`\u3002"
+    },
+    {
+      "english": "- Self-observation was insufficient; an external trigger was needed to notice.",
+      "canonical": "- \u2705 PM \u81ea\u6211\u89c2\u5bdf\u4e0d\u8db3\uff0c\u9700\u8981\u5916\u90e8 trigger \u624d\u53d1\u73b0\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Rules:**",
+      "canonical": "**\u89c4\u5219**\uff1a"
+    },
+    {
+      "english": "1. Before every PM role change, run decision-checkpoint Q1-Q7. When status needs writing, the Project PM main session or the responsible allowlisted role adds the final row; other PMs/agents only draft or report.",
+      "canonical": "1. \u6bcf\u6b21 PM \u5207\u89d2\u8272\u5e3d\u5b50\u524d\uff1a\u5fc5\u8dd1 decision-checkpoint Q1-Q7\uff1b\u9700\u8981\u5199 `\u72b6\u6001.md` \u65f6\u7531\u9879\u76ee PM \u4e3b\u4f1a\u8bdd\u6216\u5bf9\u5e94\u767d\u540d\u5355\u6536\u53e3\u52a0 1 \u884c\uff0c\u5176\u4ed6 PM/agent \u53ea\u8d77\u8349\u6216\u62a5\u544a"
+    },
+    {
+      "english": "2. After every five short chat handoffs, roughly 15-30 minutes, run a mini-review: how many role changes occurred, and how many status rows were added? Correct any discrepancy immediately.",
+      "canonical": "2. \u6bcf 5 \u4e2a chat \u7b80\u7248\u8f93\u51fa\uff08\u7ea6 15-30 \u5206\u949f\uff09\u5fc5\u8dd1\u4e00\u6b21 mini \u81ea\u68c0\uff1a\u300c\u6211\u672c\u6b21\u5207\u6362\u4e86\u51e0\u6b21\u5e3d\u5b50\uff1f\u72b6\u6001.md \u52a0\u4e86\u51e0\u884c\uff1f\u300d\u5982\u4e0d\u4e00\u81f4 \u2192 \u5f53\u573a\u8865\u767b"
+    },
+    {
+      "english": "3. For long sessions, short chat section \u2466 must state \u201cN PM-trace rows added (\u72b6\u6001.md L<line>).\u201d",
+      "canonical": "3. \u957f session \u9632\u8870\u51cf\uff1achat \u7b80\u7248 \u2466 \u5fc5\u542b\u201cPM \u8f68\u8ff9\u52a0\u4e86 N \u884c\uff08\u72b6\u6001.md L<line>\uff09\u201d"
+    },
+    {
+      "english": "4. Any request from zlbdh for an operating-system self-check requires stopping, reviewing and recording the trace before resuming work.",
+      "canonical": "4. zlbdh \u4efb\u4f55\u201c\u64cd\u4f5c\u7cfb\u7edf\u81ea\u68c0\u201d\u63d0\u793a\uff1aPM \u5fc5\u5148\u505c + \u81ea\u68c0\u7559\u75d5 + \u518d\u505a\u4e8b"
+    },
+    {
+      "english": "5. At a new conversation's start, read the latest PM-transition trace in `\u72b6\u6001.md` to understand the previous session before working.",
+      "canonical": "5. \u65b0\u5bf9\u8bdd\u8d77\u624b\uff1a\u5148 read `\u72b6\u6001.md` \u6700\u65b0 PM \u5207\u6362\u8f68\u8ff9\uff0c\u4e86\u89e3\u4e0a\u6b21 session \u72b6\u6001\u518d\u5f00\u5de5"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**PM self-correction #57:** the seventh recurrence of issue AJ trace collapse across Sprints.",
+      "canonical": "**PM \u81ea\u7ea0 #57**\uff1a\u8bae\u9898 AJ \u7559\u75d5\u5d29\u584c\u8de8 Sprint \u7b2c 7 \u6b21\u540c\u6a21\u5f0f\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**PM self-correction #58:** PM self-observation decayed and needed an external trigger; therefore self-check after every N chat outputs and stop whenever zlbdh requests a self-check.",
+      "canonical": "**PM \u81ea\u7ea0 #58**\uff1aPM \u81ea\u6211\u89c2\u5bdf\u8870\u51cf\u9700\u5916\u90e8 trigger\uff1b\u56e0\u6b64\u6bcf N \u6b21 chat \u81ea\u68c0\uff0c\u4e14 zlbdh \u4efb\u4f55\u201c\u81ea\u68c0\u201d\u63d0\u793a\u5fc5\u505c\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Issue CK candidate monitoring:** prevent decay of trace recording in \u72b6\u6001.md.",
+      "canonical": "**\u8bae\u9898 CK \u5019\u9009\u76d1\u63a7**\uff1a\u72b6\u6001.md \u7559\u75d5\u673a\u5236\u8870\u51cf\u9632\u5fa1\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "**Issue AJ v2 / PROP-027:** historical candidate for automatic trace triggering; current hooks/scripts only remind and do not write automatically.",
+      "canonical": "**\u8bae\u9898 AJ v2 / PROP-027**\uff1a\u5386\u53f2\u5019\u9009\u201c\u81ea\u52a8 trigger \u7559\u75d5\u201d\uff1b\u73b0\u884c\u4ec5 hooks/\u811a\u672c\u63d0\u9192\uff0c\u4e0d\u81ea\u52a8\u843d\u7b14\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 8 \u2014 Do not mistake volume-root metadata for project ADS",
+      "canonical": "## \u53cd\u601d 8 \u2014 \u8def\u5f84\u5b89\u5168\u4e0d\u5f97\u628a\u5377\u6839\u5143\u6570\u636e\u8bef\u5224\u4e3a\u9879\u76ee ADS"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 04:15 by Codex \u2014 exposed in the first real D-drive borrowing-lifecycle dogfood preflight; do not fix it by deleting volume metadata or broadly relaxing ADS checks.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 04:15 by Codex \u2014 \u501f\u9274\u95ed\u73af\u9996\u6b21\u5728 D \u76d8\u771f\u5b9e dogfood \u524d\u7f6e\u68c0\u67e5\u4e2d\u66b4\u9732\uff0c\u9700\u9632\u6b62\u7528\u5220\u9664\u5377\u5143\u6570\u636e\u6216\u6574\u4f53\u653e\u5bbd ADS \u5b88\u536b\u4fee\u7eff\u3002"
+    },
+    {
+      "english": "- **Observed:** reference directory, template root and future instance root all passed content inventory but reported `source-boundary`; C-drive fixtures passed, while the real D-drive root could not be entered.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u53c2\u8003\u76ee\u5f55\u3001\u6a21\u677f\u6839\u548c\u672a\u6765\u5b9e\u4f8b\u6839\u90fd\u901a\u8fc7\u5185\u5bb9\u76d8\u70b9\uff0c\u5374\u7edf\u4e00\u62a5 `source-boundary`\uff1bC \u76d8 fixture \u5168\u7eff\uff0cD \u76d8\u771f\u5b9e\u6839\u4e0d\u53ef\u8fdb\u5165\u3002"
+    },
+    {
+      "english": "- **Cause:** the `D:\\` volume root had `:sguard:$DATA` maintained by security software. Old logic treated named streams on volume roots, project ancestors and targets identically.",
+      "canonical": "- **\u6839\u56e0**\uff1a`D:\\` \u5377\u6839\u6709\u5b89\u5168\u8f6f\u4ef6\u7ef4\u62a4\u7684 `:sguard:$DATA`\uff0c\u65e7\u903b\u8f91\u628a\u5377\u6839\u3001\u9879\u76ee\u5185\u7956\u5148\u4e0e\u76ee\u6807\u8def\u5f84\u7684\u547d\u540d\u6d41\u7b49\u540c\u5904\u7406\u3002"
+    },
+    {
+      "english": "- **Fix:** skip stream inspection only when the volume root is an ancestor. Target paths and every non-volume-root ancestor still undergo ADS checks; reparse, hard-link and fixed-drive constraints remain.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u4ec5\u5f53\u5377\u6839\u4f5c\u4e3a\u7956\u5148\u65f6\u8df3\u8fc7\u6d41\u68c0\u67e5\uff1b\u76ee\u6807\u8def\u5f84\u4e0e\u6240\u6709\u975e\u5377\u6839\u7956\u5148\u4ecd\u68c0\u67e5 ADS\uff0creparse\u3001\u786c\u94fe\u63a5\u548c\u56fa\u5b9a\u76d8\u7ea6\u675f\u4e0d\u53d8\u3002"
+    },
+    {
+      "english": "- **Lesson:** test path guards against both isolated fixtures and real workspaces. Distinguish volume metadata from project boundaries before addressing volume-root ADS; never delete external metadata or weaken the entire guard.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u8def\u5f84\u5b88\u536b\u5fc5\u987b\u540c\u65f6\u8dd1\u9694\u79bb fixture \u4e0e\u771f\u5b9e workspace\uff1b\u9047\u5230\u5377\u6839 ADS \u5148\u533a\u5206\u5377\u5143\u6570\u636e\u548c\u9879\u76ee\u8fb9\u754c\uff0c\u7981\u6b62\u5220\u9664\u5916\u90e8\u5143\u6570\u636e\u6216\u653e\u5bbd\u6574\u6761\u5b88\u536b\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 9 \u2014 Materialize Handle before waiting on redirected WinPS 5.1 processes",
+      "canonical": "## \u53cd\u601d 9 \u2014 WinPS 5.1 \u91cd\u5b9a\u5411\u8fdb\u7a0b\u9700\u5148\u7269\u5316 Handle"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 04:21 by Codex \u2014 the P4t concurrent fa\u00e7ade contract reproduced two false failures; retain this minimal runtime-compatibility finding.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 04:21 by Codex \u2014 P4t \u5e76\u53d1 fa\u00e7ade \u5408\u540c\u7a33\u5b9a\u590d\u73b0\u4e24\u6b21\u5047\u5931\u8d25\uff0c\u9700\u4fdd\u7559\u6700\u5c0f\u8fd0\u884c\u65f6\u517c\u5bb9\u7ed3\u8bba\u3002"
+    },
+    {
+      "english": "- **Observed:** `WaitForExit(timeout)` returned true and `HasExited=true`, yet `ExitCode` remained null after `Start-Process -PassThru -RedirectStandardOutput/-RedirectStandardError`.",
+      "canonical": "- **\u73b0\u8c61**\uff1a`WaitForExit(timeout)` \u8fd4\u56de true \u4e14 `HasExited=true`\uff0c\u4f46 `Start-Process -PassThru -RedirectStandardOutput/-RedirectStandardError` \u7684 `ExitCode` \u4ecd\u4e3a null\u3002"
+    },
+    {
+      "english": "- **Cause:** Windows PowerShell 5.1 materializes the Process handle lazily; obtaining it only after a redirected process exits can lose the exit code.",
+      "canonical": "- **\u6839\u56e0**\uff1aWindows PowerShell 5.1 \u7684 `Process` \u53e5\u67c4\u4e3a\u60f0\u6027\u7269\u5316\uff1b\u5e26\u91cd\u5b9a\u5411\u65f6\u8fdb\u7a0b\u9000\u51fa\u540e\u518d\u53d6\u53e5\u67c4\u53ef\u80fd\u4e22\u5931 exit code\u3002"
+    },
+    {
+      "english": "- **Fix:** execute `[void]$process.Handle` after startup and before waiting. The concurrency contract recovered from a stable 9/1 to 10/0.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u542f\u52a8\u540e\u3001\u7b49\u5f85\u524d\u5148\u6267\u884c `[void]$process.Handle`\uff0c\u5e76\u53d1\u5408\u540c\u7531\u7a33\u5b9a 9/1 \u6062\u590d\u4e3a 10/0\u3002"
+    },
+    {
+      "english": "- **Lesson:** when testing concurrency with WinPS 5.1 Start-Process, retain Handle before WaitForExit; a null ExitCode does not establish failure of the tested program.",
+      "canonical": "- **\u6559\u8bad**\uff1aWinPS 5.1 \u7528 `Start-Process` \u505a\u5e76\u53d1\u9a8c\u6536\u65f6\uff0c\u5fc5\u987b\u5728 `WaitForExit` \u524d\u4fdd\u7559 Handle\uff1b\u4e0d\u80fd\u628a null ExitCode \u8bef\u5224\u6210\u88ab\u6d4b\u7a0b\u5e8f\u5931\u8d25\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 10 \u2014 Public validation leaves must independently enforce governance boundaries",
+      "canonical": "## \u53cd\u601d 10 \u2014 \u516c\u5f00\u68c0\u67e5 leaf \u5fc5\u987b\u72ec\u7acb\u95ed\u5408\u6cbb\u7406\u8fb9\u754c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 04:49 by Codex \u2014 focused P4t item-helper review found that a passing fa\u00e7ade did not prove each leaf was safe independently.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 04:49 by Codex \u2014 P4t \u4e8b\u9879 helper \u805a\u7126\u5ba1\u67e5\u53d1\u73b0 fa\u00e7ade \u5168\u7eff\u4ecd\u4e0d\u8db3\u4ee5\u8bc1\u660e leaf \u81ea\u8eab\u5b89\u5168\u3002"
+    },
+    {
+      "english": "- **Observed:** direct item-leaf calls could pass with unknown/conflict mode, arbitrary owners, credential queries, active-item supersedes or placeholder cancellation reasons.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u76f4\u63a5\u8c03\u7528\u4e8b\u9879 leaf \u65f6\uff0c`unknown/conflict` \u6a21\u5f0f\u3001\u4efb\u610f owner\u3001\u51ed\u636e query\u3001\u6d3b\u52a8\u4e8b\u9879 supersedes \u548c\u53d6\u6d88\u5360\u4f4d\u7406\u7531\u4ecd\u53ef\u80fd\u8fd4\u56de\u901a\u8fc7\u3002"
+    },
+    {
+      "english": "- **Cause:** mode checks relied on fa\u00e7ade preconditions. Schema, references and history checked only shape, without enforcing cross-document governance semantics in the public leaf.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u6a21\u5f0f\u6821\u9a8c\u4f9d\u8d56 fa\u00e7ade \u5148\u9a8c\uff0cschema\u3001\u5f15\u7528\u548c\u5386\u53f2\u53ea\u505a\u5f62\u72b6\u68c0\u67e5\uff0c\u6ca1\u6709\u628a\u8de8\u6587\u6863\u6cbb\u7406\u8bed\u4e49\u9501\u8fdb\u516c\u5f00 leaf\u3002"
+    },
+    {
+      "english": "- **Fix:** leaves fail closed independently; owner uses the strict nine-PM enum; URL decoding precedes rejection of credential parameter names; supersedes permits terminal predecessors only; cancellation reasons reject defined placeholders.",
+      "canonical": "- **\u4fee\u590d**\uff1aleaf \u81ea\u884c fail-closed\uff1bowner \u4e25\u683c\u4f7f\u7528 9 PM \u679a\u4e3e\uff1bURL \u89e3\u7801\u540e\u62d2\u7edd\u51ed\u636e\u53c2\u6570\u540d\uff1bsupersedes \u53ea\u5141\u8bb8\u7ec8\u6001\u524d\u8eab\uff1b\u53d6\u6d88\u539f\u56e0\u62d2\u7edd\u89c4\u8303\u5360\u4f4d\u7b26\u3002"
+    },
+    {
+      "english": "- **Lesson:** every directly callable public validation entry must validate its own safety preconditions. Fa\u00e7ade orchestration cannot replace a leaf's own fail-closed contract.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u6bcf\u4e2a\u53ef\u76f4\u63a5\u8c03\u7528\u7684\u516c\u5f00\u68c0\u67e5\u5165\u53e3\u90fd\u5fc5\u987b\u72ec\u7acb\u9a8c\u8bc1\u5b89\u5168\u524d\u7f6e\u6761\u4ef6\uff1b\u603b fa\u00e7ade \u7684\u7f16\u6392\u987a\u5e8f\u4e0d\u80fd\u66ff\u4ee3 leaf \u81ea\u8eab\u7684 fail-closed \u5408\u540c\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 11 \u2014 Placeholder files need byte-level contracts too",
+      "canonical": "## \u53cd\u601d 11 \u2014 \u5360\u4f4d\u6587\u4ef6\u4e5f\u5fc5\u987b\u7eb3\u5165\u5b57\u8282\u7ea7\u5951\u7ea6"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 05:03 by Codex \u2014 the first real temporary instance hit a P4t hard failure with an empty borrowing area.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 05:03 by Codex \u2014 \u9996\u4e2a\u771f\u5b9e\u4e34\u65f6\u5b9e\u4f8b\u5728\u7a7a\u501f\u9274\u533a\u5373\u89e6\u53d1 P4t \u786c\u5931\u8d25\u3002"
+    },
+    {
+      "english": "- **Observed:** template and instance `\u6765\u6e90/.gitkeep` and `\u4e8b\u9879/.gitkeep` appeared empty but each contained one LF; source inventory accepted only zero-byte sentinels.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u6a21\u677f\u548c\u5b9e\u4f8b\u7684 `\u6765\u6e90/.gitkeep`\u3001`\u4e8b\u9879/.gitkeep` \u770b\u4f3c\u4e3a\u7a7a\uff0c\u5b9e\u9645\u5404\u542b\u4e00\u4e2a LF\uff1b\u6765\u6e90 inventory \u53ea\u63a5\u53d7\u96f6\u5b57\u8282 sentinel\u3002"
+    },
+    {
+      "english": "- **Cause:** scaffold contracts checked names and counts, not placeholder bytes. Template mode skipped instance-source scanning, so the issue appeared only in a real instance.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u9aa8\u67b6\u5408\u540c\u53ea\u65ad\u8a00\u540d\u79f0\u4e0e\u6570\u91cf\uff0c\u6ca1\u6709\u65ad\u8a00\u5360\u4f4d\u6587\u4ef6\u5b57\u8282\uff1b\u6a21\u677f\u6a21\u5f0f\u53c8\u8df3\u8fc7\u5b9e\u4f8b\u6765\u6e90\u626b\u63cf\uff0c\u95ee\u9898\u76f4\u5230\u771f\u5b9e\u5b9e\u4f8b\u624d\u66b4\u9732\u3002"
+    },
+    {
+      "english": "- **Fix:** first add RED checks for template/instance sentinel length, then normalize the four retained files to zero bytes. Scaffold and initial instance P4t rechecks passed.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u5148\u8865\u6a21\u677f/\u5b9e\u4f8b sentinel \u957f\u5ea6 RED\uff0c\u518d\u628a\u56db\u4e2a\u4fdd\u7559\u6587\u4ef6\u5f52\u4e00\u4e3a\u96f6\u5b57\u8282\uff1bscaffold \u4e0e\u5b9e\u4f8b\u521d\u59cb P4t \u590d\u9a8c\u901a\u8fc7\u3002"
+    },
+    {
+      "english": "- **Lesson:** a placeholder interpreted by a safety scanner is not semantically empty. Lock its path, count and exact bytes; passing template mode does not replace instance-mode dogfood.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u4f1a\u88ab\u5b89\u5168\u626b\u63cf\u5668\u89e3\u91ca\u7684\u5360\u4f4d\u6587\u4ef6\u4e0d\u662f\u201c\u65e0\u5185\u5bb9\u6587\u4ef6\u201d\uff0c\u5fc5\u987b\u540c\u65f6\u9501\u5b9a\u8def\u5f84\u3001\u6570\u91cf\u548c\u7cbe\u786e\u5b57\u8282\uff1b\u6a21\u677f\u6a21\u5f0f\u901a\u8fc7\u4e0d\u80fd\u4ee3\u66ff\u5b9e\u4f8b\u6a21\u5f0f dogfood\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 12 \u2014 Placeholder replacement must not rewrite validator constants",
+      "canonical": "## \u53cd\u601d 12 \u2014 \u5360\u4f4d\u7b26\u66ff\u6362\u4e0d\u80fd\u6539\u5199\u6821\u9a8c\u5668\u7684\u89c4\u8303\u5e38\u91cf"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 05:10 by Codex \u2014 the first Local capture in a real instance reported missing-trusted-component during zero-write preflight.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 05:10 by Codex \u2014 \u771f\u5b9e\u5b9e\u4f8b\u9996\u6b21 Local capture \u5728\u96f6\u5199\u5165 preflight \u62a5 `missing-trusted-component`\u3002"
+    },
+    {
+      "english": "- **Observed:** all production leaves existed and .gitignore was valid, but the instance's source-card scaffold hash differed from the validator's hardcoded hash.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u6240\u6709\u751f\u4ea7\u53f6\u90fd\u5b58\u5728\u4e14 `.gitignore` \u5408\u6cd5\uff0c\u4f46\u5b9e\u4f8b\u6765\u6e90\u5361\u9aa8\u67b6\u54c8\u5e0c\u4e0e\u6821\u9a8c\u5668\u786c\u7f16\u7801\u4e0d\u4e00\u81f4\u3002"
+    },
+    {
+      "english": "- **Cause:** recursive replacement of `{{PROJECT_NAME}}` also rewrote the same literal in source-card-skeleton.ps1 used to reconstruct the canonical template; the expected hash still described the unchanged template.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u5b9e\u4f8b\u5316\u5668\u9012\u5f52\u66ff\u6362 `{{PROJECT_NAME}}` \u65f6\uff0c\u4e5f\u6539\u5199\u4e86 `source-card-skeleton.ps1` \u7528\u6765\u6062\u590d\u89c4\u8303\u6a21\u677f\u7684\u540c\u540d\u5b57\u9762\u91cf\uff1b\u9884\u671f\u54c8\u5e0c\u4ecd\u5c5e\u4e8e\u672a\u6539\u5199\u6a21\u677f\u3002"
+    },
+    {
+      "english": "- **Fix:** construct the canonical token in pieces at runtime, keeping the full instantiator-matchable placeholder out of validator source; add a real-instance capture contract.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u6821\u9a8c\u5668\u5728\u8fd0\u884c\u65f6\u5206\u6bb5\u6784\u9020\u89c4\u8303 token\uff0c\u6e90\u7801\u4e0d\u518d\u51fa\u73b0\u53ef\u88ab\u5b9e\u4f8b\u5316\u5668\u547d\u4e2d\u7684\u5b8c\u6574\u5360\u4f4d\u7b26\uff1b\u65b0\u589e\u771f\u5b9e\u5b9e\u4f8b capture \u5408\u540c\u3002"
+    },
+    {
+      "english": "- **Lesson:** a template placeholder is both data and a code-rewrite pattern. Production validators, regexes and golden constants must construct globally replaced tokens in a way that cannot match the replacement, and undergo instance-level end-to-end tests.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u6a21\u677f\u5360\u4f4d\u7b26\u65e2\u662f\u6570\u636e\u4e5f\u662f\u4ee3\u7801\u6539\u5199\u6a21\u5f0f\uff1b\u751f\u4ea7\u6821\u9a8c\u5668\u3001\u6b63\u5219\u548c golden \u5e38\u91cf\u4e0d\u5f97\u76f4\u63a5\u5d4c\u5165\u4f1a\u88ab\u5168\u5c40\u66ff\u6362\u7684\u5b8c\u6574 token\uff0c\u5fc5\u987b\u7528\u4e0d\u53ef\u547d\u4e2d\u7684\u6784\u9020\u65b9\u5f0f\u5e76\u8dd1\u5b9e\u4f8b\u7ea7\u7aef\u5230\u7aef\u9a8c\u6536\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 13 \u2014 Cross-card implementation authority must exactly match the decision",
+      "canonical": "## \u53cd\u601d 13 \u2014 \u8de8\u5361\u5b9e\u65bd\u6743\u9650\u5fc5\u987b\u4e0e\u51b3\u7b56\u7cbe\u786e\u76f8\u7b49"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 05:18 by Codex \u2014 P4t item review showed that valid per-card enums could still broaden authority when bound across cards.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 05:18 by Codex \u2014 P4t \u4e8b\u9879\u5ba1\u67e5\u53d1\u73b0\u5355\u5361\u679a\u4e3e\u5408\u6cd5\u4ecd\u53ef\u80fd\u5728\u8de8\u5361\u7ed1\u5b9a\u65f6\u9519\u8bef\u6269\u6743\u3002"
+    },
+    {
+      "english": "- **Observed:** after an item entered implementation_ready / implementing / verifying / closed, a valid reuse_scope from the other internal reuse mode, or the broader redistribute scope, could be mistaken for authorization under its current decision.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u4e8b\u9879\u8fdb\u5165 `implementation_ready / implementing / verifying / closed` \u540e\uff0c\u53ea\u8981\u6765\u6e90\u5361\u7684 `reuse_scope` \u5c5e\u4e8e\u5408\u6cd5\u679a\u4e3e\uff0c\u53e6\u4e00\u79cd\u5185\u90e8\u590d\u7528\u8303\u56f4\u6216\u66f4\u5bbd\u7684 `redistribute` \u4e5f\u53ef\u80fd\u88ab\u8bef\u5f53\u6210\u5f53\u524d decision \u7684\u5b9e\u65bd\u6388\u6743\u3002"
+    },
+    {
+      "english": "- **Cause:** source and item cards checked field shape separately without verifying each bound capture's authorization against adopt / adapt in every implementation state.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u6765\u6e90\u5361\u4e0e\u4e8b\u9879\u5361\u5206\u522b\u6821\u9a8c\u4e86\u5b57\u6bb5\u5f62\u72b6\uff0c\u5374\u6ca1\u6709\u5728\u5b9e\u65bd\u6001\u9010\u4e00\u6838\u5bf9\u6bcf\u4e2a\u7ed1\u5b9a capture \u7684\u6388\u6743\u503c\u4e0e `adopt / adapt` \u51b3\u7b56\u3002"
+    },
+    {
+      "english": "- **Fix:** in implementation and later states, adopt accepts only copy-internal-approved and adapt only adapt-internal-approved. Every capture must match exactly; infer no authority from inspect, the other internal scope, or redistribute.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u5b9e\u65bd\u53ca\u540e\u7eed\u72b6\u6001\u4e2d\uff0c`adopt` \u53ea\u63a5\u53d7 `copy-internal-approved`\uff0c`adapt` \u53ea\u63a5\u53d7 `adapt-internal-approved`\uff1b\u6bcf\u4e2a\u7ed1\u5b9a capture \u90fd\u5fc5\u987b\u7cbe\u786e\u5339\u914d\uff0c\u4e0d\u4ece `inspect`\u3001\u53e6\u4e00\u5185\u90e8\u8303\u56f4\u6216 `redistribute` \u63a8\u5bfc\u6743\u9650\u3002"
+    },
+    {
+      "english": "- **Lesson:** cross-card authority is a relationship contract, not the union of two enum contracts. Fixtures must update frontmatter, permission tables and disk-reread paths together and exercise actual seal/fa\u00e7ade rereads.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u8de8\u5361\u6388\u6743\u662f\u5173\u7cfb\u5408\u540c\uff0c\u4e0d\u662f\u4e24\u4e2a\u679a\u4e3e\u5408\u540c\u7684\u5e76\u96c6\uff1b\u6d4b\u8bd5 fixture \u5fc5\u987b\u540c\u65f6\u66f4\u65b0 frontmatter\u3001\u6743\u9650\u8868\u548c\u78c1\u76d8\u91cd\u8bfb\u8def\u5f84\uff0c\u5e76\u8986\u76d6 seal / fa\u00e7ade \u7684\u771f\u5b9e\u91cd\u8bfb\u884c\u4e3a\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 14 \u2014 Root mode does not establish a business-source profile",
+      "canonical": "## \u53cd\u601d 14 \u2014 \u6839\u6a21\u5f0f\u4e0d\u80fd\u4ee3\u66ff\u4e1a\u52a1\u6765\u6e90\u753b\u50cf"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 09:49 by Codex \u2014 a fresh generic project's first complete health check repeatedly produced 32 false legacy requirements/PROP failures; keep deployment mode and business lineage separate.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 09:49 by Codex \u2014 \u5168\u65b0 generic project \u9996\u6b21\u5168\u91cf\u4f53\u68c0\u7a33\u5b9a\u62a5\u51fa 32 \u6761\u65e7\u9700\u6c42/PROP \u5047\u5931\u8d25\uff0c\u9700\u56fa\u5316\u6a21\u5f0f\u4e0e\u4e1a\u52a1\u8c31\u7cfb\u5206\u8f74\u539f\u5219\u3002"
+    },
+    {
+      "english": "- **Observed:** the instance had only a valid `.czxt-project-root` and no inherited requirements, tests or PROP history, yet P4q still required all legacy business-specific anchors.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u5b9e\u4f8b\u53ea\u6709\u5408\u6cd5 `.czxt-project-root`\uff0c\u672a\u643a\u5e26\u65e7\u6765\u6e90\u9879\u76ee\u7684\u9700\u6c42\u3001\u6d4b\u8bd5\u4e0e PROP \u5386\u53f2\uff0cP4q \u4ecd\u5f3a\u5236\u8fd0\u884c\u5168\u90e8\u65e7\u4e1a\u52a1\u4e13\u5c5e\u951a\u70b9\u3002"
+    },
+    {
+      "english": "- **Cause:** old logic distinguished only template/project, incorrectly inferring that any project instance belonged to one legacy source project; deployment mode and business lineage became one boolean.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u65e7\u903b\u8f91\u53ea\u533a\u5206 `template / project`\uff0c\u9519\u8bef\u5730\u628a\u201c\u8fd9\u662f\u9879\u76ee\u5b9e\u4f8b\u201d\u63a8\u5bfc\u6210\u201c\u8fd9\u662f\u67d0\u4e2a\u65e7\u6765\u6e90\u9879\u76ee\u201d\uff1b\u90e8\u7f72\u6a21\u5f0f\u4e0e\u4e1a\u52a1\u6765\u6e90\u753b\u50cf\u88ab\u6df7\u6210\u4e00\u4e2a\u5e03\u5c14\u91cf\u3002"
+    },
+    {
+      "english": "- **Fix:** add a public-scope legacy-profile check requiring all three high-confidence historical asset classes. Template and generic project skip only legacy business helpers, while general governance helpers still run; one decoy file cannot activate legacy mode.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u5728\u516c\u5171 scope \u4e2d\u589e\u52a0\u4e09\u7c7b\u9ad8\u7f6e\u4fe1\u5386\u53f2\u8d44\u4ea7\u540c\u65f6\u5b58\u5728\u7684 legacy profile \u5224\u5b9a\uff1b\u6a21\u677f\u4e0e generic project \u53ea\u8df3\u8fc7\u65e7\u4e1a\u52a1 helper\uff0c\u901a\u7528\u6cbb\u7406 helper \u7ee7\u7eed\u6267\u884c\uff0c\u5355\u4e2a\u8bf1\u9975\u6587\u4ef6\u4e0d\u80fd\u6fc0\u6d3b legacy\u3002"
+    },
+    {
+      "english": "- **Lesson:** a root marker establishes runtime mode, not business lineage. Source-specific guards need explicit, conjunctive, high-confidence signatures; default to generic while retaining general gates.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u6839 marker \u53ea\u56de\u7b54\u8fd0\u884c\u6a21\u5f0f\uff0c\u4e0d\u80fd\u8bc1\u660e\u4e1a\u52a1\u8c31\u7cfb\uff1b\u6765\u6e90\u4e13\u5c5e\u5b88\u536b\u5fc5\u987b\u7531\u663e\u5f0f\u3001\u5408\u53d6\u3001\u9ad8\u7f6e\u4fe1\u7b7e\u540d\u542f\u7528\uff0c\u9ed8\u8ba4\u6309 generic \u6536\u655b\u4e14\u4fdd\u7559\u901a\u7528\u95e8\u7981\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 15 \u2014 Judge WinPS child processes by exit codes before stderr",
+      "canonical": "## \u53cd\u601d 15 \u2014 WinPS \u5b50\u8fdb\u7a0b stderr \u5fc5\u987b\u8ba9\u4f4d\u4e8e\u9000\u51fa\u7801\u5224\u5b9a"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 09:49 by Codex \u2014 before a generic project's business Git repository was initialized, P4r changed from an expected skip to an unhandled exit 1.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 09:49 by Codex \u2014 generic project \u5c1a\u672a\u521d\u59cb\u5316\u4e1a\u52a1 Git \u4ed3\u5e93\u65f6\uff0cP4r \u4ece\u9884\u671f\u8df3\u8fc7\u53d8\u6210\u672a\u5904\u7406 exit 1\u3002"
+    },
+    {
+      "english": "- **Observed:** app/.git was absent and install-hooks.ps1 raised a diagnosable error, but P4r stopped with NativeCommandError before reading `$LASTEXITCODE`.",
+      "canonical": "- **\u73b0\u8c61**\uff1a`app/.git` \u4e0d\u5b58\u5728\uff0c`install-hooks.ps1` \u629b\u51fa\u53ef\u8bca\u65ad\u9519\u8bef\uff1bP4r \u5c1a\u672a\u8bfb\u53d6 `$LASTEXITCODE` \u5c31\u4ee5 `NativeCommandError` \u4e2d\u6b62\u3002"
+    },
+    {
+      "english": "- **Cause:** the parent used `$ErrorActionPreference='Stop'` while capturing the native PowerShell child's stderr with `2>&1`; WinPS 5.1 first wrapped stderr in a terminating error.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u7236\u811a\u672c\u4f7f\u7528 `$ErrorActionPreference='Stop'`\uff0c\u540c\u65f6\u4ee5 `2>&1` \u6355\u83b7\u539f\u751f PowerShell \u5b50\u8fdb\u7a0b stderr\uff1bWinPS 5.1 \u4f1a\u5148\u628a stderr \u5305\u6210\u7ec8\u6b62\u9519\u8bef\u3002"
+    },
+    {
+      "english": "- **Fix:** generic projects without a bound business repository explicitly report info/exit 0. Once .git exists, hook-drift checks still run. Temporarily use EAP Continue at the child-process boundary, restore it in finally, then decide from the actual exit code.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u672a\u7ed1\u5b9a\u4e1a\u52a1\u4ed3\u5e93\u7684 generic project \u663e\u5f0f info/exit 0\uff1b\u4e00\u65e6 `.git` \u5b58\u5728\u4ecd\u6267\u884c hooks \u6f02\u79fb\u68c0\u67e5\uff1b\u5b50\u8fdb\u7a0b\u8fb9\u754c\u4e34\u65f6\u4f7f\u7528 EAP Continue\uff0c\u5e76\u5728 `finally` \u6062\u590d\u540e\u6309\u771f\u5b9e\u9000\u51fa\u7801\u5224\u5b9a\u3002"
+    },
+    {
+      "english": "- **Lesson:** separate output collection from success/failure decisions when wrapping WinPS children. Stderr is diagnostic evidence and must not alter control flow before the exit code is read.",
+      "canonical": "- **\u6559\u8bad**\uff1aWinPS \u5305\u88c5\u5b50\u8fdb\u7a0b\u65f6\uff0c\u8f93\u51fa\u91c7\u96c6\u4e0e\u6210\u8d25\u5224\u5b9a\u5fc5\u987b\u89e3\u8026\uff1bstderr \u662f\u8bca\u65ad\u8bc1\u636e\uff0c\u4e0d\u5e94\u5728\u8bfb\u53d6\u9000\u51fa\u7801\u524d\u6539\u53d8\u63a7\u5236\u6d41\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 16 \u2014 Encoding-gate bootstrap must not depend on the encoding it validates",
+      "canonical": "## \u53cd\u601d 16 \u2014 \u7f16\u7801\u95e8\u7981 bootstrap \u4e0d\u5f97\u4f9d\u8d56\u81ea\u8eab\u5f85\u6821\u9a8c\u7f16\u7801"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 09:49 by Codex \u2014 after the first GREEN legacy-profile fix, Gate0's BOM-removal negative contract regressed from the specified exit 10 to startup exit 1.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 09:49 by Codex \u2014 legacy profile \u4fee\u590d\u9996\u6b21 GREEN \u540e\uff0cGate0 \u53bb BOM \u8d1f\u5411\u5951\u7ea6\u4ece\u89c4\u8303 exit 10 \u56de\u9000\u4e3a\u542f\u52a8\u671f exit 1\u3002"
+    },
+    {
+      "english": "- **Observed:** when the encoding gate deliberately removed framework-scope.ps1's BOM, P4a failed to load it before invoking the public encoding gate.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u7f16\u7801\u95e8\u7981\u6545\u610f\u79fb\u9664 `framework-scope.ps1` BOM \u65f6\uff0cP4a \u5728\u8c03\u7528\u516c\u5f00\u7f16\u7801 gate \u524d\u5df2\u7ecf\u52a0\u8f7d\u5931\u8d25\u3002"
+    },
+    {
+      "english": "- **Cause:** P4a dot-sourced framework-scope.ps1 first; new Chinese path literals were misdecoded without a BOM in WinPS 5.1, making bootstrap depend on itself.",
+      "canonical": "- **\u6839\u56e0**\uff1a`framework-scope.ps1` \u662f P4a \u7684\u524d\u7f6e dot-source\uff1b\u65b0\u589e\u7684\u4e2d\u6587\u8def\u5f84\u5b57\u9762\u91cf\u5728\u65e0 BOM \u7684 WinPS 5.1 \u4e2d\u5148\u88ab\u8bef\u89e3\u7801\uff0c\u5f62\u6210 bootstrap \u81ea\u4f9d\u8d56\u3002"
+    },
+    {
+      "english": "- **Fix:** retain the public detection functions' locations, but use ASCII source for additions and construct exact Chinese signature paths from Unicode code points at runtime. Gate0 recovered to 12/12.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u4fdd\u6301\u516c\u5171\u5224\u5b9a\u51fd\u6570\u4f4d\u7f6e\u4e0d\u53d8\uff0c\u4f46\u65b0\u589e\u6e90\u7801\u4f7f\u7528\u7eaf ASCII\uff0c\u5e76\u901a\u8fc7 Unicode code point \u5728\u8fd0\u884c\u65f6\u6784\u9020\u7cbe\u786e\u4e2d\u6587\u7b7e\u540d\u8def\u5f84\uff1bGate0 \u6062\u590d 12/12\u3002"
+    },
+    {
+      "english": "- **Lesson:** a startup chain that detects encoding damage must run even when the target file's encoding is damaged. Any pre-gate bootstrap change must rerun the integration contract proving BOM removal still produces the public gate's specified error code.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u8d1f\u8d23\u53d1\u73b0\u7f16\u7801\u635f\u574f\u7684\u542f\u52a8\u94fe\u5fc5\u987b\u80fd\u5728\u76ee\u6807\u6587\u4ef6\u7f16\u7801\u5df2\u635f\u574f\u65f6\u7ee7\u7eed\u8fd0\u884c\uff1b\u4efb\u4f55 pre-gate bootstrap \u6539\u52a8\u90fd\u8981\u91cd\u8dd1\u201c\u53bb BOM \u540e\u4ecd\u7531\u516c\u5f00\u95e8\u7981\u8fd4\u56de\u89c4\u8303\u9519\u8bef\u7801\u201d\u7684\u96c6\u6210\u5951\u7ea6\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 17 \u2014 An extension allowlist cannot prove zero business dependencies",
+      "canonical": "## \u53cd\u601d 17 \u2014 \u4e1a\u52a1\u96f6\u4f9d\u8d56\u4e0d\u80fd\u9760\u6269\u5c55\u540d\u767d\u540d\u5355\u8bc1\u660e"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 10:10 by Codex \u2014 independent borrowing-lifecycle review reproduced common runtime-text bypasses; retain the combined content-detection and resource-limit boundary.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 10:10 by Codex \u2014 \u501f\u9274\u95ed\u73af\u72ec\u7acb\u5ba1\u67e5\u590d\u73b0\u4e86\u5e38\u89c1\u8fd0\u884c\u65f6\u6587\u672c\u7ed5\u8fc7\uff0c\u9700\u56fa\u5316\u5185\u5bb9\u8bc6\u522b\u4e0e\u8d44\u6e90\u4e0a\u9650\u7684\u7ec4\u5408\u8fb9\u754c\u3002"
+    },
+    {
+      "english": "- **Observed:** known extensions such as JavaScript and JSON blocked direct dependencies on \u501f\u9274\u533a/, while HTML, .env, .conf and extensionless launchers carrying the same reference still passed P4t.",
+      "canonical": "- **\u73b0\u8c61**\uff1aJavaScript\u3001JSON \u7b49\u5df2\u77e5\u6269\u5c55\u80fd\u62e6\u622a\u5bf9 `\u501f\u9274\u533a/` \u7684\u76f4\u63a5\u4f9d\u8d56\uff0c\u4f46 HTML\u3001`.env`\u3001`.conf` \u548c\u65e0\u6269\u5c55\u540d\u542f\u52a8\u5668\u643a\u5e26\u540c\u4e00\u5f15\u7528\u65f6 P4t \u4ecd\u8fd4\u56de\u901a\u8fc7\u3002"
+    },
+    {
+      "english": "- **Cause:** the isolation leaf selected a limited set of extensions before reading content, incorrectly treating unlisted files as non-runtime text.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u9694\u79bb leaf \u5148\u6309\u6709\u9650\u6269\u5c55\u540d\u6311\u9009\u6587\u4ef6\uff0c\u518d\u8bfb\u53d6\u5185\u5bb9\uff1b\u201c\u672a\u5217\u5165\u6e05\u5355\u201d\u88ab\u9519\u8bef\u7b49\u540c\u4e8e\u201c\u4e0d\u662f\u8fd0\u884c\u65f6\u6587\u672c\u201d\u3002"
+    },
+    {
+      "english": "- **Fix:** content-scan every regular file within 8 MiB that strictly decodes as UTF-8 or BOM-marked UTF-16LE/BE. Suspected oversized text fails hard; binary files are skipped. Use a nonfinalizing Decoder to avoid misclassifying multibyte characters across sampling boundaries.",
+      "canonical": "- **\u4fee\u590d**\uff1a8 MiB \u5185\u6240\u6709\u53ef\u4e25\u683c\u89e3\u7801\u7684 UTF-8 \u6216\u5e26 BOM UTF-16LE/BE \u5e38\u89c4\u6587\u4ef6\u90fd\u6309\u5185\u5bb9\u626b\u63cf\uff1b\u7591\u4f3c\u8d85\u9650\u6587\u672c\u786c\u5931\u8d25\uff0c\u4e8c\u8fdb\u5236\u8df3\u8fc7\uff0c\u5e76\u7528\u975e\u7ec8\u7ed3 Decoder \u9632\u6b62\u591a\u5b57\u8282\u5b57\u7b26\u8de8\u91c7\u6837\u8fb9\u754c\u88ab\u8bef\u5224\u3002"
+    },
+    {
+      "english": "- **Lesson:** verified content is the basis of safety scanning; extensions are only hints. Resource limits require oversized-text, binary and encoding-boundary tests so the limit itself cannot become a bypass.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u5b89\u5168\u626b\u63cf\u5e94\u4ee5\u53ef\u9a8c\u8bc1\u5185\u5bb9\u4e3a\u4e3b\u3001\u6269\u5c55\u540d\u53ea\u53ef\u4f5c\u63d0\u793a\uff1b\u5f15\u5165\u8d44\u6e90\u4e0a\u9650\u65f6\uff0c\u5fc5\u987b\u540c\u65f6\u6d4b\u8bd5\u8d85\u9650\u3001\u4e8c\u8fdb\u5236\u548c\u7f16\u7801\u8fb9\u754c\uff0c\u4e0d\u80fd\u8ba9\u9650\u989d\u672c\u8eab\u5f62\u6210\u7ed5\u8fc7\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 18 \u2014 Treat tracked authorization descriptions as potential credentials",
+      "canonical": "## \u53cd\u601d 18 \u2014 tracked \u6388\u6743\u8bf4\u660e\u4e5f\u5fc5\u987b\u6309\u51ed\u636e\u5904\u7406"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 10:58 by Codex \u2014 independent review showed that \u201cnot a URL\u201d does not prove authorization metadata is secret-free; align pre-capture and offline-audit semantics.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 10:58 by Codex \u2014 \u72ec\u7acb\u5ba1\u67e5\u8bc1\u660e\u201c\u4e0d\u662f URL\u201d\u4e0d\u80fd\u4f5c\u4e3a\u6388\u6743\u5143\u6570\u636e\u65e0\u5bc6\u94a5\u7684\u8bc1\u636e\uff0c\u9700\u7edf\u4e00\u6355\u83b7\u524d\u4e0e\u79bb\u7ebf\u5ba1\u8ba1\u8bed\u4e49\u3002"
+    },
+    {
+      "english": "- **Observed:** `token=...`, `Authorization: Bearer ...`, URL-encoded credentials and common raw tokens could enter source-card authorization origin/scope while P4t passed.",
+      "canonical": "- **\u73b0\u8c61**\uff1a`token=...`\u3001`Authorization: Bearer ...`\u3001URL \u7f16\u7801\u51ed\u636e\u548c\u5e38\u89c1 raw token \u53ef\u8fdb\u5165\u6765\u6e90\u5361\u7684\u6388\u6743\u6765\u6e90/\u8303\u56f4\uff0cP4t \u4ecd\u8fd4\u56de\u901a\u8fc7\u3002"
+    },
+    {
+      "english": "- **Cause:** capture checked only length and control characters; P4t had a separate narrow rule set for URI userinfo and a few query fields. Write and audit boundaries diverged.",
+      "canonical": "- **\u6839\u56e0**\uff1acapture \u53ea\u68c0\u67e5\u957f\u5ea6\u4e0e\u63a7\u5236\u5b57\u7b26\uff0cP4t \u53e6\u6709\u4e00\u5957\u53ea\u8986\u76d6 URI userinfo \u548c\u5c11\u6570 query \u7684\u7a84\u89c4\u5219\uff1b\u5199\u5165\u8fb9\u754c\u4e0e\u5ba1\u8ba1\u8fb9\u754c\u8bed\u4e49\u5206\u53c9\u3002"
+    },
+    {
+      "english": "- **Fix:** add a shared strong-credential detector recursively handling URL/form encoding, userinfo, credential assignments, Bearer/Basic, common token prefixes and private-key headers. Reuse the same fail-closed function before card creation and in P4t.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u65b0\u589e\u5171\u4eab\u5f3a\u51ed\u636e\u68c0\u6d4b\u5668\uff0c\u9012\u5f52\u5904\u7406 URL/form \u7f16\u7801\u3001userinfo\u3001credential assignment\u3001Bearer/Basic\u3001\u5e38\u89c1 token \u524d\u7f00\u4e0e private-key header\uff1b\u5199\u5361\u524d\u4e0e P4t \u590d\u7528\u540c\u4e00\u51fd\u6570\u5e76 fail closed\u3002"
+    },
+    {
+      "english": "- **Lesson:** any tracked free text can contain credentials. Detect them before first persistence and reuse that implementation in later guards; do not maintain two drifting regex sets.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u4efb\u4f55 tracked \u81ea\u7531\u6587\u672c\u90fd\u53ef\u80fd\u627f\u8f7d\u51ed\u636e\uff1b\u654f\u611f\u68c0\u6d4b\u5fc5\u987b\u5728\u9996\u6b21\u6301\u4e45\u5316\u524d\u6267\u884c\uff0c\u5e76\u7531\u540e\u9a8c\u5b88\u536b\u590d\u7528\u540c\u4e00\u5b9e\u73b0\uff0c\u4e0d\u80fd\u7ef4\u62a4\u4e24\u5957\u9010\u6e10\u6f02\u79fb\u7684\u6b63\u5219\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 19 \u2014 Closed is the result of a complete transaction, not a seal field",
+      "canonical": "## \u53cd\u601d 19 \u2014 closed \u662f\u5b8c\u6574\u4e8b\u52a1\u7ed3\u679c\uff0c\u4e0d\u662f seal \u5b57\u6bb5\u7ed3\u679c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 10:58 by Codex \u2014 locally passing closure-helper checks hid full-root isolation failure, empty evidence and concurrent-overwrite risks.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 10:58 by Codex \u2014 \u5173\u95ed helper \u7684\u5c40\u90e8\u5168\u7eff\u63a9\u76d6\u4e86\u5b8c\u6574\u6839 isolation \u5931\u8d25\u3001\u7a7a\u58f3\u8bc1\u636e\u548c\u5e76\u53d1\u8986\u76d6\u98ce\u9669\u3002"
+    },
+    {
+      "english": "- **Observed:** seal could write closed+sealed before full-root P4t failed on a business dependency. Nonexistent targets/evidence, empty bullets and stale verification could pass, while concurrent user edits before closure could be overwritten.",
+      "canonical": "- **\u73b0\u8c61**\uff1aseal helper \u53ef\u6210\u529f\u628a\u5361\u5199\u6210 closed+sealed\uff0c\u968f\u540e\u5b8c\u6574\u6839 P4t \u624d\u56e0\u4e1a\u52a1\u76f4\u4f9d\u8d56\u5931\u8d25\uff1b\u4e0d\u5b58\u5728\u7684\u76ee\u6807/\u8bc1\u636e\u3001\u7a7a bullet \u6216\u65e7\u9a8c\u8bc1\u4e5f\u80fd\u8fc7\uff0c\u5173\u95ed\u524d\u5e76\u53d1\u7528\u6237\u7f16\u8f91\u8fd8\u4f1a\u88ab\u8986\u76d6\u3002"
+    },
+    {
+      "english": "- **Cause:** seal, item leaf and full-root P4t were treated as loosely connected steps, without original bytes, candidate staging, machine evidence or a compare-before-replace transaction boundary.",
+      "canonical": "- **\u6839\u56e0**\uff1aseal\u3001\u4e8b\u9879 leaf \u4e0e\u5b8c\u6574\u6839 P4t \u88ab\u5f53\u6210\u677e\u6563\u6b65\u9aa4\uff1b\u6ca1\u6709\u4fdd\u5b58\u539f\u5b57\u8282\u3001\u5019\u9009 staging\u3001\u673a\u5668\u8bc1\u636e\u4e0e compare-before-replace \u4e8b\u52a1\u8fb9\u754c\u3002"
+    },
+    {
+      "english": "- **Fix:** add a trusted close fa\u00e7ade: candidate \u2192 atomic installation \u2192 seal \u2192 full-root P4t \u2192 cleanup. Reflections 28 and 31 narrow the initial \u201crestore original bytes on failure\u201d rule: restore only with provable ownership and before content-deleted; otherwise preserve and report. Verify targets/evidence as actual safe files, bind fresh evidence to the latest verifying state, and recheck snapshots before official replacement.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u65b0\u589e\u53ef\u4fe1 close fa\u00e7ade\uff0c\u6309\u5019\u9009\u2192\u539f\u5b50\u5b89\u88c5\u2192seal\u2192\u5b8c\u6574\u6839 P4t\u2192\u6e05\u7406\u6267\u884c\uff1b\u521d\u7248\u201c\u5931\u8d25\u6062\u590d\u539f\u5b57\u8282\u201d\u53e3\u5f84\u5df2\u7531\u53cd\u601d 28 \u4e0e\u53cd\u601d 31 \u7684\u540e\u7ee7\u7ea6\u675f\u6536\u7a84\uff1a\u4ec5\u5728 ownership \u53ef\u8bc1\u660e\u4e14\u5c1a\u672a\u8fdb\u5165 `content-deleted` \u65f6\u6062\u590d\uff0c\u6240\u6709\u6743\u4e0d\u660e\u6216\u8d8a\u8fc7\u4e0d\u53ef\u9006\u70b9\u540e\u53ea\u4fdd\u7559\u5e76\u62a5\u544a\u3002\u76ee\u6807/evidence \u9a8c\u771f\u5b9e\u5b89\u5168\u6587\u4ef6\uff0cfresh \u7ed1\u5b9a\u6700\u8fd1 verifying\uff0c\u6b63\u5f0f\u66ff\u6362\u524d\u590d\u6838\u5feb\u7167\u3002"
+    },
+    {
+      "english": "- **Lesson:** only a complete transaction may produce a terminal state. Every fallible postcondition gate must precede commitment; test rollback, failure-evidence retention and rejection of concurrent rewrites together.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u7ec8\u6001\u53ea\u80fd\u7531\u5b8c\u6574\u4e8b\u52a1\u4ea7\u751f\uff1b\u4efb\u4f55\u53ef\u80fd\u5931\u8d25\u7684\u540e\u9a8c\u95e8\u7981\u90fd\u5fc5\u987b\u4f4d\u4e8e\u63d0\u4ea4\u70b9\u4e4b\u524d\uff0c\u5e76\u540c\u65f6\u6d4b\u8bd5\u56de\u6eda\u3001\u5931\u8d25\u8bc1\u636e\u4fdd\u7559\u548c\u5e76\u53d1\u6539\u5199\u62d2\u7edd\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 20 \u2014 Validate instantiation paths before the first write",
+      "canonical": "## \u53cd\u601d 20 \u2014 \u5b9e\u4f8b\u5316\u8def\u5f84\u6821\u9a8c\u5fc5\u987b\u53d1\u751f\u5728\u7b2c\u4e00\u6b21\u5199\u5165\u4e4b\u524d"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 10:58 by Codex \u2014 path parameters could fail later yet already pollute the project root or write outside it through a junction.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 10:58 by Codex \u2014 \u8def\u5f84\u53c2\u6570\u867d\u4f1a\u5728\u540e\u7a0b\u62a5\u9519\uff0c\u4f46\u5df2\u8db3\u4ee5\u5728\u62a5\u9519\u524d\u6c61\u67d3\u9879\u76ee\u6839\u6216\u501f junction \u5199\u5230\u6839\u5916\u3002"
+    },
+    {
+      "english": "- **Observed:** absolute, `..`, blank and `\u501f\u9274\u533a/`-overlapping AppRepoDir values, plus ProjectRoot/AppRepo ancestor junctions, were accepted; scaffolding could be written outside the root through a junction.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u7edd\u5bf9\u3001`..`\u3001\u7a7a\u767d\u3001\u4e0e `\u501f\u9274\u533a/` \u91cd\u53e0\u7684 `AppRepoDir` \u53ca ProjectRoot/AppRepo \u7956\u5148 junction \u88ab\u653e\u884c\uff1b\u501f\u9274\u9aa8\u67b6\u53ef\u5199\u5165 junction \u6307\u5411\u7684\u5916\u90e8\u76ee\u5f55\u3002"
+    },
+    {
+      "english": "- **Cause:** the old instantiator treated string Join-Path as containment, used the business-directory parameter only after copying, and did not check every ancestor for reparse points.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u65e7\u5b9e\u4f8b\u5316\u5668\u628a\u5b57\u7b26\u4e32 `Join-Path` \u5f53 containment\uff0c\u53ea\u5728\u590d\u5236\u540e\u4f7f\u7528\u4e1a\u52a1\u76ee\u5f55\u53c2\u6570\uff0c\u4e14\u6ca1\u6709\u9010\u7956\u5148 reparse \u68c0\u67e5\u3002"
+    },
+    {
+      "english": "- **Fix:** normalize ProjectRoot/AppRepo before the first write; verify strict containment and non-overlap in both directions, reject reparse ancestors, and recheck the target chain before each borrowing-scaffold copy.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u9996\u6b21\u5199\u5165\u524d\u89c4\u8303\u5316 ProjectRoot/AppRepo\uff0c\u9a8c\u8bc1\u4e25\u683c\u5305\u542b\u4e0e\u53cc\u5411\u4e0d\u76f8\u4ea4\uff0c\u9010\u7956\u5148\u62d2\u7edd reparse\uff1b\u501f\u9274\u9aa8\u67b6\u6bcf\u6b21\u590d\u5236\u524d\u518d\u6b21\u68c0\u67e5\u76ee\u6807\u94fe\u3002"
+    },
+    {
+      "english": "- **Lesson:** parameters that control write locations need semantic containment and physical-path validation first. Eventual errors do not mean zero side effects; use an outside-write sentinel to establish a path guard's RED.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u4f1a\u5f71\u54cd\u843d\u76d8\u4f4d\u7f6e\u7684\u53c2\u6570\u5fc5\u987b\u5148\u5b8c\u6210\u8bed\u4e49 containment \u4e0e\u7269\u7406\u8def\u5f84\u6821\u9a8c\uff1b\u201c\u6700\u7ec8\u4f1a\u62a5\u9519\u201d\u4e0d\u7b49\u4e8e\u65e0\u526f\u4f5c\u7528\uff0c\u8def\u5f84\u5b88\u536b\u8981\u7528\u5916\u5199 sentinel \u8bc1\u660e RED\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 21 \u2014 Ignored directories still need exact membership contracts",
+      "canonical": "## \u53cd\u601d 21 \u2014 \u88ab\u5ffd\u7565\u76ee\u5f55\u4e5f\u5fc5\u987b\u6709\u7cbe\u786e\u6210\u5458\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 10:58 by Codex \u2014 both ignored caches and failed staging confused required-member existence with complete fingerprint/transaction coverage.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 10:58 by Codex \u2014 ignored cache \u4e0e\u5931\u8d25 staging \u4e24\u5904\u90fd\u628a\u201c\u5fc5\u9700\u6210\u5458\u5b58\u5728\u201d\u8bef\u5f53\u6210\u201c\u5168\u90e8\u5185\u5bb9\u53d7\u6307\u7eb9\u6216\u4e8b\u52a1\u8986\u76d6\u201d\u3002"
+    },
+    {
+      "english": "- **Observed:** capture snapshots could contain additional unfingerprinted files or directories; item inventory broadly skipped any .staging-* subtree, so unknown members did not affect P4t.",
+      "canonical": "- **\u73b0\u8c61**\uff1acapture \u5feb\u7167\u53ef\u5939\u5e26\u672a\u5165\u6307\u7eb9\u7684\u989d\u5916\u6587\u4ef6/\u76ee\u5f55\uff1b\u4e8b\u9879 inventory \u53c8\u4f1a\u5bbd\u6cdb\u8df3\u8fc7\u4efb\u610f `.staging-*` \u5b50\u6811\uff0c\u672a\u77e5\u6210\u5458\u4e0d\u5f71\u54cd P4t\u3002"
+    },
+    {
+      "english": "- **Cause:** checks used an existence allowlist instead of set equality, incorrectly treating ignore rules as audit exemptions.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u68c0\u67e5\u91c7\u7528\u5b58\u5728\u6027\u767d\u540d\u5355\u800c\u975e\u96c6\u5408\u7b49\u5f0f\uff0c\u5ffd\u7565\u89c4\u5219\u88ab\u9519\u8bef\u7406\u89e3\u6210\u5ba1\u8ba1\u8c41\u514d\u3002"
+    },
+    {
+      "english": "- **Fix:** Git/Local/Web captures each enumerate exact capture-root and direct snapshot members. Item inventory ignores only directories named `.staging-close-<32hex>` whose members exactly equal the safe regular files `\u539f\u6d3b\u52a8\u5361.bin` and `\u501f\u9274\u5361.md`.",
+      "canonical": "- **\u4fee\u590d**\uff1aGit/Local/Web \u5206\u522b\u7cbe\u786e\u679a\u4e3e capture \u6839\u548c\u5feb\u7167\u76f4\u63a5\u6210\u5458\uff1b\u4e8b\u9879\u4ec5\u5ffd\u7565\u540d\u79f0\u5339\u914d `.staging-close-<32hex>` \u4e14\u6210\u5458\u4e25\u683c\u7b49\u4e8e\u5b89\u5168\u5e38\u89c4\u6587\u4ef6 `\u539f\u6d3b\u52a8\u5361.bin`\u3001`\u501f\u9274\u5361.md` \u7684\u76ee\u5f55\u3002"
+    },
+    {
+      "english": "- **Lesson:** ignored status concerns version control, not integrity. Evidence outside Git still needs exact names, types, identities and rejection of unknown members.",
+      "canonical": "- **\u6559\u8bad**\uff1aignored \u53ea\u89e3\u51b3\u7248\u672c\u63a7\u5236\uff0c\u4e0d\u89e3\u51b3\u5b8c\u6574\u6027\uff1b\u6240\u6709\u4e0d\u4f1a\u8fdb\u5165 Git \u7684\u8bc1\u636e\u96c6\u5408\u4ecd\u9700\u7cbe\u786e\u540d\u79f0\u3001\u7c7b\u578b\u3001\u8eab\u4efd\u548c\u672a\u77e5\u6210\u5458\u62d2\u7edd\u5408\u540c\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 22 \u2014 Credential guards must cover the final tracked destination",
+      "canonical": "## \u53cd\u601d 22 \u2014 \u51ed\u636e\u5b88\u536b\u5fc5\u987b\u8986\u76d6\u6700\u7ec8 tracked sink"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 11:38 by Codex \u2014 a second safety review found that JSON keys, provider tokens and Web-response metadata bypassed the existing shared detector.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 11:38 by Codex \u2014 \u7b2c\u4e8c\u8f6e\u5b89\u5168\u7ec8\u5ba1\u53d1\u73b0\u5171\u4eab\u68c0\u6d4b\u5668\u5b58\u5728\uff0c\u4f46 JSON \u952e\u3001provider token \u4e0e Web \u54cd\u5e94\u5143\u6570\u636e\u4ecd\u53ef\u7ed5\u8fc7\u3002"
+    },
+    {
+      "english": "- **Observed:** quoted JSON keys, AWS access/secret values, GitLab glpat- tokens and credential shapes in etag / last_modified could enter source cards; syntactically valid source_id and LocalDisplayName values could themselves resemble tokens.",
+      "canonical": "- **\u73b0\u8c61**\uff1aJSON quoted key\u3001AWS access/secret\u3001GitLab `glpat-` \u53ca\u85cf\u5728 `etag / last_modified` \u7684\u51ed\u636e\u5f62\u6001\u53ef\u8fdb\u5165\u6765\u6e90\u5361\uff1b\u683c\u5f0f\u5408\u6cd5\u7684 `source_id` \u4e0e LocalDisplayName \u4e5f\u53ef\u80fd\u672c\u8eab\u50cf token\u3002"
+    },
+    {
+      "english": "- **Cause:** guards covered common input fields rather than all text ultimately written into tracked artifacts; the renderer trusted upstream sanitization.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u5b88\u536b\u4ee5\u201c\u5e38\u89c1\u8f93\u5165\u5b57\u6bb5\u201d\u4e3a\u8fb9\u754c\uff0c\u6ca1\u6709\u4ee5\u201c\u6700\u7ec8\u4f1a\u5199\u8fdb tracked artifact \u7684\u5168\u90e8\u6587\u672c\u201d\u4e3a\u8fb9\u754c\uff1brenderer \u9ed8\u8ba4\u4fe1\u4efb\u4e0a\u6e38\u5df2\u51c0\u5316\u3002"
+    },
+    {
+      "english": "- **Fix:** scan normalized inputs uniformly, then defensively recheck identifiers, locators, authorization descriptions and every fact in the final renderer. Add RED cases for JSON escaping, AWS/GitHub/GitLab/Slack and Web metadata.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u8f93\u5165\u89c4\u8303\u5316\u540e\u7edf\u4e00\u626b\u63cf\uff0c\u6700\u7ec8 renderer \u5bf9\u6807\u8bc6\u3001locator\u3001\u6388\u6743\u8bf4\u660e\u53ca\u5168\u90e8 facts \u518d\u9632\u5fa1\u6027\u590d\u68c0\uff1b\u8865 JSON \u8f6c\u4e49\u3001AWS/GitHub/GitLab/Slack \u4e0e Web \u5143\u6570\u636e RED\u3002"
+    },
+    {
+      "english": "- **Lesson:** derive validation coverage backward from the persistence destination. Field shape, source type and upstream validation cannot replace the final shared detector before writing.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u5b89\u5168\u6821\u9a8c\u8981\u4ece\u6301\u4e45\u5316 sink \u53cd\u63a8\u8986\u76d6\u9762\uff1b\u5b57\u6bb5\u683c\u5f0f\u3001\u6765\u6e90\u7c7b\u578b\u6216\u4e0a\u6e38\u6821\u9a8c\u90fd\u4e0d\u80fd\u66ff\u4ee3\u5199\u76d8\u524d\u7684\u6700\u540e\u4e00\u9053\u540c\u6e90\u68c0\u6d4b\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 23 \u2014 Instantiators must check every physical target twice",
+      "canonical": "## \u53cd\u601d 23 \u2014 \u5b9e\u4f8b\u5316\u5668\u5fc5\u987b\u9010\u76ee\u6807\u53cc\u68c0\u7269\u7406\u8def\u5f84"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 11:38 by Codex \u2014 even with a valid ProjectRoot, `-Force` could follow an existing Docs junction and copy the template outside the root.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 11:38 by Codex \u2014 `-Force` \u5728 ProjectRoot \u5408\u6cd5\u65f6\u4ecd\u53ef\u6cbf\u65e2\u6709 `Docs` junction \u628a\u6a21\u677f\u590d\u5236\u5230\u6839\u5916\u3002"
+    },
+    {
+      "english": "- **Observed:** ProjectRoot, AppRepoDir and the borrowing area passed preflight, but a junction in a generic `$copyItems` target let `Copy-Item -Recurse -Force` create an external marker.",
+      "canonical": "- **\u73b0\u8c61**\uff1aProjectRoot\u3001AppRepoDir \u4e0e\u501f\u9274\u533a\u5747\u901a\u8fc7\u9884\u68c0\uff0c\u4f46\u901a\u7528 `$copyItems` \u7684\u67d0\u4e2a\u76ee\u6807\u76ee\u5f55\u82e5\u662f junction\uff0c`Copy-Item -Recurse -Force` \u4f1a\u4ea7\u751f\u5916\u90e8 marker\u3002"
+    },
+    {
+      "english": "- **Cause:** root-layout safety was incorrectly extended to all descendants; the copy plan lacked containment and reparse-free checks for each `$dst`.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u628a\u6839\u7ea7\u5e03\u5c40\u5b89\u5168\u9519\u8bef\u63a8\u5e7f\u4e3a\u6240\u6709\u540e\u4ee3\u76ee\u6807\u5b89\u5168\uff1b\u590d\u5236\u8ba1\u5212\u6ca1\u6709\u9010 `$dst` \u505a containment \u4e0e reparse-free \u9a8c\u8bc1\u3002"
+    },
+    {
+      "english": "- **Fix:** preflight all copy, directory-creation and direct-write targets as a batch, then recheck immediately before each write. A real-junction fixture uses an outside-root sentinel to prove RED/GREEN.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u6240\u6709\u590d\u5236/\u5efa\u76ee\u5f55/\u76f4\u63a5\u5199\u76ee\u6807\u5148\u6574\u6279\u9884\u68c0\uff0c\u7d27\u90bb\u6bcf\u4e2a\u843d\u76d8\u70b9\u518d\u590d\u6838\uff1b\u771f\u5b9e junction fixture \u7528\u6839\u5916 sentinel \u8bc1\u660e RED/GREEN\u3002"
+    },
+    {
+      "english": "- **Lesson:** root safety is not transitive. Batch installers need physical-path checks at both planning time and immediately before writing each actual destination.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u6839\u5b89\u5168\u4e0d\u5177\u4f20\u9012\u6027\uff1b\u6279\u91cf\u5b89\u88c5\u5668\u5fc5\u987b\u5bf9\u6bcf\u4e2a\u5b9e\u9645\u5199\u5165\u76ee\u6807\u6267\u884c\u201c\u8ba1\u5212\u671f + \u843d\u76d8\u524d\u201d\u53cc\u91cd\u7269\u7406\u8def\u5f84\u6821\u9a8c\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 24 \u2014 Lock the committed object after postcondition gates pass",
+      "canonical": "## \u53cd\u601d 24 \u2014 \u540e\u9a8c\u95e8\u7981\u901a\u8fc7\u540e\u4ecd\u9700\u9501\u4f4f\u63d0\u4ea4\u5bf9\u8c61"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 11:38 by Codex \u2014 close could still return success when the official card changed between full-root P4t exit 0 and staging cleanup.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 11:38 by Codex \u2014 close \u5728\u5b8c\u6574\u6839 P4t exit 0 \u540e\u5230 staging \u6e05\u7406\u4e4b\u95f4\u4ecd\u53ef\u88ab\u5e76\u53d1\u6539\u5199\uff0c\u5374\u8fd4\u56de\u6210\u529f\u3002"
+    },
+    {
+      "english": "- **Observed:** a card valid during P4t was replaced or edited afterward; the old implementation still deleted rollback evidence and output CLOSED.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u6b63\u5f0f\u5361\u5728 P4t \u671f\u95f4\u5408\u6cd5\uff0c\u8fd4\u56de\u540e\u88ab\u66ff\u6362\u6216\u6539\u5b57\u8282\uff0c\u65e7\u5b9e\u73b0\u4ecd\u5220\u9664\u56de\u6eda\u8bc1\u636e\u5e76\u8f93\u51fa `CLOSED`\u3002"
+    },
+    {
+      "english": "- **Cause:** gate return was mistaken for commitment; the official object was neither reverified nor protected from writers before compensation material was removed.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u628a\u95e8\u7981\u8fd4\u56de\u5f53\u6210\u4e8b\u52a1\u63d0\u4ea4\u70b9\uff0c\u6ca1\u6709\u5728\u6e05\u7406\u56de\u6eda\u6750\u6599\u524d\u518d\u6b21\u9a8c\u8bc1\u6b63\u5f0f\u5bf9\u8c61\u5e76\u963b\u6b62\u5199\u8005\u3002"
+    },
+    {
+      "english": "- **Fix:** after P4t, recheck canonical path, identity, length and sealed bytes; hold a FileShare.None exclusive read lock through staging cleanup. RED cases cover concurrent byte changes and identity replacement.",
+      "canonical": "- **\u4fee\u590d**\uff1aP4t \u540e\u590d\u6838\u89c4\u8303\u8def\u5f84\u3001identity\u3001\u957f\u5ea6\u548c sealed \u5b57\u8282\uff0c\u6301\u6709 `FileShare.None` \u72ec\u5360\u8bfb\u9501\u5b8c\u6210 staging \u6e05\u7406\uff1b\u5e76\u53d1\u5b57\u8282\u4e0e identity \u66ff\u6362\u5747\u6709 RED\u3002"
+    },
+    {
+      "english": "- **Lesson:** checks and commitment have a TOCTOU boundary. If success destroys compensation material, final snapshot verification and commit cleanup must occur under lock.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u68c0\u67e5\u4e0e\u63d0\u4ea4\u4e4b\u95f4\u5fc5\u6709 TOCTOU\uff1b\u53ea\u8981\u6210\u529f\u8def\u5f84\u4f1a\u9500\u6bc1\u8865\u507f\u6750\u6599\uff0c\u5c31\u5fc5\u987b\u5728\u9501\u5185\u5b8c\u6210\u6700\u7ec8\u5feb\u7167\u786e\u8ba4\u4e0e\u63d0\u4ea4\u6e05\u7406\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 25 \u2014 Leaves must distrust both mode context and path tokens",
+      "canonical": "## \u53cd\u601d 25 \u2014 leaf \u6a21\u5f0f\u4e0e\u8def\u5f84 token \u90fd\u4e0d\u80fd\u4fe1\u8c03\u7528\u4e0a\u4e0b\u6587"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 11:38 by Codex \u2014 source/isolation leaves could skip project checks with a forged Mode=template; isolation regexes also missed cwd-relative paths.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 11:38 by Codex \u2014 source/isolation leaf \u53ef\u7528\u4f2a\u9020 `Mode=template` \u8df3\u8fc7\u9879\u76ee\u68c0\u67e5\uff0c\u9694\u79bb\u6b63\u5219\u53c8\u6f0f\u6389 cwd \u76f8\u5bf9\u8def\u5f84\u3002"
+    },
+    {
+      "english": "- **Observed:** a real project root passed when given template mode; BORROWED_PATH=\u501f\u9274\u533a/... and source \u501f\u9274\u533a/... did not match the old slash/quote-prefix regex.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u771f\u5b9e project Root \u4f20 template \u8fd4\u56de\u901a\u8fc7\uff1b`BORROWED_PATH=\u501f\u9274\u533a/...` \u548c `source \u501f\u9274\u533a/...` \u4e0d\u547d\u4e2d\u65e7\u659c\u6760/\u5f15\u53f7\u524d\u7f00\u6b63\u5219\u3002"
+    },
+    {
+      "english": "- **Cause:** public leaves trusted fa\u00e7ade parameters, while path recognition enumerated a few textual prefixes without defining token boundaries.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u516c\u5f00 leaf \u4fe1\u4efb fa\u00e7ade \u53c2\u6570\uff1b\u8def\u5f84\u8bc6\u522b\u679a\u4e3e\u5c11\u6570\u6587\u672c\u524d\u7f00\uff0c\u6ca1\u6709\u5b9a\u4e49\u8bed\u6cd5 token \u8fb9\u754c\u3002"
+    },
+    {
+      "english": "- **Fix:** each leaf independently derives RootMode from safe markers and requires exact agreement with its parameter. Isolation recognizes root-relative \u501f\u9274\u533a/ at line start or a non-alphanumeric/non-underscore boundary.",
+      "canonical": "- **\u4fee\u590d**\uff1aleaf \u4ece\u5b89\u5168 marker \u72ec\u7acb\u5224 RootMode \u5e76\u4e0e\u53c2\u6570\u7cbe\u786e\u4e00\u81f4\uff1b\u9694\u79bb\u6309\u884c\u9996\u53ca\u975e\u5b57\u6bcd\u6570\u5b57\u4e0b\u5212\u7ebf\u8fb9\u754c\u8bc6\u522b\u6839\u76f8\u5bf9 `\u501f\u9274\u533a/`\u3002"
+    },
+    {
+      "english": "- **Lesson:** treat context parameters at public entries as untrusted input. Path scans need defined accepted/rejected token syntax, not a list of sample prefixes.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u516c\u5f00\u5165\u53e3\u7684\u4e0a\u4e0b\u6587\u53c2\u6570\u4e00\u5f8b\u6309\u4e0d\u53ef\u4fe1\u8f93\u5165\u5904\u7406\uff1b\u8def\u5f84\u626b\u63cf\u5e94\u5b9a\u4e49\u5141\u8bb8/\u62d2\u7edd\u7684 token \u8bed\u6cd5\uff0c\u4e0d\u80fd\u9760\u6837\u4f8b\u524d\u7f00\u6e05\u5355\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 26 \u2014 Fresh evidence must bind facts, not merely exist",
+      "canonical": "## \u53cd\u601d 26 \u2014 fresh evidence \u5fc5\u987b\u7ed1\u5b9a\u4e8b\u5b9e\u800c\u975e\u5b58\u5728\u6027"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 11:38 by Codex \u2014 arbitrary nonempty files, even original bytes in failed staging, could masquerade as closure evidence.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 11:38 by Codex \u2014 \u4efb\u610f\u975e\u7a7a\u6587\u4ef6\u751a\u81f3\u5931\u8d25 staging \u539f\u5b57\u8282\u90fd\u53ef\u5192\u5145\u5173\u95ed\u8bc1\u636e\u3002"
+    },
+    {
+      "english": "- **Observed:** cards self-reported command, exit and time; evidence checks required only an existing nonempty file inside the root. Later target changes did not invalidate it.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u5361\u7247\u81ea\u62a5 command/exit/time\uff0cevidence \u53ea\u9a8c\u8bc1\u6839\u5185\u3001\u5b58\u5728\u3001\u975e\u7a7a\uff1b\u76ee\u6807\u6587\u4ef6\u9a8c\u8bc1\u540e\u53d8\u5316\u4e5f\u4e0d\u4f1a\u4f7f\u8bc1\u636e\u5931\u6548\u3002"
+    },
+    {
+      "english": "- **Cause:** no machine-verifiable relationship linked the evidence locator to the fact asserted; existence was mistaken for reproducibility.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u8bc1\u636e locator \u4e0e\u88ab\u8bc1\u660e\u4e8b\u5b9e\u4e4b\u95f4\u6ca1\u6709\u673a\u5668\u5173\u7cfb\uff0c\u5b58\u5728\u6027\u88ab\u8bef\u5f53\u6210\u53ef\u590d\u9a8c\u6027\u3002"
+    },
+    {
+      "english": "- **Fix:** define the exact five-line borrowing-evidence/v1 format binding bullet time, command SHA-256, exit and the SHA-256 of the entire target-file list. P4t reads the target list twice and rejects .staging-*.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u5b9a\u4e49\u7cbe\u786e\u4e94\u884c `borrowing-evidence/v1`\uff0c\u7ed1\u5b9a bullet time\u3001command SHA-256\u3001exit \u548c\u5168\u90e8\u76ee\u6807\u6587\u4ef6\u6e05\u5355 SHA-256\uff1bP4t \u53cc\u8bfb\u76ee\u6807\u6e05\u5355\u5e76\u62d2\u7edd `.staging-*`\u3002"
+    },
+    {
+      "english": "- **Lesson:** machine evidence must bind who verified which bytes, when and with what result. A file that cannot be recomputed and compared against current facts is an attachment, not acceptance evidence.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u673a\u5668\u8bc1\u636e\u81f3\u5c11\u8981\u7ed1\u5b9a\u201c\u8c01\u3001\u4f55\u65f6\u3001\u4ee5\u4ec0\u4e48\u7ed3\u679c\u9a8c\u8bc1\u4e86\u54ea\u4e9b\u5b57\u8282\u201d\uff1b\u65e0\u6cd5\u4ece\u5f53\u524d\u4e8b\u5b9e\u91cd\u7b97\u5e76\u6bd4\u5bf9\u7684\u6587\u4ef6\u53ea\u662f\u9644\u4ef6\uff0c\u4e0d\u662f\u9a8c\u6536\u8bc1\u636e\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 27 \u2014 Negative contracts must prove the intended failure condition was reached",
+      "canonical": "## \u53cd\u601d 27 \u2014 \u8d1f\u5411\u5951\u7ea6\u5fc5\u987b\u8bc1\u660e\u547d\u4e2d\u4e86\u76ee\u6807\u5931\u8d25\u6761\u4ef6"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 11:38 by Codex \u2014 the concurrent-installation contract accidentally passed because baseline was omitted.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 11:38 by Codex \u2014 \u5e76\u53d1\u5b89\u88c5\u5951\u7ea6\u56e0\u6f0f\u4f20 baseline \u800c\u201c\u610f\u5916\u901a\u8fc7\u201d\u3002"
+    },
+    {
+      "english": "- **Observed:** the test expected rejection of a concurrent rewrite but actually failed on a missing required snapshot. The real compare-before-replace logic could regress while the test stayed green.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u6d4b\u8bd5\u671f\u671b\u5e76\u53d1\u6539\u5199\u88ab\u62d2\u7edd\uff0c\u4f46\u5b9e\u9645\u629b\u9519\u539f\u56e0\u53ea\u662f\u7f3a\u5c11\u5fc5\u586b\u5feb\u7167\uff1b\u771f\u6b63\u7684 compare-before-replace \u53ef\u4ee5\u56de\u5f52\u800c\u6d4b\u8bd5\u4ecd\u7eff\u3002"
+    },
+    {
+      "english": "- **Cause:** negative tests asserted only that an exception occurred, with no successful control and no distinction between same-length byte changes and identity replacement.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u8d1f\u5411\u6d4b\u8bd5\u53ea\u65ad\u8a00\u201c\u53d1\u751f\u5f02\u5e38\u201d\uff0c\u672a\u8bbe\u7f6e\u6210\u529f\u63a7\u5236\u7ec4\uff0c\u4e5f\u672a\u533a\u5206\u540c\u957f\u5ea6\u5b57\u8282\u53d8\u5316\u4e0e identity \u66ff\u6362\u3002"
+    },
+    {
+      "english": "- **Fix:** first require the unchanged control to pass, then explicitly supply baseline and separately verify same-length rewrites, identity replacement and rejection by the final lock after P4t.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u5148\u9501\u672a\u4fee\u6539\u63a7\u5236\u7ec4\u5fc5\u987b\u6210\u529f\uff0c\u518d\u663e\u5f0f\u4f20\u5165 baseline\uff0c\u5206\u522b\u9a8c\u8bc1\u540c\u957f\u5ea6\u6539\u5199\u3001identity \u66ff\u6362\u548c P4t \u540e\u6700\u7ec8\u9501\u62d2\u7edd\u3002"
+    },
+    {
+      "english": "- **Lesson:** an exception alone is not evidence. Every safety RED needs valid preconditions and a control or exact result proving the tested guard caused failure, not an earlier unrelated error.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u5f02\u5e38\u4e0d\u662f\u8bc1\u636e\uff1b\u6bcf\u4e2a\u5b89\u5168 RED \u90fd\u8981\u8ba9\u524d\u7f6e\u6761\u4ef6\u6210\u7acb\uff0c\u5e76\u7528\u63a7\u5236\u7ec4\u6216\u7cbe\u786e\u7ed3\u679c\u8bc1\u660e\u5931\u8d25\u6765\u81ea\u88ab\u6d4b\u5b88\u536b\u800c\u975e\u66f4\u65e9\u7684\u65e0\u5173\u9519\u8bef\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 28 \u2014 Rollback ownership must bind identity and compensation material",
+      "canonical": "## \u53cd\u601d 28 \u2014 \u56de\u6eda\u6240\u6709\u6743\u5fc5\u987b\u540c\u65f6\u7ed1\u5b9a\u8eab\u4efd\u4e0e\u8865\u507f\u6750\u6599"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-19 12:41 by Codex \u2014 closure-transaction review found that cleanup failure and same-byte identity replacement bypassed byte-only rollback decisions.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-19 12:41 by Codex \u2014 \u5173\u95ed\u4e8b\u52a1\u7ec8\u5ba1\u66b4\u9732\u4e86\u6e05\u7406\u5931\u8d25\u4e0e\u540c\u5b57\u8282\u6362 identity \u4f1a\u7a7f\u900f\u5b57\u8282\u7ea7\u56de\u6eda\u5224\u65ad\u3002"
+    },
+    {
+      "english": "- **Observed:** after deleting both owned staging files, directory deletion could fail; rollback could no longer recover the sealed candidate, leaving the official card closed. A concurrent same-byte replacement of the official identity could also be overwritten by old rollback logic.",
+      "canonical": "- **\u73b0\u8c61**\uff1astaging \u4e24\u4e2a\u81ea\u6709\u6587\u4ef6\u5df2\u5220\u9664\u540e\u76ee\u5f55\u5220\u9664\u5931\u8d25\uff0c\u56de\u6eda\u65e0\u6cd5\u53d6\u56de sealed \u5019\u9009\uff0c\u6b63\u5f0f\u5361\u7559\u5728 closed\uff1b\u5e76\u53d1\u5199\u8005\u4ee5\u76f8\u540c\u5b57\u8282\u66ff\u6362\u6b63\u5f0f\u5361 identity \u65f6\uff0c\u65e7\u56de\u6eda\u53c8\u4f1a\u5c06\u5176\u8986\u76d6\u3002"
+    },
+    {
+      "english": "- **Cause:** the failed candidate existed only in the directory being cleaned, with no in-memory original/candidate compensation source. The main flow discarded official snapshots after trusted replacements, and rollback compared only bytes.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u5931\u8d25\u5019\u9009\u53ea\u4fdd\u5b58\u5728\u5c06\u88ab\u6e05\u7406\u7684\u78c1\u76d8\u76ee\u5f55\uff0c\u672a\u628a\u5185\u5b58\u539f\u5b57\u8282/\u5019\u9009\u5b57\u8282\u4f5c\u4e3a\u8865\u507f\u6e90\uff1b\u4e3b\u6d41\u7a0b\u4e22\u5f03\u6bcf\u6b21\u53d7\u4fe1\u66ff\u6362\u540e\u7684\u6b63\u5f0f\u5361\u5feb\u7167\uff0c\u56de\u6eda\u53ea\u6bd4\u5bf9 bytes\u3002"
+    },
+    {
+      "english": "- **Fix:** reconstruct and verify \u539f\u6d3b\u52a8\u5361.bin and the failed \u501f\u9274\u5361.md from memory before rollback. Retain the latest trusted official path/identity/length/bytes snapshot; rollback may overwrite only that complete snapshot.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u56de\u6eda\u524d\u4ece\u5185\u5b58\u91cd\u5efa\u5e76\u590d\u6838 `\u539f\u6d3b\u52a8\u5361.bin` \u4e0e\u5931\u8d25 `\u501f\u9274\u5361.md`\uff1b\u4e3b\u6d41\u7a0b\u4fdd\u5b58\u6700\u540e\u4e00\u6b21\u53d7\u4fe1\u6b63\u5f0f\u5361\u7684 path/identity/length/bytes\uff0c\u56de\u6eda\u53ea\u80fd\u8986\u76d6\u8be5\u5b8c\u6574\u5feb\u7167\u3002"
+    },
+    {
+      "english": "- **Lesson:** compensation cannot depend on the only copy being destroyed on the success path. Equal bytes do not prove transaction ownership; rollback must verify path, identity, length and bytes together.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u4e8b\u52a1\u8865\u507f\u4e0d\u80fd\u4f9d\u8d56\u6210\u529f\u8def\u5f84\u6b63\u5728\u9500\u6bc1\u7684\u552f\u4e00\u526f\u672c\uff1b\u201c\u5b57\u8282\u76f8\u540c\u201d\u4e5f\u4e0d\u4ee3\u8868\u201c\u4ecd\u7531\u672c\u4e8b\u52a1\u62e5\u6709\u201d\uff0c\u56de\u6eda\u8981\u540c\u65f6\u9a8c\u8bc1\u8def\u5f84\u3001\u8eab\u4efd\u3001\u957f\u5ea6\u4e0e\u5b57\u8282\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 29 \u2014 No-overwrite moves express ownership more accurately than atomic replacement",
+      "canonical": "## \u53cd\u601d 29 \u2014 \u4e0d\u8986\u76d6\u79fb\u52a8\u6bd4\u201c\u539f\u5b50\u66ff\u6362\u201d\u66f4\u63a5\u8fd1\u6240\u6709\u6743\u771f\u76f8"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 10:45 by Codex \u2014 installer and seal reviews repeatedly found that later objects could occupy backup, prepared or official target paths between operations.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 10:45 by Codex \u2014 \u5b89\u88c5\u5668\u4e0e seal \u7ec8\u5ba1\u8fde\u7eed\u53d1\u73b0 backup\u3001prepared\u3001\u6b63\u5f0f\u76ee\u6807\u8def\u5f84\u53ef\u80fd\u5728\u4e24\u4e2a\u52a8\u4f5c\u4e4b\u95f4\u88ab\u540e\u6765\u5bf9\u8c61\u5360\u7528\u3002"
+    },
+    {
+      "english": "- **Observed:** even a single-call atomic replace could overwrite a concurrent writer's new object at the same path; failure compensation could then delete remnants whose ownership was unproven.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u8986\u76d6\u5f0f replace \u5373\u4f7f\u5355\u6b21\u7cfb\u7edf\u8c03\u7528\u539f\u5b50\uff0c\u4e5f\u53ef\u80fd\u628a\u5e76\u53d1\u5199\u8005\u521a\u843d\u4e0b\u7684\u540c\u8def\u5f84\u5bf9\u8c61\u5f53\u6210\u672c\u4e8b\u52a1\u5bf9\u8c61\u8986\u76d6\uff1b\u5931\u8d25\u8865\u507f\u53c8\u53ef\u80fd\u8bef\u5220\u65e0\u6cd5\u8bc1\u660e\u6240\u6709\u6743\u7684\u6b8b\u7559\u3002"
+    },
+    {
+      "english": "- **Cause:** a transaction's path name was confused with ownership of the current object there, and single-file atomicity was generalized to global atomicity of an entire installation.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u628a\u201c\u8def\u5f84\u540d\u5c5e\u4e8e\u4e8b\u52a1\u201d\u8bef\u5f53\u6210\u201c\u8def\u5f84\u5f53\u524d\u5bf9\u8c61\u5c5e\u4e8e\u4e8b\u52a1\u201d\uff0c\u5e76\u628a\u5355\u6587\u4ef6\u539f\u5b50\u64cd\u4f5c\u5916\u63a8\u6210\u6574\u68f5\u5b89\u88c5\u7684\u5168\u5c40\u539f\u5b50\u6027\u3002"
+    },
+    {
+      "english": "- **Fix:** use no-overwrite moves for all writes. Bind object identity separately for target\u2192backup and prepared\u2192target. Stop on conflict and preserve backup, prepared, installed and later objects for audit.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u6240\u6709\u843d\u76d8\u6539\u4e3a no-overwrite \u79fb\u52a8\uff0ctarget\u2192backup \u4e0e prepared\u2192target \u5206\u522b\u7ed1\u5b9a\u5bf9\u8c61\u8eab\u4efd\uff1b\u51b2\u7a81\u5373\u505c\u6b62\uff0c\u4fdd\u7559 backup\u3001prepared\u3001\u5df2\u843d\u5730\u5bf9\u8c61\u548c\u540e\u6765\u5bf9\u8c61\u4f9b\u5ba1\u8ba1\u3002"
+    },
+    {
+      "english": "- **Lesson:** atomicity does not establish ownership. Multifile installation should promise per-object no-overwrite behavior, not an unattainable global rollback.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u539f\u5b50\u6027\u4e0d\u80fd\u66ff\u4ee3\u6240\u6709\u6743\uff1b\u591a\u6587\u4ef6\u5b89\u88c5\u5e94\u51c6\u786e\u627f\u8bfa\u201c\u9010\u5bf9\u8c61\u4e0d\u8986\u76d6\u201d\uff0c\u4e0d\u80fd\u627f\u8bfa\u65e0\u6cd5\u5b9e\u73b0\u7684\u5168\u5c40\u56de\u6eda\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 30 \u2014 Large-file scanning must disclose its observation model",
+      "canonical": "## \u53cd\u601d 30 \u2014 \u5927\u6587\u4ef6\u626b\u63cf\u5fc5\u987b\u516c\u5f00\u89c2\u6d4b\u6a21\u578b"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 10:45 by Codex \u2014 P4t isolation switched to prefix reads for large files to bound resources, while old documentation still implied full-file digests everywhere.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 10:45 by Codex \u2014 P4t \u9694\u79bb\u626b\u63cf\u4e3a\u63a7\u5236\u8d44\u6e90\u6539\u7528\u5927\u6587\u4ef6\u524d\u7f00\u8bfb\u53d6\u540e\uff0c\u65e7\u6587\u6863\u4ecd\u6697\u793a\u6240\u6709\u6587\u4ef6\u5168\u91cf\u6458\u8981\u3002"
+    },
+    {
+      "english": "- **Observed:** files over 8 MiB bound only identity, length and the first 64 KiB. Same-identity, same-length tail edits were outside v1's observation range; claiming full consistency would create a false assurance.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u8d85\u8fc7 8 MiB \u7684\u6587\u4ef6\u5b9e\u9645\u53ea\u7ed1\u5b9a identity\u3001length \u548c\u524d 64 KiB\uff1b\u5c3e\u90e8\u540c\u8eab\u4efd\u540c\u957f\u5ea6\u6539\u5199\u5728 v1 \u89c2\u6d4b\u8303\u56f4\u5916\uff0c\u82e5\u6587\u6863\u7ee7\u7eed\u5ba3\u79f0\u5168\u91cf\u4e00\u81f4\u6027\u4f1a\u4ea7\u751f\u865a\u5047\u5b89\u5168\u4fdd\u8bc1\u3002"
+    },
+    {
+      "english": "- **Cause:** the implementation's resource policy was not treated as a safety contract. Tests demonstrated current branches without documenting visible and invisible boundaries.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u5b9e\u73b0\u5c42\u7684\u8d44\u6e90\u7b56\u7565\u6ca1\u6709\u88ab\u5f53\u6210\u5b89\u5168\u5408\u540c\uff0c\u6d4b\u8bd5\u53ea\u8bc1\u660e\u5f53\u524d\u5206\u652f\u884c\u4e3a\uff0c\u6ca1\u6709\u540c\u6b65\u8bf4\u660e\u53ef\u89c1\u4e0e\u4e0d\u53ef\u89c1\u8fb9\u754c\u3002"
+    },
+    {
+      "english": "- **Fix:** define three full reads for small files and three prefix reads for large files; share one invocation budget across files, directory entries, digest bytes and project-card reads.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u56fa\u5b9a\u5c0f\u6587\u4ef6\u4e09\u8f6e\u5168\u91cf\u3001\u5927\u6587\u4ef6\u4e09\u8f6e\u524d\u7f00\u7684\u89c2\u6d4b\u6a21\u578b\uff0c\u5e76\u628a\u6587\u4ef6\u3001\u76ee\u5f55\u9879\u3001\u6458\u8981\u5b57\u8282\u4e0e\u9879\u76ee\u5361\u8bfb\u53d6\u7eb3\u5165\u4e00\u6b21\u8c03\u7528\u5171\u4eab\u9884\u7b97\u3002"
+    },
+    {
+      "english": "- **Lesson:** safety scanning must state both what it detects and what it explicitly cannot guarantee. Resource limits, repeated reads and sampling boundaries are public contracts.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u5b89\u5168\u626b\u63cf\u65e2\u8981\u8bf4\u660e\u68c0\u6d4b\u4ec0\u4e48\uff0c\u4e5f\u8981\u8bf4\u660e\u660e\u786e\u4e0d\u4fdd\u8bc1\u4ec0\u4e48\uff1b\u8d44\u6e90\u4e0a\u9650\u3001\u91cd\u590d\u8bfb\u53d6\u548c\u91c7\u6837\u8fb9\u754c\u90fd\u5c5e\u4e8e\u516c\u5171\u5408\u540c\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 31 \u2014 Name the irreversible point between recoverable material and success output",
+      "canonical": "## \u53cd\u601d 31 \u2014 \u4e0d\u53ef\u9006\u5b8c\u6210\u70b9\u5fc5\u987b\u65e9\u4e8e\u6210\u529f\u8f93\u51fa\u3001\u665a\u4e8e\u53ef\u6062\u590d\u6750\u6599"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 10:45 by Codex \u2014 if directory deletion failed after both staging files were deleted, restoring the original card lacked compensation material and could undo an actually completed official state.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 10:45 by Codex \u2014 close \u6e05\u7406\u4e24\u4e2a staging \u6587\u4ef6\u540e\u82e5\u5220\u9664\u76ee\u5f55\u5931\u8d25\uff0c\u7ee7\u7eed\u201c\u6062\u590d\u539f\u5361\u201d\u65e2\u7f3a\u8865\u507f\u6750\u6599\uff0c\u4e5f\u53ef\u80fd\u56de\u6eda\u4e00\u4e2a\u5b9e\u9645\u4e0a\u5df2\u5b8c\u6210\u7684\u6b63\u5f0f\u72b6\u6001\u3002"
+    },
+    {
+      "english": "- **Observed:** old guidance treated every cleanup failure as rollback-capable. Once both owned files were deleted and content-deleted reached, the transaction could only preserve the official closed card and explicitly report cleanup failure.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u65e7\u53e3\u5f84\u628a\u4efb\u4f55\u6e05\u7406\u5931\u8d25\u90fd\u5f53\u4f5c\u53ef\u56de\u6eda\uff1b\u5b9e\u9645\u5728\u4e24\u4e2a owned \u6587\u4ef6\u88ab\u5220\u9664\u5e76\u8fdb\u5165 `content-deleted` \u540e\uff0c\u4e8b\u52a1\u53ea\u80fd\u4fdd\u7559\u6b63\u5f0f closed \u5361\u5e76\u663e\u5f0f\u62a5\u544a\u6e05\u7406\u5931\u8d25\u3002"
+    },
+    {
+      "english": "- **Cause:** success output, business commitment and physical cleanup were treated as one instant, without marking the irreversible boundary after compensation material was destroyed.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u628a\u6210\u529f\u8f93\u51fa\u3001\u4e1a\u52a1\u63d0\u4ea4\u548c\u7269\u7406\u6e05\u7406\u89c6\u4e3a\u540c\u4e00\u4e2a\u77ac\u95f4\uff0c\u6ca1\u6709\u6807\u8bb0\u8865\u507f\u6750\u6599\u88ab\u9500\u6bc1\u540e\u7684\u4e0d\u53ef\u9006\u8fb9\u754c\u3002"
+    },
+    {
+      "english": "- **Fix:** content-deleted is the irreversible completion point. Before it, rollback requires complete provable ownership. After it, preserve auditable remnants and never roll back the official card.",
+      "canonical": "- **\u4fee\u590d**\uff1a`content-deleted` \u6210\u4e3a\u4e0d\u53ef\u9006\u5b8c\u6210\u70b9\uff1b\u5176\u524d\u53ea\u6709 ownership \u5b8c\u6574\u53ef\u8bc1\u624d\u5141\u8bb8\u56de\u6eda\uff0c\u5176\u540e\u7981\u6b62\u56de\u6eda\u6b63\u5f0f\u5361\u5e76\u4fdd\u7559\u53ef\u5ba1\u8ba1\u6b8b\u7559\u3002"
+    },
+    {
+      "english": "- **Lesson:** transactions must explicitly name the irreversible point. Once compensation evidence is destroyed, failure handling becomes preserve-and-report; it cannot pretend recovery remains possible.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u4e8b\u52a1\u5fc5\u987b\u663e\u5f0f\u547d\u540d\u4e0d\u53ef\u9006\u70b9\uff1b\u4e00\u65e6\u8865\u507f\u8bc1\u636e\u88ab\u9500\u6bc1\uff0c\u5931\u8d25\u5904\u7406\u5e94\u8f6c\u4e3a\u201c\u4fdd\u7559\u5e76\u62a5\u544a\u201d\uff0c\u4e0d\u80fd\u7ee7\u7eed\u5047\u88c5\u53ef\u6062\u590d\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 32 \u2014 Optional WinPS ref parameters are not a stable nested-call protocol",
+      "canonical": "## \u53cd\u601d 32 \u2014 Windows PowerShell \u53ef\u9009 ref \u4e0d\u662f\u7a33\u5b9a\u7684\u5d4c\u5957\u4f20\u53c2\u534f\u8bae"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 10:45 by Codex \u2014 close staging used `[object]` for an optional output path and passed `[ref]$local` from a nested function; WinPS 5.1 dereferenced it into an ordinary string.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 10:45 by Codex \u2014 close staging \u4e3a\u517c\u5bb9\u201c\u53ef\u9009\u8f93\u51fa\u8def\u5f84\u201d\u628a\u53c2\u6570\u5199\u6210 `[object]` \u5e76\u4ece\u5d4c\u5957\u51fd\u6570\u4f20\u5165 `[ref]$local`\uff0cWinPS 5.1 \u5c06\u5176\u89e3\u5f15\u7528\u6210\u666e\u901a\u5b57\u7b26\u4e32\u3002"
+    },
+    {
+      "english": "- **Observed:** a direct-call control received PSReference, but the nested call failed with a nonwritable Value before staging creation. The caller saw only candidate-invalid and none (not created).",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u76f4\u63a5\u8c03\u7528\u63a7\u5236\u7ec4\u80fd\u6536\u5230 `PSReference`\uff0c\u5d4c\u5957\u8c03\u7528\u5374\u5728 staging \u521b\u5efa\u524d\u62a5 Value \u4e0d\u53ef\u5199\uff0c\u5916\u5c42\u53ea\u770b\u5230 `candidate-invalid` \u4e0e `none\uff08\u672a\u521b\u5efa\uff09`\u3002"
+    },
+    {
+      "english": "- **Cause:** the design relied on context-dependent binding from `[ref]` to a non-`[ref]` optional parameter, while failure reporting hid the actual exception location.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u4f9d\u8d56 PowerShell binder \u5bf9 `[ref]` \u5230\u975e `[ref]` \u53ef\u9009\u53c2\u6570\u7684\u4e0a\u4e0b\u6587\u76f8\u5173\u884c\u4e3a\uff0c\u4e14\u5931\u8d25\u7ed3\u679c\u9690\u85cf\u4e86\u771f\u5b9e\u5f02\u5e38\u4f4d\u7f6e\u3002"
+    },
+    {
+      "english": "- **Fix:** use an explicit state object with a writable Value property; record the attempted path before creation starts. Named injection points test directory, second-file-write and second-snapshot failures without replacing script-level functions.",
+      "canonical": "- **\u4fee\u590d**\uff1a\u6539\u7528\u5e26\u53ef\u5199 `Value` \u5c5e\u6027\u7684\u663e\u5f0f\u72b6\u6001\u5bf9\u8c61\uff0c\u5728\u8fdb\u5165\u521b\u5efa\u903b\u8f91\u524d\u5199\u5165\u5c1d\u8bd5\u8def\u5f84\uff1b\u6d4b\u8bd5\u901a\u8fc7\u5177\u540d\u6ce8\u5165\u70b9\u8986\u76d6\u76ee\u5f55\u3001\u7b2c\u4e8c\u6587\u4ef6\u5199\u5165\u548c\u7b2c\u4e8c\u5feb\u7167\u5931\u8d25\uff0c\u4e0d\u518d\u66ff\u6362\u811a\u672c\u7ea7\u51fd\u6570\u3002"
+    },
+    {
+      "english": "- **Lesson:** pass mutable outputs through explicit state objects or mandatory ref contracts. Test injection needs lifecycle boundaries so it cannot contaminate later cases in the same process.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u8de8\u51fd\u6570\u4f20\u9012\u53ef\u53d8\u8f93\u51fa\u5e94\u4f7f\u7528\u663e\u5f0f\u72b6\u6001\u5bf9\u8c61\u6216\u5f3a\u5236 ref \u5408\u540c\uff1b\u6d4b\u8bd5\u6ce8\u5165\u5fc5\u987b\u6709\u751f\u547d\u5468\u671f\u8fb9\u754c\uff0c\u4e0d\u80fd\u6c61\u67d3\u540c\u8fdb\u7a0b\u540e\u7eed\u7528\u4f8b\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 33 \u2014 Staging safety depends on handle lifetimes, not path rechecks",
+      "canonical": "## \u53cd\u601d 33 \u2014 staging \u5b89\u5168\u4f9d\u8d56\u53e5\u67c4\u751f\u547d\u5468\u671f\u800c\u975e\u8def\u5f84\u590d\u6838"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 by Codex \u2014 close review found that creating child files by absolute path after validating staging still left a directory-replacement window between validation and opening.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 by Codex \u2014 close \u7ec8\u5ba1\u53d1\u73b0 staging \u76ee\u5f55\u867d\u7136\u5df2\u6838\u9a8c\uff0c\u5b50\u6587\u4ef6\u82e5\u518d\u6309\u7edd\u5bf9\u8def\u5f84\u521b\u5efa\uff0c\u9a8c\u8bc1\u4e0e\u6253\u5f00\u4e4b\u95f4\u4ecd\u5b58\u5728\u53ef\u88ab\u76ee\u5f55\u66ff\u6362\u7684\u7a97\u53e3\u3002"
+    },
+    {
+      "english": "- **Observed:** an empty staging directory could move or be replaced before the first file was created. Retaining path and identity alone could not guarantee that later CreateNew and cleanup used the same directory object.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u7a7a staging \u76ee\u5f55\u53ef\u5728\u9996\u6587\u4ef6\u521b\u5efa\u524d\u88ab\u79fb\u52a8\u6216\u66ff\u6362\uff1b\u4ec5\u4fdd\u5b58\u8def\u5f84\u4e0e identity\uff0c\u4e0d\u80fd\u4fdd\u8bc1\u540e\u7eed CreateNew \u548c\u6e05\u7406\u4ecd\u4f5c\u7528\u4e8e\u540c\u4e00\u4e2a\u76ee\u5f55\u5bf9\u8c61\u3002"
+    },
+    {
+      "english": "- **Cause:** trusted parent handle, staging creation handle and first-file lease were not a continuous ownership chain. Path validation, relative CreateNew and delete-pending were separate raceable operations.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u6ca1\u6709\u628a\u53d7\u4fe1\u7236\u76ee\u5f55\u53e5\u67c4\u3001staging \u521b\u5efa\u53e5\u67c4\u548c\u9996\u6587\u4ef6 lease \u7ec4\u6210\u8fde\u7eed\u6240\u6709\u6743\u94fe\uff1b\u8def\u5f84\u7ea7\u9a8c\u8bc1\u4e0e\u76f8\u5bf9 CreateNew\u3001delete-pending \u88ab\u62c6\u6210\u591a\u4e2a\u53ef\u7ade\u6001\u52a8\u4f5c\u3002"
+    },
+    {
+      "english": "- **Fix:** The staging ownership chain is fixed: atomically create the staging directory relative to a trusted parent-directory handle. Create the first `\u539f\u6d3b\u52a8\u5361.bin` using directory-handle-relative CreateNew; write, flush and bind through that same handle. Retain the file lease throughout the transaction so the directory stays nonempty. Create candidate `\u501f\u9274\u5361.md` with directory-handle-relative CreateNew as well. Cleanup order is fixed as `Candidate\u2192retained Original\u2192content-deleted\u2192directory`: validate Candidate through a single-open bound handle and set delete-pending through that same handle; set retained Original delete-pending through its retained lease and same handle; immediately enter `content-deleted`, then delete the directory through its original creation handle. Leave no gap between verification and path opening. Failed creation deletes only objects bound to this transaction's handles.",
+      "canonical": "- **\u4fee\u590d**\uff1astaging \u6240\u6709\u6743\u94fe\u56fa\u5b9a\uff1a\u901a\u8fc7\u53d7\u4fe1\u7236\u76ee\u5f55\u53e5\u67c4\u76f8\u5bf9\u539f\u5b50\u521b\u5efa staging \u76ee\u5f55\uff1b\u9996\u4e2a `\u539f\u6d3b\u52a8\u5361.bin` \u4ee5\u76ee\u5f55\u53e5\u67c4\u76f8\u5bf9 CreateNew\uff0c\u5e76\u5728\u540c\u4e00 handle \u5199\u5165\u3001flush \u5e76\u7ed1\u5b9a\uff0c\u6587\u4ef6 lease \u8d2f\u7a7f\u6574\u4e2a\u4e8b\u52a1\u4ee5\u8ba9\u76ee\u5f55\u4fdd\u6301\u975e\u7a7a\uff1b\u5019\u9009 `\u501f\u9274\u5361.md` \u4e5f\u4ee5\u76ee\u5f55\u53e5\u67c4\u76f8\u5bf9 CreateNew\u3002\u6e05\u7406\u987a\u5e8f\u56fa\u5b9a\u4e3a `Candidate\u2192retained Original\u2192content-deleted\u2192directory`\uff1aCandidate \u4ee5\u5355\u6b21\u6253\u5f00\u7684\u7ed1\u5b9a handle \u5b8c\u6210\u9a8c\u8bc1\u5e76\u5728\u540c\u4e00 handle \u8bbe\u7f6e delete-pending\uff1bretained Original \u901a\u8fc7\u4fdd\u7559 lease \u5728\u540c\u4e00 handle \u8bbe\u7f6e delete-pending\uff1b\u968f\u540e\u7acb\u5373\u8fdb\u5165 `content-deleted`\uff0c\u6700\u540e\u7531\u76ee\u5f55\u521b\u5efa\u53e5\u67c4\u540c\u53e5\u67c4\u5220\u9664\u3002\u9a8c\u8bc1\u4e0e\u8def\u5f84\u6253\u5f00\u4e4b\u95f4\u4e0d\u5f97\u7559\u7a97\u53e3\uff1b\u521b\u5efa\u5931\u8d25\u53ea\u5220\u9664\u672c\u4e8b\u52a1\u53e5\u67c4\u7ed1\u5b9a\u5bf9\u8c61\u3002"
+    },
+    {
+      "english": "- **Lesson:** validation, creation, writing, flushing, binding and deletion must stay within continuous handle lifetimes. On creation failure, delete only objects bound to this transaction's handles; never guess cleanup by path.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u9a8c\u8bc1\u3001\u521b\u5efa\u3001\u5199\u5165\u3001flush\u3001\u7ed1\u5b9a\u548c\u5220\u9664\u5fc5\u987b\u843d\u5728\u8fde\u7eed\u53e5\u67c4\u751f\u547d\u5468\u671f\u5185\uff1b\u521b\u5efa\u5931\u8d25\u53ea\u5220\u9664\u672c\u4e8b\u52a1\u53e5\u67c4\u7ed1\u5b9a\u5bf9\u8c61\uff0c\u4e0d\u80fd\u6309\u8def\u5f84\u731c\u6d4b\u6e05\u7406\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 34 \u2014 Acquire the post-P4t final lock through one handle open",
+      "canonical": "## \u53cd\u601d 34 \u2014 P4t \u901a\u8fc7\u540e\u7684\u7ec8\u9501\u5fc5\u987b\u4ee5\u4e00\u6b21\u53e5\u67c4\u6253\u5f00\u95ed\u5408"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 by Codex \u2014 close review found that an official card could become reparse-backed or gain a hard link after safe-path validation but before the final lock reopened the path.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 by Codex \u2014 close \u7ec8\u5ba1\u53d1\u73b0\u6b63\u5f0f\u5361\u5728\u5b89\u5168\u8def\u5f84\u9a8c\u8bc1\u4e4b\u540e\u3001\u7ec8\u9501\u6309\u8def\u5f84\u91cd\u5f00\u4e4b\u524d\u4ecd\u53ef\u88ab\u6362\u6210 reparse \u6216\u65b0\u589e\u786c\u94fe\u63a5\u3002"
+    },
+    {
+      "english": "- **Observed:** path validation and final-lock opening could each succeed while observing different objects. A prior P4t pass did not prove the official card remained the same safe regular file during cleanup.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u8def\u5f84\u9a8c\u8bc1\u548c\u7ec8\u9501\u6253\u5f00\u5404\u81ea\u6210\u529f\uff0c\u5374\u53ef\u80fd\u89c2\u5bdf\u5230\u4e24\u4e2a\u4e0d\u540c\u5bf9\u8c61\uff1bP4t \u5df2\u901a\u8fc7\u4e0d\u80fd\u8bc1\u660e\u540e\u7eed\u6e05\u7406\u65f6\u6b63\u5f0f\u5361\u4ecd\u662f\u540c\u4e00\u5b89\u5168\u5e38\u89c4\u6587\u4ef6\u3002"
+    },
+    {
+      "english": "- **Cause:** a path-level conclusion was carried across a later open, without repeating canonical-path, type, link-count and complete-snapshot verification from the actual final-lock handle.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u628a\u8def\u5f84\u7ea7\u5b89\u5168\u7ed3\u8bba\u8de8\u8d8a\u5230\u4e0b\u4e00\u6b21\u6253\u5f00\uff0c\u6ca1\u6709\u4ece\u7ec8\u9501\u5b9e\u9645 handle \u91cd\u505a canonical path\u3001\u7c7b\u578b\u3001link count \u4e0e\u5b8c\u6574\u5feb\u7167\u590d\u6838\u3002"
+    },
+    {
+      "english": "- **Fix:** After P4t exit 0, acquire the official card's final lock with one OPEN_REPARSE_POINT open. Through the same handle, recheck canonical path, regular non-reparse type, link count=1, identity, length and bytes. Hold that exclusive lease until staging cleanup finishes. Do not validate a safe path and then reopen it by path.",
+      "canonical": "- **\u4fee\u590d**\uff1aP4t exit 0 \u540e\uff0c\u6b63\u5f0f\u5361\u7ec8\u9501\u5fc5\u987b\u5355\u6b21 OPEN_REPARSE_POINT \u6253\u5f00\uff0c\u5e76\u4ece\u540c\u4e00 handle \u590d\u6838 canonical path\u3001\u5e38\u89c4\u975e reparse \u7c7b\u578b\u3001link count=1\u3001identity\u3001length \u4e0e bytes\uff1b\u8be5\u6392\u4ed6 lease \u6301\u6709\u5230 staging \u6e05\u7406\u7ed3\u675f\u3002\u7981\u6b62\u201c\u5148\u5b89\u5168\u8def\u5f84\u9a8c\u8bc1\u518d\u6309\u8def\u5f84\u91cd\u5f00\u201d\u3002"
+    },
+    {
+      "english": "- **Lesson:** derive the final lock's safety facts from the actual locked handle and retain it through staging cleanup. Do not validate a safe path and then reopen it by path.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u7ec8\u9501\u7684\u5b89\u5168\u4e8b\u5b9e\u5fc5\u987b\u6765\u81ea\u5b9e\u9645\u6301\u9501 handle\uff0c\u5e76\u6301\u6709\u5230 staging \u6e05\u7406\u7ed3\u675f\uff1b\u7981\u6b62\u201c\u5148\u5b89\u5168\u8def\u5f84\u9a8c\u8bc1\u518d\u6309\u8def\u5f84\u91cd\u5f00\u201d\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Reflection 35 \u2014 Official cards and staging candidates are separate rollback states",
+      "canonical": "## \u53cd\u601d 35 \u2014 \u6b63\u5f0f\u5361\u4e0e staging \u5019\u9009\u662f\u4e24\u4e2a\u72ec\u7acb\u56de\u6eda\u72b6\u6001"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "- **Recorded:** 2026-07-22 by Codex \u2014 after seal committed the official card, a staging-candidate update failed before commitment, but old state advancement had already treated staging expectations as sealed bytes.",
+      "canonical": "- **\u8bb0\u5f55**\uff1a2026-07-22 by Codex \u2014 seal \u5df2\u63d0\u4ea4\u6b63\u5f0f\u5361\u540e\uff0cstaging \u5019\u9009\u66f4\u65b0\u5728\u63d0\u4ea4\u524d\u5931\u8d25\uff0c\u65e7\u72b6\u6001\u63a8\u8fdb\u5374\u628a staging \u671f\u671b\u63d0\u524d\u89c6\u4e3a sealed \u5b57\u8282\u3002"
+    },
+    {
+      "english": "- **Observed:** the official ownership snapshot described the sealed official object while staging still held the unsealed candidate. Sharing one expected-byte state made a safely recoverable branch falsely report a concurrent staging rewrite.",
+      "canonical": "- **\u73b0\u8c61**\uff1a\u6b63\u5f0f\u5361\u6240\u6709\u6743\u5feb\u7167\u5df2\u7ecf\u6307\u5411 sealed \u6b63\u5f0f\u5bf9\u8c61\uff0c\u5f53\u524d staging \u5019\u9009\u5feb\u7167\u4ecd\u662f\u672a seal \u5019\u9009\uff1b\u5171\u7528\u4e00\u4e2a\u201c\u9884\u671f\u5b57\u8282\u201d\u4f1a\u8ba9\u672c\u53ef\u5b89\u5168\u56de\u6eda\u7684\u5206\u652f\u8bef\u62a5 staging \u88ab\u5e76\u53d1\u6539\u5199\u3002"
+    },
+    {
+      "english": "- **Cause:** two independent snapshots, official-card ownership and current staging candidate, were merged, and the candidate expectation advanced before Set actually committed.",
+      "canonical": "- **\u6839\u56e0**\uff1a\u628a\u6b63\u5f0f\u5361\u6240\u6709\u6743\u5feb\u7167\u4e0e\u5f53\u524d staging \u5019\u9009\u5feb\u7167\u4e24\u4e2a\u72ec\u7acb\u72b6\u6001\u5408\u5e76\uff0c\u5e76\u5728 Set \u771f\u6b63\u63d0\u4ea4\u524d\u5148\u63a8\u8fdb\u5019\u9009\u671f\u671b\u3002"
+    },
+    {
+      "english": "- **Fix:** Post-seal staging-candidate updates follow a two-state contract: the official-card ownership snapshot and current staging-candidate snapshot are separate states, each independently verified during rollback. Do not change the expected staging state to sealed bytes in advance. After `Set-BctCandidateBytes` commits its Set, update the state object before any later check that may fail, so exception paths see the candidate actually committed.",
+      "canonical": "- **\u4fee\u590d**\uff1aseal \u540e staging \u5019\u9009\u66f4\u65b0\u9075\u5faa\u53cc\u72b6\u6001\u5408\u540c\uff1a\u6b63\u5f0f\u5361\u6240\u6709\u6743\u5feb\u7167\u4e0e\u5f53\u524d staging \u5019\u9009\u5feb\u7167\u662f\u4e24\u4e2a\u72ec\u7acb\u72b6\u6001\uff0c\u56de\u6eda\u5fc5\u987b\u5206\u522b\u9a8c\u8bc1\uff1b\u4e0d\u5f97\u63d0\u524d\u628a staging \u671f\u671b\u6539\u6210 sealed \u5b57\u8282\u3002`Set-BctCandidateBytes` \u7684 Set \u63d0\u4ea4\u540e\u72b6\u6001\u5bf9\u8c61\u5148\u66f4\u65b0\uff0c\u518d\u6267\u884c\u540e\u7eed\u53ef\u5931\u8d25\u590d\u6838\uff0c\u786e\u4fdd\u5f02\u5e38\u5206\u652f\u770b\u5230\u5b9e\u9645\u5df2\u63d0\u4ea4\u5019\u9009\u3002"
+    },
+    {
+      "english": "- **Lesson:** rollback must independently verify each object's current snapshot. Update the state object after Set commits; never advance expected staging state to sealed bytes beforehand.",
+      "canonical": "- **\u6559\u8bad**\uff1a\u56de\u6eda\u5fc5\u987b\u5206\u522b\u9a8c\u8bc1\u4e24\u4e2a\u5bf9\u8c61\u7684\u5f53\u524d\u5feb\u7167\uff1bSet \u63d0\u4ea4\u540e\u72b6\u6001\u5bf9\u8c61\u5148\u66f4\u65b0\uff0c\u4e14\u4e0d\u5f97\u63d0\u524d\u628a staging \u671f\u671b\u6539\u6210 sealed \u5b57\u8282\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    }
+  ]
+}

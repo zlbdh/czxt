@@ -84,8 +84,8 @@ foreach ($rel in @(
   }
 }
 
-Assert-Contains "交接区\README.md" "历史归档/.*不可直接复制执行" "交接历史归档目录边界"
-Assert-Contains "交接区\历史归档\README.md" "不代表当前待办.*不可直接复制执行|不可直接复制执行.*不代表当前待办" "交接历史归档入口边界"
+Assert-Contains "交接区\README.md" "历史归档/.*不可直接复制执行|(?s:历史归档/.*Use them for historical tracing, not as current instructions or copy-and-run commands\.)" "交接历史归档目录边界"
+Assert-Contains "交接区\历史归档\README.md" "不代表当前待办.*不可直接复制执行|不可直接复制执行.*不代表当前待办|They are not current tasks and must not be copied and executed directly\." "交接历史归档入口边界"
 
 $permanentText = Get-Text "操作系统\01_架构\元规则池.md"
 $candidateText = Get-Text "操作系统\01_架构\元规则池-候选.md"

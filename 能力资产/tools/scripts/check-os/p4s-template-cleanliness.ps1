@@ -5,7 +5,7 @@ $ErrorActionPreference = "Stop"
 . (Join-Path $PSScriptRoot "adr-governance-truth.ps1")
 
 if (-not (Test-IsTemplateRoot -Root $Root)) {
-  Write-Host "  ℹ️ 非模板根模式：跳过模板纯净度守卫"
+  Write-Host "  ℹ️ Not a template root; skipping template-neutrality guard"
   exit 0
 }
 
@@ -27,19 +27,19 @@ function Test-CurrentTruthFile {
     [string]$RelativePath,
     [string[]]$RequiredTerms = @(),
     [string[]]$ForbiddenTerms = @(),
-    [string]$Purpose = "模板当前真值"
+    [string]$Purpose = "current template truth"
   )
 
   $fullPath = Join-Path $Root $RelativePath
   if (-not (Test-Path -LiteralPath $fullPath -PathType Leaf)) {
-    $failures.Add("$RelativePath 缺失；无法验证${Purpose}")
+    $failures.Add("$RelativePath is missing; cannot verify ${Purpose}")
     return
   }
 
   try {
     $text = Get-Content -LiteralPath $fullPath -Raw -Encoding UTF8
   } catch {
-    $failures.Add("$RelativePath 无法读取；无法验证${Purpose}：$($_.Exception.Message)")
+    $failures.Add("$RelativePath cannot be read; cannot verify ${Purpose}: $($_.Exception.Message)")
     return
   }
 
@@ -66,7 +66,7 @@ function Test-CurrentTruthFile {
     $hasAlias = $anchorAliases.ContainsKey($term) -and
       ($text.IndexOf($anchorAliases[$term], [System.StringComparison]::OrdinalIgnoreCase) -ge 0)
     if (-not $hasTerm -and -not $hasAlias) {
-      $failures.Add("$RelativePath 缺少「${Purpose}」锚点：$term")
+      $failures.Add("$RelativePath is missing the ${Purpose} anchor: $term")
     }
   }
 
@@ -91,7 +91,7 @@ function Test-CurrentTruthFile {
       $idx = $text.IndexOf($variant, [System.StringComparison]::OrdinalIgnoreCase)
       if ($idx -lt 0) { continue }
       $line = ($text.Substring(0, $idx) -split "`n").Count
-      $failures.Add("$RelativePath`:L$line 仍含来源项目或过期当前事实：$variant；应改为项目实例占位、真源指针或显式阶段判定")
+      $failures.Add("$RelativePath`:L$line still contains source-project or stale current facts: $variant; use an instance placeholder, authoritative-source pointer, or explicit stage assessment")
     }
   }
 }
@@ -99,71 +99,71 @@ function Test-CurrentTruthFile {
 $currentTruthChecks = @(
   @{
     Path = "README.md"
-    Purpose = "产品化阶段"
+    Purpose = "Productization stage"
     Required = @("P1 complete", "P2 incomplete")
     Forbidden = @("准备进入长期产品化模板阶段", "再做首个受控提交")
   },
   @{
     Path = "操作系统/00_总入口.md"
-    Purpose = "ADR 状态"
+    Purpose = "ADR status"
     Required = @("ADR 永久档案")
     Forbidden = @("38 ADR 永久现行")
   },
   @{
     Path = "操作系统/04_台账/长期产品化路线图.md"
-    Purpose = "产品化阶段"
+    Purpose = "Productization stage"
     Required = @("P1 已完成", "P2 未完成", "自托管首证")
     Forbidden = @("## P1 前验收")
   },
   @{
     Path = "Docs/3-开发文档/README.md"
-    Purpose = "开发文档模板中立"
+    Purpose = "Development-document template neutrality"
     Required = @("项目实例真值", "模板根不预设")
     Forbidden = @("Dexie schema 索引", "src/shared/database/schema.js")
   },
   @{
     Path = "Docs/3-开发文档/项目结构.md"
-    Purpose = "中性目录导航"
+    Purpose = "Neutral directory navigation"
     Required = @("模板根导航", "项目实例导航", "项目实例真值")
     Forbidden = @("AppShell.jsx", "health/Health.jsx", "accounting/Accounting.jsx", "timeline/Timeline.jsx")
   },
   @{
     Path = "Docs/3-开发文档/技术栈.md"
-    Purpose = "技术栈填写模板"
+    Purpose = "Technology-stack template"
     Required = @("项目实例真值", "[填写]")
     Forbidden = @("| React | 18.3.1 |", "| Dexie | 4.4.2 |", "APK 大小: 5.5 MB", "Bundle 大小（v2.2")
   },
   @{
     Path = "Docs/3-开发文档/API规范.md"
-    Purpose = "API 填写模板"
+    Purpose = "API template"
     Required = @("项目实例真值", "协议层", "模型层", "[填写]")
     Forbidden = @("token-plan-sgp.xiaomimimo.com", "mimo-v2.5-pro", "### 4 个 AI 能力", "analyzeMealImage", "parseLedgerWithAI", "summarizeDay")
   },
   @{
     Path = "Docs/3-开发文档/数据库schema.md"
-    Purpose = "数据库 Schema 填写模板"
+    Purpose = "Database schema template"
     Required = @("项目实例真值", "迁移与兼容", "[填写]")
     Forbidden = @("当前 schema 版本：v16", "19 张业务表 + meta", "### userProfile", "### dailyTasks")
   },
   @{
     Path = "能力资产/skills/项目体检.md"
-    Purpose = "P4s 能力说明"
+    Purpose = "P4s capability description"
     Required = @("定向当前真值检查", "项目实例真值")
     Forbidden = @()
   },
   @{
     Path = "能力资产/tools/依赖矩阵.md"
-    Purpose = "依赖矩阵项目实例真值"
+    Purpose = "Dependency-matrix project instance source of truth"
     Required = @("项目实例真值")
     Forbidden = @("mimo-v2.5-pro", "schema v1-v16", "^4.4.2")
   },
   @{
     Path = "能力资产/shared/品牌词典.md"
-    Purpose = "品牌协议层与模型层分离"
+    Purpose = "Brand protocol/model layer separation"
     Required = @("协议层", "模型层")
     Forbidden = @("mimo-v2.5-pro", "token-plan-cn.xiaomimimo.com", "token-plan-sgp.xiaomimimo.com")
   },
-  @{ Path = "操作系统/05_记忆/INDEX.md"; Purpose = "记忆项目身份"; Required = @("项目实例真值"); Forbidden = @("mimo-v2.5-pro", "小米自研 MiMo") }
+  @{ Path = "操作系统/05_记忆/INDEX.md"; Purpose = "Project identity in memory"; Required = @("项目实例真值"); Forbidden = @("mimo-v2.5-pro", "小米自研 MiMo") }
 )
 
 foreach ($check in $currentTruthChecks) {
@@ -172,7 +172,7 @@ foreach ($check in $currentTruthChecks) {
 
 $adrTruth = Get-CzxtAdrGovernanceTruth -Root $Root
 foreach ($failure in $adrTruth.Failures) {
-  $failures.Add("ADR 真源失败：$failure")
+  $failures.Add("ADR source check failed: $failure")
 }
 foreach ($failure in @(Test-CzxtAdrMainEntryAnchor -Root $Root -Truth $adrTruth)) {
   $failures.Add($failure)
@@ -188,7 +188,7 @@ $currentPlaybooks = @(
   "操作系统/02_智能体/运营PM-运营咪咪.md"
 )
 foreach ($playbook in $currentPlaybooks) {
-  Test-CurrentTruthFile -RelativePath $playbook -RequiredTerms @("项目实例真值") -Purpose "现行 playbook"
+  Test-CurrentTruthFile -RelativePath $playbook -RequiredTerms @("项目实例真值") -Purpose "current playbook"
 }
 
 $configDir = Join-Path $Root "项目配置"
@@ -229,7 +229,7 @@ foreach ($file in $files) {
   $rel = Get-RelativePathCompat -BasePath $Root -FullPath $file.FullName
   foreach ($term in $terms) {
     if ($rel.IndexOf($term, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
-      $failures.Add("$rel 路径名发现来源项目残留：$term")
+      $failures.Add("$rel path contains source-project remnants: $term")
     }
   }
 
@@ -242,15 +242,15 @@ foreach ($file in $files) {
     $idx = $text.IndexOf($term, [System.StringComparison]::OrdinalIgnoreCase)
     if ($idx -lt 0) { continue }
     $line = ($text.Substring(0, $idx) -split "`n").Count
-    $failures.Add("$rel`:L$line 发现来源项目残留：$term")
+    $failures.Add("$rel`:L$line contains source-project remnants: $term")
   }
 }
 
 if ($failures.Count -gt 0) {
-  Write-Host "  🔴 模板纯净度失败：$($failures.Count) 处" -ForegroundColor Red
+  Write-Host "  🔴 Template-neutrality check failed: $($failures.Count) findings" -ForegroundColor Red
   foreach ($failure in $failures) { Write-Host "    - $failure" -ForegroundColor Red }
   exit 10
 }
 
-Write-Host "  ✅ 模板纯净度通过：无具体项目卡 / 无已知来源项目残留 / 当前真值入口保持模板中立" -ForegroundColor Green
+Write-Host "  ✅ Template-neutrality check passed: no specific-project cards or known source-project remnants; current-truth entries remain neutral" -ForegroundColor Green
 exit 0

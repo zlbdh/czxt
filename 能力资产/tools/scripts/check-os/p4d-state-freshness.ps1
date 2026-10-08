@@ -11,24 +11,24 @@ $stale = $false
 $reasons = @()
 
 if (-not (Test-Path -LiteralPath $stateFile -PathType Leaf)) {
-    Write-Host "  🔴 状态.md 不存在 — P4a 已应触发" -ForegroundColor Red
+    Write-Host "  🔴 状态.md is missing; P4a should already have reported it" -ForegroundColor Red
     $stale = $true
-    $reasons += "文件缺失"
+    $reasons += "file missing"
 } else {
-    # 维度 1：文件 mtime
+    # Dimension 1: file modification time.
     $mtime = (Get-Item -LiteralPath $stateFile).LastWriteTime
     $mtimeDays = [int]($Now - $mtime).TotalDays
     $mtimeStr = $mtime.ToString("yyyy-MM-dd HH:mm")
 
     if ($mtime -lt $threshold) {
-        Write-Host ("  🟡 文件 mtime: {0}（距今 {1} 天，超 30 天）" -f $mtimeStr, $mtimeDays) -ForegroundColor Yellow
+        Write-Host ("  🟡 File mtime: {0} ({1} days ago; over 30 days)" -f $mtimeStr, $mtimeDays) -ForegroundColor Yellow
         $stale = $true
-        $reasons += "mtime 超 30 天"
+        $reasons += "mtime is over 30 days old"
     } else {
-        Write-Host ("  ✅ 文件 mtime: {0}（距今 {1} 天）" -f $mtimeStr, $mtimeDays) -ForegroundColor Green
+        Write-Host ("  ✅ File mtime: {0} ({1} days ago)" -f $mtimeStr, $mtimeDays) -ForegroundColor Green
     }
 
-    # 维度 2：文件内日期戳（防 git checkout 重置 mtime 但内容仍旧）
+    # Dimension 2: dates in the content, since git checkout can reset mtime without updating stale content.
     $content = Get-Content -LiteralPath $stateFile -Raw -ErrorAction SilentlyContinue
     if ($content) {
         $matches = [regex]::Matches($content, '\d{4}-\d{2}-\d{2}')
@@ -43,24 +43,24 @@ if (-not (Test-Path -LiteralPath $stateFile -PathType Leaf)) {
                 $latestStr = $latest.ToString("yyyy-MM-dd")
                 $latestDays = [int]($Now - $latest).TotalDays
                 if ($latest -lt $threshold) {
-                    Write-Host ("  🟡 内容最新日期戳: {0}（距今 {1} 天，超 30 天）" -f $latestStr, $latestDays) -ForegroundColor Yellow
+                    Write-Host ("  🟡 Latest content date: {0} ({1} days ago; over 30 days)" -f $latestStr, $latestDays) -ForegroundColor Yellow
                     $stale = $true
-                    $reasons += "内容日期戳超 30 天"
+                    $reasons += "content date is over 30 days old"
                 } else {
-                    Write-Host ("  ✅ 内容最新日期戳: {0}（距今 {1} 天）" -f $latestStr, $latestDays) -ForegroundColor Green
+                    Write-Host ("  ✅ Latest content date: {0} ({1} days ago)" -f $latestStr, $latestDays) -ForegroundColor Green
                 }
             } else {
-                Write-Host "  🟡 内容未能解析任何 YYYY-MM-DD 日期戳" -ForegroundColor Yellow
+                Write-Host "  🟡 No valid YYYY-MM-DD date could be parsed from the content" -ForegroundColor Yellow
             }
         } else {
-            Write-Host "  🟡 内容未匹配 YYYY-MM-DD 日期格式" -ForegroundColor Yellow
+            Write-Host "  🟡 Content contains no YYYY-MM-DD date pattern" -ForegroundColor Yellow
         }
     }
 }
 
 if ($stale) {
-    $reasonText = if ($reasons.Count -gt 0) { $reasons -join " + " } else { "未知 stale" }
-    Write-Host "  🟡 P4d warning：$reasonText（不阻塞，但建议立刻更新）" -ForegroundColor Yellow
+    $reasonText = if ($reasons.Count -gt 0) { $reasons -join " + " } else { "unknown freshness" }
+    Write-Host "  🟡 P4d warning: $reasonText (nonblocking; prompt update recommended)" -ForegroundColor Yellow
     exit 5
 }
 

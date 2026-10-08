@@ -3,33 +3,32 @@ name: project-sink
 scope: project
 type: semantic
 loaded: on-demand
-description: 项目沉淀（Layer 3 / 项目全周期视角）— 立项设想 vs 落地差异 / Sprint 业务收获 / 用户反馈 / 市场学习
+description: Project learning, Layer 3 — initial plans versus implementation, Sprint business lessons, user feedback and market learning.
 ---
 
-# 项目沉淀 · Layer 3 沉淀架构最外层
+# Project Learning — Outermost Layer of the Three-Layer Knowledge Structure
 
-> 📚 **PM 自纠 #71 落地入口**（task #102 / 2026-05-22）
-> **位置在沉淀 3 层架构中**：Layer 1 私人沉淀（PM 自治）/ Layer 2 主沉淀 PM（跨 PM 协调）/ **Layer 3 项目沉淀**（项目全周期视角）
+> Entry implementing PM self-correction #71: task #102, 2026-05-22.
+> Layer 1: private PM learning under PM autonomy. Layer 2: lead Knowledge PM coordinating across PMs. **Layer 3: project learning across the entire lifecycle.**
 
-## 与 PM 沉淀的区别
+## Relationship to PM learning
 
-| 维度 | PM 沉淀（Layer 1+2）| 项目沉淀（Layer 3）|
+| Dimension | PM learning: Layers 1 + 2 | Project learning: Layer 3 |
 |---|---|---|
-| 关注点 | PM 协作机制 / framework 演化 / 角色错向 | 业务+产品+用户+市场 |
-| 治理 | 9 PM 自治 + 沉淀 PM 主沉淀 | 项目 PM 主导 + 运营 PM 数据 + 沉淀 PM 起稿 |
-| 内容 | PM 自纠 + 速查表 + 议题 backlog | 立项 vs 落地 / 用户反馈 / 推广效果 / 产品演化 |
-| 频率 | 实时 + RETRO | Sprint 收官 + 跨 Sprint 战略反思 |
+| Focus | PM collaboration, framework evolution, misdirected role ownership | Business, product, users, and market |
+| Governance | Nine autonomous PMs + lead Knowledge PM | Project PM leads; Operations PM provides data; Knowledge PM drafts |
+| Content | PM self-corrections, quick references, issue backlog | Plans versus implementation, user feedback, promotion outcomes, product evolution |
+| Frequency | Ongoing + RETRO | Sprint completion + strategic reflection across Sprints |
 
-## 未来候选沉淀产物（未建，非链接）
+## Future candidate artifacts — not created, not links
 
-- `立项设想-vs-落地.md`（v1 项目立项 vs 当前版本实际差异）
-- `Sprint业务收获/`（每 Sprint 业务侧收获 / 与代码 ship 解耦）
-- `用户反馈累积.md`（运营 PM 提供 / 真机反馈 / 推广咪咪 v0.4 互动）
-- `推广效果数据.md`（运营 PM 数据 / W0-MVP 起累积）
-- `产品演化轨迹.md`（v1 → v2 → v3 → v4 业务能力增量）
-- `市场学习.md`（前作 4 App 反推需求 v2 + 业界对标）
+- `立项设想-vs-落地.md`: initial v1 plan compared with the actual current version.
+- `Sprint业务收获/`: business learning per Sprint, separate from code shipment.
+- `用户反馈累积.md`: Operations PM input, device feedback, Promotion Mimi v0.4 interactions.
+- `推广效果数据.md`: Operations PM data accumulated from W0-MVP onward.
+- `产品演化轨迹.md`: business capability increments from v1 → v2 → v3 → v4.
+- `市场学习.md`: requirements v2 inferred from the four earlier apps and industry comparisons.
 
----
+PM self-correction #71, issue DC candidate meta-rule: three learning layers — private, lead Knowledge PM, and project.
 
-📌 **PM 自纠 #71 议题 DC 候选元规则**：「沉淀 3 层架构 — 私人 + 主沉淀 + 项目沉淀」
-📌 **维护状态**：项目 PM + 运营 PM + 沉淀 PM 在 Sprint 收官或运营侧有真实数据后累积；暂无数据时保持本入口，不虚构正文。
+**Maintenance:** Project PM, Operations PM, and Knowledge PM accumulate evidence at Sprint completion or once real operational data exists. When no data exists, retain this entry; do not invent body content.

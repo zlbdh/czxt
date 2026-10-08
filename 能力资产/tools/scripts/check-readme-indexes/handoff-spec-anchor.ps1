@@ -25,11 +25,11 @@ Assert-NotContains "操作系统\03_交接\交接卡格式.md" '必须由项目 
 Assert-Contains "操作系统\03_交接\交接卡格式-附录.md" '不会自动把卡从 `待接手/` 移到 `已接手/`|does not automatically move cards from `待接手/` to `已接手/`' "Appendix prohibits automatic moves"
 Assert-Contains "操作系统\03_交接\交接卡格式-附录.md" '不会替 PM 追加轨迹|does not append PM-transition rows on a PM.s behalf' "Appendix prohibits automatic trace appends"
 
-Assert-Contains "交接区\README.md" '⑥ 追加问答（标题必留，内容可写“暂无”）' "Handoff-area README requires section ⑥ heading"
-Assert-Contains "交接区\README.md" '等下一棒 PM / 等 zlbdh confirm' "Handoff-area README next PM"
-Assert-Contains "交接区\README.md" '接手者 / 当前 session' "Handoff-area README move authority"
-Assert-Contains "交接区\README.md" '不会静默移动文件' "Handoff-area README hooks do not move cards"
-Assert-NotContains "交接区\README.md" '下一个工具' "Handoff-area README obsolete tool actor"
+Assert-Contains "交接区\README.md" '⑥ 追加问答（标题必留，内容可写“暂无”）|⑥ Follow-up questions\. Keep the heading even when the answer is "None\."' "Handoff-area README requires section ⑥ heading"
+Assert-Contains "交接区\README.md" '等下一棒 PM / 等 zlbdh confirm|Waiting for the next PM or zlbdh.s confirmation' "Handoff-area README next PM"
+Assert-Contains "交接区\README.md" '接手者 / 当前 session|Recipient/current session' "Handoff-area README move authority"
+Assert-Contains "交接区\README.md" '不会静默移动文件|do not silently move files' "Handoff-area README hooks do not move cards"
+Assert-NotContains "交接区\README.md" '下一个工具|next tool' "Handoff-area README obsolete tool actor"
 
 Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '待接手卡 frontmatter status 应为 pending' "handoff guard pending frontmatter"
 Assert-Contains "能力资产\tools\scripts\check-handoff-zone\card-format.ps1" '缺少完整交接卡基础标题' "Handoff guard sections ①-⑥"

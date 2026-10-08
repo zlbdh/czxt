@@ -36,7 +36,7 @@ foreach ($helperName in @(
 )) {
   $helper = Join-Path (Split-Path -Parent $PSScriptRoot) "check-readme-indexes\$helperName"
   if (-not (Test-Path -LiteralPath $helper -PathType Leaf)) {
-    Write-Host "  🔴 $helperName 缺失" -ForegroundColor Red
+    Write-Host "  🔴 $helperName is missing" -ForegroundColor Red
     exit 10
   }
   $code = Invoke-ChildScript -Path $helper -ScriptArgs @("-Root", $Root)
@@ -52,18 +52,18 @@ Invoke-HooksSmokeConfigRuntimeContracts -Paths $smokePaths
 
 $installHooks = Join-Path $Root "能力资产\tools\hooks\install-hooks.ps1"
 if (-not (Test-Path -LiteralPath $installHooks -PathType Leaf)) {
-  Write-Host "  🔴 install-hooks.ps1 缺失" -ForegroundColor Red
+  Write-Host "  🔴 install-hooks.ps1 is missing" -ForegroundColor Red
   exit 10
 }
 $businessGitPath = Join-Path $Root "{{APP_REPO_DIR}}\.git"
 if ((Get-CzxtRootMode -Root $Root) -eq 'project' -and
     -not (Test-Path -LiteralPath $businessGitPath)) {
-  Write-Host "  ℹ️ generic project 尚未绑定业务仓库：跳过 git hooks 与关联运行态检查" -ForegroundColor Gray
+  Write-Host "  ℹ️ Generic project has no bound application repository; skipping Git hooks and related runtime checks" -ForegroundColor Gray
   exit 0
 }
 $code = Invoke-ChildScript -Path $installHooks -ScriptArgs @("-Mode", "Check", "-Root", $Root)
 if ($code -eq 5 -and $isTemplateRoot) {
-  $warnings += "git hooks wrapper (模板根未实例化业务仓库)"
+  $warnings += "Git hooks wrapper (template root has no instantiated application repository)"
 } elseif ($code -ne 0) { exit 10 }
 
 foreach ($entry in @(
@@ -72,7 +72,7 @@ foreach ($entry in @(
 )) {
   $scriptPath = Join-Path $Root $entry.Path
   if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
-    Write-Host "  🔴 $($entry.Label) install script 缺失" -ForegroundColor Red
+    Write-Host "  🔴 $($entry.Label) install script is missing" -ForegroundColor Red
     exit 10
   }
   $code = Invoke-ChildScript -Path $scriptPath -ScriptArgs @("-Mode", "Check", "-Root", $Root)
@@ -84,9 +84,9 @@ foreach ($entry in @(
 }
 
 if ($warnings.Count -gt 0) {
-  Write-Host "  🟡 hooks runtime 检查存在软提醒：$($warnings -join ', ')" -ForegroundColor Yellow
+  Write-Host "  🟡 Hooks runtime checks have advisory findings: $($warnings -join ', ')" -ForegroundColor Yellow
   exit 5
 }
 
-Write-Host "  ✅ hooks 配置与运行态锚点对齐" -ForegroundColor Green
+Write-Host "  ✅ Hooks configuration and runtime anchors aligned" -ForegroundColor Green
 exit 0

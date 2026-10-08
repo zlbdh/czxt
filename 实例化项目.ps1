@@ -26,12 +26,12 @@ $ProjectRootLower = $ProjectRoot.ToLowerInvariant()
 
 $TemplateRootFull = [System.IO.Path]::GetFullPath($TemplateRoot)
 if ($ProjectRootLower -eq $TemplateRootFull.ToLowerInvariant()) {
-  throw "目标路径不能是模板根自身：$ProjectRoot"
+  throw "Target path cannot be the template root itself: $ProjectRoot"
 }
 
 $TargetTemplateMarker = Join-Path $ProjectRoot ".czxt-template-root"
 if (Test-Path -LiteralPath $TargetTemplateMarker) {
-  throw "目标已存在模板根标记，拒绝实例化：$TargetTemplateMarker"
+  throw "Target already has a template-root marker; refusing instantiation: $TargetTemplateMarker"
 }
 
 if ([string]::IsNullOrWhiteSpace($ProjectSlug)) {
@@ -62,12 +62,12 @@ foreach ($item in $copyItems) {
   $src = Join-Path $TemplateRoot $item
   if ((Test-Path -LiteralPath $src -PathType Container) -and
       (Test-CzxtInstallerPathsOverlapFinal -FirstPath $ProjectRoot -SecondPath $src)) {
-    throw "ProjectRoot 与递归复制来源重叠，拒绝实例化：$src"
+    throw "ProjectRoot overlaps a recursive copy source; refusing instantiation: $src"
   }
   $dst = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath (Join-Path $ProjectRoot $item) -Context ("复制目标 {0}" -f $item)
+    -CandidatePath (Join-Path $ProjectRoot $item) -Context ("Copy target {0}" -f $item)
   if (!(Test-Path -LiteralPath $src)) {
-    throw "模板缺少必要项：$item"
+    throw "Template is missing a required item: $item"
   }
   $copyPlan.Add((New-CzxtInstallerCopyPlanEntry -ProjectRoot $ProjectRoot `
       -SourcePath $src -TargetPath $dst -Item $item -Force:$Force))
@@ -83,13 +83,13 @@ $InstalledFiles = New-CzxtInstallerOutputManifest
 $PreservedStatusState = $null
 
 foreach ($entry in $copyPlan) {
-  # 预检后再贴近落盘复核，避免 -Force 穿过既有 junction/reparse 写出项目根。
+  # After preflight, recheck immediately before writing so -Force cannot traverse an existing junction/reparse point outside the project root.
   $dst = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath $entry.Target -Context ("复制目标 {0}" -f $entry.Item)
+    -CandidatePath $entry.Target -Context ("Copy target {0}" -f $entry.Item)
   if ($Force -and $entry.Item -ceq "状态.md" -and
       $null -ne $entry.ExpectedPresentState) {
     $PreservedStatusState = (Get-CzxtInstallerFileSnapshot `
-        -ProjectRoot $ProjectRoot -TargetPath $dst -Context 'Force 保留状态轨迹' `
+        -ProjectRoot $ProjectRoot -TargetPath $dst -Context 'Force-preserved state history' `
         -ExpectedTargetState $entry.ExpectedPresentState).State
     continue
   }
@@ -101,48 +101,48 @@ foreach ($entry in $copyPlan) {
     -ExpectedSourceState $entry.ExpectedSourceState -InstalledFiles $InstalledFiles
 }
 
-# 项目区：只复制骨架（README/清单/.gitignore + 空 本地实例/.gitkeep），
-# 绝不递归复制 本地实例/* —— 防自实例化时把生成中的实例反复拷进自己（无限套娃），
-# 同时避免新项目继承模板的本地实例残留。
+# Project area: copy only scaffolding (README/checklist/.gitignore + empty 本地实例/.gitkeep).
+# Never recursively copy 本地实例/*: self-instantiation would repeatedly copy the growing instance into itself (infinite nesting).
+# Also prevent a new project from inheriting local-instance remnants from the template.
 $pzSrc = Join-Path $TemplateRoot "项目区"
 $pzDst = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-  -CandidatePath (Join-Path $ProjectRoot "项目区") -Context '项目区目标'
+  -CandidatePath (Join-Path $ProjectRoot "项目区") -Context 'Project-area target'
 if (!(Test-Path -LiteralPath $pzSrc)) {
-  throw "模板缺少必要项：项目区"
+  throw "Template is missing a required item: project area"
 }
 $pzWasPresent = Test-Path -LiteralPath $pzDst
 if ($pzWasPresent -and -not $Force) {
-  throw "目标已存在：$pzDst。若确认覆盖，请加 -Force。"
+  throw "Target already exists: $pzDst. Add -Force if you confirm overwriting."
 }
 if ($pzWasPresent -and -not (Test-Path -LiteralPath $pzDst -PathType Container)) {
-  throw "项目区目标不是目录：$pzDst"
+  throw "Project-area target is not a directory: $pzDst"
 }
 $pzLocalInstances = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-  -CandidatePath (Join-Path $pzDst "本地实例") -Context '项目区本地实例目标'
+  -CandidatePath (Join-Path $pzDst "本地实例") -Context 'Project-area local-instance target'
 [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-  -TargetPath $pzLocalInstances -Context '项目区本地实例目标')
+  -TargetPath $pzLocalInstances -Context 'Project-area local-instance target')
 [void](Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-  -CandidatePath $pzLocalInstances -Context '项目区本地实例目标')
+  -CandidatePath $pzLocalInstances -Context 'Project-area local-instance target')
 foreach ($pzFile in @("README.md", "清单.md", ".gitignore")) {
   $pzf = Join-Path $pzSrc $pzFile
   if (Test-Path -LiteralPath $pzf) {
     $pzfTarget = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-      -CandidatePath (Join-Path $pzDst $pzFile) -Context ("项目区复制目标 {0}" -f $pzFile)
+      -CandidatePath (Join-Path $pzDst $pzFile) -Context ("Project-area copy target {0}" -f $pzFile)
     [void](Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-      -CandidatePath $pzfTarget -Context ("项目区复制目标 {0}" -f $pzFile))
+      -CandidatePath $pzfTarget -Context ("Project-area copy target {0}" -f $pzFile))
     Copy-CzxtInstallerBoundFile -ProjectRoot $ProjectRoot -SourcePath $pzf `
-      -TargetPath $pzfTarget -Context ("项目区复制目标 {0}" -f $pzFile) `
+      -TargetPath $pzfTarget -Context ("Project-area copy target {0}" -f $pzFile) `
       -AllowExisting:$Force -InstalledFiles $InstalledFiles
   }
 }
 $pzKeep = Join-Path $pzSrc "本地实例\.gitkeep"
 if (Test-Path -LiteralPath $pzKeep) {
   $pzKeepTarget = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath (Join-Path $pzLocalInstances ".gitkeep") -Context '项目区 .gitkeep 复制目标'
+    -CandidatePath (Join-Path $pzLocalInstances ".gitkeep") -Context 'Project-area .gitkeep copy target'
   [void](Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath $pzKeepTarget -Context '项目区 .gitkeep 复制目标')
+    -CandidatePath $pzKeepTarget -Context 'Project-area .gitkeep copy target')
   Copy-CzxtInstallerBoundFile -ProjectRoot $ProjectRoot -SourcePath $pzKeep `
-    -TargetPath $pzKeepTarget -Context '项目区 .gitkeep 复制目标' `
+    -TargetPath $pzKeepTarget -Context 'Project-area .gitkeep copy target' `
     -AllowExisting:$Force -InstalledFiles $InstalledFiles
 }
 
@@ -152,9 +152,9 @@ Copy-BorrowingZoneSkeleton -TemplateRoot $TemplateRoot -ProjectRoot $ProjectRoot
 function Ensure-Directory {
   param([string]$RelativePath)
   $path = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath (Join-Path $ProjectRoot $RelativePath) -Context ("目录目标 {0}" -f $RelativePath)
+    -CandidatePath (Join-Path $ProjectRoot $RelativePath) -Context ("Directory target {0}" -f $RelativePath)
   [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-    -TargetPath $path -Context ("目录目标 {0}" -f $RelativePath))
+    -TargetPath $path -Context ("Directory target {0}" -f $RelativePath))
 }
 
 function Write-TextIfMissing {
@@ -164,22 +164,22 @@ function Write-TextIfMissing {
   )
 
   $path = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath (Join-Path $ProjectRoot $RelativePath) -Context ("文本目标 {0}" -f $RelativePath)
+    -CandidatePath (Join-Path $ProjectRoot $RelativePath) -Context ("Text target {0}" -f $RelativePath)
   if ((Test-Path -LiteralPath $path -PathType Leaf) -and -not $Force) {
     return
   }
   $expectation = Get-CzxtInstallerTargetExpectation -ProjectRoot $ProjectRoot `
-    -TargetPath $path -Context ("文本目标 {0}" -f $RelativePath) `
+    -TargetPath $path -Context ("Text target {0}" -f $RelativePath) `
     -AllowExisting:$Force
   $parent = Split-Path -Parent $path
   if (!(Test-Path -LiteralPath $parent -PathType Container)) {
     [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-      -TargetPath $parent -Context ("文本父目录 {0}" -f $RelativePath))
+      -TargetPath $parent -Context ("Text parent directory {0}" -f $RelativePath))
   }
   [void](Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath $path -Context ("文本目标 {0}" -f $RelativePath))
+    -CandidatePath $path -Context ("Text target {0}" -f $RelativePath))
   Write-CzxtInstallerTextFile -ProjectRoot $ProjectRoot -TargetPath $path `
-    -Content $Content -Encoding $Utf8NoBom -Context ("文本目标 {0}" -f $RelativePath) `
+    -Content $Content -Encoding $Utf8NoBom -Context ("Text target {0}" -f $RelativePath) `
     -ExpectAbsent:($expectation.Mode -eq 'ExpectAbsent') `
     -ExpectedPresentState $expectation.State `
     -InstalledFiles $InstalledFiles
@@ -192,40 +192,40 @@ if (!(Test-Path -LiteralPath $AppRepoPath -PathType Container)) {
 }
 
 Write-TextIfMissing "TASKS.md" @"
-# {{PROJECT_NAME}} 任务看板
+# {{PROJECT_NAME}} Task Board
 
-> 实例化项目的初始任务看板。真实任务以当前项目节奏、交接卡和需求文档为准。
+> Initial task board for the instantiated project. Actual tasks follow the current project cadence, handoff cards, and requirements documents.
 
-## 当前
+## Current
 
-- [ ] 填写项目卡：从 `项目配置/_模板.project.json` 复制到本机项目位置后补全。
-- [ ] 补齐 `Docs/1-需求文档/` 的项目真实需求。
-- [ ] 确认 `{{APP_REPO_DIR}}/` 是否指向真实业务仓库目录。
+- [ ] Complete the project card: copy `项目配置/_模板.project.json` to a local project location and fill it in.
+- [ ] Add the project's actual requirements under `Docs/1-需求文档/`.
+- [ ] Confirm that `{{APP_REPO_DIR}}/` points to the actual business repository directory.
 
-### 🟢 业务侧 P4b 历史债监控
+### 🟢 Business P4b Historical Debt Monitoring
 
-| 范围 | 状态 | 处理口径 |
+| Scope | Status | Handling policy |
 |---|---|---|
-| `{{APP_REPO_DIR}}/src` | P4b 业务历史债；owner=开发 PM「实施者」 | 不代表操作系统未完成；按功能触发拆，不为数字单独动业务代码 |
+| `{{APP_REPO_DIR}}/src` | P4b business historical debt; owner=Development PM 'Implementer' | Does not indicate unfinished operating-system work; split when a feature change calls for it, not solely to reduce a number |
 
-#### P4b 业务债策略入口
+#### P4b Business Debt Policy Entry
 
-- 测试膨胀：跟随测试重构或用例迁移处理。
-- shared 生产逻辑：跟随真实业务功能改动处理。
-- feature UI：跟随对应页面/组件迭代处理。
-- app hook：跟随应用级入口或状态管理调整处理。
+- Test growth: handle during test refactoring or test-case migration.
+- Shared production logic: handle alongside actual business feature changes.
+- Feature UI: handle during iteration on the corresponding page/component.
+- App hooks: handle alongside application-level entry-point or state-management changes.
 "@
 
 Write-TextIfMissing "Docs\1-需求文档\README.md" @"
-# {{PROJECT_NAME}} 需求文档
+# {{PROJECT_NAME}} Requirements
 
-> 本目录承载实例化项目的真实需求文档；模板只提供入口，不预设业务内容。
+> This directory holds actual requirements for the instantiated project; the template provides only an entry point and does not prescribe business content.
 
-## 起步
+## Getting started
 
-- 将当前项目 PRD、需求清单或阶段目标放到本目录。
-- 若已有外部需求源，请在这里放索引和同步规则。
-- 需求进入实施前，按 `操作系统/07_完整工作流/需求接收.md` 走 Q1-Q7。
+- Put the current project PRD, requirements list, or phase objectives here.
+- If an external requirements source already exists, add its index and synchronization rules here.
+- Before requirements enter implementation, follow Q1-Q7 in `操作系统/07_完整工作流/需求接收.md`.
 "@
 
 $textExt = @(".md", ".ps1", ".json", ".txt", ".yml", ".yaml", ".toml", ".cmd", ".bat")
@@ -258,7 +258,7 @@ try {
       $rewriteParent = $fileParent
     }
     $snapshot = Get-CzxtInstallerOutputTextSnapshot -ProjectRoot $ProjectRoot `
-      -InstalledFiles $InstalledFiles -TargetPath $file.FullName -Context '占位符替换目标'
+      -InstalledFiles $InstalledFiles -TargetPath $file.FullName -Context 'Placeholder replacement target'
     $text = $snapshot.Text
     $rewritten = ConvertTo-CzxtInstallerRenderedText -Text $text `
       -Extension $file.Extension -Values $renderValues
@@ -266,14 +266,14 @@ try {
       if ($null -eq $rewriteParentLease) {
         $rewriteParentLease = Open-CzxtInstallerParentDirectoryLease `
           -ProjectRoot $ProjectRoot -TargetPath $file.FullName `
-          -Context '占位符替换父目录'
+          -Context 'Placeholder replacement parent directory'
       }
       $writeEncoding = if ($file.Extension.Equals(".ps1", `
           [StringComparison]::OrdinalIgnoreCase)) {
         $Utf8Bom
       } else { $Utf8NoBom }
       Write-CzxtInstallerTextFile -ProjectRoot $ProjectRoot -TargetPath $file.FullName `
-        -Content $rewritten -Encoding $writeEncoding -Context '占位符替换目标' `
+        -Content $rewritten -Encoding $writeEncoding -Context 'Placeholder replacement target' `
         -ExpectedPresentState $snapshot.State -InstalledFiles $InstalledFiles `
         -ParentDirectoryLease $rewriteParentLease
     }
@@ -284,20 +284,20 @@ finally {
 }
 
 $statePath = Join-Path $ProjectRoot "状态.md"
-$trackLine = "| $InitTime | 操作系统 PM「框架管家」 | 操作系统 PM「框架管家」 | 实例化操作系统到 $ProjectRoot：生成项目区/项目配置/需求入口/TASKS/业务仓库目录骨架，并完成占位符替换。 | ✅ Q1-Q7：framework / 操作系统 PM | ✅ |"
+$trackLine = "| $InitTime | Operating System PM 'Framework Steward' | Operating System PM 'Framework Steward' | Instantiate the operating system at $ProjectRoot; generate scaffolding for the project area, project configuration, requirements entry, TASKS, and business repository directory, then replace placeholders. | ✅ Q1-Q7: framework / Operating System PM | ✅ |"
 $statePath = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-  -CandidatePath $statePath -Context '状态轨迹目标'
+  -CandidatePath $statePath -Context 'State history target'
 if ($null -ne $PreservedStatusState) {
   Set-CzxtInstallerOutputState -InstalledFiles $InstalledFiles `
     -State $PreservedStatusState
 }
 $stateExpected = Get-CzxtInstallerOutputState -InstalledFiles $InstalledFiles -Path $statePath
 Add-CzxtInstallerTextFile -ProjectRoot $ProjectRoot -TargetPath $statePath `
-  -Content "`n$trackLine" -Encoding $Utf8NoBom -Context '状态轨迹目标' `
+  -Content "`n$trackLine" -Encoding $Utf8NoBom -Context 'State history target' `
   -ExpectedPresentState $stateExpected -InstalledFiles $InstalledFiles
 
 Complete-CzxtInstallerOutput -ProjectRoot $ProjectRoot -InstalledFiles $InstalledFiles `
   -Encoding $Utf8NoBom -Force:$Force -OnVerified {
-    Write-Host "✅ 操作系统已实例化到：$ProjectRoot"
-    Write-Host "下一步：在目标项目中 review/trust .codex hooks，并运行 能力资产/tools/scripts/check-operating-system.ps1。"
+    Write-Host "✅ Operating system instantiated at: $ProjectRoot"
+    Write-Host "Next: review/trust .codex hooks in the target project and run 能力资产/tools/scripts/check-operating-system.ps1."
   }

@@ -79,16 +79,16 @@ function Invoke-BorrowingInstanceContracts {
 
   Invoke-CzxtContract 'real installer interpolates its target path in the state trajectory' {
     $stateText = [IO.File]::ReadAllText((Join-Path $InstanceRoot '状态.md'))
-    $normalizedFragment = '实例化操作系统到 {0}：' -f `
+    $normalizedFragment = 'Instantiate the operating system at {0}; ' -f `
       [IO.Path]::GetFullPath($InstanceRoot)
     Assert-CzxtEqual 1 `
       ([regex]::Matches($stateText, [regex]::Escape($normalizedFragment))).Count `
       'fresh installer should append exactly one normalized ProjectRoot fragment'
-    $literalFragment = '实例化操作系统到 $ProjectRoot：'
+    $literalFragment = 'Instantiate the operating system at $ProjectRoot; '
     Assert-CzxtEqual 0 `
       ([regex]::Matches($stateText, [regex]::Escape($literalFragment))).Count `
       'fresh installer must not retain a literal ProjectRoot variable name'
-    $expectedColumns = ' | 操作系统 PM「框架管家」 | 操作系统 PM「框架管家」 | {0}生成项目区/项目配置/需求入口/TASKS/业务仓库目录骨架，并完成占位符替换。 | ✅ Q1-Q7：framework / 操作系统 PM | ✅ |' -f `
+    $expectedColumns = ' | Operating System PM ''Framework Steward'' | Operating System PM ''Framework Steward'' | {0}generate scaffolding for the project area, project configuration, requirements entry, TASKS, and business repository directory, then replace placeholders. | ✅ Q1-Q7: framework / Operating System PM | ✅ |' -f `
       $normalizedFragment
     $trackPattern = '(?m)^\| (?<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2})' + `
       [regex]::Escape($expectedColumns) + '\r?$'
@@ -212,15 +212,15 @@ function Invoke-BorrowingInstanceContracts {
       ([regex]::Matches($forceStateText, [regex]::Escape($stateSentinel))).Count `
       'Force must preserve the unique pre-existing state sentinel exactly once'
     $normalizedRoot = [IO.Path]::GetFullPath($InstanceRoot)
-    $normalizedFragment = '实例化操作系统到 {0}：' -f $normalizedRoot
+    $normalizedFragment = 'Instantiate the operating system at {0}; ' -f $normalizedRoot
     Assert-CzxtEqual 2 `
       ([regex]::Matches($forceStateText, [regex]::Escape($normalizedFragment))).Count `
       'fresh plus Force should append exactly two normalized ProjectRoot fragments'
-    $literalFragment = '实例化操作系统到 $ProjectRoot：'
+    $literalFragment = 'Instantiate the operating system at $ProjectRoot; '
     Assert-CzxtEqual 0 `
       ([regex]::Matches($forceStateText, [regex]::Escape($literalFragment))).Count `
       'fresh plus Force must not retain a literal ProjectRoot variable name'
-    $expectedColumns = ' | 操作系统 PM「框架管家」 | 操作系统 PM「框架管家」 | {0}生成项目区/项目配置/需求入口/TASKS/业务仓库目录骨架，并完成占位符替换。 | ✅ Q1-Q7：framework / 操作系统 PM | ✅ |' -f `
+    $expectedColumns = ' | Operating System PM ''Framework Steward'' | Operating System PM ''Framework Steward'' | {0}generate scaffolding for the project area, project configuration, requirements entry, TASKS, and business repository directory, then replace placeholders. | ✅ Q1-Q7: framework / Operating System PM | ✅ |' -f `
       $normalizedFragment
     $trackPattern = '(?m)^\| (?<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2})' + `
       [regex]::Escape($expectedColumns) + '\r?$'

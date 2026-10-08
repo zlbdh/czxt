@@ -12,8 +12,8 @@ function Test-CzxtBorrowingPath {
   if (Test-Path -LiteralPath $path -PathType $PathType) {
     $Passes.Add($RelativePath)
   } else {
-    $label = if ($PathType -eq 'Leaf') { '文件' } else { '目录' }
-    $Failures.Add("🔴 借鉴区缺必查$label：$RelativePath")
+    $label = if ($PathType -eq 'Leaf') { 'file' } else { 'directory' }
+    $Failures.Add("🔴 Borrowing area lacks required $label`: $RelativePath")
   }
 }
 
@@ -25,7 +25,7 @@ function Get-CzxtBorrowingInstallerItems {
     $InstallerText, [ref]$tokens, [ref]$parseErrors)
   if ($parseErrors.Count -gt 0) {
     return [pscustomobject]@{
-      Success = $false; Items = @(); Error = '实例化脚本无法解析：' + $parseErrors[0].Message
+      Success = $false; Items = @(); Error = 'Cannot parse the instantiation script: ' + $parseErrors[0].Message
     }
   }
   $assignments = @($ast.FindAll({
@@ -36,7 +36,7 @@ function Get-CzxtBorrowingInstallerItems {
     }, $true))
   if ($assignments.Count -ne 1) {
     return [pscustomobject]@{
-      Success = $false; Items = @(); Error = '实例化脚本必须且只能静态声明一次 $copyItems'
+      Success = $false; Items = @(); Error = 'The instantiation script must declare $copyItems statically exactly once'
     }
   }
   $right = $assignments[0].Right
@@ -53,7 +53,7 @@ function Get-CzxtBorrowingInstallerItems {
     }, $true) | ForEach-Object { $_.Value })
   if ($unsupported.Count -gt 0 -or $strings.Count -eq 0) {
     return [pscustomobject]@{
-      Success = $false; Items = @(); Error = '$copyItems 只允许静态字符串数组'
+      Success = $false; Items = @(); Error = '$copyItems accepts only a static string array'
     }
   }
   return [pscustomobject]@{ Success = $true; Items = [string[]]$strings; Error = '' }
@@ -90,18 +90,18 @@ function Test-CzxtBorrowingInstaller {
   $helperPath = Join-Path $Root '能力资产\tools\scripts\installer-borrowing-zone.ps1'
   $skeletonPath = Join-Path $Root '能力资产\tools\scripts\installer-borrowing-skeleton.ps1'
   if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
-    $Failures.Add('🔴 借鉴区守卫缺实例化项目.ps1')
+    $Failures.Add('🔴 Borrowing-area guard requires 实例化项目.ps1')
     return
   }
   $helperText = ''
   $skeletonText = ''
   if (-not (Test-Path -LiteralPath $helperPath -PathType Leaf)) {
-    $Failures.Add('🔴 借鉴区守卫缺 installer-borrowing-zone.ps1')
+    $Failures.Add('🔴 Borrowing-area guard requires installer-borrowing-zone.ps1')
   } else {
     $helperText = [IO.File]::ReadAllText($helperPath)
   }
   if (-not (Test-Path -LiteralPath $skeletonPath -PathType Leaf)) {
-    $Failures.Add('🔴 借鉴区守卫缺 installer-borrowing-skeleton.ps1')
+    $Failures.Add('🔴 Borrowing-area guard requires installer-borrowing-skeleton.ps1')
   } else {
     $skeletonText = [IO.File]::ReadAllText($skeletonPath)
   }
@@ -119,14 +119,14 @@ function Test-CzxtBorrowingInstaller {
         break
       }
       if ($state -ne 'safe') {
-        $Failures.Add(("🔴 实例化脚本 `$copyItems 路径无效或越界：{0}" -f $item))
+        $Failures.Add(("🔴 Instantiation script `$copyItems path is invalid or escapes the root: {0}" -f $item))
         $copyItemsSafe = $false
         break
       }
     }
   }
   if ($copyItemsSafe) {
-    $Passes.Add('实例化脚本借鉴区未进总递归清单')
+    $Passes.Add('Instantiation script excludes the borrowing area from recursive copying')
   }
   $anchors = @(
     @($installerText, 'installer-borrowing-zone.ps1', '实例化脚本未加载借鉴区专用 helper'),

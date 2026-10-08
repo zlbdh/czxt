@@ -111,7 +111,7 @@ function Invoke-BorrowingCloseTransaction {
   $ownedFormalSnapshot = $null
   $formalOwnershipUnproven = $false
   $formalLock = $null
-  $stagingAttempt = [pscustomobject]@{ Value = 'none（未创建）' }
+  $stagingAttempt = [pscustomobject]@{ Value = 'none(not-created)' }
   $completeReached = $false
   try {
     $mode = Invoke-BorrowingP4tModeCheck -Root $Root
@@ -204,7 +204,7 @@ function Invoke-BorrowingCloseTransaction {
     $formalLock = $null
     $staging = $null
     return New-BctResult 0 CLOSED complete $borrowId $formalPath `
-      'none（已清理）' $p4t none
+      'none(cleaned)' $p4t none
   }
   catch {
     if ($null -ne $staging -and
@@ -237,10 +237,10 @@ function Invoke-BorrowingCloseTransaction {
       $staging.Path
     }
     elseif ($null -ne $staging -and $staging.State -ceq 'removed') {
-      'none（已清理）'
+      'none(cleaned)'
     }
-    elseif ($stagingAttempt.Value -cne 'none（未创建）') { $stagingAttempt.Value }
-    else { 'none（未创建）' }
+    elseif ($stagingAttempt.Value -cne 'none(not-created)') { $stagingAttempt.Value }
+    else { 'none(not-created)' }
     return New-BctResult 10 FAIL $stage $borrowId $formalPath `
       $stagingPath $p4t $reasonCode
   }

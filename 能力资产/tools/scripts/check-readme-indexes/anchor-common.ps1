@@ -10,7 +10,7 @@ function Get-Text {
   param([string]$Rel)
   $path = Join-Path $Root $Rel
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    Add-Failure "缺少文件：$Rel"
+    Add-Failure "File is missing: $Rel"
     return ""
   }
   return Get-Content -LiteralPath $path -Raw -Encoding UTF8
@@ -23,7 +23,7 @@ function Get-Head {
   )
   $path = Join-Path $Root $Rel
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    Add-Failure "缺少文件：$Rel"
+    Add-Failure "File is missing: $Rel"
     return ""
   }
   return (Get-Content -LiteralPath $path -TotalCount $Lines -Encoding UTF8) -join "`n"
@@ -37,7 +37,7 @@ function Assert-Contains {
   )
   $text = Get-Text $Rel
   if ($text -notmatch $Pattern) {
-    Add-Failure "$Label：$Rel 未命中 $Pattern"
+    Add-Failure "$Label`: $Rel does not match $Pattern"
   }
 }
 
@@ -50,6 +50,6 @@ function Assert-NotContains {
   $text = Get-Text $Rel
   foreach ($match in [regex]::Matches($text, $Pattern)) {
     $line = ($text.Substring(0, $match.Index) -split "`n").Count
-    Add-Failure "$Label：$Rel L$line 命中旧口径 $($match.Value)"
+    Add-Failure "$Label`: $Rel L$line matches obsolete language $($match.Value)"
   }
 }

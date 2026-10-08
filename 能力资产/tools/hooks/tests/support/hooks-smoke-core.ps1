@@ -12,8 +12,8 @@ function Assert-True {
 
 function Run-Checked {
   param([string[]]$Command)
-  # PS5.1: 原生命令 stderr 经 2>&1 会被包成 NativeCommandError；
-  # 真实成败只看 $LASTEXITCODE，避免良性 stderr 误红。
+  # PS5.1 wraps native stderr redirected through 2>&1 as NativeCommandError.
+  # Use $LASTEXITCODE for the actual result so benign stderr does not create a false failure.
   $prevEAP = $ErrorActionPreference
   $ErrorActionPreference = "Continue"
   try {

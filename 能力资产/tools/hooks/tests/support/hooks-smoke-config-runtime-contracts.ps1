@@ -64,11 +64,11 @@ function Invoke-HooksSmokeConfigRuntimeContracts {
   $codexHooks = Get-Content -LiteralPath $Paths.CodexHooks -Raw -Encoding UTF8 | ConvertFrom-Json
   Assert-EventSet $codexHooks.hooks @("SessionStart", "UserPromptSubmit", "Stop", "PostToolUse", "PreToolUse") "Codex hooks"
   Assert-ConfigScriptsExist $codexHooks.hooks "Codex hooks"
-  Assert-HookMapsTo $codexHooks.hooks "SessionStart" $Paths.CodexSessionStart "Codex hooks" "startup|resume|clear|compact" 15 "加载{{PROJECT_NAME}}项目治理上下文" "session-start" "Codex"
-  Assert-HookMapsTo $codexHooks.hooks "UserPromptSubmit" $Paths.CodexUserPrompt "Codex hooks" "" 10 "检查用户输入的项目治理上下文" "user-prompt-submit" "Codex"
-  Assert-HookMapsTo $codexHooks.hooks "Stop" $Paths.CodexStop "Codex hooks" "" 15 "检查实施收尾交接卡格式" "stop-chat-summary" "Codex"
-  Assert-HookMapsTo $codexHooks.hooks "PostToolUse" $Paths.CodexPost "Codex hooks" "Edit|Write|apply_patch" 20 "改 framework 后快检索引一致性" "post-edit-framework-check" "Codex"
-  Assert-HookMapsTo $codexHooks.hooks "PreToolUse" $Paths.CodexPreWrite "Codex hooks" "Edit|Write|apply_patch" 10 "敏感写入(密钥)前置确认" "pre-write-guard" "Codex"
+  Assert-HookMapsTo $codexHooks.hooks "SessionStart" $Paths.CodexSessionStart "Codex hooks" "startup|resume|clear|compact" 15 "Loading governance context for {{PROJECT_NAME}}" "session-start" "Codex"
+  Assert-HookMapsTo $codexHooks.hooks "UserPromptSubmit" $Paths.CodexUserPrompt "Codex hooks" "" 10 "Checking project governance context for the user request" "user-prompt-submit" "Codex"
+  Assert-HookMapsTo $codexHooks.hooks "Stop" $Paths.CodexStop "Codex hooks" "" 15 "Checking the implementation handoff format" "stop-chat-summary" "Codex"
+  Assert-HookMapsTo $codexHooks.hooks "PostToolUse" $Paths.CodexPost "Codex hooks" "Edit|Write|apply_patch" 20 "Checking index consistency after framework edits" "post-edit-framework-check" "Codex"
+  Assert-HookMapsTo $codexHooks.hooks "PreToolUse" $Paths.CodexPreWrite "Codex hooks" "Edit|Write|apply_patch" 10 "Checking sensitive writes involving secrets" "pre-write-guard" "Codex"
   $dispatchCases = [ordered]@{
     "session-start" = '{"hook_event_name":"SessionStart","source":"startup","cwd":"D:\\fixture","model":"gpt-5"}'
     "user-prompt-submit" = '{"hook_event_name":"UserPromptSubmit","turn_id":"t1","prompt":"检查 hooks","cwd":"D:\\fixture","model":"gpt-5"}'
@@ -150,7 +150,7 @@ function Invoke-HooksSmokeConfigRuntimeContracts {
   $codexPostHook.commandWindows = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$($Paths.CodexUserPrompt)`""
   $codexDriftCaught = $false
   try {
-    Assert-HookMapsTo $codexDrift.hooks "PostToolUse" $Paths.CodexPost "Codex hooks drift fixture" "Edit|Write|apply_patch" 20 "改 framework 后快检索引一致性" "post-edit-framework-check" "Codex"
+    Assert-HookMapsTo $codexDrift.hooks "PostToolUse" $Paths.CodexPost "Codex hooks drift fixture" "Edit|Write|apply_patch" 20 "Checking index consistency after framework edits" "post-edit-framework-check" "Codex"
   } catch {
     if ($_.Exception.Message -match "dispatch drift") { $codexDriftCaught = $true } else { throw }
   }
@@ -161,7 +161,7 @@ function Invoke-HooksSmokeConfigRuntimeContracts {
   $codexCommandHook.command = "powershell -NoProfile -ExecutionPolicy Bypass -File `"$($Paths.CodexUserPrompt)`""
   $codexCommandDriftCaught = $false
   try {
-    Assert-HookMapsTo $codexCommandDrift.hooks "PostToolUse" $Paths.CodexPost "Codex hooks command drift fixture" "Edit|Write|apply_patch" 20 "改 framework 后快检索引一致性" "post-edit-framework-check" "Codex"
+    Assert-HookMapsTo $codexCommandDrift.hooks "PostToolUse" $Paths.CodexPost "Codex hooks command drift fixture" "Edit|Write|apply_patch" 20 "Checking index consistency after framework edits" "post-edit-framework-check" "Codex"
   } catch {
     if ($_.Exception.Message -match "dispatch drift") { $codexCommandDriftCaught = $true } else { throw }
   }
@@ -170,12 +170,12 @@ function Invoke-HooksSmokeConfigRuntimeContracts {
   $claudeSettings = Get-Content -LiteralPath $Paths.ClaudeSettings -Raw -Encoding UTF8 | ConvertFrom-Json
   Assert-EventSet $claudeSettings.hooks @("SessionStart", "UserPromptSubmit", "Stop", "PostToolUse", "PreCompact", "PreToolUse") "Claude hooks"
   Assert-ConfigScriptsExist $claudeSettings.hooks "Claude hooks"
-  Assert-HookMapsTo $claudeSettings.hooks "SessionStart" $Paths.CodexSessionStart "Claude hooks" "" 15 "加载{{PROJECT_NAME}}项目治理上下文" "" "Claude"
-  Assert-HookMapsTo $claudeSettings.hooks "UserPromptSubmit" $Paths.CodexUserPrompt "Claude hooks" "" 10 "检查用户输入的项目治理上下文" "" "Claude"
-  Assert-HookMapsTo $claudeSettings.hooks "Stop" $Paths.ClaudeStop "Claude hooks" "" 15 "检查实施收尾交接卡格式" "" "Claude"
-  Assert-HookMapsTo $claudeSettings.hooks "PostToolUse" $Paths.ClaudePost "Claude hooks" "Edit|Write" 20 "改 framework 后快检索引一致性" "" "Claude"
-  Assert-HookMapsTo $claudeSettings.hooks "PreCompact" $Paths.ClaudePreCompact "Claude hooks" "auto|manual" 15 "压缩前留存 PM 轨迹" "" "Claude"
-  Assert-HookMapsTo $claudeSettings.hooks "PreToolUse" $Paths.ClaudePreWrite "Claude hooks" "Edit|Write" 10 "敏感写入(密钥)前置确认" "" "Claude"
+  Assert-HookMapsTo $claudeSettings.hooks "SessionStart" $Paths.CodexSessionStart "Claude hooks" "" 15 "Loading governance context for {{PROJECT_NAME}}" "" "Claude"
+  Assert-HookMapsTo $claudeSettings.hooks "UserPromptSubmit" $Paths.CodexUserPrompt "Claude hooks" "" 10 "Checking project governance context for the user request" "" "Claude"
+  Assert-HookMapsTo $claudeSettings.hooks "Stop" $Paths.ClaudeStop "Claude hooks" "" 15 "Checking the implementation handoff format" "" "Claude"
+  Assert-HookMapsTo $claudeSettings.hooks "PostToolUse" $Paths.ClaudePost "Claude hooks" "Edit|Write" 20 "Checking index consistency after framework edits" "" "Claude"
+  Assert-HookMapsTo $claudeSettings.hooks "PreCompact" $Paths.ClaudePreCompact "Claude hooks" "auto|manual" 15 "Saving PM role transitions before compaction" "" "Claude"
+  Assert-HookMapsTo $claudeSettings.hooks "PreToolUse" $Paths.ClaudePreWrite "Claude hooks" "Edit|Write" 10 "Checking sensitive writes involving secrets" "" "Claude"
   $claudeDrift = $claudeSettings | ConvertTo-Json -Depth 20 | ConvertFrom-Json
   $claudeStop = @($claudeDrift.hooks.Stop)[0]
   $claudeStopHook = @($claudeStop.hooks)[0]
@@ -185,11 +185,11 @@ function Invoke-HooksSmokeConfigRuntimeContracts {
   }
   $claudeDriftCaught = $false
   try {
-    Assert-HookMapsTo $claudeDrift.hooks "Stop" $Paths.ClaudeStop "Claude hooks drift fixture" "" 15 "检查实施收尾交接卡格式" "" "Claude"
+    Assert-HookMapsTo $claudeDrift.hooks "Stop" $Paths.ClaudeStop "Claude hooks drift fixture" "" 15 "Checking the implementation handoff format" "" "Claude"
   } catch {
     if ($_.Exception.Message -match "script drift") { $claudeDriftCaught = $true } else { throw }
   }
   Assert-True $claudeDriftCaught "Claude hooks Stop drift fixture should fail"
 
-  Write-Host "  ✅ Codex/Claude 原生 hooks 事件到脚本映射对齐（含负向漂移 fixture）"
+  Write-Host "  ✅ Codex/Claude native hook events map to the expected scripts, including negative drift fixtures"
 }

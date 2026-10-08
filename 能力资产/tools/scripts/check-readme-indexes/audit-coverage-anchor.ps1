@@ -10,6 +10,14 @@ function Add-Failure([string]$Message) {
   Write-Host "  🔴 $Message" -ForegroundColor Red
 }
 
+$literalAliases = @{
+  '自动守卫通过不等于人工逐字覆盖' = 'Passing automated guards does not establish complete human reading.'
+  '覆盖类型边界' = 'Coverage-type boundaries'
+  '已登记覆盖片段' = 'Registered coverage segments'
+  '不得单独声称“逐字已证明”' = 'this alone must not support a claim of complete line-by-line proof'
+  '95 个审计对象' = '95 audit subjects'
+}
+
 $rel = "操作系统\04_台账\逐文件审计覆盖台账.md"
 $path = Join-Path $Root $rel
 $detailRel = "操作系统\04_台账\逐文件审计覆盖台账-明细.md"
@@ -17,7 +25,7 @@ $detailPath = Join-Path $Root $detailRel
 $indexPath = Join-Path $Root "操作系统\04_台账\INDEX.md"
 
 if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-  Add-Failure "缺少逐文件审计覆盖台账：$rel"
+  Add-Failure "Missing file-audit coverage ledger：$rel"
 } else {
   $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
   foreach ($needle in @(
@@ -28,8 +36,8 @@ if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
     '不得单独声称“逐字已证明”',
     '操作系统/00_总入口.md'
   )) {
-    if (-not $text.Contains($needle)) {
-      Add-Failure "$rel 缺少覆盖台账锚点：$needle"
+    if (-not $text.Contains($needle) -and (-not $literalAliases.ContainsKey($needle) -or -not $text.Contains($literalAliases[$needle]))) {
+      Add-Failure "$rel Missing coverage-ledger anchor：$needle"
     }
   }
 
@@ -38,31 +46,32 @@ if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
     $_.FullName -match '\\历史归档\\|\\状态-archive\\|CHANGELOG-2026|CHANGELOG-2026H1|agent-.*历史\.md'
   })
   $expected = "$($files.Count) 个 Markdown；活跃 $($files.Count - $history.Count) / 历史 $($history.Count)"
-  if (-not $text.Contains($expected)) {
-    Add-Failure "$rel 时点基线未匹配当前文件系统计数：应包含「$expected」"
+  $expectedEnglish = "$($files.Count) Markdown files; active $($files.Count - $history.Count) / historical $($history.Count)"
+  if (-not $text.Contains($expected) -and -not $text.Contains($expectedEnglish)) {
+    Add-Failure "$rel Point-in-time baseline does not match the current filesystem count: expected [$expected] or [$expectedEnglish]"
   }
 }
 
 if (-not (Test-Path -LiteralPath $detailPath -PathType Leaf)) {
-  Add-Failure "缺少逐文件审计覆盖明细：$detailRel"
+  Add-Failure "Missing file-audit coverage details：$detailRel"
 } else {
   $detailText = Get-Content -LiteralPath $detailPath -Raw -Encoding UTF8
   foreach ($needle in @('95 个审计对象', '29 + 25 + 15 + 26', '019ed184-ba7b', '019ed184-cdc7', '019ed184-e1ad', '019ed184-f547')) {
-    if (-not $detailText.Contains($needle)) {
-      Add-Failure "$detailRel 缺少全量逐文件证据锚点：$needle"
+    if (-not $detailText.Contains($needle) -and (-not $literalAliases.ContainsKey($needle) -or -not $detailText.Contains($literalAliases[$needle]))) {
+      Add-Failure "$detailRel Missing complete file-audit evidence anchor：$needle"
     }
   }
 }
 
 if (-not (Test-Path -LiteralPath $indexPath -PathType Leaf)) {
-  Add-Failure "缺少台账 INDEX.md"
+  Add-Failure "Missing ledger INDEX.md"
 } else {
   $indexText = Get-Content -LiteralPath $indexPath -Raw -Encoding UTF8
-  if ($indexText -notmatch "逐文件审计覆盖台账\.md" -or $indexText -notmatch "逐文件审计覆盖台账-明细\.md" -or $indexText -notmatch "不把自动守卫误当人工逐字证明") {
-    Add-Failure "04_台账/INDEX.md 未登记逐文件审计覆盖台账"
+  if ($indexText -notmatch "逐文件审计覆盖台账\.md" -or $indexText -notmatch "逐文件审计覆盖台账-明细\.md" -or $indexText -notmatch "不把自动守卫误当人工逐字证明|do not mistake automated guards for proof of a complete human reading") {
+    Add-Failure "04_台账/INDEX.md does not register file-audit coverage"
   }
 }
 
 if ($failures.Count -gt 0) { exit 10 }
-Write-Host "  ✅ 逐文件审计覆盖台账锚点对齐" -ForegroundColor Green
+Write-Host "  ✅ File-audit coverage anchors aligned" -ForegroundColor Green
 exit 0

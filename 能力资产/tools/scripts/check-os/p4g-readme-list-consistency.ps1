@@ -14,13 +14,13 @@ if ((Test-Path -LiteralPath $adrDir) -and (Test-Path -LiteralPath $adrReadmePath
     $adrFiles = (Get-ChildItem -LiteralPath $adrDir -Filter "ADR-*.md").Count
     $adrReadmeRows = (Get-Content -LiteralPath $adrReadmePath -Encoding UTF8 | Select-String -Pattern "^\| ADR-").Count
     if ($adrFiles -eq $adrReadmeRows) {
-        Write-Host "  ✅ ADR README：文件 $adrFiles = README 表 $adrReadmeRows" -ForegroundColor Green
+        Write-Host "  ✅ ADR README: $adrFiles files = $adrReadmeRows README table rows" -ForegroundColor Green
     } else {
-        Write-Host "  🔴 ADR README 不一致：文件 $adrFiles vs README 表 $adrReadmeRows（PM 自纠 #91 复发）" -ForegroundColor Red
-        $failures.Add("ADR README 一致性 — 文件 $adrFiles vs README $adrReadmeRows")
+        Write-Host "  🔴 ADR README mismatch: $adrFiles files vs $adrReadmeRows README table rows (self-correction #91 recurrence)" -ForegroundColor Red
+        $failures.Add("ADR README consistency: $adrFiles files vs $adrReadmeRows README rows")
     }
 } else {
-    Write-Host "  ⚠️ ADR 目录或 README 不存在" -ForegroundColor Yellow
+    Write-Host "  ⚠️ ADR directory or README is missing" -ForegroundColor Yellow
 }
 
 $panoramaPaths = @(
@@ -36,9 +36,9 @@ foreach ($panoramaPath in $panoramaPaths) {
     }
 }
 if ($panoramaFound) {
-    Write-Host "  ℹ️ 议题全景 ADR 扫描完成（主文+历史快照 / 人工语义表不自动阻塞）" -ForegroundColor Gray
+    Write-Host "  ℹ️ Issue-panorama ADR scan complete (main document + historical snapshots; manual semantic tables do not automatically block)" -ForegroundColor Gray
 } else {
-    Write-Host "  ⚠️ 议题全景.md 不存在" -ForegroundColor Yellow
+    Write-Host "  ⚠️ 议题全景.md is missing" -ForegroundColor Yellow
 }
 
 $poolPath = Join-Path $Root "操作系统/01_架构/元规则池.md"
@@ -50,16 +50,16 @@ if (Test-Path -LiteralPath $poolPath) {
     if ($claimMatch.Success) {
         $poolClaim = [int]$claimMatch.Groups[1].Value
         if ($poolRows -eq $poolClaim) {
-            Write-Host "  ✅ 元规则池：二表行数 $poolRows = 声明 $poolClaim 永久" -ForegroundColor Green
+            Write-Host "  ✅ Meta-rule pool: $poolRows rows in table two = $poolClaim declared permanent rules" -ForegroundColor Green
         } else {
-            Write-Host "  🔴 元规则池不一致：二表 $poolRows vs 声明 $poolClaim 永久" -ForegroundColor Red
-            $failures.Add("元规则池一致性 — 二表 $poolRows vs 声明 $poolClaim")
+            Write-Host "  🔴 Meta-rule pool mismatch: $poolRows table-two rows vs $poolClaim declared permanent rules" -ForegroundColor Red
+            $failures.Add("Meta-rule pool consistency: $poolRows table-two rows vs $poolClaim declared")
         }
     } else {
-        Write-Host "  ℹ️ 元规则池声明 N 永久数未识别（regex 未匹配 / 人工核）" -ForegroundColor Gray
+        Write-Host "  ℹ️ Permanent meta-rule count could not be recognized (no regex match; check manually)" -ForegroundColor Gray
     }
 } else {
-    Write-Host "  ⚠️ 元规则池.md 不存在" -ForegroundColor Yellow
+    Write-Host "  ⚠️ 元规则池.md is missing" -ForegroundColor Yellow
 }
 
 $readmes = Get-ChildItem -LiteralPath $Root -Filter "README.md" -Recurse -ErrorAction SilentlyContinue | Where-Object {
@@ -74,13 +74,13 @@ foreach ($r in $readmes) {
 if ($total -gt 0) {
     $pct = [math]::Round($withFm * 100 / $total)
     if ($pct -eq 100) {
-        Write-Host "  ✅ README frontmatter 覆盖：$withFm / $total = 100%" -ForegroundColor Green
+        Write-Host "  ✅ README frontmatter coverage: $withFm / $total = 100%" -ForegroundColor Green
     } elseif ($pct -ge 80) {
-        Write-Host "  🟡 README frontmatter 覆盖：$withFm / $total = $pct%（议题 CW / ADR-028 / 待补）" -ForegroundColor Yellow
-        $warnings.Add("README frontmatter 覆盖率 $pct% （$($total-$withFm) 个待补）")
+        Write-Host "  🟡 README frontmatter coverage: $withFm / $total = $pct% (issue CW / ADR-028; incomplete)" -ForegroundColor Yellow
+        $warnings.Add("README frontmatter coverage $pct% ($($total-$withFm) files remaining)")
     } else {
-        Write-Host "  🔴 README frontmatter 覆盖：$withFm / $total = $pct%（议题 CW 严重缺位）" -ForegroundColor Red
-        $failures.Add("README frontmatter 覆盖率仅 $pct%")
+        Write-Host "  🔴 README frontmatter coverage: $withFm / $total = $pct% (issue CW; substantial gaps)" -ForegroundColor Red
+        $failures.Add("README frontmatter coverage is only $pct%")
     }
 }
 

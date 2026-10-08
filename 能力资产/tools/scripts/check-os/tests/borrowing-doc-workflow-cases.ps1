@@ -136,9 +136,14 @@ function Invoke-BorrowingDocWorkflowCases {
 
   Invoke-CzxtContract 'workflow index has one file row and one same-line trigger row' {
     $index = Get-BorrowingDocText $Root $indexRelative
-    Assert-BorrowingIndexLink $index '文件清单' '借鉴闭环.md' '借鉴闭环.md' 1
-    $trigger = Get-BorrowingMarkdownSection $index '速记 — 流程触发表'
+    if ($index.Contains('## Files')) {
+      Assert-BorrowingIndexLink $index 'Files' 'Borrowing lifecycle' '借鉴闭环.md' 1
+      $trigger = Get-BorrowingMarkdownSection $index 'Trigger reference'
+    } else {
+      Assert-BorrowingIndexLink $index '文件清单' '借鉴闭环.md' '借鉴闭环.md' 1
+      $trigger = Get-BorrowingMarkdownSection $index '速记 — 流程触发表'
+    }
     Assert-BorrowingWorkflowTriggerProjection $trigger
-    Assert-BorrowingDocMatchCount $index '\[借鉴闭环\.md\]\(借鉴闭环\.md\)' 2 'workflow index total projection count'
+    Assert-BorrowingDocMatchCount $index '\[(?:借鉴闭环\.md|Borrowing lifecycle)\]\(借鉴闭环\.md\)' 2 'workflow index total projection count'
   }
 }

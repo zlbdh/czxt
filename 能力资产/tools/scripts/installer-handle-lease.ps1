@@ -149,13 +149,13 @@ namespace Czxt {
 
 function Open-CzxtInstallerDirectoryLease {
   param(
-    [string]$Path, [object]$ExpectedState, [string]$Context = '实例化目录',
+    [string]$Path, [object]$ExpectedState, [string]$Context = 'Installer directory',
     [switch]$WithoutMarker
   )
   foreach ($property in @('VolumeSerialNumber', 'FileIndexHigh', 'FileIndexLow')) {
     if ($null -eq $ExpectedState -or
         $null -eq $ExpectedState.PSObject.Properties[$property]) {
-      throw ($Context + '缺少原生身份字段')
+      throw ($Context + ' is missing native identity fields')
     }
   }
   $lease = [Czxt.InstallerDirectoryLease]::Open(
@@ -176,7 +176,7 @@ function Open-CzxtInstallerDirectoryLease {
       CanonicalPath = $canonical
     }
     if (($lease.Attributes -band 0x400) -ne 0 -or ($lease.Attributes -band 0x10) -eq 0) {
-      throw ($Context + '不是受信目录')
+      throw ($Context + ' is not a trusted directory')
     }
     Assert-CzxtInstallerDirectoryStateStable $ExpectedState $actual $Context
     return [pscustomobject]@{ Native = $lease; State = $actual; Parent = $actual.Path }
@@ -186,7 +186,7 @@ function Open-CzxtInstallerDirectoryLease {
 
 function Open-CzxtInstallerFileLease {
   param(
-    [string]$Path, [object]$ExpectedState, [string]$Context = '实例化文件',
+    [string]$Path, [object]$ExpectedState, [string]$Context = 'Installer file',
     [switch]$ForDelete, [switch]$AllowHardLinks
   )
   $lease = [Czxt.InstallerFileLease]::Open($Path, $ForDelete.IsPresent)
@@ -194,7 +194,7 @@ function Open-CzxtInstallerFileLease {
     $actual = ConvertTo-CzxtInstallerFileState -NativeState $lease -Path $Path `
       -Context $Context -AllowHardLinks:$AllowHardLinks
     Assert-CzxtInstallerStateMaterialEqual $ExpectedState $actual `
-      ($Context + '身份在句柄绑定前发生变化') `
+      ($Context + ' identity changed before handle binding') `
       -AllowHardLinks:$AllowHardLinks
     return [pscustomobject]@{ Native = $lease; State = $actual }
   }
@@ -204,7 +204,7 @@ function Open-CzxtInstallerFileLease {
 function Open-CzxtInstallerParentDirectoryLease {
   param(
     [string]$ProjectRoot, [string]$TargetPath,
-    [string]$Context = '实例化文件父目录'
+    [string]$Context = 'Installer file parent directory'
   )
   $target = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
     -CandidatePath $TargetPath -Context $Context
@@ -224,18 +224,18 @@ function Open-CzxtInstallerParentDirectoryLease {
 
 function New-CzxtInstallerBoundProjectRoot {
   param(
-    [string]$ProjectRoot, [string]$Context = '实例化 ProjectRoot 创建',
+    [string]$ProjectRoot, [string]$Context = 'Installer ProjectRoot creation',
     [scriptblock]$BeforeParentLease, [scriptblock]$AfterParentLease
   )
   $target = Get-CzxtBorrowingFullPath $ProjectRoot
   [void](Assert-CzxtBorrowingNoReparseAncestor -Path $target -Context $Context)
-  if ([IO.File]::Exists($target)) { throw ($Context + '被文件占用：' + $target) }
+  if ([IO.File]::Exists($target)) { throw ($Context + ' is occupied by a file: ' + $target) }
 
   $anchor = $target
   while (-not [IO.Directory]::Exists($anchor)) {
-    if ([IO.File]::Exists($anchor)) { throw ($Context + '路径祖先不是目录：' + $anchor) }
+    if ([IO.File]::Exists($anchor)) { throw ($Context + ' path ancestor is not a directory: ' + $anchor) }
     $parent = [IO.Directory]::GetParent($anchor)
-    if ($null -eq $parent) { throw ($Context + '无法定位已存在祖先：' + $target) }
+    if ($null -eq $parent) { throw ($Context + ' cannot locate an existing ancestor: ' + $target) }
     $anchor = Get-CzxtBorrowingFullPath $parent.FullName
   }
   [void](Assert-CzxtBorrowingNoReparseAncestor -Path $anchor -Context $Context)
@@ -251,16 +251,16 @@ function New-CzxtInstallerBoundProjectRoot {
       return $currentLease.State
     }
     foreach ($segment in $segments) {
-      if ([string]::IsNullOrWhiteSpace($segment)) { throw ($Context + '路径段无效') }
+      if ([string]::IsNullOrWhiteSpace($segment)) { throw ($Context + ' path segment is invalid') }
       $next = Join-Path $current $segment
       if ($null -ne $BeforeParentLease) { & $BeforeParentLease $current $next }
       if ($null -eq $currentLease) {
         $currentLease = Open-CzxtInstallerDirectoryLease -Path $current `
-          -ExpectedState $currentState -Context ($Context + '父目录')
+          -ExpectedState $currentState -Context ($Context + ' parent directory')
       }
       if ($null -ne $AfterParentLease) { & $AfterParentLease $current $next }
       [void](Assert-CzxtBorrowingNoReparseAncestor -Path $next -Context $Context)
-      if ([IO.File]::Exists($next)) { throw ($Context + '被文件占用：' + $next) }
+      if ([IO.File]::Exists($next)) { throw ($Context + ' is occupied by a file: ' + $next) }
       if (-not [IO.Directory]::Exists($next)) {
         [void][IO.Directory]::CreateDirectory($next)
       }
@@ -283,10 +283,10 @@ function New-CzxtInstallerBoundProjectRoot {
 function New-CzxtInstallerBoundDirectory {
   param(
     [string]$ProjectRoot, [string]$TargetPath,
-    [string]$Context = '实例化目录创建', [scriptblock]$BeforeParentLease
+    [string]$Context = 'Installer directory creation', [scriptblock]$BeforeParentLease
   )
   $root = Get-CzxtBorrowingFullPath $ProjectRoot
-  if (-not [IO.Directory]::Exists($root)) { throw ($Context + ' ProjectRoot 不存在') }
+  if (-not [IO.Directory]::Exists($root)) { throw ($Context + ' ProjectRoot does not exist') }
   $target = Assert-CzxtInstallerTargetPath -ProjectRoot $root `
     -CandidatePath $TargetPath -Context $Context
   if ($target.Equals($root, [StringComparison]::OrdinalIgnoreCase)) {
@@ -296,15 +296,15 @@ function New-CzxtInstallerBoundDirectory {
   $current = $root
   $currentState = Get-CzxtInstallerDirectoryState $current $Context
   foreach ($segment in @($relative -split '[\\/]')) {
-    if ([string]::IsNullOrWhiteSpace($segment)) { throw ($Context + '路径段无效') }
+    if ([string]::IsNullOrWhiteSpace($segment)) { throw ($Context + ' path segment is invalid') }
     $next = Join-Path $current $segment
     if ($null -ne $BeforeParentLease) { & $BeforeParentLease $current $next }
     $parentLease = Open-CzxtInstallerDirectoryLease -Path $current `
-      -ExpectedState $currentState -Context ($Context + '父目录')
+      -ExpectedState $currentState -Context ($Context + ' parent directory')
     try {
       [void](Assert-CzxtInstallerTargetPath -ProjectRoot $root `
         -CandidatePath $next -Context $Context)
-      if ([IO.File]::Exists($next)) { throw ($Context + '被文件占用：' + $next) }
+      if ([IO.File]::Exists($next)) { throw ($Context + ' is occupied by a file: ' + $next) }
       if (-not [IO.Directory]::Exists($next)) {
         [void][IO.Directory]::CreateDirectory($next)
       }

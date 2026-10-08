@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $failures = @()
 
 $common = Join-Path $PSScriptRoot "anchor-common.ps1"
-if (-not (Test-Path -LiteralPath $common -PathType Leaf)) { throw "缺少 anchor-common.ps1" }
+if (-not (Test-Path -LiteralPath $common -PathType Leaf)) { throw "Missing anchor-common.ps1" }
 . $common
 
 $entry = Get-Text "操作系统\00_总入口.md"
@@ -29,13 +29,13 @@ $englishModuleLabels = @(
 )
 $moduleMatches = @([regex]::Matches($entry, '(?m)^\| \[(?<label>[^\]]+)\]\((?<target>\d{2}_[^)]*/)\) \|'))
 if ($moduleMatches.Count -ne $expectedModules.Count) {
-  Add-Failure "00_总入口 8 个编号模块数量异常：$($moduleMatches.Count)"
+  Add-Failure "Main entry must contain eight numbered modules; found $($moduleMatches.Count)"
 } else {
   for ($i = 0; $i -lt $expectedModules.Count; $i++) {
     $label = $moduleMatches[$i].Groups["label"].Value.Trim([char]96)
     $target = $moduleMatches[$i].Groups["target"].Value
     if (($label -ne $expectedModules[$i] -and $label -ne $englishModuleLabels[$i]) -or $target -ne $expectedModules[$i]) {
-      Add-Failure "00_总入口 8 模块顺序/链接异常：第 $($i + 1) 项为 $label -> $target"
+      Add-Failure "Main-entry module order/link mismatch at item $($i + 1): $label -> $target"
     }
   }
 }
@@ -53,32 +53,32 @@ $expectedStart = @(
 
 $startMatches = @([regex]::Matches($entry, '(?m)^(?<num>[1-8])\. ✅ (?<body>.+)$'))
 if ($startMatches.Count -ne $expectedStart.Count) {
-  Add-Failure "00_总入口 起手必读顺序数量异常：$($startMatches.Count)"
+  Add-Failure "Unexpected main-entry required-reading count: $($startMatches.Count)"
 } else {
   for ($i = 0; $i -lt $expectedStart.Count; $i++) {
     $num = [int]$startMatches[$i].Groups["num"].Value
     $body = $startMatches[$i].Groups["body"].Value
     if ($num -ne ($i + 1) -or $body -notmatch $expectedStart[$i]) {
-      Add-Failure "00_总入口 起手第 $($i + 1) 项漂移：$body"
+      Add-Failure "Main-entry startup item $($i + 1) differs: $body"
     }
   }
 }
 
 if ($entry -notmatch '(?:AGENTS\.md 是\*\*5 秒指引\*\*|AGENTS\.md is the \*\*five-second guide\*\*)' -or $entry -notmatch '(?:本文件是\*\*深入目录导航\*\*|This file provides \*\*detailed navigation\*\*)') {
-  Add-Failure "00_总入口 未明确 AGENTS 5 秒指引 / 本文件深入目录导航分工"
+  Add-Failure "Main entry does not distinguish the AGENTS five-second guide from detailed directory navigation"
 }
 
 if ($agents -notmatch 'Full rules are in `操作系统/00_总入口\.md`' -or $agents -notmatch 'Read `操作系统/00_总入口\.md`') {
-  Add-Failure "AGENTS.md 未保持指向 00_总入口 的互补起手关系"
+  Add-Failure "AGENTS.md does not preserve its complementary startup link to the main entry"
 }
 
 if ($entry -notmatch '(?:除项目 PM 主会话外，每个 PM 的实际工作默认实例化为真实 agent|Except for the Project PM.s main session, each PM.s actual work defaults to a real agent)') {
-  Add-Failure "00_总入口 子 agent 调度速记缺默认真实 agent 机制"
+  Add-Failure "Main-entry scheduling reference lacks the default real-agent mechanism"
 }
 
 if ($failures.Count -gt 0) {
   exit 10
 }
 
-Write-Host "  ✅ 00_总入口 起手链路锚点对齐" -ForegroundColor Green
+Write-Host "  ✅ Main-entry startup-chain anchors aligned" -ForegroundColor Green
 exit 0

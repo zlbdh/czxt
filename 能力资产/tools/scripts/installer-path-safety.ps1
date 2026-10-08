@@ -53,7 +53,7 @@ namespace Czxt {
 
 function Get-CzxtBorrowingFullPath {
   param([string]$Path)
-  if ([string]::IsNullOrWhiteSpace($Path)) { throw '路径不能为空。' }
+  if ([string]::IsNullOrWhiteSpace($Path)) { throw 'Path cannot be empty.' }
   $full = [IO.Path]::GetFullPath($Path)
   $pathRoot = [IO.Path]::GetPathRoot($full)
   if ($full.Equals($pathRoot, [StringComparison]::OrdinalIgnoreCase)) { return $pathRoot }
@@ -82,7 +82,7 @@ function Assert-CzxtBorrowingNoReparseAncestor {
   $full = Get-CzxtBorrowingFullPath $Path
   $pathRoot = [IO.Path]::GetPathRoot($full)
   if ([string]::IsNullOrWhiteSpace($pathRoot)) {
-    throw ("{0}不是受支持的绝对路径：{1}" -f $Context, $Path)
+    throw ("{0} is not a supported absolute path: {1}" -f $Context, $Path)
   }
   $walk = New-Object 'Collections.Generic.List[string]'
   $walk.Add($pathRoot)
@@ -96,35 +96,35 @@ function Assert-CzxtBorrowingNoReparseAncestor {
     if (-not (Test-Path -LiteralPath $candidate)) { break }
     $item = Get-Item -LiteralPath $candidate -Force -ErrorAction Stop
     if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
-      throw ("{0}路径链包含 reparse point：{1}" -f $Context, $candidate)
+      throw ("{0} path chain contains a reparse point: {1}" -f $Context, $candidate)
     }
     if (-not $item.PSIsContainer -and
         -not $candidate.Equals($full, [StringComparison]::OrdinalIgnoreCase)) {
-      throw ("{0}路径祖先不是目录：{1}" -f $Context, $candidate)
+      throw ("{0} path ancestor is not a directory: {1}" -f $Context, $candidate)
     }
   }
   return $full
 }
 
 function Assert-CzxtInstallerTargetPath {
-  param([string]$ProjectRoot, [string]$CandidatePath, [string]$Context = '实例化目标')
+  param([string]$ProjectRoot, [string]$CandidatePath, [string]$Context = 'Installer target')
   $project = Get-CzxtBorrowingFullPath $ProjectRoot
   $candidate = Get-CzxtBorrowingFullPath $CandidatePath
   if (-not (Test-CzxtBorrowingPathWithinRoot $candidate $project)) {
-    throw ("{0}路径越出 ProjectRoot：{1}" -f $Context, $candidate)
+    throw ("{0} path is outside ProjectRoot: {1}" -f $Context, $candidate)
   }
   [void](Assert-CzxtBorrowingNoReparseAncestor -Path $candidate -Context $Context)
   return $candidate
 }
 
 function Get-CzxtInstallerDirectoryState {
-  param([string]$Path, [string]$Context = '实例化目录')
+  param([string]$Path, [string]$Context = 'Installer directory')
   $full = Get-CzxtBorrowingFullPath $Path
-  if (-not [IO.Directory]::Exists($full)) { throw ("{0}不存在：{1}" -f $Context, $full) }
+  if (-not [IO.Directory]::Exists($full)) { throw ("{0} does not exist: {1}" -f $Context, $full) }
   $native = [Czxt.InstallerPathNative]::Read($full)
   if (($native.Attributes -band 0x400) -ne 0 -or
       ($native.Attributes -band 0x10) -eq 0) {
-    throw ("{0}不是受信目录：{1}" -f $Context, $full)
+    throw ("{0} is not a trusted directory: {1}" -f $Context, $full)
   }
   $canonical = $native.FinalPath.Normalize([Text.NormalizationForm]::FormC)
   $canonical = $canonical.Replace('/', '\').TrimEnd('\')
@@ -141,18 +141,18 @@ function Get-CzxtInstallerDirectoryState {
 }
 
 function Assert-CzxtInstallerDirectoryStateStable {
-  param([object]$Expected, [object]$Actual, [string]$Context = '实例化目录')
+  param([object]$Expected, [object]$Actual, [string]$Context = 'Installer directory')
   if ($null -eq $Expected -or $null -eq $Actual -or
       $Expected.Identity -cne $Actual.Identity -or
       $Expected.NumberOfLinks -ne $Actual.NumberOfLinks -or
       $Expected.CanonicalPath -cne $Actual.CanonicalPath) {
     $actualPath = if ($null -eq $Actual) { '<missing>' } else { $Actual.Path }
-    throw ("{0}身份在预检后发生变化：{1}" -f $Context, $actualPath)
+    throw ("{0} identity changed after preflight: {1}" -f $Context, $actualPath)
   }
 }
 
 function Resolve-CzxtInstallerFinalPath {
-  param([string]$Path, [string]$Context = '实例化路径')
+  param([string]$Path, [string]$Context = 'Installer path')
   $full = Get-CzxtBorrowingFullPath $Path
   [void](Assert-CzxtBorrowingNoReparseAncestor -Path $full -Context $Context)
   $probe = $full
@@ -161,7 +161,7 @@ function Resolve-CzxtInstallerFinalPath {
     $leaf = [IO.Path]::GetFileName($probe)
     $parent = [IO.Directory]::GetParent($probe)
     if ([string]::IsNullOrEmpty($leaf) -or $null -eq $parent) {
-      throw ("{0}无法定位已存在祖先：{1}" -f $Context, $full)
+      throw ("{0} cannot locate an existing ancestor: {1}" -f $Context, $full)
     }
     $suffix.Insert(0, $leaf)
     $probe = $parent.FullName
@@ -182,8 +182,8 @@ function Test-CzxtInstallerCanonicalPathWithinRoot {
 
 function Test-CzxtInstallerPathsOverlapFinal {
   param([string]$FirstPath, [string]$SecondPath)
-  $first = Resolve-CzxtInstallerFinalPath $FirstPath '重叠路径 A'
-  $second = Resolve-CzxtInstallerFinalPath $SecondPath '重叠路径 B'
+  $first = Resolve-CzxtInstallerFinalPath $FirstPath 'Overlapping path A'
+  $second = Resolve-CzxtInstallerFinalPath $SecondPath 'Overlapping path B'
   return (Test-CzxtInstallerCanonicalPathWithinRoot $first $second) -or
     (Test-CzxtInstallerCanonicalPathWithinRoot $second $first)
 }

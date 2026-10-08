@@ -8,7 +8,7 @@
   foreach ($relativePath in $Files) {
     $path = Join-Path $Root $relativePath
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-      $hits += "$relativePath 缺状态推断关键文件，P4m 不能静默跳过"
+      $hits += "$relativePath is a required state-inference file; P4m must not skip it silently"
     }
   }
   return @($hits)
@@ -41,7 +41,7 @@ function Complete-P4mScan {
   )
 
   if ($Hits.Count -gt 0) {
-    Write-Host "  🔴 $FailureTitle：$($Hits.Count) 处" -ForegroundColor Red
+    Write-Host "  🔴 $FailureTitle`: $($Hits.Count) matches" -ForegroundColor Red
     foreach ($hit in $Hits) { Write-Host "    - $hit" -ForegroundColor Red }
     exit 10
   }

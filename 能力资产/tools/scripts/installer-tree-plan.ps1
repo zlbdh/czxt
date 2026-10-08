@@ -7,7 +7,7 @@ function New-CzxtInstallerTreeChildMap {
   foreach ($child in @($Children)) {
     $kind = if ($child.PSIsContainer) { 'Directory' } else { 'File' }
     if ($map.ContainsKey($child.Name)) {
-      throw ("实例化来源目录子项重复：{0}" -f $child.FullName)
+      throw ("Duplicate installer source-directory child: {0}" -f $child.FullName)
     }
     $map.Add($child.Name, [pscustomobject]@{ Name = $child.Name; Kind = $kind })
   }
@@ -18,13 +18,13 @@ function Assert-CzxtInstallerTreeChildrenStable {
   param([object]$ExpectedChildren, [object[]]$ActualChildren, [string]$Context)
   $actual = New-CzxtInstallerTreeChildMap $ActualChildren
   if ($null -eq $ExpectedChildren -or $ExpectedChildren.Count -ne $actual.Count) {
-    throw ($Context + '子项集在预检后发生变化')
+    throw ($Context + ' child set changed after preflight')
   }
   foreach ($name in $ExpectedChildren.Keys) {
     if (-not $actual.ContainsKey($name) -or
         $ExpectedChildren[$name].Name -cne $actual[$name].Name -or
         $ExpectedChildren[$name].Kind -cne $actual[$name].Kind) {
-      throw ("{0}子项在预检后发生变化：{1}" -f $Context, $name)
+      throw ("{0} child changed after preflight: {1}" -f $Context, $name)
     }
   }
 }
@@ -32,13 +32,13 @@ function Assert-CzxtInstallerTreeChildrenStable {
 function Get-CzxtInstallerBoundSourceDirectoryView {
   param([object]$Node)
   $before = Get-CzxtInstallerDirectoryState -Path $Node.SourcePath `
-    -Context '实例化来源目录'
-  Assert-CzxtInstallerDirectoryStateStable $Node.SourceState $before '实例化来源目录'
+    -Context 'Installer source directory'
+  Assert-CzxtInstallerDirectoryStateStable $Node.SourceState $before 'Installer source directory'
   $children = @(Get-ChildItem -LiteralPath $Node.SourcePath -Force -ErrorAction Stop)
   $after = Get-CzxtInstallerDirectoryState -Path $Node.SourcePath `
-    -Context '实例化来源目录'
-  Assert-CzxtInstallerDirectoryStateStable $Node.SourceState $after '实例化来源目录'
-  Assert-CzxtInstallerTreeChildrenStable $Node.SourceChildren $children '实例化来源目录'
+    -Context 'Installer source directory'
+  Assert-CzxtInstallerDirectoryStateStable $Node.SourceState $after 'Installer source directory'
+  Assert-CzxtInstallerTreeChildrenStable $Node.SourceChildren $children 'Installer source directory'
   return [pscustomobject]@{ State = $after; Children = $children }
 }
 
@@ -51,25 +51,25 @@ function Add-CzxtInstallerTreePlanNode {
   )
   $source = Get-CzxtBorrowingFullPath $SourcePath
   $target = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
-    -CandidatePath $TargetPath -Context '实例化树预检目标'
+    -CandidatePath $TargetPath -Context 'Installer tree preflight target'
   $sourceItem = Get-Item -LiteralPath $source -Force -ErrorAction Stop
   if (($sourceItem.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
-    throw ("实例化来源含 reparse point：{0}" -f $source)
+    throw ("Installer source contains a reparse point: {0}" -f $source)
   }
-  if ($Nodes.ContainsKey($target)) { throw ("实例化树预检路径重复：{0}" -f $target) }
+  if ($Nodes.ContainsKey($target)) { throw ("Duplicate installer tree preflight path: {0}" -f $target) }
 
   if ($sourceItem.PSIsContainer) {
     $sourceState = Get-CzxtInstallerDirectoryState -Path $source `
-      -Context '实例化树预检来源目录'
+      -Context 'Installer tree preflight source directory'
     $sourceChildren = @(Get-ChildItem -LiteralPath $source -Force -ErrorAction Stop)
     $sourceChildMap = New-CzxtInstallerTreeChildMap $sourceChildren
     if ([IO.File]::Exists($target)) {
-      throw ("实例化目录目标已被文件占用：{0}" -f $target)
+      throw ("Installer directory target is occupied by a file: {0}" -f $target)
     }
     $exists = [IO.Directory]::Exists($target)
     $targetState = if ($exists) {
       Get-CzxtInstallerDirectoryState -Path $target `
-        -Context '实例化树预检目标目录'
+        -Context 'Installer tree preflight target directory'
     } else { $null }
     $Nodes.Add($target, [pscustomobject]@{
         SourcePath = $source
@@ -85,23 +85,23 @@ function Add-CzxtInstallerTreePlanNode {
         -SourcePath $child.FullName -TargetPath (Join-Path $target $child.Name) -Nodes $Nodes
     }
     $sourceAfter = Get-CzxtInstallerDirectoryState -Path $source `
-      -Context '实例化树预检来源目录'
+      -Context 'Installer tree preflight source directory'
     Assert-CzxtInstallerDirectoryStateStable $sourceState $sourceAfter `
-      '实例化树预检来源目录'
+      'Installer tree preflight source directory'
     Assert-CzxtInstallerTreeChildrenStable $sourceChildMap `
       @(Get-ChildItem -LiteralPath $source -Force -ErrorAction Stop) `
-      '实例化树预检来源目录'
+      'Installer tree preflight source directory'
     return
   }
 
   if ([IO.Directory]::Exists($target)) {
-    throw ("实例化文件目标已被目录占用：{0}" -f $target)
+    throw ("Installer file target is occupied by a directory: {0}" -f $target)
   }
   $sourceState = Get-CzxtInstallerFileState -Path $source `
-    -Context '实例化树预检来源文件'
+    -Context 'Installer tree preflight source file'
   $expected = $null
   if ([IO.File]::Exists($target)) {
-    $expected = Get-CzxtInstallerFileState -Path $target -Context '实例化树预检文件'
+    $expected = Get-CzxtInstallerFileState -Path $target -Context 'Installer tree preflight file'
   }
   $Nodes.Add($target, [pscustomobject]@{
       SourcePath = $source
@@ -114,8 +114,8 @@ function Add-CzxtInstallerTreePlanNode {
     })
   Assert-CzxtInstallerFileStateStable $sourceState `
     (Get-CzxtInstallerFileState -Path $source `
-      -Context '实例化树预检来源文件') `
-    '实例化树预检来源文件'
+      -Context 'Installer tree preflight source file') `
+    'Installer tree preflight source file'
 }
 
 function New-CzxtInstallerTreePlan {
@@ -136,18 +136,18 @@ function Get-CzxtInstallerTreePlanNode {
   param([object]$TreePlan, [string]$SourcePath, [string]$TargetPath, [string]$Kind)
   if ($null -eq $TreePlan -or $TreePlan.Schema -cne 'czxt-installer-tree-plan/v1' -or
       $null -eq $TreePlan.Nodes) {
-    throw '实例化树计划无效。'
+    throw 'Invalid installer tree plan.'
   }
   $source = Get-CzxtBorrowingFullPath $SourcePath
   $target = Get-CzxtBorrowingFullPath $TargetPath
   if (-not $TreePlan.Nodes.ContainsKey($target)) {
-    throw ("实例化树出现未经预检的节点：{0}" -f $target)
+    throw ("Installer tree contains a node that was not preflighted: {0}" -f $target)
   }
   $node = $TreePlan.Nodes[$target]
   if ($node.Kind -cne $Kind -or
       -not $node.SourcePath.Equals($source, [StringComparison]::OrdinalIgnoreCase) -or
       -not $node.TargetPath.Equals($target, [StringComparison]::OrdinalIgnoreCase)) {
-    throw ("实例化树计划与当前节点不匹配：{0}" -f $target)
+    throw ("Installer tree plan does not match the current node: {0}" -f $target)
   }
   return $node
 }

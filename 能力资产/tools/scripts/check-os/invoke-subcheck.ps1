@@ -15,8 +15,8 @@
   $script:lastSubcheckExit = 0
   $scriptPath = Join-Path $ScriptRoot $RelativeScript
   if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
-    Write-Host "  🔴 子检查脚本缺失：$RelativeScript" -ForegroundColor Red
-    $Failures.Add("$FailureLabel 子检查脚本缺失")
+    Write-Host "  🔴 Subcheck script is missing: $RelativeScript" -ForegroundColor Red
+    $Failures.Add("$FailureLabel subcheck script is missing")
     $script:lastSubcheckExit = 10
     return
   }
@@ -37,7 +37,7 @@
 
   if ($WarnExitCodes -contains $exitCode) {
     $warningText = if ([string]::IsNullOrWhiteSpace($WarningLabel)) {
-      "$FailureLabel 子检查 warning exit $exitCode"
+      "$FailureLabel subcheck warning exit $exitCode"
     } else {
       "$WarningLabel exit $exitCode"
     }
@@ -46,6 +46,6 @@
   }
 
   if (($FailExitCodes -contains $exitCode) -or ($exitCode -ne 0)) {
-    $Failures.Add("$FailureLabel 子检查失败 exit $exitCode")
+    $Failures.Add("$FailureLabel subcheck failed with exit $exitCode")
   }
 }

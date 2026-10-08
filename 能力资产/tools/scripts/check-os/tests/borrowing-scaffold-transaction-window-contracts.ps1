@@ -535,7 +535,7 @@ if ($ProjectName -ceq 'status directory window fixture') {
     $trustedSignature = Get-BorrowingByteSignature (Join-Path $templateRoot 'AGENTS.md')
     $originalBytes = [IO.File]::ReadAllBytes($InstallerPath)
     $installerText = [IO.File]::ReadAllText($InstallerPath)
-    $needle = 'Write-Host "✅ 操作系统已实例化到：$ProjectRoot"'
+    $needle = 'Write-Host "✅ Operating system instantiated at: $ProjectRoot"'
     Assert-CzxtEqual 1 ([regex]::Matches($installerText, [regex]::Escape($needle)).Count) `
       'final in-place injection anchor count'
     $injection = @'

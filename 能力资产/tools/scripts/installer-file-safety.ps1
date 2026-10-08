@@ -61,18 +61,18 @@ function ConvertTo-CzxtInstallerFileState {
   param(
     [object]$NativeState,
     [string]$Path,
-    [string]$Context = '实例化文件',
+    [string]$Context = 'Installer file',
     [switch]$AllowHardLinks
   )
   $full = Get-CzxtBorrowingFullPath $Path
   if (($NativeState.Attributes -band 0x400) -ne 0) {
-    throw ("{0}是 reparse point：{1}" -f $Context, $full)
+    throw ("{0} is a reparse point: {1}" -f $Context, $full)
   }
   if (($NativeState.Attributes -band 0x10) -ne 0) {
-    throw ("{0}不是文件：{1}" -f $Context, $full)
+    throw ("{0} is not a file: {1}" -f $Context, $full)
   }
   if ($NativeState.NumberOfLinks -ne 1 -and -not $AllowHardLinks) {
-    throw ("{0}拒绝硬链接（NumberOfLinks={1}）：{2}" -f `
+    throw ("{0} rejects hardlinks (NumberOfLinks={1}): {2}" -f `
       $Context, $NativeState.NumberOfLinks, $full)
   }
   return [pscustomobject]@{
@@ -87,36 +87,36 @@ function ConvertTo-CzxtInstallerFileState {
 function Get-CzxtInstallerFileState {
   param(
     [string]$Path,
-    [string]$Context = '实例化文件',
+    [string]$Context = 'Installer file',
     [switch]$AllowHardLinks
   )
   $full = Get-CzxtBorrowingFullPath $Path
-  if (-not [IO.File]::Exists($full)) { throw ("{0}不存在：{1}" -f $Context, $full) }
+  if (-not [IO.File]::Exists($full)) { throw ("{0} does not exist: {1}" -f $Context, $full) }
   $native = [Czxt.InstallerNative]::Read($full)
   return ConvertTo-CzxtInstallerFileState -NativeState $native -Path $full `
     -Context $Context -AllowHardLinks:$AllowHardLinks
 }
 function Assert-CzxtInstallerFileStateStable {
-  param([object]$Expected, [object]$Actual, [string]$Context = '实例化文件')
+  param([object]$Expected, [object]$Actual, [string]$Context = 'Installer file')
   if ($null -eq $Expected -or $null -eq $Actual -or
       $Expected.Identity -cne $Actual.Identity -or $Actual.NumberOfLinks -ne 1 -or
       $Expected.Length -ne $Actual.Length -or $Expected.Sha256 -cne $Actual.Sha256) {
     $path = if ($null -eq $Actual) { '<missing>' } else { $Actual.Path }
-    throw ("{0}文件身份在写入前发生变化：{1}" -f $Context, $path)
+    throw ("{0} file identity changed before writing: {1}" -f $Context, $path)
   }
 }
 function Get-CzxtInstallerTargetExpectation {
   param(
     [string]$ProjectRoot,
     [string]$TargetPath,
-    [string]$Context = '实例化目标',
+    [string]$Context = 'Installer target',
     [switch]$AllowExisting
   )
   $target = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
     -CandidatePath $TargetPath -Context $Context
   if ([IO.File]::Exists($target)) {
     if (-not $AllowExisting) {
-      throw ("{0}已存在：{1}" -f $Context, $target)
+      throw ("{0} already exists: {1}" -f $Context, $target)
     }
     return [pscustomobject]@{
       Mode = 'ExpectedPresent'
@@ -124,7 +124,7 @@ function Get-CzxtInstallerTargetExpectation {
     }
   }
   if (Test-Path -LiteralPath $target) {
-    throw ("{0}已被目录占用：{1}" -f $Context, $target)
+    throw ("{0} is occupied by a directory: {1}" -f $Context, $target)
   }
   return [pscustomobject]@{ Mode = 'ExpectAbsent'; State = $null }
 }
@@ -133,7 +133,7 @@ function Set-CzxtInstallerPreparedFile {
     [string]$ProjectRoot,
     [string]$PreparedPath,
     [string]$TargetPath,
-    [string]$Context = '实例化文件写入',
+    [string]$Context = 'Installer file write',
     [switch]$ExpectAbsent,
     [object]$ExpectedPresentState,
     [object]$ExpectedPreparedState,
@@ -150,47 +150,47 @@ function Set-CzxtInstallerPreparedFile {
     [object]$ParentDirectoryLease
   )
   if ($ExpectAbsent.IsPresent -eq ($null -ne $ExpectedPresentState)) {
-    throw ("{0}必须且只能声明 ExpectAbsent 或 ExpectedPresentState。" -f $Context)
+    throw ("{0} must declare exactly one of ExpectAbsent or ExpectedPresentState." -f $Context)
   }
-  if ($null -eq $ExpectedPreparedState) { throw ($Context + '缺少临时文件所有权状态') }
+  if ($null -eq $ExpectedPreparedState) { throw ($Context + ' is missing temporary-file ownership state') }
   $target = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
     -CandidatePath $TargetPath -Context $Context
   $prepared = Get-CzxtBorrowingFullPath $PreparedPath
   if (-not (Test-CzxtBorrowingPathWithinRoot $prepared $ProjectRoot)) {
-    throw ("{0}临时文件越出 ProjectRoot：{1}" -f $Context, $prepared)
+    throw ("{0} temporary file is outside ProjectRoot: {1}" -f $Context, $prepared)
   }
   $ownsParentLease = $null -eq $ParentDirectoryLease
   $parentLease = if ($ownsParentLease) {
     Open-CzxtInstallerParentDirectoryLease -ProjectRoot $ProjectRoot `
-      -TargetPath $target -Context ($Context + '父目录')
+      -TargetPath $target -Context ($Context + ' parent directory')
   } else { $ParentDirectoryLease }
   try {
     if ($null -eq $parentLease.Native -or $null -eq $parentLease.State -or
         [string]::IsNullOrWhiteSpace([string]$parentLease.Parent)) {
-      throw ($Context + '父目录 lease 无效')
+      throw ($Context + ' parent-directory lease is invalid')
     }
     $targetParent = Get-CzxtBorrowingFullPath (Split-Path -Parent $target)
     if (-not $targetParent.Equals(
         $parentLease.Parent, [StringComparison]::OrdinalIgnoreCase)) {
-      throw ($Context + '目标与受锁父目录不匹配')
+      throw ($Context + ' target does not match the locked parent directory')
     }
     $preparedParent = Get-CzxtBorrowingFullPath (Split-Path -Parent $prepared)
     if (-not $preparedParent.Equals(
         $parentLease.Parent, [StringComparison]::OrdinalIgnoreCase)) {
-      throw ($Context + '临时文件与目标必须位于同一受锁父目录')
+      throw ($Context + ' temporary file and target must share the same locked parent directory')
     }
     $preparedState = Get-CzxtInstallerFileState -Path $prepared `
-      -Context ($Context + '临时文件')
+      -Context ($Context + ' temporary file')
     Assert-CzxtInstallerStateMaterialEqual $ExpectedPreparedState $preparedState `
-      ($Context + '临时文件在提交前发生变化')
+      ($Context + ' temporary file changed before commit')
     if ($null -ne $BeforeTargetCommit) { & $BeforeTargetCommit $target $prepared }
     $preparedState = Get-CzxtInstallerFileState -Path $prepared `
-      -Context ($Context + '临时文件')
+      -Context ($Context + ' temporary file')
     Assert-CzxtInstallerStateMaterialEqual $ExpectedPreparedState $preparedState `
-      ($Context + '临时文件在提交前发生变化')
+      ($Context + ' temporary file changed before commit')
     if ([IO.File]::Exists($target)) {
       if ($ExpectAbsent) {
-        throw ("{0}目标原应不存在，但在提交前出现：{1}" -f $Context, $target)
+        throw ("{0} target was expected to be absent but appeared before commit: {1}" -f $Context, $target)
       }
       $targetState = Get-CzxtInstallerFileState -Path $target -Context $Context
       Assert-CzxtInstallerFileStateStable $ExpectedPresentState $targetState $Context
@@ -208,7 +208,7 @@ function Set-CzxtInstallerPreparedFile {
         -BeforePreparedMove $BeforePreparedMove)
     } else {
       if ($null -ne $ExpectedPresentState -or [IO.Directory]::Exists($target)) {
-        throw ("{0}目标在写入前发生变化：{1}" -f $Context, $target)
+        throw ("{0} target changed before writing: {1}" -f $Context, $target)
       }
       [IO.File]::Move($prepared, $target)
     }
@@ -224,7 +224,7 @@ function Set-CzxtInstallerPreparedFile {
 function Copy-CzxtInstallerFile {
   param(
     [string]$ProjectRoot, [string]$SourcePath, [string]$TargetPath,
-    [string]$Context = '实例化文件复制', [switch]$ExpectAbsent,
+    [string]$Context = 'Installer file copy', [switch]$ExpectAbsent,
     [object]$ExpectedPresentState, [object]$ExpectedSourceState,
     [object]$InstalledFiles,
     [scriptblock]$BeforeTargetCommit, [object]$ParentDirectoryLease
@@ -234,28 +234,28 @@ function Copy-CzxtInstallerFile {
   $parent = Split-Path -Parent $target
   if (-not (Test-Path -LiteralPath $parent -PathType Container)) {
     [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-      -TargetPath $parent -Context ($Context + '父目录'))
+      -TargetPath $parent -Context ($Context + ' parent directory'))
   }
   $ownsParentLease = $null -eq $ParentDirectoryLease
   $parentLease = if ($ownsParentLease) {
     Open-CzxtInstallerParentDirectoryLease -ProjectRoot $ProjectRoot `
-      -TargetPath $target -Context ($Context + '父目录')
+      -TargetPath $target -Context ($Context + ' parent directory')
   } else { $ParentDirectoryLease }
   try {
     if ($null -eq $parentLease.Native -or $null -eq $parentLease.State -or
         [string]::IsNullOrWhiteSpace([string]$parentLease.Parent) -or
         -not $parent.Equals(
           $parentLease.Parent, [StringComparison]::OrdinalIgnoreCase)) {
-      throw ($Context + '父目录 lease 与目标不匹配')
+      throw ($Context + ' parent-directory lease does not match the target')
     }
     $temp = Join-Path $parentLease.Parent `
       ('.czxt-install-' + [guid]::NewGuid().ToString('N') + '.tmp')
     $preparedState = $null
     try {
-      if ($null -eq $ExpectedSourceState) { throw ($Context + '缺少受信来源状态') }
+      if ($null -eq $ExpectedSourceState) { throw ($Context + ' is missing trusted source state') }
       $preparedState = Copy-CzxtInstallerTrustedSource -SourcePath $SourcePath `
         -DestinationPath $temp -ExpectedState $ExpectedSourceState `
-        -Context ($Context + '来源')
+        -Context ($Context + ' source')
       [void](Set-CzxtInstallerPreparedFile -ProjectRoot $ProjectRoot -PreparedPath $temp `
         -TargetPath $target -Context $Context -ExpectAbsent:$ExpectAbsent `
         -ExpectedPresentState $ExpectedPresentState -ExpectedPreparedState $preparedState `
@@ -266,7 +266,7 @@ function Copy-CzxtInstallerFile {
     finally {
       if ($null -ne $preparedState -and [IO.File]::Exists($temp)) {
         Remove-CzxtInstallerOwnedTransactionFile -Path $temp -ExpectedState $preparedState `
-          -Context ($Context + '临时文件')
+          -Context ($Context + ' temporary file')
       }
     }
   }
@@ -277,7 +277,7 @@ function Copy-CzxtInstallerFile {
 function Write-CzxtInstallerTextFile {
   param(
     [string]$ProjectRoot, [string]$TargetPath, [string]$Content,
-    [Text.Encoding]$Encoding, [string]$Context = '实例化文本写入',
+    [Text.Encoding]$Encoding, [string]$Context = 'Installer text write',
     [switch]$ExpectAbsent, [object]$ExpectedPresentState, [object]$InstalledFiles,
     [scriptblock]$BeforePreparedWrite, [scriptblock]$BeforePreparedCleanup,
     [object]$ParentDirectoryLease
@@ -287,19 +287,19 @@ function Write-CzxtInstallerTextFile {
   $parent = Split-Path -Parent $target
   if (-not (Test-Path -LiteralPath $parent -PathType Container)) {
     [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-      -TargetPath $parent -Context ($Context + '父目录'))
+      -TargetPath $parent -Context ($Context + ' parent directory'))
   }
   $ownsParentLease = $null -eq $ParentDirectoryLease
   $parentLease = if ($ownsParentLease) {
     Open-CzxtInstallerParentDirectoryLease -ProjectRoot $ProjectRoot `
-      -TargetPath $target -Context ($Context + '父目录')
+      -TargetPath $target -Context ($Context + ' parent directory')
   } else { $ParentDirectoryLease }
   try {
     if ($null -eq $parentLease.Native -or $null -eq $parentLease.State -or
         [string]::IsNullOrWhiteSpace([string]$parentLease.Parent) -or
         -not $parent.Equals(
           $parentLease.Parent, [StringComparison]::OrdinalIgnoreCase)) {
-      throw ($Context + '父目录 lease 与目标不匹配')
+      throw ($Context + ' parent-directory lease does not match the target')
     }
     $temp = Join-Path $parentLease.Parent `
       ('.czxt-install-' + [guid]::NewGuid().ToString('N') + '.tmp')
@@ -308,7 +308,7 @@ function Write-CzxtInstallerTextFile {
       if ($null -ne $BeforePreparedWrite) { & $BeforePreparedWrite $temp }
       $preparedState = New-CzxtInstallerPreparedFile -DestinationPath $temp `
         -FirstBytes $Encoding.GetPreamble() -SecondBytes $Encoding.GetBytes($Content) `
-        -Context ($Context + '临时文件')
+        -Context ($Context + ' temporary file')
       [void](Set-CzxtInstallerPreparedFile -ProjectRoot $ProjectRoot -PreparedPath $temp `
         -TargetPath $target -Context $Context -ExpectAbsent:$ExpectAbsent `
         -ExpectedPresentState $ExpectedPresentState `
@@ -319,7 +319,7 @@ function Write-CzxtInstallerTextFile {
       if ($null -ne $BeforePreparedCleanup) { & $BeforePreparedCleanup $temp }
       if ($null -ne $preparedState -and [IO.File]::Exists($temp)) {
         Remove-CzxtInstallerOwnedTransactionFile -Path $temp -ExpectedState $preparedState `
-          -Context ($Context + '临时文件')
+          -Context ($Context + ' temporary file')
       }
     }
   }
@@ -330,14 +330,14 @@ function Write-CzxtInstallerTextFile {
 function Add-CzxtInstallerTextFile {
   param(
     [string]$ProjectRoot, [string]$TargetPath, [string]$Content,
-    [Text.Encoding]$Encoding, [string]$Context = '实例化文本追加',
+    [Text.Encoding]$Encoding, [string]$Context = 'Installer text append',
     [object]$ExpectedPresentState, [object]$InstalledFiles,
     [scriptblock]$BeforeSnapshotRead, [scriptblock]$AfterSnapshotRead
   )
   $target = Assert-CzxtInstallerTargetPath -ProjectRoot $ProjectRoot `
     -CandidatePath $TargetPath -Context $Context
   $parentLease = Open-CzxtInstallerParentDirectoryLease -ProjectRoot $ProjectRoot `
-    -TargetPath $target -Context ($Context + '父目录')
+    -TargetPath $target -Context ($Context + ' parent directory')
   try {
     $snapshot = Get-CzxtInstallerFileSnapshot -ProjectRoot $ProjectRoot `
       -TargetPath $target -Context $Context -ExpectedTargetState $ExpectedPresentState `
@@ -349,7 +349,7 @@ function Add-CzxtInstallerTextFile {
     try {
       $preparedState = New-CzxtInstallerPreparedFile -DestinationPath $temp `
         -FirstBytes $snapshot.Bytes -SecondBytes $Encoding.GetBytes($Content) `
-        -Context ($Context + '临时文件')
+        -Context ($Context + ' temporary file')
       [void](Set-CzxtInstallerPreparedFile -ProjectRoot $ProjectRoot -PreparedPath $temp `
         -TargetPath $target -Context $Context -ExpectedPresentState $snapshot.State `
         -ExpectedPreparedState $preparedState `
@@ -358,7 +358,7 @@ function Add-CzxtInstallerTextFile {
     finally {
       if ($null -ne $preparedState -and [IO.File]::Exists($temp)) {
         Remove-CzxtInstallerOwnedTransactionFile -Path $temp -ExpectedState $preparedState `
-          -Context ($Context + '临时文件')
+          -Context ($Context + ' temporary file')
       }
     }
   }

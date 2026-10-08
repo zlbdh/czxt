@@ -16,7 +16,7 @@ try {
 
 $watchPath = Join-Path $Root "能力资产\tools\hooks\watch\adr-readme-watch.ps1"
 if (-not (Test-Path -LiteralPath $watchPath)) {
-  throw "找不到 ADR watch 入口脚本：$watchPath"
+  throw "ADR watcher entry script not found: $watchPath"
 }
 
 function Get-TaskOrNull {
@@ -30,17 +30,17 @@ if ($Mode -eq "Check") {
   Write-Host "🔎 ADR watch task check"
   Write-Host "  task: $TaskName"
   if (-not $task) {
-    Write-Host "  🟡 未注册 ADR watch 计划任务"
+    Write-Host "  🟡 ADR watch scheduled task is not registered"
     exit 5
   }
   $info = Get-ScheduledTaskInfo -TaskName $TaskName -ErrorAction SilentlyContinue
   $issues = @()
-  Write-Host "  ✅ 已注册：$($task.State)"
+  Write-Host "  ✅ Registered: $($task.State)"
   if ($info) {
     Write-Host "  last run: $($info.LastRunTime)"
     Write-Host "  last result: $($info.LastTaskResult)"
     if ($info.LastTaskResult -eq 267009) {
-      Write-Host "  last result meaning: 0x41301 / watcher 正在运行"
+      Write-Host "  last result meaning: 0x41301 / watcher is running"
     }
     Write-Host "  next run: $($info.NextRunTime)"
     if ($info.LastTaskResult -notin @(0, 267009)) {
@@ -61,7 +61,7 @@ if ($Mode -eq "Check") {
     }
   }
   if ($issues.Count -gt 0) {
-    Write-Host "  🟡 ADR watch 计划任务需重装：$($issues -join '; ')" -ForegroundColor Yellow
+    Write-Host "  🟡 ADR watch scheduled task must be reinstalled: $($issues -join '; ')" -ForegroundColor Yellow
     exit 5
   }
   exit 0
@@ -69,17 +69,17 @@ if ($Mode -eq "Check") {
 
 if ($Mode -eq "Remove") {
   if (-not $task) {
-    Write-Host "🟡 计划任务不存在：$TaskName"
+    Write-Host "🟡 Scheduled task does not exist: $TaskName"
     exit 0
   }
   Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
   Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
-  Write-Host "✅ 已删除计划任务：$TaskName"
+  Write-Host "✅ Scheduled task removed: $TaskName"
   exit 0
 }
 
 if ($task) {
-  Write-Host "🟡 计划任务已存在，先删除后重建：$TaskName"
+  Write-Host "🟡 Scheduled task already exists; remove it before recreating: $TaskName"
   Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
   Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
 }
@@ -103,8 +103,8 @@ if ($StartNow) {
   Start-ScheduledTask -TaskName $TaskName
 }
 
-Write-Host "✅ 已注册计划任务：$TaskName"
-Write-Host "  触发：用户登录"
-Write-Host "  脚本：$watchPath"
-if ($StartNow) { Write-Host "  当前：已启动" }
+Write-Host "✅ Scheduled task registered: $TaskName"
+Write-Host "  Trigger: user logon"
+Write-Host "  Script: $watchPath"
+if ($StartNow) { Write-Host "  Current state: started" }
 exit 0

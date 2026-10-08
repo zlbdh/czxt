@@ -13,7 +13,7 @@ if (($post -match "apply_patch") -and ($pre -match "apply_patch")) {
   $hasPost = $text -match 'PostToolUse[^\r\n]*Edit\\?\|Write\\?\|apply_patch'
   $hasPre = $text -match 'PreToolUse[^\r\n]*Edit\\?\|Write\\?\|apply_patch'
   if (-not ($hasPost -and $hasPre)) {
-    Write-Host "  🔴 hooks SOP Codex Post/PreToolUse 未写明 apply_patch matcher" -ForegroundColor Red
+    Write-Host "  🔴 Hooks SOP does not specify the Codex Post/PreToolUse apply_patch matcher" -ForegroundColor Red
     exit 10
   }
 }
@@ -22,12 +22,12 @@ if (($text -match "PreToolUse") -and (
     $text -notmatch "baseUrl" -or
     $text -notmatch "(?:用户数据删除|user-data deletion)"
   )) {
-  Write-Host "  🔴 hooks SOP 未写明 PreToolUse 只做密钥结构提醒，不能替代 C/B 类边界判断" -ForegroundColor Red
+  Write-Host "  🔴 Hooks SOP does not explain that PreToolUse only flags secret structure and cannot replace Class C/B boundary assessment" -ForegroundColor Red
   exit 10
 }
 if ($text -notmatch "check-operating-system\.ps1" -or $text -notmatch "(?:P4r hooks 配置与运行态锚点|P4r hook configuration and runtime anchors)") {
-  Write-Host "  🔴 hooks SOP 未把 P4r 作为 hooks 文档/运行态变更后的收口检查" -ForegroundColor Red
+  Write-Host "  🔴 Hooks SOP does not require P4r after hooks documentation/runtime changes" -ForegroundColor Red
   exit 10
 }
-Write-Host "  ✅ hooks SOP Codex apply_patch 口径与 .codex/hooks.json 对齐"
+Write-Host "  ✅ Hooks SOP Codex apply_patch guidance matches .codex/hooks.json"
 exit 0

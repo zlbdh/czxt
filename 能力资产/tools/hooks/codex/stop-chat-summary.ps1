@@ -37,11 +37,11 @@ if ([string]::IsNullOrWhiteSpace($message)) {
   Continue-Hook
 }
 
-$readOnlyNoChange = $message -match '只读审计|未修改文件|未改文件|没有改文件'
+$readOnlyNoChange = $message -match '只读审计|未修改文件|未改文件|没有改文件|\bRead-only audit\b|\bNo files changed\b|\bNo files modified\b'
 if ($readOnlyNoChange) {
   Continue-Hook
 }
-$hasCloseoutSignal = $message -match '文件变更|已修改|修改了|新增|测试[:：]|验证[:：]|PM 切换轨迹|交接区/待接手|commit hash|vitest|build|smoke|APK|push|commit|发布|验证|测试|构建|提交'
+$hasCloseoutSignal = $message -match '文件变更|已修改|修改了|新增|测试[:：]|验证[:：]|PM 切换轨迹|交接区/待接手|commit hash|vitest|build|smoke|APK|push|commit|发布|验证|测试|构建|提交|\bFile changes\b|\bFiles changed\b|\bModified files\b|\bFiles modified\b|\bAdded files\b|\bTests\s*:|\bVerification\s*:|\bPM (?:role )?transitions\b'
 
 $looksLikeImplementationCloseout = $hasCloseoutSignal
 
@@ -61,7 +61,7 @@ if ($code -eq 0) {
   Continue-Hook
 }
 
-$reason = "本次回复像实施收尾，但缺少{{PROJECT_NAME}} ①-⑦ 交接卡或 PM 切换轨迹说明。请补齐交接卡后再结束。检查输出：$($output -join ' ')"
+$reason = "This response appears to complete implementation but lacks the {{PROJECT_NAME}} seven-part handoff or PM role-transition trace. Complete the handoff before ending. Check output: $($output -join ' ')"
 [ordered]@{
   decision = "block"
   reason = $reason

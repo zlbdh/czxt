@@ -166,11 +166,11 @@ function Copy-CzxtInstallerTrustedSource {
     [string]$SourcePath,
     [string]$DestinationPath,
     [object]$ExpectedState,
-    [string]$Context = '实例化来源文件'
+    [string]$Context = 'Installer source file'
   )
-  if ($null -eq $ExpectedState) { throw ($Context + '缺少预检状态') }
+  if ($null -eq $ExpectedState) { throw ($Context + ' is missing preflight state') }
   $identity = @($ExpectedState.Identity -split ':')
-  if ($identity.Count -ne 3) { throw ($Context + '预检 identity 无效') }
+  if ($identity.Count -ne 3) { throw ($Context + ' preflight identity is invalid') }
   $result = [Czxt.InstallerSourceNative]::CopyBound(
     $SourcePath, $DestinationPath,
     [Convert]::ToUInt32($identity[0], 16),
@@ -183,13 +183,13 @@ function Copy-CzxtInstallerTrustedSource {
     -Path $SourcePath -Context $Context
   Assert-CzxtInstallerFileStateStable $ExpectedState $actual $Context
   return ConvertTo-CzxtInstallerFileState -NativeState $result.Destination `
-    -Path $DestinationPath -Context ($Context + '临时文件')
+    -Path $DestinationPath -Context ($Context + ' temporary file')
 }
 
 function New-CzxtInstallerPreparedFile {
   param(
     [string]$DestinationPath, [byte[]]$FirstBytes, [byte[]]$SecondBytes,
-    [string]$Context = '实例化临时文件'
+    [string]$Context = 'Installer temporary file'
   )
   $native = [Czxt.InstallerSourceNative]::WriteNew(
     $DestinationPath, $FirstBytes, $SecondBytes)

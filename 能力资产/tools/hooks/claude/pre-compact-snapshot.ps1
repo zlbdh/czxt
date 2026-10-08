@@ -1,8 +1,8 @@
 ﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
-# Claude Code PreCompact 适配器（PROP-038 / 议题 CK）：context 压缩前快照「最后 PM 切换轨迹」并提醒，
-# 防 PM 留痕 / 未发收尾交接卡在自动压缩中丢失（治本 session 反复踩的留痕崩塌）。
-# 全程 fail-safe：任何不确定 / 出错都输出 {continue:true}，绝不阻断压缩。零文件副作用（只发 systemMessage）。
+# Claude Code PreCompact adapter (PROP-038 / issue CK): snapshot the latest PM role-transition trace and remind before context compaction.
+# Preserve PM traces and pending completion handoffs across automatic compaction, addressing repeated trace loss during remediation sessions.
+# Fail safe: uncertainty or errors return {continue:true}; never block compaction. No file writes; only systemMessage output.
 
 $ErrorActionPreference = "Stop"
 try {
@@ -21,7 +21,7 @@ function Pass {
 }
 
 $raw = [Console]::In.ReadToEnd()
-if (-not [string]::IsNullOrEmpty($raw)) { $raw = $raw.TrimStart([char]0xFEFF) }  # 防个别宿主在 stdin 头塞 BOM 导致 JSON 解析失败
+if (-not [string]::IsNullOrEmpty($raw)) { $raw = $raw.TrimStart([char]0xFEFF) }  # Strip a leading stdin BOM from hosts that would otherwise cause JSON parsing to fail.
 $trigger = "unknown"
 try {
   if (-not [string]::IsNullOrWhiteSpace($raw)) {
@@ -39,11 +39,11 @@ try {
     if ($lines[$i] -match '^\|\s*\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}\s*\|') { $lastIdx = $i; break }
   }
   if ($lastIdx -lt 0) {
-    Pass ("⚠️ context 压缩（{0}）：压缩后请 re-read 状态.md 末尾确认 PM 留痕未断、补未发收尾交接卡。" -f $trigger)
+    Pass ("⚠️ Context compaction ({0}): afterward, reread the end of 状态.md to verify uninterrupted PM traces and provide any pending completion handoff." -f $trigger)
   }
   $lineNo = $lastIdx + 1
   $ts = ([regex]::Match($lines[$lastIdx], '\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}')).Value
-  Pass ("⚠️ context 压缩（{0}）前快照：最后 PM 轨迹 状态.md L{1}（{2}）。压缩后请 re-read 状态.md 末尾确认留痕未断、补未发收尾交接卡。" -f $trigger, $lineNo, $ts)
+  Pass ("⚠️ Before context compaction ({0}): latest PM trace at 状态.md L{1} ({2}). Afterward, reread the end of 状态.md to verify the trace and provide any pending completion handoff." -f $trigger, $lineNo, $ts)
 } catch {
   Pass
 }

@@ -3,7 +3,7 @@
 $ErrorActionPreference = "Stop"
 $checker = Join-Path $Root "能力资产\tools\scripts\check-os\p4n-pm-workspace.ps1"
 if (-not (Test-Path -LiteralPath $checker -PathType Leaf)) {
-  Write-Host "  🔴 PM 工作区锚点检查缺少 P4n 子检查：$checker" -ForegroundColor Red
+  Write-Host "  🔴 PM workspace anchor check lacks the P4n subcheck: $checker" -ForegroundColor Red
   exit 10
 }
 

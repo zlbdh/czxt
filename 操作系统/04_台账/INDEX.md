@@ -3,61 +3,54 @@ name: ledger-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 台账总入口 — 版本时间线 / Sprint 节奏 / 议题全景 / 审计覆盖 5 个聚合视图索引 + 维护 SOP
+description: Ledger entry — version, Sprint, issue and audit-coverage aggregate views and maintenance procedure.
 ---
 
-# 台账 · 总入口（议题 CG 延续 / PROP-028 落地）
+# Ledger Index — Issue CG / PROP-028
 
-> **🎯 单一信息源原则**：聚合视图，不复制内容，仅"指针 + 时间线"。详细内容指向项目真知识源（RETRO / TASKS.md / git / 状态.md）。
+> **Single source of truth:** these are aggregate views. Keep pointers and timelines; do not duplicate detailed content. Link to the project's actual knowledge sources: RETRO, TASKS.md, Git, and 状态.md.
 
----
+## Aggregate views
 
-## 一、台账 5 个聚合视图
+The original “five views” heading accompanies six entries in the source; all six are retained here.
 
-| 文档 | 视角 | 真知识源 |
+| Document | Perspective | Source of truth |
 |---|---|---|
-| [版本时间线.md](版本时间线.md) | 版本总览指针（当前 {{CURRENT_VERSION}}；明细表阶段截至 v3.8.2）| git log + {{APP_REPO_DIR}}/apk/ |
-| [Sprint节奏.md](Sprint节奏.md) | Sprint 总览指针（当前 {{CURRENT_SPRINT}}；明细表阶段截至 Sprint-7）| Docs/7-复盘/RETRO-*.md |
-| [议题全景.md](议题全景.md) + [历史快照](历史归档/2026-05/议题全景-2026-05-22-历史快照.md) | 全议题状态入口 + 2026-05-22 阶段性明细表 | RETRO + TASKS.md + 确认改动/ |
-| [项目沉淀/README.md](项目沉淀/README.md) | Layer 3 项目全周期沉淀入口（业务 / 用户 / 市场 / 产品演化）| 项目 PM + 运营 PM + 沉淀 PM |
-| [逐文件审计覆盖台账.md](逐文件审计覆盖台账.md) + [明细](逐文件审计覆盖台账-明细.md) | 操作系统逐文件/分片深审覆盖证据，不把自动守卫误当人工逐字证明 | agent 回流 + 状态.md + check-os |
-| [长期产品化路线图.md](长期产品化路线图.md) | `czxt` 模板仓库产品化阶段、项目区与安装器边界 | README + git remote + 项目配置/ |
+| [Version timeline](版本时间线.md) | Version overview pointer (current {{CURRENT_VERSION}}; detailed snapshot through v3.8.2) | git log + {{APP_REPO_DIR}}/apk/ |
+| [Sprint rhythm](Sprint节奏.md) | Sprint overview pointer (current {{CURRENT_SPRINT}}; detailed snapshot through Sprint-7) | Docs/7-复盘/RETRO-*.md |
+| [Issue panorama](议题全景.md) + [historical snapshot](历史归档/2026-05/议题全景-2026-05-22-历史快照.md) | Current issue-status entry and the 2026-05-22 detailed snapshot | RETRO + TASKS.md + 确认改动/ |
+| [Project learning](项目沉淀/README.md) | Layer 3 learning across the project lifecycle: business, users, market, and product evolution | Project PM + Operations PM + Knowledge PM |
+| [File audit coverage](逐文件审计覆盖台账.md) + [details](逐文件审计覆盖台账-明细.md) | File-by-file and partitioned operating-system audit evidence; do not mistake automated guards for proof of a complete human reading | Agent returns + 状态.md + check-os |
+| [Long-term productization roadmap](长期产品化路线图.md) | Productization stages for the czxt template repository; project-area and installer boundaries | README + git remote + 项目配置/ |
 
----
+## Maintenance procedure
 
-## 二、维护 SOP
+- When drafting each Sprint RETRO, update the version timeline, Sprint rhythm, and issue panorama. Operating System PM owns this work.
+- Whenever an issue permanently closes or becomes an ADR, update the issue panorama.
+- Whenever a file-by-file operating-system audit concludes, update the audit-coverage ledger.
+- A single work-item shipment does not require an update; maintenance mode avoids excessive PM documentation.
 
-### 何时同步本台账
+### Data lag
 
-- ✅ **每次 Sprint RETRO 起稿时**：必同步「版本时间线 + Sprint 节奏 + 议题全景」（操作系统 PM 责任）
-- ✅ **每次议题永久关闭 / ADR 升级时**：必同步「议题全景」
-- ✅ **每次操作系统逐文件深审收口时**：必同步「逐文件审计覆盖台账」
-- ❌ **每次单棒 ship 不强制同步**（避免 PM 过度文档化 / 维护模式精神）
+This ledger is an **aggregate view**. Pointer pages may lag their sources by several hours to one day. Detailed version and Sprint tables are **periodic snapshots, not exhaustive real-time records**. For the latest information:
 
-### 数据延迟说明
+- Versions and commits: `git log --oneline`.
+- Issues: `TASKS.md` and RETRO.
+- Sprint progress: the top summary in `状态.md`.
 
-本台账是**聚合视图**。指针类页面可能滞后真知识源数小时-1 天；版本时间线 / Sprint 节奏的明细表是阶段性快照，不追实时全量。如需最新状态：
-- 版本 / commit → `git log --oneline`
-- 议题 → `TASKS.md` + RETRO
-- Sprint 进度 → `状态.md` 顶部摘要
+## Related framework modules
 
----
+| Path | Responsibility |
+|---|---|
+| `操作系统/05_记忆/INDEX.md` | Project memory: user preferences, behavior-reflection entry across runtimes, and important history pointers |
+| `操作系统/04_台账/INDEX.md` | Project ledger: version, Sprint, and issue aggregates; this file |
+| `能力资产/mcp/INSTALLED.md` | MCP tool governance |
+| `能力资产/tools/` | Build scripts and dependency matrix |
+| `操作系统/02_智能体/` | Nine PM roles and subagent dispatch |
+| `操作系统/07_完整工作流/` | Workflows |
+| `能力资产/rules/` | Engineering rules |
+| `能力资产/shared/` | Shared resources across roles |
 
-## 三、与其他 framework 模块的关系
+## Version
 
-```
-操作系统/05_记忆/INDEX.md       项目记忆入口（用户偏好 + 多运行时行为反思入口 + 重要历史指针）
-操作系统/04_台账/INDEX.md         项目台账（版本 + Sprint + 议题 全景聚合 / 本文件）
-能力资产/mcp/INSTALLED.md      MCP 工具治理
-能力资产/tools/                 构建脚本 + 依赖矩阵
-操作系统/02_智能体/               9 PM 角色与子 agent 调度机制
-操作系统/07_完整工作流/            工作流
-能力资产/rules/                工程规则
-能力资产/shared/               跨角色共享
-```
-
----
-
-## 四、版本
-
-- **v1**（2026-05-21）— PROP-028 落地（议题 CG 延续 / 项目内分散 → 单一目录）
+- **v1 — 2026-05-21:** PROP-028 implemented, continuing issue CG and consolidating scattered project records in one directory.

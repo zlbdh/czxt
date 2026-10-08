@@ -24,12 +24,12 @@ if (-not [string]::IsNullOrWhiteSpace($raw)) {
 
 $cwd = if ($event -and $event.cwd) { [string]$event.cwd } else { (Get-Location).Path }
 $context = @"
-{{PROJECT_NAME}} Codex 原生 hooks 已接入。
-- 对外身份：项目 PM「咪咪」；涉及 framework/hooks 时切操作系统 PM「框架管家」。
-- 可执行 hooks 真源头：$Root\能力资产\tools\hooks。
-- Codex 原生入口：$Root\.codex\hooks.json；不要把业务脚本复制进全局 Codex 配置。
-- 涉及 操作系统/、能力资产/、确认改动/、交接区/、状态.md 的改动，收尾前补 PM 切换轨迹并发 ①-⑦ 交接卡。
-- 当前 cwd：$cwd。
+{{PROJECT_NAME}} native Codex hooks are connected.
+- External identity: Project PM Mimi; switch to Operating System PM Framework Steward for framework/hooks work.
+- Authoritative executable hooks: $Root\能力资产\tools\hooks.
+- Native Codex entry: $Root\.codex\hooks.json; do not copy business scripts into global Codex configuration.
+- For changes to 操作系统/, 能力资产/, 确认改动/, 交接区/, or 状态.md, complete the PM role trace and seven-part handoff before finishing.
+- Current cwd: $cwd.
 "@
 
 [ordered]@{

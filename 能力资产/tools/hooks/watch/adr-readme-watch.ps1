@@ -9,7 +9,7 @@ $runner = Join-Path $Root "能力资产\tools\hooks\run-hooks.ps1"
 $mode = if ($Apply) { "Apply" } else { "Check" }
 
 if (-not (Test-Path -LiteralPath $adrDir)) {
-  throw "找不到 ADR 目录：$adrDir"
+  throw "ADR directory not found: $adrDir"
 }
 
 Write-Host "👀 Watching ADR directory: $adrDir"

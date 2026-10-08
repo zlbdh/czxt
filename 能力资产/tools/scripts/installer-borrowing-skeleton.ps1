@@ -11,32 +11,32 @@ function Copy-CzxtBorrowingStaticFile {
   $target = Get-CzxtBorrowingFullPath (Join-Path $TargetRoot $RelativePath)
   if (-not (Test-CzxtBorrowingPathWithinRoot $source $SourceRoot) -or
       -not (Test-CzxtBorrowingPathWithinRoot $target $TargetRoot)) {
-    throw "借鉴区骨架路径越界：$RelativePath"
+    throw "Borrowing scaffolding path is out of bounds: $RelativePath"
   }
-  [void](Assert-CzxtBorrowingNoReparseAncestor $source '借鉴区骨架来源')
-  [void](Assert-CzxtBorrowingNoReparseAncestor $target '借鉴区骨架目标')
+  [void](Assert-CzxtBorrowingNoReparseAncestor $source 'Borrowing scaffolding source')
+  [void](Assert-CzxtBorrowingNoReparseAncestor $target 'Borrowing scaffolding target')
   if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
-    throw "模板缺少借鉴区骨架：$RelativePath"
+    throw "Template is missing borrowing scaffolding: $RelativePath"
   }
-  $sourceState = Get-CzxtInstallerFileState $source '借鉴区骨架来源'
+  $sourceState = Get-CzxtInstallerFileState $source 'Borrowing scaffolding source'
   if ($null -ne $AfterSourceBind) { & $AfterSourceBind $source }
   if ($ExpectAbsent -and $null -ne $ExpectedPresentState) {
-    throw '借鉴区骨架目标不能同时声明不存在与已存在快照。'
+    throw 'Borrowing scaffolding target cannot declare both absence and an existing snapshot.'
   }
   if (-not $ExpectAbsent -and $null -eq $ExpectedPresentState) {
     $expectation = Get-CzxtInstallerTargetExpectation -ProjectRoot $ProjectRoot `
-      -TargetPath $target -Context '借鉴区骨架目标' -AllowExisting:$Force
+      -TargetPath $target -Context 'Borrowing scaffolding target' -AllowExisting:$Force
     $ExpectAbsent = $expectation.Mode -eq 'ExpectAbsent'
     $ExpectedPresentState = $expectation.State
   }
   $parent = Split-Path -Parent $target
   if (-not (Test-Path -LiteralPath $parent -PathType Container)) {
     [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-      -TargetPath $parent -Context '借鉴区骨架父目录')
+      -TargetPath $parent -Context 'Borrowing scaffolding parent directory')
   }
-  [void](Assert-CzxtBorrowingNoReparseAncestor $target '借鉴区骨架目标')
+  [void](Assert-CzxtBorrowingNoReparseAncestor $target 'Borrowing scaffolding target')
   Copy-CzxtInstallerFile -ProjectRoot $ProjectRoot -SourcePath $source `
-    -TargetPath $target -Context '借鉴区骨架目标' -ExpectAbsent:$ExpectAbsent `
+    -TargetPath $target -Context 'Borrowing scaffolding target' -ExpectAbsent:$ExpectAbsent `
     -ExpectedPresentState $ExpectedPresentState -ExpectedSourceState $sourceState `
     -InstalledFiles $InstalledFiles
 }
@@ -51,12 +51,12 @@ function Copy-BorrowingZoneSkeleton {
   $targetRoot = Get-CzxtBorrowingFullPath (Join-Path $ProjectRoot '借鉴区')
   if (-not (Test-CzxtBorrowingPathStrictlyWithinRoot $sourceRoot $TemplateRoot) -or
       -not (Test-CzxtBorrowingPathStrictlyWithinRoot $targetRoot $ProjectRoot)) {
-    throw '借鉴区骨架根路径越界。'
+    throw 'Borrowing scaffolding root path is out of bounds.'
   }
-  [void](Assert-CzxtBorrowingNoReparseAncestor $sourceRoot '借鉴区模板根')
-  [void](Assert-CzxtBorrowingNoReparseAncestor $targetRoot '借鉴区目标根')
+  [void](Assert-CzxtBorrowingNoReparseAncestor $sourceRoot 'Borrowing template root')
+  [void](Assert-CzxtBorrowingNoReparseAncestor $targetRoot 'Borrowing target root')
   if (-not (Test-Path -LiteralPath $sourceRoot -PathType Container)) {
-    throw '模板缺少必要项：借鉴区'
+    throw 'Template is missing a required item: borrowing area'
   }
   foreach ($relativePath in @(
       'README.md', '.gitignore', '模板\来源版本卡.md', '模板\借鉴卡.md')) {
@@ -66,15 +66,15 @@ function Copy-BorrowingZoneSkeleton {
   }
   foreach ($relativeDirectory in @('来源', '事项')) {
     $targetDirectory = Join-Path $targetRoot $relativeDirectory
-    [void](Assert-CzxtBorrowingNoReparseAncestor $targetDirectory '借鉴区目录')
+    [void](Assert-CzxtBorrowingNoReparseAncestor $targetDirectory 'Borrowing directory')
     if (-not (Test-Path -LiteralPath $targetDirectory -PathType Container)) {
       $sentinelRelative = Join-Path $relativeDirectory '.gitkeep'
       $sentinelTarget = Join-Path $targetDirectory '.gitkeep'
       $sentinelExpectation = Get-CzxtInstallerTargetExpectation `
         -ProjectRoot $ProjectRoot -TargetPath $sentinelTarget `
-        -Context '借鉴区新建目录 .gitkeep'
+        -Context 'New borrowing directory .gitkeep'
       [void](New-CzxtInstallerBoundDirectory -ProjectRoot $ProjectRoot `
-        -TargetPath $targetDirectory -Context '借鉴区目录')
+        -TargetPath $targetDirectory -Context 'Borrowing directory')
       if ($null -ne $BeforeBorrowingSentinelCopy) {
         & $BeforeBorrowingSentinelCopy $targetDirectory $sentinelTarget
       }

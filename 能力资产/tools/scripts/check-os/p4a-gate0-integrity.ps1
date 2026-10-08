@@ -3,7 +3,7 @@
 function Test-CzxtP4aRootMode {
   param([string]$RootMode, [object]$Failures)
   if ($RootMode -notin @('template', 'project')) {
-    $Failures.Add("🔴 根模式非法：$RootMode（要求 template-only 或 project-only marker）")
+    $Failures.Add("🔴 Invalid root mode: $RootMode (requires a template-only or project-only marker)")
   }
 }
 
@@ -12,15 +12,15 @@ function Test-CzxtWinPsEncodingGate {
   $gateRel = "能力资产/tools/scripts/check-winps-encoding.ps1"
   $gatePath = Join-Path $Root $gateRel
   if (-not (Test-Path -LiteralPath $gatePath -PathType Leaf)) {
-    $Failures.Add("🔴 缺 Windows PowerShell 编码门禁：$gateRel")
+    $Failures.Add("🔴 Windows PowerShell encoding gate is missing: $gateRel")
     return
   }
   & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $gatePath -Root $Root
   $gateExit = $LASTEXITCODE
   if ($gateExit -ne 0) {
-    $Failures.Add("🔴 Windows PowerShell 编码门禁失败 exit $gateExit")
+    $Failures.Add("🔴 Windows PowerShell encoding gate failed with exit $gateExit")
   } else {
-    $Passes.Add("Windows PowerShell 编码门禁")
+    $Passes.Add("Windows PowerShell encoding gate")
   }
 }
 
@@ -34,7 +34,7 @@ function Test-CzxtInstallerCopyItems {
   $installerRel = "实例化项目.ps1"
   $installerPath = Join-Path $Root $installerRel
   if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
-    $Failures.Add("🔴 缺实例化脚本：$installerRel")
+    $Failures.Add("🔴 Instantiation script is missing: $installerRel")
     return
   }
   $scriptText = Get-Content -LiteralPath $installerPath -Raw -Encoding UTF8
@@ -46,16 +46,16 @@ function Test-CzxtInstallerCopyItems {
   }
   $match = [regex]::Match($scriptText, '\$copyItems\s*=\s*@\((?<body>[\s\S]*?)\)')
   if (-not $match.Success) {
-    $Failures.Add("🔴 实例化脚本未找到 `$copyItems 清单")
+    $Failures.Add("🔴 Instantiation script lacks the `$copyItems list")
     return
   }
   $items = @([regex]::Matches($match.Groups["body"].Value, '"([^"]+)"') |
     ForEach-Object { $_.Groups[1].Value })
   foreach ($item in $ExpectedItems) {
     if ($items -notcontains $item) {
-      $Failures.Add("🔴 实例化脚本 `$copyItems 缺少：$item")
+      $Failures.Add("🔴 Instantiation script `$copyItems is missing: $item")
     } else {
-      $Passes.Add("实例化脚本复制清单：$item")
+      $Passes.Add("Instantiation script copy list: $item")
     }
   }
   Test-CzxtInstallerGate0Contract -ScriptText $scriptText -MarkerText $markerText `
@@ -72,9 +72,9 @@ function Test-CzxtInstallerGate0Contract {
     [object]$Passes
   )
   if ($CopyItems -contains ".czxt-template-root") {
-    $Failures.Add("🔴 实例化脚本不得复制 .czxt-template-root")
+    $Failures.Add("🔴 Instantiation script must not copy .czxt-template-root")
   } else {
-    $Passes.Add("实例化脚本不复制模板 marker")
+    $Passes.Add("Instantiation script excludes the template marker")
   }
 
   $hasProjectMarker = (
@@ -83,9 +83,9 @@ function Test-CzxtInstallerGate0Contract {
     ($MarkerText -match 'schema=1')
   )
   if ($hasProjectMarker) {
-    $Passes.Add("实例化脚本生成 project marker schema=1")
+    $Passes.Add("Instantiation script creates project marker schema=1")
   } else {
-    $Failures.Add("🔴 实例化脚本未生成 project marker schema=1")
+    $Failures.Add("🔴 Instantiation script does not create project marker schema=1")
   }
 
   $preservesPs1Bom = (
@@ -94,8 +94,8 @@ function Test-CzxtInstallerGate0Contract {
     ($ScriptText -match 'Write-CzxtInstallerTextFile[\s\S]{0,400}-TargetPath\s+\$file\.FullName[\s\S]{0,400}-Encoding\s+\$writeEncoding')
   )
   if ($preservesPs1Bom) {
-    $Passes.Add("实例化脚本按 .ps1 选择 UTF-8 BOM 写回")
+    $Passes.Add("Instantiation script writes .ps1 files with UTF-8 BOM encoding")
   } else {
-    $Failures.Add("🔴 实例化脚本未按 .ps1 选择 UTF-8 BOM 写回")
+    $Failures.Add("🔴 Instantiation script does not write .ps1 files with UTF-8 BOM encoding")
   }
 }

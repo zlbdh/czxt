@@ -10,16 +10,16 @@ if (Test-Path -LiteralPath $workspace -PathType Container) {
         $text = Get-Content -LiteralPath $_.FullName -Raw -Encoding UTF8
         foreach ($m in [regex]::Matches($text, '(?m)^scope: agent$|^agent:')) {
             $line = ($text.Substring(0, $m.Index) -split "`n").Count
-            $hits += "$rel`:L$line PM 工作区 frontmatter 不应把 PM 写成 agent"
+            $hits += "$rel`:L$line PM workspace frontmatter must not label a PM as an agent"
         }
     }
 }
 
 if ($hits.Count -gt 0) {
-    Write-Host "  🔴 PM frontmatter 旧 agent 语义：$($hits.Count) 处" -ForegroundColor Red
+    Write-Host "  🔴 PM frontmatter has obsolete agent semantics: $($hits.Count) matches" -ForegroundColor Red
     foreach ($hit in $hits) { Write-Host "    - $hit" -ForegroundColor Red }
     exit 10
 }
 
-Write-Host "  ✅ PM 工作区 frontmatter 使用 PM 语义" -ForegroundColor Green
+Write-Host "  ✅ PM workspace frontmatter uses PM semantics" -ForegroundColor Green
 exit 0

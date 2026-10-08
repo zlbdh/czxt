@@ -1,0 +1,2191 @@
+{
+  "schema": "borrowing-doc-language/v1",
+  "relativePath": "\u80fd\u529b\u8d44\u4ea7/skills/\u501f\u9274-\u547d\u4ee4\u9644\u5f55.md",
+  "englishHeading": "# Skill: Borrowing \u00b7 Command Appendix",
+  "lines": [
+    {
+      "english": "---",
+      "canonical": "---"
+    },
+    {
+      "english": "name: borrowing-command-appendix",
+      "canonical": "name: borrowing-command-appendix"
+    },
+    {
+      "english": "scope: project",
+      "canonical": "scope: project"
+    },
+    {
+      "english": "type: procedural",
+      "canonical": "type: procedural"
+    },
+    {
+      "english": "loaded: on-demand",
+      "canonical": "loaded: on-demand"
+    },
+    {
+      "english": "description: Calls for the three borrowing source capture types through the facade, authorization parameters, failure recovery, and offline diagnostics",
+      "canonical": "description: \u501f\u9274\u6765\u6e90\u6355\u83b7 fa\u00e7ade \u7684\u4e09\u7c7b\u8c03\u7528\u3001\u6388\u6743\u53c2\u6570\u3001\u5931\u8d25\u6062\u590d\u4e0e\u79bb\u7ebf\u8bca\u65ad"
+    },
+    {
+      "english": "---",
+      "canonical": "---"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "# Skill: Borrowing \u00b7 Command Appendix",
+      "canonical": "# \u6280\u80fd\uff1a\u501f\u9274 \u00b7 \u547d\u4ee4\u9644\u5f55"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Use this appendix only to call the tested facade from the [borrowing skill](\u501f\u9274.md); it does not define a second operating workflow. The [borrowing governance rules](../rules/\u501f\u9274\u6cbb\u7406.md) are the sole authority for allowed permission values, defaults, and behavior classification.",
+      "canonical": "\u672c\u9644\u5f55\u53ea\u4f9b[\u501f\u9274 Skill](\u501f\u9274.md)\u8c03\u7528\u53d7\u6d4b\u8bd5\u7684 fa\u00e7ade\uff0c\u4e0d\u5f62\u6210\u7b2c\u4e8c\u5957\u64cd\u4f5c\u6d41\u7a0b\u3002\u6743\u9650\u5141\u8bb8\u503c\u3001\u9ed8\u8ba4\u503c\u548c\u884c\u4e3a\u5206\u7ea7\u53ea\u4ee5[\u501f\u9274\u6cbb\u7406\u89c4\u5219](../rules/\u501f\u9274\u6cbb\u7406.md)\u4e3a\u51c6\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Usage boundaries",
+      "canonical": "## \u4f7f\u7528\u8fb9\u754c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Capture enters same-volume `staging` first and is promoted atomically only after the candidate passes validation. The executor runs `P4t` before and after promotion; `P4t` always remains offline. Operators must not manually assemble underlying Git, copy, or hash commands, or add internal execution injection parameters to the public entry point.",
+      "canonical": "\u6355\u83b7\u5148\u8fdb\u5165\u540c\u5377 `staging`\uff0c\u5019\u9009\u6821\u9a8c\u901a\u8fc7\u540e\u624d\u539f\u5b50\u664b\u5347\uff1b\u6267\u884c\u5668\u5728\u664b\u5347\u524d\u540e\u8fd0\u884c `P4t`\uff0c\u800c `P4t` \u59cb\u7ec8\u4e0d\u8054\u7f51\u3002\u64cd\u4f5c\u8005\u4e0d\u5f97\u624b\u5de5\u62fc\u88c5\u5e95\u5c42 Git\u3001\u590d\u5236\u6216\u54c8\u5e0c\u547d\u4ee4\uff0c\u4e5f\u4e0d\u5f97\u5411\u516c\u5f00\u5165\u53e3\u52a0\u5165\u5185\u90e8\u6267\u884c\u6ce8\u5165\u53c2\u6570\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Fixed v1 resource limits",
+      "canonical": "### v1 \u56fa\u5b9a\u8d44\u6e90\u4e0a\u9650"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Resource|Fixed limit|Exact boundary|",
+      "canonical": "|\u8d44\u6e90\u9879|\u56fa\u5b9a\u4e0a\u9650|\u7cbe\u786e\u8fb9\u754c|"
+    },
+    {
+      "english": "|---|---:|---|",
+      "canonical": "|---|---:|---|"
+    },
+    {
+      "english": "|leaf|10000|10000 is valid; 10001 fails|",
+      "canonical": "|leaf|10000|10000 \u5408\u6cd5\uff1b10001 \u5931\u8d25|"
+    },
+    {
+      "english": "|Total bytes|536870912|536870912 is valid; 536870913 fails|",
+      "canonical": "|\u603b\u5b57\u8282|536870912|536870912 \u5408\u6cd5\uff1b536870913 \u5931\u8d25|"
+    },
+    {
+      "english": "|Bytes per item|67108864|67108864 is valid; 67108865 fails|",
+      "canonical": "|\u5355\u9879\u5b57\u8282|67108864|67108864 \u5408\u6cd5\uff1b67108865 \u5931\u8d25|"
+    },
+    {
+      "english": "|Git cache bytes|536870912|536870912 is valid; 536870913 fails|",
+      "canonical": "|Git cache \u5b57\u8282|536870912|536870912 \u5408\u6cd5\uff1b536870913 \u5931\u8d25|"
+    },
+    {
+      "english": "|Depth|64|64 is valid; 65 fails|",
+      "canonical": "|\u6df1\u5ea6|64|64 \u5408\u6cd5\uff1b65 \u5931\u8d25|"
+    },
+    {
+      "english": "|Path UTF-8 bytes|1024|1024 is valid; 1025 fails|",
+      "canonical": "|\u8def\u5f84 UTF-8 \u5b57\u8282|1024|1024 \u5408\u6cd5\uff1b1025 \u5931\u8d25|"
+    },
+    {
+      "english": "|Metadata bytes|65536|65536 is valid; 65537 fails|",
+      "canonical": "|metadata \u5b57\u8282|65536|65536 \u5408\u6cd5\uff1b65537 \u5931\u8d25|"
+    },
+    {
+      "english": "|redirect|10|10 is valid; 11 fails|",
+      "canonical": "|redirect|10|10 \u5408\u6cd5\uff1b11 \u5931\u8d25|"
+    },
+    {
+      "english": "|Git timeout|300000ms|300000ms is valid; 300001ms fails|",
+      "canonical": "|Git timeout|300000ms|300000ms \u5408\u6cd5\uff1b300001ms \u5931\u8d25|"
+    },
+    {
+      "english": "|P4t timeout|120000ms|120000ms is valid; 120001ms fails|",
+      "canonical": "|P4t timeout|120000ms|120000ms \u5408\u6cd5\uff1b120001ms \u5931\u8d25|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "All limits are fixed and cannot be overridden. P4t timeout uses reason_code=p4t-process-failed; every other resource limit violation uses reason_code=resource-limit.",
+      "canonical": "\u6240\u6709\u4e0a\u9650\u56fa\u5b9a\u4e14\u65e0 override\uff1b\u9664 P4t timeout \u4f7f\u7528 reason_code=p4t-process-failed \u5916\uff0c\u5176\u4f59\u8d8a\u754c\u7edf\u4e00 reason_code=resource-limit\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The transaction tree seal separately allows at most `20000` directory/file members and reuses the `536870912` total-byte limit. It stops early during per-member DFS and streams SHA-256 with a 1 MiB buffer, without retaining an entire tree or file in memory at once.",
+      "canonical": "\u4e8b\u52a1\u6811 seal \u53e6\u56fa\u5b9a\u6700\u591a `20000` \u4e2a\u76ee\u5f55/\u6587\u4ef6\u6210\u5458\uff0c\u5e76\u590d\u7528 `536870912` \u603b\u5b57\u8282\u4e0a\u9650\uff1b\u5b83\u901a\u8fc7\u9010\u6210\u5458 DFS \u63d0\u524d\u7194\u65ad\u3001\u4ee5 1 MiB \u7f13\u51b2\u6d41\u5f0f\u8ba1\u7b97 SHA-256\uff0c\u4e0d\u628a\u6574\u68f5\u6811\u6216\u6574\u6587\u4ef6\u5b57\u8282\u4e00\u6b21\u6027\u5e38\u9a7b\u5185\u5b58\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Resource|Applicable source|Measurement and timing|reason|",
+      "canonical": "|\u8d44\u6e90\u9879|\u9002\u7528\u6765\u6e90|\u8ba1\u91cf\u5bf9\u8c61\u4e0e\u65f6\u70b9|reason|"
+    },
+    {
+      "english": "|---|---|---|---|",
+      "canonical": "|---|---|---|---|"
+    },
+    {
+      "english": "|leaf|Local|Manifest entry count; check before creating staging and repeat on source-after/staging after copying|resource-limit|",
+      "canonical": "|leaf|Local|manifest \u6761\u76ee\u6570\uff1b\u521b\u5efa staging \u524d\u53ca\u590d\u5236\u540e\u5bf9 source-after/staging \u91cd\u590d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|leaf|Git|Non-tree entry count in the selected tree; check only inside staging after fetch|resource-limit|",
+      "canonical": "|leaf|Git|\u9009\u5b9a tree \u7684\u975e tree \u6761\u76ee\u6570\uff1b\u4ec5 fetch \u540e\u5728 staging \u5185\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Total bytes|Local|Sum file lengths for each normalized path; check before creating staging and repeat on source-after/staging after copying|resource-limit|",
+      "canonical": "|\u603b\u5b57\u8282|Local|\u6309\u6bcf\u4e2a\u89c4\u8303\u5316\u8def\u5f84\u7684\u6587\u4ef6\u957f\u5ea6\u6c42\u548c\uff1b\u521b\u5efa staging \u524d\u53ca\u590d\u5236\u540e\u5bf9 source-after/staging \u91cd\u590d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Total bytes|Git|Sum the uncompressed size of the blob reachable from each leaf; count repeated paths separately; check only inside staging after fetch|resource-limit|",
+      "canonical": "|\u603b\u5b57\u8282|Git|\u6309\u6bcf\u4e2a leaf \u53ef\u8fbe blob \u7684\u672a\u538b\u7f29 size \u6c42\u548c\uff1b\u91cd\u590d\u8def\u5f84\u91cd\u590d\u8ba1\uff1b\u4ec5 fetch \u540e\u5728 staging \u5185\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Total bytes|Web|Raw response byte length; check before creating staging|resource-limit|",
+      "canonical": "|\u603b\u5b57\u8282|Web|raw \u54cd\u5e94\u5b57\u8282\u957f\u5ea6\uff1b\u521b\u5efa staging \u524d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Bytes per item|Local|Each file's length; check before creating staging and repeat on source-after/staging after copying|resource-limit|",
+      "canonical": "|\u5355\u9879\u5b57\u8282|Local|\u6bcf\u4e2a\u6587\u4ef6\u957f\u5ea6\uff1b\u521b\u5efa staging \u524d\u53ca\u590d\u5236\u540e\u5bf9 source-after/staging \u91cd\u590d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Bytes per item|Git|Uncompressed size of the blob reachable from each leaf; check only inside staging after fetch|resource-limit|",
+      "canonical": "|\u5355\u9879\u5b57\u8282|Git|\u6bcf\u4e2a leaf \u53ef\u8fbe blob \u7684\u672a\u538b\u7f29 size\uff1b\u4ec5 fetch \u540e\u5728 staging \u5185\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Bytes per item|Web|Raw response byte length; check before creating staging|resource-limit|",
+      "canonical": "|\u5355\u9879\u5b57\u8282|Web|raw \u54cd\u5e94\u5b57\u8282\u957f\u5ea6\uff1b\u521b\u5efa staging \u524d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Git cache bytes|Git|Sum the lengths of all regular files under staging repository.git after fetch; check only inside staging|resource-limit|",
+      "canonical": "|Git cache \u5b57\u8282|Git|fetch \u540e staging repository.git \u4e0b\u5168\u90e8\u5e38\u89c4\u6587\u4ef6\u957f\u5ea6\u4e4b\u548c\uff1b\u4ec5\u5728 staging \u5185\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Depth|Local|Number of /-separated segments in a normalized relative path; a root-level file=1, an empty set=0; check before creating staging and repeat after copying|resource-limit|",
+      "canonical": "|\u6df1\u5ea6|Local|\u89c4\u8303\u5316\u76f8\u5bf9\u8def\u5f84\u6309 / \u5206\u6bb5\u6570\uff1b\u6839\u7ea7\u6587\u4ef6=1\uff1b\u7a7a\u96c6=0\uff1b\u521b\u5efa staging \u524d\u53ca\u590d\u5236\u540e\u91cd\u590d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Depth|Git|Number of /-separated segments in a normalized relative path; a root-level file=1, an empty set=0; check only inside staging after fetch|resource-limit|",
+      "canonical": "|\u6df1\u5ea6|Git|\u89c4\u8303\u5316\u76f8\u5bf9\u8def\u5f84\u6309 / \u5206\u6bb5\u6570\uff1b\u6839\u7ea7\u6587\u4ef6=1\uff1b\u7a7a\u96c6=0\uff1b\u4ec5 fetch \u540e\u5728 staging \u5185\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Path UTF-8 bytes|Local|Normalized relative path; check before creating staging and repeat on source-after/staging after copying|resource-limit|",
+      "canonical": "|\u8def\u5f84 UTF-8 \u5b57\u8282|Local|\u89c4\u8303\u5316\u76f8\u5bf9\u8def\u5f84\uff1b\u521b\u5efa staging \u524d\u53ca\u590d\u5236\u540e\u5bf9 source-after/staging \u91cd\u590d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Path UTF-8 bytes|Git|Normalized relative path; check only inside staging after fetch|resource-limit|",
+      "canonical": "|\u8def\u5f84 UTF-8 \u5b57\u8282|Git|\u89c4\u8303\u5316\u76f8\u5bf9\u8def\u5f84\uff1b\u4ec5 fetch \u540e\u5728 staging \u5185\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Metadata bytes|Web|Measure input bytes and canonical file bytes (including the final LF) separately; check before creating staging|resource-limit|",
+      "canonical": "|metadata \u5b57\u8282|Web|\u8f93\u5165\u5b57\u8282\u4e0e canonical \u6587\u4ef6\u5b57\u8282\uff08\u542b\u672b\u5c3e LF\uff09\u5404\u81ea\u8ba1\u91cf\uff1b\u521b\u5efa staging \u524d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|redirect|Web|Number of redirect_chain array elements; check before creating staging|resource-limit|",
+      "canonical": "|redirect|Web|redirect_chain \u6570\u7ec4\u5143\u7d20\u6570\uff1b\u521b\u5efa staging \u524d\u68c0\u67e5|resource-limit|"
+    },
+    {
+      "english": "|Git timeout|Git|Wall-clock time of each Git subprocess|resource-limit|",
+      "canonical": "|Git timeout|Git|\u6bcf\u4e2a Git \u5b50\u8fdb\u7a0b wall-clock|resource-limit|"
+    },
+    {
+      "english": "|P4t timeout|Local / Git / Web|Wall-clock time of each P4t call at the corresponding before/after gate|p4t-process-failed|",
+      "canonical": "|P4t timeout|Local / Git / Web|\u6bcf\u6b21 P4t wall-clock\uff1b\u5bf9\u5e94\u524d\u540e\u95e8|p4t-process-failed|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Applicable source|Fixed scope|Fixed check stage|",
+      "canonical": "|\u9002\u7528\u6765\u6e90|\u56fa\u5b9a\u8303\u56f4|\u56fa\u5b9a\u68c0\u67e5\u9636\u6bb5|"
+    },
+    {
+      "english": "|---|---|---|",
+      "canonical": "|---|---|---|"
+    },
+    {
+      "english": "|Local|All content/path limits|Check before creating staging; repeat on source-after and staging after copying|",
+      "canonical": "|Local|\u6240\u6709\u5185\u5bb9/\u8def\u5f84\u4e0a\u9650|\u521b\u5efa staging \u524d\u68c0\u67e5\uff1b\u590d\u5236\u540e\u5bf9 source-after \u4e0e staging \u91cd\u590d\u68c0\u67e5|"
+    },
+    {
+      "english": "|Web|Raw content and input/canonical metadata|Check before creating staging|",
+      "canonical": "|Web|raw \u4e0e\u8f93\u5165/canonical metadata|\u521b\u5efa staging \u524d\u68c0\u67e5|"
+    },
+    {
+      "english": "|Git|All content/path limits|Check only inside staging after fetch|",
+      "canonical": "|Git|\u6240\u6709\u5185\u5bb9/\u8def\u5f84\u4e0a\u9650|\u4ec5 fetch \u540e\u5728 staging \u5185\u68c0\u67e5|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Shared resource item|Exact contract|",
+      "canonical": "|\u8d44\u6e90\u516c\u5171\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Int64|Any count or sum overflow is a hard failure|",
+      "canonical": "|Int64|\u4efb\u4e00\u8ba1\u6570\u6216\u6c42\u548c\u6ea2\u51fa\u5373\u786c\u5931\u8d25|"
+    },
+    {
+      "english": "|Limit violation reason|P4t timeout uses p4t-process-failed; all other resource limit violations use resource-limit|",
+      "canonical": "|\u8d8a\u754c reason|\u9664 P4t timeout \u4f7f\u7528 p4t-process-failed \u5916\uff0c\u5176\u4f59\u8d44\u6e90\u8d8a\u754c\u5747\u4f7f\u7528 resource-limit|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Timeout item|Timing boundary|Timeout action|stage / reason|",
+      "canonical": "|\u8d85\u65f6\u9879|\u8ba1\u65f6\u8fb9\u754c|\u8d85\u65f6\u52a8\u4f5c|stage / reason|"
+    },
+    {
+      "english": "|---|---|---|---|",
+      "canonical": "|---|---|---|---|"
+    },
+    {
+      "english": "|Git timeout|Wall-clock time of each Git subprocess|Kill the process tree on timeout|stage=capture; reason_code=resource-limit|",
+      "canonical": "|Git timeout|\u6bcf\u4e2a Git \u5b50\u8fdb\u7a0b wall-clock|\u8d85\u65f6\u6740\u8fdb\u7a0b\u6811|stage=capture\uff1breason_code=resource-limit|"
+    },
+    {
+      "english": "|P4t timeout|Wall-clock time of each P4t call|Kill the process tree on timeout; roll back according to the before/after gate rules|stage=the corresponding p4t-before or p4t-after; reason_code=p4t-process-failed|",
+      "canonical": "|P4t timeout|\u6bcf\u6b21 P4t wall-clock|\u8d85\u65f6\u6740\u8fdb\u7a0b\u6811\uff1b\u6309\u524d\u540e\u95e8\u89c4\u5219\u56de\u9000|stage=\u5bf9\u5e94 p4t-before \u6216 p4t-after\uff1breason_code=p4t-process-failed|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### capture.local.json contract",
+      "canonical": "### capture.local.json \u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Local state item|Exact contract|",
+      "canonical": "|\u672c\u673a\u72b6\u6001\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Fixed filename|capture.local.json|",
+      "canonical": "|\u56fa\u5b9a\u6587\u4ef6\u540d|capture.local.json|"
+    },
+    {
+      "english": "|schema|borrowing-capture-local-state/v1|",
+      "canonical": "|schema|borrowing-capture-local-state/v1|"
+    },
+    {
+      "english": "|Top-level key order|schema,source_type,local_source_path,web_raw_bytes_path,web_response_metadata_path|",
+      "canonical": "|\u9876\u5c42\u952e\u5e8f|schema,source_type,local_source_path,web_raw_bytes_path,web_response_metadata_path|"
+    },
+    {
+      "english": "|Git|local_source_path, web_raw_bytes_path, and web_response_metadata_path are all null|",
+      "canonical": "|Git|local_source_path\u3001web_raw_bytes_path\u3001web_response_metadata_path \u5747\u4e3a null|"
+    },
+    {
+      "english": "|Local|Only local_source_path is a path; both web paths are null|",
+      "canonical": "|Local|\u4ec5 local_source_path \u4e3a\u8def\u5f84\uff1b\u4e24\u4e2a web \u8def\u5f84\u5747\u4e3a null|"
+    },
+    {
+      "english": "|Web|local_source_path is null; both web paths are paths|",
+      "canonical": "|Web|local_source_path \u4e3a null\uff1b\u4e24\u4e2a web \u8def\u5f84\u5747\u4e3a\u8def\u5f84|"
+    },
+    {
+      "english": "|Path values|Use the existing canonical JSON string algorithm for absolute, normalized NFC paths; use JSON null when absent|",
+      "canonical": "|\u8def\u5f84\u503c|\u7edd\u5bf9\u89c4\u8303\u5316 NFC \u8def\u5f84\u4f7f\u7528\u65e2\u6709 canonical JSON string \u7b97\u6cd5\uff1b\u7f3a\u7701\u4f7f\u7528 JSON null|"
+    },
+    {
+      "english": "|canonical bytes|Compact JSON; UTF-8 without BOM; exactly one final LF|",
+      "canonical": "|canonical bytes|compact JSON\uff1bUTF-8 \u65e0 BOM\uff1b\u6070\u597d\u4e00\u4e2a\u672b\u5c3e LF|"
+    },
+    {
+      "english": "|Write timing|After fingerprint and capture_id are frozen; write atomically inside same-volume staging|",
+      "canonical": "|\u5199\u5165\u65f6\u70b9|fingerprint \u4e0e capture_id \u51bb\u7ed3\u540e\uff1b\u540c\u5377 staging \u5185\u539f\u5b50\u5199\u5165|"
+    },
+    {
+      "english": "|Sensitive-data boundary|Must not enter tracked cards, the 12 stdout lines, or reason|",
+      "canonical": "|\u654f\u611f\u8fb9\u754c|\u7981\u6b62\u8fdb\u5165 tracked \u5361\u300112 \u884c stdout \u6216 reason|"
+    },
+    {
+      "english": "|REUSED|May write and then clean up its own staging; existing tracked and present cache bytes/mtime stay unchanged; only restoring wholly missing ignored cache is allowed|",
+      "canonical": "|REUSED|\u53ef\u5199\u540e\u6e05\u7406\u81ea\u6709 staging\uff1b\u65e2\u6709 tracked \u4e0e\u73b0\u5b58 cache \u5b57\u8282/mtime \u4e0d\u53d8\uff1b\u4ec5\u5141\u8bb8\u6062\u590d\u5168\u7f3a\u5931 ignored cache|"
+    },
+    {
+      "english": "|preflight|Confirm the borrowing area's ignore contract before creating staging|",
+      "canonical": "|preflight|\u521b\u5efa staging \u524d\u786e\u8ba4\u501f\u9274\u533a ignore \u5408\u540c|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### ignored cache repair set",
+      "canonical": "### ignored cache repair \u96c6\u5408"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Ignored cache item|Exact contract|",
+      "canonical": "|ignored cache \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Git|\u5feb\u7167/repository.git/, capture.local.json|",
+      "canonical": "|Git|\u5feb\u7167/repository.git/\u3001capture.local.json|"
+    },
+    {
+      "english": "|Local|\u5feb\u7167/\u5185\u5bb9/ (an empty directory also counts as a member), \u5feb\u7167/manifest.tsv, capture.local.json|",
+      "canonical": "|Local|\u5feb\u7167/\u5185\u5bb9/\uff08\u7a7a\u76ee\u5f55\u4e5f\u7b97\u6210\u5458\uff09\u3001\u5feb\u7167/manifest.tsv\u3001capture.local.json|"
+    },
+    {
+      "english": "|Web|\u5feb\u7167/response.bin, \u5feb\u7167/response.metadata.json, capture.local.json|",
+      "canonical": "|Web|\u5feb\u7167/response.bin\u3001\u5feb\u7167/response.metadata.json\u3001capture.local.json|"
+    },
+    {
+      "english": "|Wholly missing test|All members for this source type and their parent \u5feb\u7167/ must be absent; the capture directory and \u6765\u6e90\u7248\u672c\u5361.md must exist and be fully valid|",
+      "canonical": "|\u5168\u90e8\u7f3a\u5931\u5224\u5b9a|\u4ec5\u5f53\u672c\u6765\u6e90\u7c7b\u578b\u7684\u5168\u90e8\u6210\u5458\u53ca\u7236\u5feb\u7167/\u5747\u4e0d\u5b58\u5728\uff1bcapture \u76ee\u5f55\u4e0e\u6765\u6e90\u7248\u672c\u5361.md \u5fc5\u987b\u5b58\u5728\u4e14\u5b8c\u6574\u5408\u6cd5|"
+    },
+    {
+      "english": "|partial / damaged|If any member or parent \u5feb\u7167/ exists but the set is incomplete, an existing member is damaged, or stable facts differ, report idempotency/idempotency-conflict; do not overwrite or fill gaps|",
+      "canonical": "|partial / damaged|\u4efb\u4e00\u6210\u5458\u6216\u7236\u5feb\u7167/\u5df2\u7ecf\u5b58\u5728\u4f46\u96c6\u5408\u4e0d\u5b8c\u6574\u3001\u73b0\u5b58\u6210\u5458\u635f\u574f\u6216\u7a33\u5b9a\u4e8b\u5b9e\u4e0d\u7b26\uff0c\u5747 idempotency/idempotency-conflict\uff1b\u7981\u6b62\u8986\u76d6\u6216\u8865\u9f50|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Windows path and file identity contract",
+      "canonical": "### Windows \u8def\u5f84\u4e0e\u6587\u4ef6\u8eab\u4efd\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Path safety item|Exact contract|",
+      "canonical": "|\u8def\u5f84\u5b89\u5168\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|v1 platform scope|Drive-letter absolute paths on a local Windows fixed drive; reject relative, UNC, device namespace, subst/network/removable paths|",
+      "canonical": "|v1 \u5e73\u53f0\u8303\u56f4|Windows \u672c\u673a fixed drive \u7684 drive-letter \u7edd\u5bf9\u8def\u5f84\uff1b\u62d2\u7edd\u76f8\u5bf9\u3001UNC\u3001device namespace\u3001subst/network/removable \u8def\u5f84|"
+    },
+    {
+      "english": "|Lexical preflight|Apply NFC and GetFullPath first; reject NUL, C0/C1/U+2028/U+2029, colons other than the drive colon, segments ending in spaces/dots, and Windows reserved device segments|",
+      "canonical": "|\u8bcd\u6cd5\u9884\u68c0|\u5148 NFC \u4e0e GetFullPath\uff1b\u62d2\u7edd NUL\u3001C0/C1/U+2028/U+2029\u3001drive colon \u4e4b\u5916\u7684 colon\u3001\u5c3e\u7a7a\u683c/\u5c3e\u70b9\u6bb5\u3001Windows \u4fdd\u7559\u8bbe\u5907\u6bb5|"
+    },
+    {
+      "english": "|Final path|Open a handle with CreateFileW; use FILE_NAME_NORMALIZED + VOLUME_NAME_DOS with GetFinalPathNameByHandleW; remove only the fixed \\\\?\\ prefix; uppercase drive letter, backslashes, NFC|",
+      "canonical": "|\u6700\u7ec8\u8def\u5f84|CreateFileW \u6253\u5f00 handle\uff1bGetFinalPathNameByHandleW \u4f7f\u7528 FILE_NAME_NORMALIZED + VOLUME_NAME_DOS\uff1b\u4ec5\u79fb\u9664\u56fa\u5b9a \\\\?\\ \u524d\u7f00\uff1bdrive letter \u5927\u5199\u3001\u53cd\u659c\u6760\u3001NFC|"
+    },
+    {
+      "english": "|Per-level safety|Validate each level by handle from the volume root to the target; any reparse tag, symlink, junction, ADS, nonregular type, or unavailable API is a hard failure|",
+      "canonical": "|\u9010\u5c42\u5b89\u5168|\u4ece volume root \u5230\u76ee\u6807\u9010\u5c42\u4ee5 handle \u6821\u9a8c\uff1b\u4efb\u4e00 reparse tag\u3001symlink\u3001junction\u3001ADS\u3001\u975e\u5e38\u89c4\u7c7b\u578b\u6216 API \u4e0d\u53ef\u7528\u5747\u786c\u5931\u8d25|"
+    },
+    {
+      "english": "|Regular files|BY_HANDLE_FILE_INFORMATION.NumberOfLinks must equal 1; file identity=VolumeSerialNumber + FileIndexHigh + FileIndexLow|",
+      "canonical": "|\u5e38\u89c4\u6587\u4ef6|BY_HANDLE_FILE_INFORMATION.NumberOfLinks \u5fc5\u987b\u7b49\u4e8e 1\uff1b\u6587\u4ef6\u8eab\u4efd=VolumeSerialNumber + FileIndexHigh + FileIndexLow|"
+    },
+    {
+      "english": "|Path relationships|Compare canonical DOS paths for equality/ancestor/descendant using OrdinalIgnoreCase and directory-separator boundaries; never use a bare string prefix|",
+      "canonical": "|\u8def\u5f84\u5173\u7cfb|canonical DOS path \u4f7f\u7528 OrdinalIgnoreCase \u4e0e\u76ee\u5f55\u5206\u9694\u7b26\u8fb9\u754c\u6bd4\u8f83 equality/ancestor/descendant\uff1b\u4e0d\u5f97\u7528\u5b57\u7b26\u4e32\u88f8\u524d\u7f00|"
+    },
+    {
+      "english": "|Local state projection|Write only the canonical DOS paths above to capture.local.json, using canonical JSON strings; never write the input spelling|",
+      "canonical": "|\u672c\u673a\u72b6\u6001\u6295\u5f71|capture.local.json \u53ea\u5199\u4e0a\u8ff0 canonical DOS path\uff1b\u4f7f\u7528 canonical JSON string\uff1b\u4e0d\u5f97\u5199\u8f93\u5165\u62fc\u6cd5|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Source version card projection contract",
+      "canonical": "### \u6765\u6e90\u7248\u672c\u5361\u6295\u5f71\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Source card projection item|Exact contract|",
+      "canonical": "|\u6765\u6e90\u5361\u6295\u5f71\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Fixed filename|\u6765\u6e90\u7248\u672c\u5361.md|",
+      "canonical": "|\u56fa\u5b9a\u6587\u4ef6\u540d|\u6765\u6e90\u7248\u672c\u5361.md|"
+    },
+    {
+      "english": "|canonical bytes|UTF-8 without BOM; LF; exactly one final LF|",
+      "canonical": "|canonical bytes|UTF-8 \u65e0 BOM\uff1bLF\uff1b\u6070\u597d\u4e00\u4e2a\u672b\u5c3e LF|"
+    },
+    {
+      "english": "|Production clock|UTC yyyy-MM-ddTHH:mm:ss.fffZ|",
+      "canonical": "|\u751f\u4ea7\u65f6\u949f|UTC yyyy-MM-ddTHH:mm:ss.fffZ|"
+    },
+    {
+      "english": "|AuthorizationTime input|Must include a timezone; parse and project consistently as UTC yyyy-MM-ddTHH:mm:ss.fffZ|",
+      "canonical": "|AuthorizationTime \u8f93\u5165|\u5fc5\u987b\u542b\u65f6\u533a\uff1b\u89e3\u6790\u540e\u7edf\u4e00\u6295\u5f71 UTC yyyy-MM-ddTHH:mm:ss.fffZ|"
+    },
+    {
+      "english": "|Clock reuse|Use the same value for captured_at, the capture_id date, initial history time, and default permission authorization time|",
+      "canonical": "|\u65f6\u949f\u590d\u7528|captured_at\u3001capture_id \u65e5\u671f\u3001\u521d\u59cb\u5386\u53f2\u65f6\u95f4\u3001\u9ed8\u8ba4\u6743\u9650\u6388\u6743\u65f6\u95f4\u4f7f\u7528\u540c\u4e00\u503c|"
+    },
+    {
+      "english": "|Clock seam|Injectable only inside the card helper; clock parameters are prohibited on the facade|",
+      "canonical": "|\u65f6\u949f seam|\u4ec5 card helper \u5185\u90e8\u53ef\u6ce8\u5165\uff1bfa\u00e7ade \u7981\u6b62\u65f6\u949f\u53c2\u6570|"
+    },
+    {
+      "english": "|Initial history|none\u2192ready; reason=initial-capture; confirmation=capture-executor|",
+      "canonical": "|\u521d\u59cb\u5386\u53f2|none\u2192ready\uff1breason=initial-capture\uff1bconfirmation=capture-executor|"
+    },
+    {
+      "english": "|Default authorization|source=default-policy; scope=current-capture; time=production clock|",
+      "canonical": "|\u9ed8\u8ba4\u6388\u6743|source=default-policy\uff1bscope=current-capture\uff1btime=\u751f\u4ea7\u65f6\u949f|"
+    },
+    {
+      "english": "|Type facts tables|Write facts only in the applicable table; every data cell in both nonapplicable tables is not-applicable|",
+      "canonical": "|\u7c7b\u578b\u4e8b\u5b9e\u8868|\u4ec5\u9002\u7528\u8868\u5199\u4e8b\u5b9e\uff1b\u4e24\u4e2a\u975e\u9002\u7528\u8868\u7684\u6bcf\u4e2a data cell \u5747\u4e3a not-applicable|"
+    },
+    {
+      "english": "|Included in idempotency|canonical_locator, applicable type facts, the nine effective permission values, and normalized authorization time/source/scope for every nondefault value|",
+      "canonical": "|\u5e42\u7b49\u5305\u542b|canonical_locator\u3001\u9002\u7528\u7c7b\u578b\u4e8b\u5b9e\u3001\u4e5d\u7ef4\u751f\u6548\u503c\u3001\u6240\u6709\u504f\u79bb\u9ed8\u8ba4\u7684\u89c4\u8303\u5316\u6388\u6743 time/source/scope|"
+    },
+    {
+      "english": "|Excluded from idempotency|capture_id, captured_at, initial history, default authorization times, nonapplicable tables, and local path state|",
+      "canonical": "|\u5e42\u7b49\u6392\u9664|capture_id\u3001captured_at\u3001\u521d\u59cb\u5386\u53f2\u3001\u9ed8\u8ba4\u6388\u6743\u65f6\u95f4\u3001\u975e\u9002\u7528\u8868\u3001\u672c\u673a\u8def\u5f84\u72b6\u6001|"
+    },
+    {
+      "english": "|Existing cards|Must still pass full validation against the complete schema before reuse|",
+      "canonical": "|\u65e2\u6709\u5361|\u590d\u7528\u524d\u4ecd\u987b\u6309\u5b8c\u6574 schema \u5168\u91cf\u5408\u6cd5|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Card input item|Exact contract|",
+      "canonical": "|\u5361\u7247\u8f93\u5165\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|AuthorizationSource / AuthorizationScope|NFC; nonempty; each at most 512 UTF-8 bytes; reject pipe/backtick/TAB/C0/C1/U+2028/U+2029|",
+      "canonical": "|AuthorizationSource / AuthorizationScope|NFC\uff1b\u975e\u7a7a\uff1b\u5404\u81ea UTF-8 512 \u5b57\u8282\u4ee5\u5185\uff1b\u62d2\u7edd pipe/backtick/TAB/C0/C1/U+2028/U+2029|"
+    },
+    {
+      "english": "|LocalDisplayName|Same format as source_id and at most 128 UTF-8 bytes; canonical_locator=local:<LocalDisplayName>|",
+      "canonical": "|LocalDisplayName|\u4e0e source_id \u683c\u5f0f\u76f8\u540c\u4e14 UTF-8 128 \u5b57\u8282\u4ee5\u5185\uff1bcanonical_locator=local:<LocalDisplayName>|"
+    },
+    {
+      "english": "|Projection|Write only normalized safe values; never concatenate raw inputs into Markdown or frontmatter|",
+      "canonical": "|\u6295\u5f71|\u53ea\u5199\u89c4\u8303\u5316\u5b89\u5168\u503c\uff1b\u7981\u6b62\u628a\u539f\u59cb\u8f93\u5165\u62fc\u5165 Markdown \u6216 frontmatter|"
+    },
+    {
+      "english": "|Local state|Nonauthoritative; must not participate in stable idempotency comparison or serve as the sole acceptance evidence|",
+      "canonical": "|\u672c\u673a\u72b6\u6001|\u975e\u6743\u5a01\uff1b\u4e0d\u5f97\u53c2\u4e0e\u5e42\u7b49\u7a33\u5b9a\u6bd4\u8f83\u6216\u6210\u4e3a\u9a8c\u6536\u552f\u4e00\u8bc1\u636e|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### capture RED classification",
+      "canonical": "### capture RED \u5206\u7c7b"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Failure scenario|stage|reason_code|Filesystem outcome|",
+      "canonical": "|\u5931\u8d25\u573a\u666f|stage|reason_code|\u6587\u4ef6\u7cfb\u7edf\u7ed3\u679c|"
+    },
+    {
+      "english": "|---|---|---|---|",
+      "canonical": "|---|---|---|---|"
+    },
+    {
+      "english": "|ADS|Corresponding check stage|source-unsafe|Promotion prohibited|",
+      "canonical": "|ADS|\u5bf9\u5e94\u68c0\u67e5\u9636\u6bb5|source-unsafe|\u4e0d\u5f97\u664b\u5347|"
+    },
+    {
+      "english": "|Local manifest/read-after change|capture|source-unsafe|Preserve staging|",
+      "canonical": "|Local manifest/read-after \u53d8\u5316|capture|source-unsafe|\u4fdd\u7559 staging|"
+    },
+    {
+      "english": "|Ordinary Local IO|capture|capture-failed|Preserve staging if it exists|",
+      "canonical": "|Local \u666e\u901a IO|capture|capture-failed|\u5df2\u6709 staging \u65f6\u4fdd\u7559|"
+    },
+    {
+      "english": "|Link change after move|promotion|source-unsafe|Atomic rollback; capture_path=none; staging_path=restored path|",
+      "canonical": "|move \u540e\u94fe\u63a5\u53d8\u5316|promotion|source-unsafe|\u539f\u5b50\u56de\u6eda\uff1bcapture_path=none\uff1bstaging_path=\u6062\u590d\u8def\u5f84|"
+    },
+    {
+      "english": "|idempotency-conflict|idempotency|idempotency-conflict|Occurs before P4t-before; p4t_before=not-run; p4t_after=not-run|",
+      "canonical": "|idempotency-conflict|idempotency|idempotency-conflict|\u53d1\u751f\u5728 P4t-before \u524d\uff1bp4t_before=not-run\uff1bp4t_after=not-run|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### capture transaction order",
+      "canonical": "### capture \u4e8b\u52a1\u987a\u5e8f"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Transaction branch|Exact contract|",
+      "canonical": "|\u4e8b\u52a1\u5206\u652f|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Common prefix|preflight\u2192input (Local completes source-before here; Git/Web complete their respective input validation before writes)\u2192create same-volume staging\u2192capture\u2192candidate validator\u2192idempotency|",
+      "canonical": "|\u5171\u540c\u524d\u5e8f|preflight\u2192input\uff08Local \u5728\u672c\u9636\u6bb5\u5b8c\u6210 source-before\uff1bGit/Web \u5b8c\u6210\u5404\u81ea\u5199\u5165\u524d\u8f93\u5165\u9a8c\u8bc1\uff09\u2192\u521b\u5efa\u540c\u5377 staging\u2192capture\u2192candidate validator\u2192idempotency|"
+    },
+    {
+      "english": "|conflict|idempotency-conflict\u2192FAIL; both P4t fields are not-run; existing capture unchanged; preserve this attempt's staging|",
+      "canonical": "|conflict|idempotency-conflict\u2192FAIL\uff1bP4t \u5747 not-run\uff1b\u65e2\u6709 capture \u4e0d\u53d8\uff1b\u4fdd\u7559\u672c\u6b21 staging|"
+    },
+    {
+      "english": "|reuse healthy|reuse\u2192P4t-before=0\u2192cleanup own staging\u2192REUSED; no move; P4t-after=not-run; all existing bytes and mtime unchanged|",
+      "canonical": "|reuse healthy|reuse\u2192P4t-before=0\u2192cleanup \u81ea\u6709 staging\u2192REUSED\uff1b\u4e0d\u5f97 move\uff1bP4t-after=not-run\uff1b\u65e2\u6709\u5168\u90e8\u5b57\u8282\u4e0e mtime \u4e0d\u53d8|"
+    },
+    {
+      "english": "|repair eligibility|Exactly one valid ready capture with matching stable facts, and all cache for the source type is missing according to the ignored cache repair set table; partial missing, existing damage, or fingerprint mismatch is idempotency-conflict|",
+      "canonical": "|repair eligibility|\u552f\u4e00\u5408\u6cd5 ready \u4e0e\u7a33\u5b9a\u4e8b\u5b9e\u76f8\u540c\uff0c\u4e14\u6309 ignored cache repair \u96c6\u5408\u8868\u5224\u5b9a\u8be5\u6765\u6e90\u7c7b\u578b\u5168\u90e8\u7f3a\u5931\uff1bpartial missing\u3001\u73b0\u5b58\u635f\u574f\u6216\u6307\u7eb9\u4e0d\u7b26\u5747 idempotency-conflict|"
+    },
+    {
+      "english": "|reuse repair|repair-missing-cache\u2192install only the missing ignored cache generated by this attempt\u2192post-link-check\u2192P4t-after=0\u2192cleanup\u2192REUSED; P4t-before=not-run; existing tracked bytes and mtime unchanged|",
+      "canonical": "|reuse repair|repair-missing-cache\u2192\u4ec5\u5b89\u88c5\u672c\u6b21\u751f\u6210\u7684\u7f3a\u5931 ignored cache\u2192post-link-check\u2192P4t-after=0\u2192cleanup\u2192REUSED\uff1bP4t-before=not-run\uff1b\u65e2\u6709 tracked \u5b57\u8282\u4e0e mtime \u4e0d\u53d8|"
+    },
+    {
+      "english": "|new|new\u2192P4t-before=0\u2192atomic move\u2192post-link-check\u2192P4t-after=0\u2192READY; only this branch creates a new formal capture|",
+      "canonical": "|new|new\u2192P4t-before=0\u2192atomic move\u2192post-link-check\u2192P4t-after=0\u2192READY\uff1b\u4ec5\u6b64\u5206\u652f\u521b\u5efa\u65b0\u6b63\u5f0f capture|"
+    },
+    {
+      "english": "|P4t-before failure|No move/repair; existing data unchanged; preserve staging; FAIL|",
+      "canonical": "|P4t-before \u5931\u8d25|\u4e0d\u5f97 move/repair\uff1b\u65e2\u6709\u4e0d\u53d8\uff1b\u4fdd\u7559 staging\uff1bFAIL|"
+    },
+    {
+      "english": "|post-link/P4t-after failure|Atomically roll back this attempt's move or repair; after successful rollback, the formal path is absent or restored to its original state, and staging exists; FAIL|",
+      "canonical": "|post-link/P4t-after \u5931\u8d25|\u5bf9\u672c\u6b21 move \u6216 repair \u6267\u884c\u539f\u5b50 rollback\uff1b\u6210\u529f\u540e\u6b63\u5f0f\u8def\u5f84\u4e0d\u5b58\u5728\u6216\u6062\u590d\u539f\u72b6\u3001staging \u5b58\u5728\uff1bFAIL|"
+    },
+    {
+      "english": "|cleanup failure|stage=cleanup, reason_code=cleanup-failed; do not delete unknown content; report capture_path/staging_path according to actual existence at output time|",
+      "canonical": "|cleanup \u5931\u8d25|stage=cleanup\u3001reason_code=cleanup-failed\uff1b\u4e0d\u5220\u9664\u672a\u77e5\u5185\u5bb9\uff1b\u6309\u8f93\u51fa\u65f6\u5b9e\u9645\u5b58\u5728\u72b6\u6001\u62a5\u544a capture_path/staging_path|"
+    },
+    {
+      "english": "|rollback failure|stage=rollback, reason_code=rollback-failed; no compensating deletion or overwrite; report capture_path/staging_path separately according to actual existence at output time|",
+      "canonical": "|rollback \u5931\u8d25|stage=rollback\u3001reason_code=rollback-failed\uff1b\u7981\u6b62\u8865\u507f\u5220\u9664\u6216\u8986\u76d6\uff1bcapture_path/staging_path \u5206\u522b\u6309\u8f93\u51fa\u65f6\u5b9e\u9645\u5b58\u5728\u6027\u62a5\u544a|"
+    },
+    {
+      "english": "|Truthful path output|capture_path=formal path only if it exists at output time, otherwise none; staging_path=this attempt's staging only if it exists at output time, otherwise none; never output input paths|",
+      "canonical": "|\u8def\u5f84\u8f93\u51fa\u771f\u503c|capture_path=\u6b63\u5f0f\u8def\u5f84\u4ec5\u5f53\u8f93\u51fa\u65f6\u5b58\u5728\u5426\u5219 none\uff1bstaging_path=\u672c\u6b21 staging \u4ec5\u5f53\u8f93\u51fa\u65f6\u5b58\u5728\u5426\u5219 none\uff1b\u4e0d\u5f97\u8f93\u51fa\u8f93\u5165\u8def\u5f84|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### P4t subprocess contract",
+      "canonical": "### P4t \u5b50\u8fdb\u7a0b\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|P4t runner item|Exact contract|",
+      "canonical": "|P4t runner \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Fixed script|<Root>/\u80fd\u529b\u8d44\u4ea7/tools/scripts/check-os/p4t-borrowing-consistency.ps1; missing\u2192preflight/missing-trusted-component|",
+      "canonical": "|\u56fa\u5b9a\u811a\u672c|<Root>/\u80fd\u529b\u8d44\u4ea7/tools/scripts/check-os/p4t-borrowing-consistency.ps1\uff1b\u7f3a\u5931\u2192preflight/missing-trusted-component|"
+    },
+    {
+      "english": "|executable|Absolute canonical path to $PSHOME/powershell.exe; the executable itself must be a regular file without reparse/ADS; only this fixed system path permits Windows component-servicing hardlinks and system-directory metadata streams|",
+      "canonical": "|executable|$PSHOME/powershell.exe \u7684\u7edd\u5bf9\u89c4\u8303\u8def\u5f84\uff1bexecutable \u81ea\u8eab\u5fc5\u987b\u662f\u65e0 reparse/ADS \u7684\u5e38\u89c4\u6587\u4ef6\uff1b\u4ec5\u8be5\u56fa\u5b9a\u7cfb\u7edf\u8def\u5f84\u5141\u8bb8 Windows \u7ec4\u4ef6\u670d\u52a1 hardlink \u4e0e\u7cfb\u7edf\u76ee\u5f55\u5143\u6570\u636e\u6d41|"
+    },
+    {
+      "english": "|argv|-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File <fixed-p4t-path> -Root <canonical-root>; use the same Windows argv quoting|",
+      "canonical": "|argv|-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File <fixed-p4t-path> -Root <canonical-root>\uff1b\u4f7f\u7528\u540c\u4e00 Windows argv quoting|"
+    },
+    {
+      "english": "|Process API|ProcessStartInfo; UseShellExecute=false; CreateNoWindow=true; close stdin; read stdout/stderr concurrently; shell and environment injection prohibited|",
+      "canonical": "|\u8fdb\u7a0b API|ProcessStartInfo\uff1bUseShellExecute=false\uff1bCreateNoWindow=true\uff1b\u5173\u95ed stdin\uff1b\u5e76\u53d1\u8bfb\u53d6 stdout/stderr\uff1b\u7981\u6b62 shell \u4e0e\u73af\u5883\u6ce8\u5165|"
+    },
+    {
+      "english": "|Output|At most 1048576 raw bytes per stream; strict UTF-8; NUL prohibited; use output only for gating and never concatenate it into the facade reason|",
+      "canonical": "|\u8f93\u51fa|\u6bcf\u6d41\u6700\u591a 1048576 \u539f\u59cb\u5b57\u8282\uff1b\u4e25\u683c UTF-8\uff1b\u7981\u6b62 NUL\uff1b\u8f93\u51fa\u53ea\u7528\u4e8e\u95e8\u7981\u4e14\u4e0d\u5f97\u62fc\u5165 fa\u00e7ade reason|"
+    },
+    {
+      "english": "|timeout|Independent 120000ms wall-clock limit per call|",
+      "canonical": "|timeout|\u6bcf\u6b21\u72ec\u7acb 120000ms wall-clock|"
+    },
+    {
+      "english": "|Termination|On timeout/output overflow, call absolute %SystemRoot%/System32/taskkill.exe /PID <pid> /T /F; wait for taskkill, the target, and both streams to exit; any failure=p4t-process-failed|",
+      "canonical": "|\u7ec8\u6b62|\u8d85\u65f6/\u8f93\u51fa\u8d8a\u754c\u8c03\u7528\u7edd\u5bf9 %SystemRoot%/System32/taskkill.exe /PID <pid> /T /F\uff1b\u7b49\u5f85 taskkill\u3001\u76ee\u6807\u548c\u53cc\u6d41\u9000\u51fa\uff1b\u4efb\u4e00\u5931\u8d25=p4t-process-failed|"
+    },
+    {
+      "english": "|Exit projection|Preserve the raw integer on normal exit; start failure=start-failed; timeout=timeout; never rewrite nonzero as 0|",
+      "canonical": "|\u9000\u51fa\u6295\u5f71|\u6b63\u5e38\u9000\u51fa\u4fdd\u7559\u539f\u59cb integer\uff1b\u542f\u52a8\u5931\u8d25=start-failed\uff1b\u8d85\u65f6=timeout\uff1b\u4e0d\u5f97\u628a\u975e\u96f6\u6539\u5199\u4e3a 0|"
+    },
+    {
+      "english": "|Injection boundary|P4tPath, executable, runner, timeout, transport, and script block must not become facade parameters|",
+      "canonical": "|\u6ce8\u5165\u8fb9\u754c|P4tPath\u3001executable\u3001runner\u3001timeout\u3001transport\u3001script block \u5747\u4e0d\u5f97\u6210\u4e3a fa\u00e7ade \u53c2\u6570|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Source version card canonical renderer",
+      "canonical": "### \u6765\u6e90\u7248\u672c\u5361 canonical renderer"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Renderer item|Exact contract|",
+      "canonical": "|renderer \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Fixed skeleton|\u501f\u9274\u533a/\u6a21\u677f/\u6765\u6e90\u7248\u672c\u5361.md; before writing staging, it must pass the template structure, strict UTF-8, LF, and static-line validators; do not accept alternative paths|",
+      "canonical": "|\u56fa\u5b9a skeleton|\u501f\u9274\u533a/\u6a21\u677f/\u6765\u6e90\u7248\u672c\u5361.md\uff1b\u5199 staging \u524d\u987b\u901a\u8fc7\u6a21\u677f\u7ed3\u6784\u3001strict UTF-8\u3001LF \u4e0e\u9759\u6001\u884c validator\uff1b\u4e0d\u5f97\u63a5\u53d7\u66ff\u4ee3\u8def\u5f84|"
+    },
+    {
+      "english": "|renderer|Generate with the fixed line-array renderer; frontmatter, title, static instructions, headers, separators, and blank lines have one fixed order; generic YAML/Markdown serializers are prohibited|",
+      "canonical": "|renderer|\u6309\u56fa\u5b9a line-array renderer \u751f\u6210\uff1bfrontmatter\u3001\u6807\u9898\u3001\u9759\u6001\u8bf4\u660e\u3001\u8868\u5934\u3001separator\u3001\u7a7a\u884c\u987a\u5e8f\u5747\u552f\u4e00\uff1b\u7981\u6b62\u901a\u7528 YAML/Markdown serializer|"
+    },
+    {
+      "english": "|frontmatter|Exactly 18 fixed fields in the existing key order; validate dynamic values with the field grammar before writing plain scalars; no quoting, line folding, escaping, adding fields, or removing fields|",
+      "canonical": "|frontmatter|\u56fa\u5b9a 18 \u4e2a\u5b57\u6bb5\u53ca\u65e2\u6709\u952e\u5e8f\uff1b\u52a8\u6001\u503c\u5747\u5148\u901a\u8fc7\u5b57\u6bb5 grammar \u540e\u5199 plain scalar\uff1b\u4e0d\u5f97 quote\u3001\u6298\u884c\u3001escape \u6216\u589e\u5220\u5b57\u6bb5|"
+    },
+    {
+      "english": "|Instance instructions|Reuse only the applicable-project line from the validated skeleton; project actual source_id/capture_id into the formal-path line|",
+      "canonical": "|\u5b9e\u4f8b\u8bf4\u660e|\u4ec5\u590d\u7528\u901a\u8fc7 validator \u7684 skeleton \u9002\u7528\u9879\u76ee\u884c\uff1b\u6b63\u5f0f\u8def\u5f84\u884c\u6295\u5f71\u5b9e\u9645 source_id/capture_id|"
+    },
+    {
+      "english": "|Permissions table|Nine rows in fixed order; default dimensions use the production clock/default-policy/current-capture; nondefault dimensions use normalized authorization triples|",
+      "canonical": "|\u6743\u9650\u8868|\u56fa\u5b9a\u4e5d\u884c\u987a\u5e8f\uff1b\u9ed8\u8ba4\u7ef4\u5ea6\u4f7f\u7528\u751f\u4ea7\u65f6\u949f/default-policy/current-capture\uff1b\u504f\u79bb\u7ef4\u5ea6\u4f7f\u7528\u89c4\u8303\u5316\u6388\u6743\u4e09\u5143\u7ec4|"
+    },
+    {
+      "english": "|Type facts|Exactly one row of canonical cells for the applicable type; every data cell for both nonapplicable types=not-applicable; submodule/LFS uses only detected/not-detected|",
+      "canonical": "|\u7c7b\u578b\u4e8b\u5b9e|\u9002\u7528\u7c7b\u578b\u6070\u597d\u4e00\u884c canonical cells\uff1b\u4e24\u4e2a\u975e\u9002\u7528\u7c7b\u578b\u6bcf\u4e2a data cell=not-applicable\uff1bsubmodule/LFS \u4ec5 detected/not-detected|"
+    },
+    {
+      "english": "|Management history|Exactly one row: <production-clock>/none/ready/initial-capture/capture-executor|",
+      "canonical": "|\u7ba1\u7406\u5386\u53f2|\u6070\u597d\u4e00\u884c <production-clock>/none/ready/initial-capture/capture-executor|"
+    },
+    {
+      "english": "|canonical bytes|UTF-8 without BOM; LF; exactly one final LF; trailing spaces prohibited|",
+      "canonical": "|canonical bytes|UTF-8 \u65e0 BOM\uff1bLF\uff1b\u6070\u597d\u4e00\u4e2a\u672b\u5c3e LF\uff1b\u7981\u6b62\u884c\u5c3e\u7a7a\u683c|"
+    },
+    {
+      "english": "|golden|For each of Git, Local, and Web, use a fixed clock and fixture to assert the whole-file SHA-256 and byte-for-byte equality with the golden|",
+      "canonical": "|golden|Git\u3001Local\u3001Web \u5404\u4ee5\u56fa\u5b9a\u65f6\u949f\u548c\u56fa\u5b9a fixture \u65ad\u8a00\u6574\u6587\u4ef6 SHA-256 \u4e0e\u9010\u5b57\u8282 golden \u76f8\u7b49|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Facade machine-readable output",
+      "canonical": "### fa\u00e7ade \u673a\u8bfb\u8f93\u51fa"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "stdout contains exactly these 12 lines, in this fixed order:",
+      "canonical": "stdout \u56fa\u5b9a\u4e14\u4ec5\u6709\u4ee5\u4e0b 12 \u884c\uff0c\u987a\u5e8f\u4e0d\u53ef\u6539\u53d8\uff1a"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```text",
+      "canonical": "```text"
+    },
+    {
+      "english": "CZXT_BORROWING_CAPTURE_V1",
+      "canonical": "CZXT_BORROWING_CAPTURE_V1"
+    },
+    {
+      "english": "result=READY|REUSED|FAIL",
+      "canonical": "result=READY|REUSED|FAIL"
+    },
+    {
+      "english": "stage=<stage>",
+      "canonical": "stage=<stage>"
+    },
+    {
+      "english": "source_id=<value|none>",
+      "canonical": "source_id=<value|none>"
+    },
+    {
+      "english": "capture_id=<value|none>",
+      "canonical": "capture_id=<value|none>"
+    },
+    {
+      "english": "fingerprint=<value|none>",
+      "canonical": "fingerprint=<value|none>"
+    },
+    {
+      "english": "capture_path=<absolute-path|none>",
+      "canonical": "capture_path=<absolute-path|none\uff08\u672a\u521b\u5efa\uff09>"
+    },
+    {
+      "english": "staging_path=<absolute-path|none>",
+      "canonical": "staging_path=<absolute-path|none\uff08\u672a\u521b\u5efa\uff09|none\uff08\u5df2\u664b\u5347\uff09|none\uff08\u5df2\u6e05\u7406\uff09>"
+    },
+    {
+      "english": "p4t_before=<not-run|start-failed|timeout|integer>",
+      "canonical": "p4t_before=<not-run|start-failed|timeout|integer>"
+    },
+    {
+      "english": "p4t_after=<not-run|start-failed|timeout|integer>",
+      "canonical": "p4t_after=<not-run|start-failed|timeout|integer>"
+    },
+    {
+      "english": "reason_code=<stable-code>",
+      "canonical": "reason_code=<stable-code>"
+    },
+    {
+      "english": "reason=<single-line-sanitized-detail>",
+      "canonical": "reason=<single-line-sanitized-detail>"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Machine-readable item|Exact contract|",
+      "canonical": "|\u673a\u8bfb\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Complete set of process exit codes|0 / 10|",
+      "canonical": "|\u8fdb\u7a0b exit code \u5168\u96c6|0 / 10|"
+    },
+    {
+      "english": "|P4t exit 5|Maps to facade exit 10|",
+      "canonical": "|P4t exit 5|\u6620\u5c04 fa\u00e7ade exit 10|"
+    },
+    {
+      "english": "|Complete stage set|preflight / input / capture / candidate / idempotency / p4t-before / promotion / p4t-after / rollback / cleanup / complete|",
+      "canonical": "|stage \u5168\u96c6|preflight / input / capture / candidate / idempotency / p4t-before / promotion / p4t-after / rollback / cleanup / complete|"
+    },
+    {
+      "english": "|Complete reason_code set|none / invalid-root / invalid-mode / missing-trusted-component / invalid-parameters / invalid-permissions / source-boundary / resource-limit / source-unsafe / capture-failed / candidate-invalid / idempotency-conflict / p4t-not-zero / p4t-process-failed / promotion-failed / rollback-failed / cleanup-failed|",
+      "canonical": "|reason_code \u5168\u96c6|none / invalid-root / invalid-mode / missing-trusted-component / invalid-parameters / invalid-permissions / source-boundary / resource-limit / source-unsafe / capture-failed / candidate-invalid / idempotency-conflict / p4t-not-zero / p4t-process-failed / promotion-failed / rollback-failed / cleanup-failed|"
+    },
+    {
+      "english": "|Handled failure stderr|Empty; must not leak source content|",
+      "canonical": "|\u5df2\u5904\u7406\u5931\u8d25 stderr|\u4e3a\u7a7a\uff1b\u4e0d\u5f97\u6cc4\u9732\u6765\u6e90\u5185\u5bb9|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Result correlation item|Exact contract|",
+      "canonical": "|\u7ed3\u679c\u5173\u8054\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|exit 0|If and only if result=READY or REUSED|",
+      "canonical": "|exit 0|\u5f53\u4e14\u4ec5\u5f53 result=READY \u6216 REUSED|"
+    },
+    {
+      "english": "|exit 10|If and only if result=FAIL|",
+      "canonical": "|exit 10|\u5f53\u4e14\u4ec5\u5f53 result=FAIL|"
+    },
+    {
+      "english": "|READY|stage=complete; reason_code=none; p4t_before=0; p4t_after=0; capture_path=absolute path to the new capture within the root; staging_path=none; staging was promoted|",
+      "canonical": "|READY|stage=complete\uff1breason_code=none\uff1bp4t_before=0\uff1bp4t_after=0\uff1bcapture_path=\u6839\u5185\u65b0 capture \u7edd\u5bf9\u8def\u5f84\uff1bstaging_path=none\uff08\u5df2\u664b\u5347\uff09|"
+    },
+    {
+      "english": "|REUSED healthy|stage=complete; reason_code=none; p4t_before=0; p4t_after=not-run; capture_path=absolute path to the existing capture within the root; staging_path=none; staging was cleaned|",
+      "canonical": "|REUSED healthy|stage=complete\uff1breason_code=none\uff1bp4t_before=0\uff1bp4t_after=not-run\uff1bcapture_path=\u6839\u5185\u65e2\u6709 capture \u7edd\u5bf9\u8def\u5f84\uff1bstaging_path=none\uff08\u5df2\u6e05\u7406\uff09|"
+    },
+    {
+      "english": "|REUSED repaired|stage=complete; reason_code=none; p4t_before=not-run; p4t_after=0; capture_path=absolute path to the existing capture within the root; staging_path=none; staging was cleaned; restore only wholly missing ignored cache|",
+      "canonical": "|REUSED repaired|stage=complete\uff1breason_code=none\uff1bp4t_before=not-run\uff1bp4t_after=0\uff1bcapture_path=\u6839\u5185\u65e2\u6709 capture \u7edd\u5bf9\u8def\u5f84\uff1bstaging_path=none\uff08\u5df2\u6e05\u7406\uff09\uff1b\u4ec5\u6062\u590d\u5168\u7f3a\u5931 ignored cache|"
+    },
+    {
+      "english": "|FAIL|stage=point of failure; reason_code is not none; reason is nonempty|",
+      "canonical": "|FAIL|stage=\u5931\u8d25\u70b9\uff1breason_code \u975e none\uff1breason \u975e\u7a7a|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|P4t case|Output contract|",
+      "canonical": "|P4t \u60c5\u5f62|\u8f93\u51fa\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|not-run|P4t did not start; corresponding field=not-run|",
+      "canonical": "|not-run|P4t \u672a\u542f\u52a8\uff1b\u5bf9\u5e94\u5b57\u6bb5=not-run|"
+    },
+    {
+      "english": "|start-failed|P4t failed to start; corresponding field=start-failed; stage=the corresponding p4t-before or p4t-after; reason_code=p4t-process-failed|",
+      "canonical": "|start-failed|P4t \u542f\u52a8\u5931\u8d25\uff1b\u5bf9\u5e94\u5b57\u6bb5=start-failed\uff1bstage=\u5bf9\u5e94 p4t-before \u6216 p4t-after\uff1breason_code=p4t-process-failed|"
+    },
+    {
+      "english": "|timeout|P4t started, timed out, and its process tree was killed; corresponding field=timeout; stage=the corresponding p4t-before or p4t-after; reason_code=p4t-process-failed|",
+      "canonical": "|timeout|P4t \u5df2\u542f\u52a8\u540e\u8d85\u65f6\u5e76\u6740\u8fdb\u7a0b\u6811\uff1b\u5bf9\u5e94\u5b57\u6bb5=timeout\uff1bstage=\u5bf9\u5e94 p4t-before \u6216 p4t-after\uff1breason_code=p4t-process-failed|"
+    },
+    {
+      "english": "|integer=0|Raw code from normal P4t exit; corresponding gate passes|",
+      "canonical": "|integer=0|P4t \u6b63\u5e38\u9000\u51fa\u539f\u7801\uff1b\u5bf9\u5e94\u95e8\u901a\u8fc7|"
+    },
+    {
+      "english": "|integer=5 / 10 / other non-0 value|Raw code from normal P4t exit; stage=the corresponding p4t-before or p4t-after; reason_code=p4t-not-zero|",
+      "canonical": "|integer=5 / 10 / \u5176\u4ed6\u975e 0|P4t \u6b63\u5e38\u9000\u51fa\u539f\u7801\uff1bstage=\u5bf9\u5e94 p4t-before \u6216 p4t-after\uff1breason_code=p4t-not-zero|"
+    },
+    {
+      "english": "|p4t-after failure|An integer other than 0 / start-failed / timeout always triggers atomic rollback|",
+      "canonical": "|p4t-after \u5931\u8d25|integer \u975e 0 / start-failed / timeout \u5747\u539f\u5b50 rollback|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Call category|stdout|stderr|",
+      "canonical": "|\u8c03\u7528\u7c7b\u522b|stdout|stderr|"
+    },
+    {
+      "english": "|---|---|---|",
+      "canonical": "|---|---|---|"
+    },
+    {
+      "english": "|Known call|Fixed 12 lines|Empty|",
+      "canonical": "|\u5df2\u77e5\u8c03\u7528|\u56fa\u5b9a 12 \u884c|\u7a7a|"
+    },
+    {
+      "english": "|Internal exception|Fixed 12 lines|Empty|",
+      "canonical": "|\u5185\u90e8\u5f02\u5e38|\u56fa\u5b9a 12 \u884c|\u7a7a|"
+    },
+    {
+      "english": "|Host binding error for an unknown parameter|Outside the contract|Outside the contract|",
+      "canonical": "|host \u672a\u77e5\u53c2\u6570\u7ed1\u5b9a\u9519\u8bef|\u5408\u540c\u5916|\u5408\u540c\u5916|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|reason rule|Exact contract|",
+      "canonical": "|reason \u89c4\u5219|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Composition|Trusted constants + field names/stages only|",
+      "canonical": "|\u7ec4\u6210|\u4ec5\u53ef\u4fe1\u5e38\u91cf + \u5b57\u6bb5\u540d/\u9636\u6bb5|"
+    },
+    {
+      "english": "|Prohibited concatenation|Input values / paths / stderr / source content|",
+      "canonical": "|\u7981\u6b62\u62fc\u63a5|\u8f93\u5165\u503c / \u8def\u5f84 / stderr / \u6765\u6e90\u5185\u5bb9|"
+    },
+    {
+      "english": "|Characters|Single line; C0 / C1 / U+2028 / U+2029 prohibited|",
+      "canonical": "|\u5b57\u7b26|\u5355\u884c\uff1b\u7981\u6b62 C0 / C1 / U+2028 / U+2029|"
+    },
+    {
+      "english": "|Encoded length|At most 512 UTF-8 bytes|",
+      "canonical": "|\u7f16\u7801\u957f\u5ea6|UTF-8 \u4e0d\u8d85\u8fc7 512 \u5b57\u8282|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Path output item|Exact contract|",
+      "canonical": "|\u8def\u5f84\u8f93\u51fa\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|capture_path / staging_path|Output only absolute capture/staging paths within the root or none; report actual existence at output time; do not present rollback history as current existence|",
+      "canonical": "|capture_path / staging_path|\u4ec5\u5141\u8bb8\u8f93\u51fa\u6839\u5185 capture/staging \u7edd\u5bf9\u8def\u5f84\u6216 none\uff1b\u6309\u8f93\u51fa\u65f6\u5b9e\u9645\u5b58\u5728\u6027\u62a5\u544a\uff1b\u4e0d\u5f97\u628a\u56de\u6eda\u5386\u53f2\u4f2a\u88c5\u4e3a\u5f53\u524d\u5b58\u5728|"
+    },
+    {
+      "english": "|Prohibited output|LocalPath / Web input paths / Git URL|",
+      "canonical": "|\u7981\u6b62\u8f93\u51fa|LocalPath / Web \u8f93\u5165\u8def\u5f84 / Git URL|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Facade parameter boundary",
+      "canonical": "### fa\u00e7ade \u53c2\u6570\u8fb9\u754c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Parameter boundary item|Exact contract|",
+      "canonical": "|\u53c2\u6570\u8fb9\u754c\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Script binding|CmdletBinding(PositionalBinding=$false)|",
+      "canonical": "|\u811a\u672c\u7ed1\u5b9a|CmdletBinding(PositionalBinding=$false)|"
+    },
+    {
+      "english": "|Explicit business parameters|Exactly Root,SourceType,SourceId,GitLocator,GitRef,LocalPath,LocalDisplayName,WebRawBytesPath,WebResponseMetadataPath,RightsStatus,AccessPolicy,ReuseScope,ExecutionPolicy,NetworkPolicy,StoragePolicy,DistributionPolicy,UpstreamWritePolicy,AutoRefresh,AuthorizationTime,AuthorizationSource,AuthorizationScope, in this order; all optional [string]|",
+      "canonical": "|\u663e\u5f0f\u4e1a\u52a1\u53c2\u6570|\u5b8c\u6574\u4e14\u4ec5\u6709 Root,SourceType,SourceId,GitLocator,GitRef,LocalPath,LocalDisplayName,WebRawBytesPath,WebResponseMetadataPath,RightsStatus,AccessPolicy,ReuseScope,ExecutionPolicy,NetworkPolicy,StoragePolicy,DistributionPolicy,UpstreamWritePolicy,AutoRefresh,AuthorizationTime,AuthorizationSource,AuthorizationScope\uff1b\u6309\u6b64\u987a\u5e8f\uff1b\u5168\u90e8\u4e3a\u53ef\u9009 [string]|"
+    },
+    {
+      "english": "|Prohibited parameter attributes|No Mandatory / ValidateSet / ValidatePattern|",
+      "canonical": "|\u7981\u6b62\u53c2\u6570\u5c5e\u6027|Mandatory / ValidateSet / ValidatePattern \u5747\u4e0d\u5b58\u5728|"
+    },
+    {
+      "english": "|Prohibited binding entry points|No Alias / ValueFromPipeline / ValueFromPipelineByPropertyName / ValueFromRemainingArguments|",
+      "canonical": "|\u7981\u6b62\u7ed1\u5b9a\u5165\u53e3|Alias / ValueFromPipeline / ValueFromPipelineByPropertyName / ValueFromRemainingArguments \u5747\u4e0d\u5b58\u5728|"
+    },
+    {
+      "english": "|Default expressions|No explicit parameter has a default expression; defaults are projected only inside the script according to SourceType|",
+      "canonical": "|\u9ed8\u8ba4\u8868\u8fbe\u5f0f|\u5168\u90e8\u663e\u5f0f\u53c2\u6570\u5747\u65e0\u9ed8\u8ba4\u8868\u8fbe\u5f0f\uff1b\u9ed8\u8ba4\u503c\u53ea\u5728\u811a\u672c\u5185\u6309 SourceType \u6295\u5f71|"
+    },
+    {
+      "english": "|SourceType input|Accept only OrdinalIgnoreCase equivalents of Git/Local/Web; Trim prohibited; project to git/local/web respectively|",
+      "canonical": "|SourceType \u8f93\u5165|\u53ea\u63a5\u53d7 Git/Local/Web \u7684 OrdinalIgnoreCase \u7b49\u4ef7\u503c\uff1b\u7981\u6b62 Trim\uff1b\u5206\u522b\u6295\u5f71 git/local/web|"
+    },
+    {
+      "english": "|Required semantics|Name must exist in PSBoundParameters and value must be non-whitespace; unbound, empty, and all-whitespace values fail|",
+      "canonical": "|\u5fc5\u586b\u8bed\u4e49|\u540d\u79f0\u5fc5\u987b\u5b58\u5728\u4e8e PSBoundParameters \u4e14\u503c\u975e\u7a7a\u767d\uff1b\u672a\u7ed1\u5b9a\u3001\u7a7a\u4e32\u3001\u5168\u7a7a\u767d\u5747\u5931\u8d25|"
+    },
+    {
+      "english": "|Prohibited semantics|Presence of the name in PSBoundParameters is a failure; empty strings or null cannot bypass it|",
+      "canonical": "|\u7981\u6b62\u8bed\u4e49|\u540d\u79f0\u53ea\u8981\u5b58\u5728\u4e8e PSBoundParameters \u5373\u5931\u8d25\uff1b\u7a7a\u4e32\u6216 null \u4e0d\u80fd\u89c4\u907f|"
+    },
+    {
+      "english": "|Missing or invalid known parameter|Handle inside the script; fixed 12 lines; exit 10|",
+      "canonical": "|\u5df2\u77e5\u53c2\u6570\u7f3a\u5931\u6216\u975e\u6cd5|\u811a\u672c\u5185\u5904\u7406\uff1b\u56fa\u5b9a 12 \u884c\uff1bexit 10|"
+    },
+    {
+      "english": "|Matrix failure|stage=input; reason_code=invalid-parameters; both P4t fields not-run; zero writes|",
+      "canonical": "|\u77e9\u9635\u5931\u8d25|stage=input\uff1breason_code=invalid-parameters\uff1bP4t \u5747 not-run\uff1b\u96f6\u5199\u5165|"
+    },
+    {
+      "english": "|Implicit common parameters|Part of the PowerShell host boundary; carry no business semantics; fixed 12 lines not guaranteed|",
+      "canonical": "|\u9690\u5f0f common parameters|\u5c5e\u4e8e PowerShell host \u8fb9\u754c\uff1b\u4e0d\u627f\u8f7d\u4e1a\u52a1\u8bed\u4e49\uff1b\u56fa\u5b9a 12 \u884c\u4e0d\u4fdd\u8bc1|"
+    },
+    {
+      "english": "|Host binding errors|unknown / duplicate / positional-extra; outside the contract|",
+      "canonical": "|host \u7ed1\u5b9a\u9519\u8bef|unknown / duplicate / positional-extra\uff1b\u5408\u540c\u5916|"
+    },
+    {
+      "english": "|Supported calls|Only the powershell -File string-parameter boundary|",
+      "canonical": "|\u652f\u6301\u8c03\u7528|\u4ec5 powershell -File \u7684\u5b57\u7b26\u4e32\u53c2\u6570\u8fb9\u754c|"
+    },
+    {
+      "english": "|Type conversion|Type conversion and embedded calls are outside the contract|",
+      "canonical": "|\u7c7b\u578b\u8f6c\u6362|\u7c7b\u578b\u8f6c\u6362\u4e0e\u5185\u5d4c\u8c03\u7528\u5408\u540c\u5916|"
+    },
+    {
+      "english": "|Root examples|All examples use -Root $PWD.Path|",
+      "canonical": "|Root \u793a\u4f8b|\u6240\u6709\u793a\u4f8b\u4f7f\u7528 -Root $PWD.Path|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|SourceType input|source_type card value|Common required|Type-required|Type-prohibited|Permissions and authorization|",
+      "canonical": "|SourceType \u8f93\u5165|source_type \u5361\u7247\u503c|\u901a\u7528\u5fc5\u586b|\u7c7b\u578b\u5fc5\u586b|\u7c7b\u578b\u7981\u6b62|\u6743\u9650\u4e0e\u6388\u6743|"
+    },
+    {
+      "english": "|---|---|---|---|---|---|",
+      "canonical": "|---|---|---|---|---|---|"
+    },
+    {
+      "english": "|Git|git|Root,SourceType,SourceId|GitLocator,GitRef|LocalPath,LocalDisplayName,WebRawBytesPath,WebResponseMetadataPath|AccessPolicy=source-read-only, NetworkPolicy=source-read-only, ExecutionPolicy=deny, UpstreamWritePolicy=deny; AuthorizationTime/Source/Scope all required|",
+      "canonical": "|Git|git|Root,SourceType,SourceId|GitLocator,GitRef|LocalPath,LocalDisplayName,WebRawBytesPath,WebResponseMetadataPath|AccessPolicy=source-read-only\u3001NetworkPolicy=source-read-only\u3001ExecutionPolicy=deny\u3001UpstreamWritePolicy=deny\uff1bAuthorizationTime/Source/Scope \u5168\u90e8\u5fc5\u586b|"
+    },
+    {
+      "english": "|Local|local|Root,SourceType,SourceId|LocalPath,LocalDisplayName|GitLocator,GitRef,WebRawBytesPath,WebResponseMetadataPath|Use the nine permission defaults when absent; if any effective value differs from its default, AuthorizationTime/Source/Scope are all required; otherwise all three are prohibited|",
+      "canonical": "|Local|local|Root,SourceType,SourceId|LocalPath,LocalDisplayName|GitLocator,GitRef,WebRawBytesPath,WebResponseMetadataPath|\u7f3a\u7701\u4f7f\u7528\u4e5d\u7ef4\u9ed8\u8ba4\u503c\uff1b\u4efb\u4e00\u751f\u6548\u503c\u504f\u79bb\u9ed8\u8ba4\u65f6 AuthorizationTime/Source/Scope \u5168\u90e8\u5fc5\u586b\uff0c\u5426\u5219\u4e09\u8005\u5168\u90e8\u7981\u6b62|"
+    },
+    {
+      "english": "|Web|web|Root,SourceType,SourceId|WebRawBytesPath,WebResponseMetadataPath|GitLocator,GitRef,LocalPath,LocalDisplayName|AccessPolicy=source-read-only, NetworkPolicy=source-read-only, ExecutionPolicy=deny, UpstreamWritePolicy=deny; AuthorizationTime/Source/Scope all required|",
+      "canonical": "|Web|web|Root,SourceType,SourceId|WebRawBytesPath,WebResponseMetadataPath|GitLocator,GitRef,LocalPath,LocalDisplayName|AccessPolicy=source-read-only\u3001NetworkPolicy=source-read-only\u3001ExecutionPolicy=deny\u3001UpstreamWritePolicy=deny\uff1bAuthorizationTime/Source/Scope \u5168\u90e8\u5fc5\u586b|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Output field|Exact contract|",
+      "canonical": "|\u8f93\u51fa\u5b57\u6bb5|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|source_id|Output only after validation succeeds; otherwise none|",
+      "canonical": "|source_id|\u4ec5\u6821\u9a8c\u901a\u8fc7\u624d\u8f93\u51fa\uff1b\u5426\u5219 none|"
+    },
+    {
+      "english": "|capture_id|Output only after validation succeeds; otherwise none|",
+      "canonical": "|capture_id|\u4ec5\u6821\u9a8c\u901a\u8fc7\u624d\u8f93\u51fa\uff1b\u5426\u5219 none|"
+    },
+    {
+      "english": "|fingerprint|Output only after validation succeeds; otherwise none|",
+      "canonical": "|fingerprint|\u4ec5\u6821\u9a8c\u901a\u8fc7\u624d\u8f93\u51fa\uff1b\u5426\u5219 none|"
+    },
+    {
+      "english": "|12-line input boundary|Input CR/LF must not enter any line|",
+      "canonical": "|12 \u884c\u8f93\u5165\u8fb9\u754c|\u7981\u6b62\u8f93\u5165 CR/LF \u8fdb\u5165\u4efb\u4f55\u4e00\u884c|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Git intake",
+      "canonical": "## Git \u63a5\u5165"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```powershell",
+      "canonical": "```powershell"
+    },
+    {
+      "english": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\capture-borrowing-source.ps1 `",
+      "canonical": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\capture-borrowing-source.ps1 `"
+    },
+    {
+      "english": "  -Root $PWD.Path `",
+      "canonical": "  -Root $PWD.Path `"
+    },
+    {
+      "english": "  -SourceType Git `",
+      "canonical": "  -SourceType Git `"
+    },
+    {
+      "english": "  -SourceId '<source_id>' `",
+      "canonical": "  -SourceId '<source_id>' `"
+    },
+    {
+      "english": "  -GitLocator 'https://example.invalid/owner/repo.git' `",
+      "canonical": "  -GitLocator 'https://example.invalid/owner/repo.git' `"
+    },
+    {
+      "english": "  -GitRef 'refs/tags/v1.0.0' `",
+      "canonical": "  -GitRef 'refs/tags/v1.0.0' `"
+    },
+    {
+      "english": "  -AccessPolicy 'source-read-only' `",
+      "canonical": "  -AccessPolicy 'source-read-only' `"
+    },
+    {
+      "english": "  -NetworkPolicy 'source-read-only' `",
+      "canonical": "  -NetworkPolicy 'source-read-only' `"
+    },
+    {
+      "english": "  -AuthorizationTime '<ISO 8601>' `",
+      "canonical": "  -AuthorizationTime '<ISO 8601>' `"
+    },
+    {
+      "english": "  -AuthorizationSource '<auditable source>' `",
+      "canonical": "  -AuthorizationSource '<auditable source>' `"
+    },
+    {
+      "english": "  -AuthorizationScope '<limited scope>'",
+      "canonical": "  -AuthorizationScope '<limited scope>'"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The executor applies the Git safety settings consistently. Operators provide only a sanitized HTTPS locator and a fixed ref, without adding underlying steps themselves.",
+      "canonical": "Git \u5b89\u5168\u53c2\u6570\u7531\u6267\u884c\u5668\u7edf\u4e00\u843d\u5b9e\uff1b\u64cd\u4f5c\u8005\u53ea\u63d0\u4f9b\u51c0\u5316\u540e\u7684 HTTPS \u5b9a\u4f4d\u548c\u56fa\u5b9a\u5f15\u7528\uff0c\u4e0d\u81ea\u884c\u8865\u5145\u5e95\u5c42\u6b65\u9aa4\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Exact Git execution contract",
+      "canonical": "### Git \u7cbe\u786e\u6267\u884c\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Git step|Exact contract|",
+      "canonical": "|Git \u6b65\u9aa4|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Cache path|\u5feb\u7167/repository.git; bare shallow cache; no working tree|",
+      "canonical": "|\u7f13\u5b58\u8def\u5f84|\u5feb\u7167/repository.git\uff1bbare shallow cache\uff1b\u65e0 working tree|"
+    },
+    {
+      "english": "|Remote discovery|git ls-remote --refs --exit-code <canonical-locator> <full-ref>|",
+      "canonical": "|\u8fdc\u7aef\u63a2\u6d4b|git ls-remote --refs --exit-code <canonical-locator> <full-ref>|"
+    },
+    {
+      "english": "|Discovery result|Exactly one line <oid><TAB><full-ref>; ref must match literally; a 40/64-hex oid selects sha1/sha256 respectively|",
+      "canonical": "|\u63a2\u6d4b\u7ed3\u679c|\u6070\u597d\u4e00\u884c <oid><TAB><full-ref>\uff1bref \u9010\u5b57\u76f8\u7b49\uff1boid 40/64hex \u5206\u522b\u5224\u5b9a sha1/sha256|"
+    },
+    {
+      "english": "|Initialization|git init --quiet --bare --object-format=<object-format> --template=<trusted-empty-dir> <repository.git>|",
+      "canonical": "|\u521d\u59cb\u5316|git init --quiet --bare --object-format=<object-format> --template=<trusted-empty-dir> <repository.git>|"
+    },
+    {
+      "english": "|Exact fetch|git -C <repository.git> fetch --quiet --depth=1 --no-tags --no-recurse-submodules --no-write-fetch-head --no-auto-maintenance --no-write-commit-graph --force <canonical-locator> +<full-ref>:refs/czxt/capture|",
+      "canonical": "|\u7cbe\u786e fetch|git -C <repository.git> fetch --quiet --depth=1 --no-tags --no-recurse-submodules --no-write-fetch-head --no-auto-maintenance --no-write-commit-graph --force <canonical-locator> +<full-ref>:refs/czxt/capture|"
+    },
+    {
+      "english": "|TOCTOU|git -C <repository.git> show-ref --verify --hash refs/czxt/capture; output exactly <lowercase-oid><LF> matching the oid advertised by ls-remote|",
+      "canonical": "|TOCTOU|git -C <repository.git> show-ref --verify --hash refs/czxt/capture\uff1b\u6070\u597d\u8f93\u51fa <lowercase-oid><LF> \u4e14\u7b49\u4e8e ls-remote advertised oid|"
+    },
+    {
+      "english": "|peel|git -C <repository.git> rev-parse --verify refs/czxt/capture^{commit}; then git -C <repository.git> rev-parse --verify <commit>^{tree}; fingerprint=full lowercase commit oid|",
+      "canonical": "|peel|git -C <repository.git> rev-parse --verify refs/czxt/capture^{commit}\uff1b\u518d\u4ee5 git -C <repository.git> rev-parse --verify <commit>^{tree}\uff1bfingerprint=\u5b8c\u6574 lowercase commit oid|"
+    },
+    {
+      "english": "|HEAD|git -C <repository.git> update-ref --no-deref HEAD <commit>; produces detached HEAD|",
+      "canonical": "|HEAD|git -C <repository.git> update-ref --no-deref HEAD <commit>\uff1b\u5f62\u6210 detached HEAD|"
+    },
+    {
+      "english": "|tree|git -C <repository.git> ls-tree -r -z -l --full-tree <tree>; paths must be strict UTF-8; checkout prohibited|",
+      "canonical": "|tree|git -C <repository.git> ls-tree -r -z -l --full-tree <tree>\uff1b\u8def\u5f84\u4e25\u683c UTF-8\uff1b\u4e0d\u5f97 checkout|"
+    },
+    {
+      "english": "|Failure|Missing capability\u2192preflight/missing-trusted-component; nonzero Git exit\u2192capture/capture-failed|",
+      "canonical": "|\u5931\u8d25|\u80fd\u529b\u7f3a\u5931\u2192preflight/missing-trusted-component\uff1bGit \u975e\u96f6\u2192capture/capture-failed|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Git input item|Exact contract|",
+      "canonical": "|Git \u8f93\u5165\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|GitLocator characters|NFC; at most 1024 UTF-8 bytes; reject backslash, percent, whitespace, C0/C1/U+2028/U+2029|",
+      "canonical": "|GitLocator \u5b57\u7b26|NFC\uff1bUTF-8 \u4e0d\u8d85\u8fc7 1024 \u5b57\u8282\uff1b\u62d2\u7edd\u53cd\u659c\u6760\u3001percent\u3001\u7a7a\u767d\u3001C0/C1/U+2028/U+2029|"
+    },
+    {
+      "english": "|GitLocator URI|[Uri] absolute HTTPS; userinfo/query/fragment must be empty; only default port 443; reject relative, UNC, file, and IP literal|",
+      "canonical": "|GitLocator URI|[Uri] \u7edd\u5bf9 HTTPS\uff1buserinfo/query/fragment \u5fc5\u987b\u4e3a\u7a7a\uff1b\u4ec5\u9ed8\u8ba4 443\uff1b\u7981\u6b62\u76f8\u5bf9\u3001UNC\u3001file\u3001IP literal|"
+    },
+    {
+      "english": "|GitLocator host|Convert to ASCII with IdnMapping(UseStd3AsciiRules=true), then lowercase; reject trailing dots; each label and total length must be valid|",
+      "canonical": "|GitLocator host|IdnMapping(UseStd3AsciiRules=true) \u8f6c ASCII \u540e\u5c0f\u5199\uff1b\u62d2\u7edd\u5c3e\u70b9\uff1b\u6bcf label \u4e0e\u603b\u957f\u5fc5\u987b\u5408\u6cd5|"
+    },
+    {
+      "english": "|GitLocator path|ASCII absolute path; each segment allows only [A-Za-z0-9._~-] and must not begin with a dot; last segment must be a nonempty basename.git; reject dot-segments, repeated slashes, and trailing slash|",
+      "canonical": "|GitLocator path|ASCII \u7edd\u5bf9\u8def\u5f84\uff1b\u6bcf\u6bb5\u4ec5 [A-Za-z0-9._~-] \u4e14\u9996\u5b57\u7b26\u4e0d\u5f97\u4e3a\u70b9\uff1b\u672b\u6bb5\u5fc5\u987b\u4e3a\u975e\u7a7a basename.git\uff1b\u62d2\u7edd dot-segment\u3001\u91cd\u590d slash\u3001\u5c3e slash|"
+    },
+    {
+      "english": "|canonical_locator|https://<lowercase-ascii-host><case-preserved-path>; remove explicit :443; do not retain the raw locator|",
+      "canonical": "|canonical_locator|https://<lowercase-ascii-host><case-preserved-path>\uff1b\u663e\u5f0f :443 \u79fb\u9664\uff1b\u4e0d\u5f97\u4fdd\u5b58\u539f\u59cb locator|"
+    },
+    {
+      "english": "|GitRef lexical rules|NFC ASCII; at most 1024 UTF-8 bytes; full refs/heads/ or refs/tags/; reject pipe, backtick, TAB, C0/C1/U+2028/U+2029|",
+      "canonical": "|GitRef \u8bcd\u6cd5|NFC ASCII\uff1bUTF-8 \u4e0d\u8d85\u8fc7 1024 \u5b57\u8282\uff1b\u5b8c\u6574 refs/heads/ \u6216 refs/tags/\uff1b\u62d2\u7edd pipe\u3001backtick\u3001TAB\u3001C0/C1/U+2028/U+2029|"
+    },
+    {
+      "english": "|GitRef Git validation|git check-ref-format <full-ref> must exit 0 with empty stdout/stderr|",
+      "canonical": "|GitRef Git \u6821\u9a8c|git check-ref-format <full-ref> \u5fc5\u987b exit 0 \u4e14 stdout/stderr \u4e3a\u7a7a|"
+    },
+    {
+      "english": "|GitRef projection|Derive branch/tag uniquely from the prefix; write the normalized original value in the table without revspec or symbolic resolution|",
+      "canonical": "|GitRef \u6295\u5f71|ref \u7c7b\u578b\u7531\u524d\u7f00\u552f\u4e00\u6d3e\u751f\u4e3a branch/tag\uff1b\u8868\u683c\u5199\u89c4\u8303\u5316\u539f\u503c\uff0c\u4e0d\u505a revspec \u6216\u7b26\u53f7\u89e3\u6790|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Git runner item|Exact contract|",
+      "canonical": "|Git runner \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Git capability baseline|git version must be parseable and >=2.43.0; production executable is the absolute path resolved during preflight|",
+      "canonical": "|Git \u80fd\u529b\u57fa\u7ebf|git version \u53ef\u89e3\u6790\u4e14 >=2.43.0\uff1b\u751f\u4ea7 executable \u4e3a\u9884\u68c0\u89e3\u6790\u7684\u7edd\u5bf9\u8def\u5f84|"
+    },
+    {
+      "english": "|Trusted runtime directories|runner-root, runner-root/cwd, HOME, and trusted-empty-dir are all inside staging; WorkingDirectory=runner-root/cwd; GIT_CEILING_DIRECTORIES=runner-root|",
+      "canonical": "|\u53ef\u4fe1\u8fd0\u884c\u76ee\u5f55|runner-root\u3001runner-root/cwd\u3001HOME \u4e0e trusted-empty-dir \u5747\u5728 staging\uff1bWorkingDirectory=runner-root/cwd\uff1bGIT_CEILING_DIRECTORIES=runner-root|"
+    },
+    {
+      "english": "|Inherited environment|First remove all GIT_*, SSH_ASKPASS, and SSH_ASKPASS_REQUIRE variables case-insensitively|",
+      "canonical": "|\u7ee7\u627f\u73af\u5883|\u5148\u6309\u4e0d\u533a\u5206\u5927\u5c0f\u5199\u79fb\u9664\u5168\u90e8 GIT_*\u3001SSH_ASKPASS\u3001SSH_ASKPASS_REQUIRE|"
+    },
+    {
+      "english": "|Fixed environment|GIT_TERMINAL_PROMPT=0; GIT_CONFIG_NOSYSTEM=1; GIT_CONFIG_GLOBAL=NUL; GIT_CONFIG_SYSTEM=NUL; GIT_LFS_SKIP_SMUDGE=1; GIT_PROTOCOL_FROM_USER=0; GIT_ALLOW_PROTOCOL=https; GIT_NO_REPLACE_OBJECTS=1; GIT_OPTIONAL_LOCKS=0; GIT_CEILING_DIRECTORIES=<runner-root>; LC_ALL=C; LANG=C|",
+      "canonical": "|\u56fa\u5b9a\u73af\u5883|GIT_TERMINAL_PROMPT=0\uff1bGIT_CONFIG_NOSYSTEM=1\uff1bGIT_CONFIG_GLOBAL=NUL\uff1bGIT_CONFIG_SYSTEM=NUL\uff1bGIT_LFS_SKIP_SMUDGE=1\uff1bGIT_PROTOCOL_FROM_USER=0\uff1bGIT_ALLOW_PROTOCOL=https\uff1bGIT_NO_REPLACE_OBJECTS=1\uff1bGIT_OPTIONAL_LOCKS=0\uff1bGIT_CEILING_DIRECTORIES=<runner-root>\uff1bLC_ALL=C\uff1bLANG=C|"
+    },
+    {
+      "english": "|Isolated HOME|HOME, USERPROFILE, and XDG_CONFIG_HOME point to separate trusted empty directories inside staging|",
+      "canonical": "|\u9694\u79bb HOME|HOME\u3001USERPROFILE\u3001XDG_CONFIG_HOME \u6307\u5411 staging \u5185\u72ec\u7acb\u53ef\u4fe1\u7a7a\u76ee\u5f55|"
+    },
+    {
+      "english": "|Fixed argv prefix|--no-pager; credential.helper=; core.askPass=; core.hooksPath=<trusted-empty-dir>; filter.lfs.clean=; filter.lfs.smudge=; filter.lfs.process=; filter.lfs.required=false; submodule.recurse=false; fetch.recurseSubmodules=false; protocol.file.allow=never; protocol.ext.allow=never; maintenance.auto=false; gc.auto=0; http.sslVerify=true; http.followRedirects=false; http.extraHeader=|",
+      "canonical": "|\u56fa\u5b9a argv \u524d\u7f00|--no-pager\uff1bcredential.helper=\uff1bcore.askPass=\uff1bcore.hooksPath=<trusted-empty-dir>\uff1bfilter.lfs.clean=\uff1bfilter.lfs.smudge=\uff1bfilter.lfs.process=\uff1bfilter.lfs.required=false\uff1bsubmodule.recurse=false\uff1bfetch.recurseSubmodules=false\uff1bprotocol.file.allow=never\uff1bprotocol.ext.allow=never\uff1bmaintenance.auto=false\uff1bgc.auto=0\uff1bhttp.sslVerify=true\uff1bhttp.followRedirects=false\uff1bhttp.extraHeader=|"
+    },
+    {
+      "english": "|Process API|ProcessStartInfo; UseShellExecute=false; CreateNoWindow=true; RedirectStandardInput/Output/Error=true; close stdin immediately after start; shell prohibited|",
+      "canonical": "|\u8fdb\u7a0b API|ProcessStartInfo\uff1bUseShellExecute=false\uff1bCreateNoWindow=true\uff1bRedirectStandardInput/Output/Error=true\uff1b\u542f\u52a8\u540e\u7acb\u5373\u5173\u95ed stdin\uff1b\u7981\u6b62 shell|"
+    },
+    {
+      "english": "|Windows argv quoting|Empty argument\u2192\"\"; preserve arguments without whitespace/quotes; N backslashes before a quote\u21922N+1 followed by the quote; N backslashes before a closing quote\u21922N; preserve all other backslashes|",
+      "canonical": "|Windows argv quoting|\u7a7a\u53c2\u6570\u2192\"\"\uff1b\u65e0\u7a7a\u767d/quote \u53c2\u6570\u539f\u6837\uff1bquote \u524d N \u4e2a backslash\u21922N+1 \u540e\u63a5 quote\uff1b\u95ed\u5f15\u53f7\u524d N \u4e2a backslash\u21922N\uff1b\u5176\u4f59 backslash \u539f\u6837|"
+    },
+    {
+      "english": "|Output reading|Read stdout/stderr concurrently as bounded raw bytes; 67108864 bytes per stream; strict UTF-8; only ls-tree stdout allows NUL as a record separator; overflow or invalid bytes cause hard failure|",
+      "canonical": "|\u8f93\u51fa\u8bfb\u53d6|stdout/stderr \u5e76\u53d1\u6309\u539f\u59cb\u5b57\u8282\u6709\u754c\u8bfb\u53d6\uff1b\u6bcf\u6d41 67108864 \u5b57\u8282\uff1b\u4e25\u683c UTF-8\uff1b\u4ec5 ls-tree stdout \u5141\u8bb8 NUL \u4f5c\u4e3a\u8bb0\u5f55\u5206\u9694\uff1b\u8d8a\u754c\u6216\u975e\u6cd5\u5b57\u8282\u786c\u5931\u8d25|"
+    },
+    {
+      "english": "|timeout|Independent 300000ms wall-clock limit per Git subprocess; on timeout call absolute %SystemRoot%/System32/taskkill.exe /PID <pid> /T /F; wait for taskkill, the target, and both streams to exit|",
+      "canonical": "|timeout|\u6bcf\u4e2a Git \u5b50\u8fdb\u7a0b\u72ec\u7acb 300000ms wall-clock\uff1b\u8d85\u65f6\u8c03\u7528\u7edd\u5bf9 %SystemRoot%/System32/taskkill.exe /PID <pid> /T /F\uff1b\u7b49\u5f85 taskkill\u3001\u76ee\u6807\u548c\u53cc\u6d41\u5168\u90e8\u9000\u51fa|"
+    },
+    {
+      "english": "|Failure semantics|Any start/read/terminate/wait exception, or a process still alive after kill, prohibits promotion; timeout/output overflow\u2192capture/resource-limit; otherwise\u2192capture/capture-failed|",
+      "canonical": "|\u5931\u8d25\u8bed\u4e49|\u542f\u52a8/\u8bfb\u53d6/\u7ec8\u6b62/\u7b49\u5f85\u4efb\u4e00\u5f02\u5e38\u6216 kill \u540e\u4ecd\u5b58\u6d3b\u5747\u4e0d\u5f97\u664b\u5347\uff1btimeout/\u8f93\u51fa\u8d8a\u754c\u2192capture/resource-limit\uff1b\u5176\u4f59\u2192capture/capture-failed|"
+    },
+    {
+      "english": "|Test seam|runner, timeout, and transport adapters are injectable only inside helpers; they must not cross the facade boundary|",
+      "canonical": "|\u6d4b\u8bd5 seam|runner\u3001timeout \u4e0e\u4f20\u8f93\u9002\u914d\u5668\u4ec5\u5185\u90e8 helper \u53ef\u6ce8\u5165\uff1b\u4e0d\u5f97\u7a7f\u900f fa\u00e7ade|"
+    },
+    {
+      "english": "|Offline file adapter|Only a test helper may record and assert the logical HTTPS argv, map the uniquely exact-matching fixture locator to a file URI, and permit file only in that test subprocess; unmapped locators hard-fail; this test does not replace production protocol/environment/argv isolation tests|",
+      "canonical": "|\u79bb\u7ebf file adapter|\u4ec5\u6d4b\u8bd5 helper \u8bb0\u5f55\u5e76\u65ad\u8a00\u903b\u8f91 HTTPS argv\uff0c\u518d\u628a\u552f\u4e00\u7cbe\u786e\u5339\u914d\u7684 fixture locator \u6620\u5c04\u4e3a file URI\uff0c\u5e76\u4ec5\u5728\u8be5\u6d4b\u8bd5\u5b50\u8fdb\u7a0b\u653e\u5f00 file\uff1b\u672a\u6620\u5c04 locator \u786c\u5931\u8d25\uff1b\u8be5\u6d4b\u8bd5\u4e0d\u66ff\u4ee3\u751f\u4ea7\u534f\u8bae/\u73af\u5883/argv \u9694\u79bb\u6d4b\u8bd5|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Git cache item|Exact contract|",
+      "canonical": "|Git cache \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Top level|Only HEAD, config, optional shallow, objects/, refs/|",
+      "canonical": "|\u9876\u5c42|\u4ec5 HEAD\u3001config\u3001\u53ef\u9009 shallow\u3001objects/\u3001refs/|"
+    },
+    {
+      "english": "|config canonical|Generate bytes only from the Git config canonical line-array table; reject duplicate keys, include, includeIf, remote.*, extra sections/keys, and any byte drift|",
+      "canonical": "|config canonical|\u5b57\u8282\u4ec5\u7531 Git config canonical line-array \u8868\u751f\u6210\uff1b\u62d2\u7edd\u91cd\u590d\u952e\u3001include\u3001includeIf\u3001remote.*\u3001\u989d\u5916 section/key \u4e0e\u4efb\u4f55\u5b57\u8282\u6f02\u79fb|"
+    },
+    {
+      "english": "|HEAD|Detached; canonical bytes=<lowercase-commit-oid><LF>|",
+      "canonical": "|HEAD|detached\uff1b\u89c4\u8303\u5b57\u8282=<lowercase-commit-oid><LF>|"
+    },
+    {
+      "english": "|refs|The sole ref file is refs/czxt/capture; canonical bytes=<lowercase-advertised-oid><LF>; empty directories generated by init are allowed|",
+      "canonical": "|refs|\u552f\u4e00 ref \u6587\u4ef6 refs/czxt/capture\uff1b\u89c4\u8303\u5b57\u8282=<lowercase-advertised-oid><LF>\uff1b\u5141\u8bb8 init \u751f\u6210\u7684\u7a7a\u76ee\u5f55|"
+    },
+    {
+      "english": "|shallow|May be absent; if present, canonical bytes are only <lowercase-commit-oid><LF>|",
+      "canonical": "|shallow|\u53ef\u7f3a\u7701\uff1b\u5b58\u5728\u65f6\u89c4\u8303\u5b57\u8282\u4ec5\u4e3a <lowercase-commit-oid><LF>|"
+    },
+    {
+      "english": "|objects|Only objects reachable from the selected ref; loose-object names match the object format; pack and idx must pair with the same basename, and rev may exist only as an optional third member with that basename; reject orphan pack/idx/rev; objects/info may only be an empty directory|",
+      "canonical": "|objects|\u4ec5\u9009\u5b9a ref \u53ef\u8fbe\u5bf9\u8c61\uff1bloose object \u540d\u7b26\u5408 object format\uff1bpack \u4e0e idx \u540c basename \u6210\u5bf9\u3001rev \u4ec5\u53ef\u4f5c\u4e3a\u540c basename \u53ef\u9009\u7b2c\u4e09\u4ef6\uff1b\u62d2\u7edd\u5b64\u7acb pack/idx/rev\uff1bobjects/info \u4ec5\u7a7a\u76ee\u5f55|"
+    },
+    {
+      "english": "|Reachability|git -C <repository.git> fsck --full --strict --no-reflogs --unreachable --no-progress must exit 0 with both stdout/stderr empty|",
+      "canonical": "|\u53ef\u8fbe\u6027|git -C <repository.git> fsck --full --strict --no-reflogs --unreachable --no-progress \u5fc5\u987b exit 0 \u4e14 stdout/stderr \u5747\u4e3a\u7a7a|"
+    },
+    {
+      "english": "|Fixed rejection set|hooks, FETCH_HEAD, packed-refs, alternates, logs, modules, worktrees, index, replace refs, extra top-level items|",
+      "canonical": "|\u56fa\u5b9a\u62d2\u7edd|hooks\u3001FETCH_HEAD\u3001packed-refs\u3001alternates\u3001logs\u3001modules\u3001worktrees\u3001index\u3001replace refs\u3001\u989d\u5916\u9876\u5c42\u9879|"
+    },
+    {
+      "english": "|File safety|All regular files have NumberOfLinks=1; reparse/symlink/junction/ADS/unavailable API cause hard failure|",
+      "canonical": "|\u6587\u4ef6\u5b89\u5168|\u6240\u6709\u5e38\u89c4\u6587\u4ef6 NumberOfLinks=1\uff1breparse/symlink/junction/ADS/API \u4e0d\u53ef\u7528\u5747\u786c\u5931\u8d25|"
+    },
+    {
+      "english": "|Git symlink|tree mode 120000\u2192capture/source-unsafe|",
+      "canonical": "|Git symlink|tree mode 120000\u2192capture/source-unsafe|"
+    },
+    {
+      "english": "|submodule|tree mode 160000\u2192detected; otherwise not-detected; initialization/download/execution prohibited|",
+      "canonical": "|submodule|tree mode 160000\u2192detected\uff1b\u65e0\u5219 not-detected\uff1b\u7981\u6b62\u521d\u59cb\u5316/\u4e0b\u8f7d/\u6267\u884c|"
+    },
+    {
+      "english": "|LFS|Pointer first line version https://git-lfs.github.com/spec/v1 or .gitattributes containing filter=lfs\u2192detected; otherwise not-detected; smudge/download/execution prohibited|",
+      "canonical": "|LFS|pointer \u9996\u884c version https://git-lfs.github.com/spec/v1 \u6216 .gitattributes \u542b filter=lfs\u2192detected\uff1b\u65e0\u5219 not-detected\uff1b\u7981\u6b62 smudge/\u4e0b\u8f7d/\u6267\u884c|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Git config line-array item|Exact contract|",
+      "canonical": "|Git config line-array \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|sha1|[\"[core]\",\"<TAB>repositoryformatversion = 0\",\"<TAB>filemode = false\",\"<TAB>bare = true\",\"<TAB>symlinks = false\",\"<TAB>ignorecase = true\"]|",
+      "canonical": "|sha1|[\"[core]\",\"<TAB>repositoryformatversion = 0\",\"<TAB>filemode = false\",\"<TAB>bare = true\",\"<TAB>symlinks = false\",\"<TAB>ignorecase = true\"]|"
+    },
+    {
+      "english": "|sha256|[\"[core]\",\"<TAB>repositoryformatversion = 1\",\"<TAB>filemode = false\",\"<TAB>bare = true\",\"<TAB>symlinks = false\",\"<TAB>ignorecase = true\",\"[extensions]\",\"<TAB>objectformat = sha256\"]|",
+      "canonical": "|sha256|[\"[core]\",\"<TAB>repositoryformatversion = 1\",\"<TAB>filemode = false\",\"<TAB>bare = true\",\"<TAB>symlinks = false\",\"<TAB>ignorecase = true\",\"[extensions]\",\"<TAB>objectformat = sha256\"]|"
+    },
+    {
+      "english": "|canonical bytes|<TAB> denotes one 0x09 byte; each entry is strict UTF-8 without CR/LF; join in order with LF and append exactly one final LF; no BOM|",
+      "canonical": "|canonical bytes|<TAB> \u8868\u793a\u5355\u4e2a 0x09 byte\uff1b\u6bcf\u9879\u4e25\u683c UTF-8 \u4e14\u4e0d\u542b CR/LF\uff1b\u6309\u5e8f\u4ee5 LF \u8fde\u63a5\u5e76\u8ffd\u52a0\u6070\u597d\u4e00\u4e2a\u672b\u5c3e LF\uff1b\u65e0 BOM|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Git failure scenario|stage / reason_code|",
+      "canonical": "|Git \u5931\u8d25\u573a\u666f|stage / reason_code|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Noncanonical HEAD/config/ref/shallow/topology/fsck|candidate / candidate-invalid|",
+      "canonical": "|HEAD/config/ref/shallow/\u62d3\u6251/fsck \u4e0d\u89c4\u8303|candidate / candidate-invalid|"
+    },
+    {
+      "english": "|Reparse, ADS, hardlink, or unavailable API inside cache|candidate / source-unsafe|",
+      "canonical": "|cache \u5185 reparse\u3001ADS\u3001hardlink\u3001API \u4e0d\u53ef\u7528|candidate / source-unsafe|"
+    },
+    {
+      "english": "|tree mode 120000 or invalid Git path|capture / source-unsafe|",
+      "canonical": "|tree mode 120000 \u6216\u975e\u6cd5 Git \u8def\u5f84|capture / source-unsafe|"
+    },
+    {
+      "english": "|Advertised OID differs from the post-fetch ref|capture / capture-failed|",
+      "canonical": "|advertised OID \u4e0e fetch \u540e ref \u4e0d\u540c|capture / capture-failed|"
+    },
+    {
+      "english": "|Timeout or per-stream overflow|capture / resource-limit|",
+      "canonical": "|timeout \u6216\u5355\u6d41\u8d8a\u754c|capture / resource-limit|"
+    },
+    {
+      "english": "|Start, read, terminate, wait, or strict UTF-8 failure|capture / capture-failed|",
+      "canonical": "|\u542f\u52a8\u3001\u8bfb\u53d6\u3001\u7ec8\u6b62\u3001\u7b49\u5f85\u6216\u4e25\u683c UTF-8 \u5931\u8d25|capture / capture-failed|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Local intake",
+      "canonical": "## \u672c\u5730\u63a5\u5165"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```powershell",
+      "canonical": "```powershell"
+    },
+    {
+      "english": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\capture-borrowing-source.ps1 `",
+      "canonical": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\capture-borrowing-source.ps1 `"
+    },
+    {
+      "english": "  -Root $PWD.Path `",
+      "canonical": "  -Root $PWD.Path `"
+    },
+    {
+      "english": "  -SourceType Local `",
+      "canonical": "  -SourceType Local `"
+    },
+    {
+      "english": "  -SourceId '<source_id>' `",
+      "canonical": "  -SourceId '<source_id>' `"
+    },
+    {
+      "english": "  -LocalPath '<absolute-source-path>' `",
+      "canonical": "  -LocalPath '<absolute-source-path>' `"
+    },
+    {
+      "english": "  -LocalDisplayName '<display-name>'",
+      "canonical": "  -LocalDisplayName '<display-name>'"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The executor generates the fixed snapshot and validates the full manifest chain according to the table below; `staging` and the final directory remain on the same volume. Real absolute paths enter only ignored local state.",
+      "canonical": "\u6267\u884c\u5668\u6309\u4e0b\u8868\u751f\u6210\u56fa\u5b9a\u5feb\u7167\u5e76\u9a8c\u8bc1\u5168\u94fe manifest\uff1b`staging` \u4e0e\u6700\u7ec8\u76ee\u5f55\u4fdd\u6301\u540c\u5377\u3002\u771f\u5b9e\u7edd\u5bf9\u8def\u5f84\u53ea\u8fdb\u5165\u88ab\u5ffd\u7565\u7684\u672c\u673a\u72b6\u6001\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Local canonical on-disk contract",
+      "canonical": "### Local canonical \u843d\u76d8\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Local item|Exact contract|",
+      "canonical": "|Local \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|LocalPath|Existing safe regular directory; must neither equal Root or Root/\u501f\u9274\u533a nor be an ancestor/descendant of either; complete validation before writing|",
+      "canonical": "|LocalPath|\u65e2\u6709\u5b89\u5168\u5e38\u89c4\u76ee\u5f55\uff1b\u4e0e Root \u53ca Root/\u501f\u9274\u533a \u5747\u4e0d\u5f97\u76f8\u7b49\u6216\u4e92\u4e3a ancestor/descendant\uff1b\u5199\u5165\u524d\u5b8c\u6210\u9a8c\u8bc1|"
+    },
+    {
+      "english": "|Content path|\u5feb\u7167/\u5185\u5bb9/; copy every regular file by relative path; no implicit exclusions|",
+      "canonical": "|\u5185\u5bb9\u8def\u5f84|\u5feb\u7167/\u5185\u5bb9/\uff1b\u9010\u76f8\u5bf9\u8def\u5f84\u590d\u5236\u5168\u90e8\u5e38\u89c4\u6587\u4ef6\uff1b\u65e0\u9690\u5f0f\u6392\u9664|"
+    },
+    {
+      "english": "|Manifest path|\u5feb\u7167/manifest.tsv; contents are sha256-manifest-v1 canonical bytes; an empty file is allowed|",
+      "canonical": "|manifest \u8def\u5f84|\u5feb\u7167/manifest.tsv\uff1b\u5185\u5bb9\u4e3a sha256-manifest-v1 canonical bytes\uff1b\u5141\u8bb8\u7a7a\u6587\u4ef6|"
+    },
+    {
+      "english": "|Full-chain consistency|The four canonical manifests source-before, source-after, staging-content, and promoted-content must all match one another, and each must equal the stored manifest.tsv byte for byte|",
+      "canonical": "|\u5168\u94fe\u4e00\u81f4\u6027|source-before\u3001source-after\u3001staging-content\u3001promoted-content \u56db\u6b21 canonical manifest \u5fc5\u987b\u4e24\u4e24\u76f8\u540c\uff0c\u4e14\u5747\u4e0e stored manifest.tsv \u5b57\u8282\u9010\u5b57\u8282\u76f8\u7b49|"
+    },
+    {
+      "english": "|Timing order|input/source-before\u2192create same-volume staging\u2192capture/copy\u2192source-after\u2192staging-content\u2192write stored manifest\u2192candidate validator\u2192idempotency\u2192P4t-before\u2192atomic move\u2192promotion/promoted-content and identity-chain verification\u2192P4t-after; do not reorder|",
+      "canonical": "|\u65f6\u70b9\u987a\u5e8f|input/source-before\u2192\u521b\u5efa\u540c\u5377 staging\u2192capture/\u590d\u5236\u2192source-after\u2192staging-content\u2192\u5199 stored manifest\u2192candidate validator\u2192idempotency\u2192P4t-before\u2192atomic move\u2192promotion/promoted-content \u4e0e\u8eab\u4efd\u94fe\u590d\u6838\u2192P4t-after\uff1b\u987a\u5e8f\u4e0d\u53ef\u4ea4\u6362|"
+    },
+    {
+      "english": "|Repeated safety checks|Check source-before before creating staging; after copying, regenerate source-after and staging-content and recheck links, ADS, type, API, and resource limits; any mismatch\u2192capture/source-unsafe|",
+      "canonical": "|\u91cd\u590d\u5b89\u5168\u68c0\u67e5|source-before \u5728\u521b\u5efa staging \u524d\u68c0\u67e5\uff1b\u590d\u5236\u540e\u91cd\u65b0\u751f\u6210 source-after \u4e0e staging-content\uff0c\u5e76\u590d\u67e5 link\u3001ADS\u3001type\u3001API \u4e0e\u8d44\u6e90\u4e0a\u9650\uff1b\u4efb\u4e00\u4e0d\u7b26\u2192capture/source-unsafe|"
+    },
+    {
+      "english": "|Identity chain|Source root identity, relative-path set, and each file's identity must match between source-before and source-after; staging-content root and per-file identities must differ from their corresponding source identities, and all regular files must have NumberOfLinks=1; after same-volume atomic move, promoted-content root and per-file identities must match their corresponding staging-content identities, with NumberOfLinks=1 for all regular files; any mismatch uses source-unsafe at its stage|",
+      "canonical": "|\u8eab\u4efd\u94fe|source-before \u4e0e source-after \u7684 source root identity\u3001\u76f8\u5bf9\u8def\u5f84\u96c6\u5408\u53ca\u9010\u6587\u4ef6 identity \u5fc5\u987b\u76f8\u540c\uff1bstaging-content \u7684 root \u53ca\u9010\u6587\u4ef6 identity \u5fc5\u987b\u4e0e source \u5bf9\u5e94 identity \u4e0d\u540c\u4e14\u6240\u6709\u5e38\u89c4\u6587\u4ef6 NumberOfLinks=1\uff1b\u540c\u5377 atomic move \u540e promoted-content \u7684 root \u53ca\u9010\u6587\u4ef6 identity \u5fc5\u987b\u4e0e staging-content \u5bf9\u5e94 identity \u76f8\u540c\u4e14\u6240\u6709\u5e38\u89c4\u6587\u4ef6 NumberOfLinks=1\uff1b\u4efb\u4e00\u4e0d\u7b26\u6309\u6240\u5728\u9636\u6bb5 source-unsafe|"
+    },
+    {
+      "english": "|Promotion verification|If the promoted-content manifest differs from any of the preceding three manifests or stored manifest.tsv, promoted-content root/per-file identities differ from the staging-content baseline, or link, ADS, type, or API checks fail\u2192promotion/source-unsafe and immediate rollback|",
+      "canonical": "|promotion \u590d\u6838|promoted-content manifest \u4e0e\u524d\u4e09\u6b21 manifest \u6216 stored manifest.tsv \u4e0d\u76f8\u7b49\uff0c\u6216 promoted-content \u7684 root/\u9010\u6587\u4ef6 identity \u4e0e staging-content \u57fa\u7ebf\u4e0d\u540c\uff0c\u6216\u51fa\u73b0 link\u3001ADS\u3001type\u3001API \u5931\u8d25\u2192promotion/source-unsafe \u5e76\u7acb\u5373 rollback|"
+    },
+    {
+      "english": "|fingerprint|After full-chain consistency, use the lowercase SHA-256 of the source-before canonical manifest bytes|",
+      "canonical": "|fingerprint|\u5168\u94fe\u4e00\u81f4\u540e\u53d6 source-before canonical manifest bytes \u7684 lowercase SHA-256|"
+    },
+    {
+      "english": "|Empty directory|\u5feb\u7167/\u5185\u5bb9/ must exist; all five sets of manifest bytes are zero bytes; file count=0, byte count=0|",
+      "canonical": "|\u7a7a\u76ee\u5f55|\u5feb\u7167/\u5185\u5bb9/ \u5fc5\u987b\u5b58\u5728\uff1b\u4e94\u4efd manifest bytes \u5747\u4e3a\u96f6\u5b57\u8282\uff1b\u6587\u4ef6\u6570=0\u3001\u5b57\u8282\u6570=0|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Web intake",
+      "canonical": "## Web \u63a5\u5165"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```powershell",
+      "canonical": "```powershell"
+    },
+    {
+      "english": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\capture-borrowing-source.ps1 `",
+      "canonical": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\capture-borrowing-source.ps1 `"
+    },
+    {
+      "english": "  -Root $PWD.Path `",
+      "canonical": "  -Root $PWD.Path `"
+    },
+    {
+      "english": "  -SourceType Web `",
+      "canonical": "  -SourceType Web `"
+    },
+    {
+      "english": "  -SourceId '<source_id>' `",
+      "canonical": "  -SourceId '<source_id>' `"
+    },
+    {
+      "english": "  -WebRawBytesPath '<response-bytes-path>' `",
+      "canonical": "  -WebRawBytesPath '<response-bytes-path>' `"
+    },
+    {
+      "english": "  -WebResponseMetadataPath '<response-metadata-path>' `",
+      "canonical": "  -WebResponseMetadataPath '<response-metadata-path>' `"
+    },
+    {
+      "english": "  -AccessPolicy 'source-read-only' `",
+      "canonical": "  -AccessPolicy 'source-read-only' `"
+    },
+    {
+      "english": "  -NetworkPolicy 'source-read-only' `",
+      "canonical": "  -NetworkPolicy 'source-read-only' `"
+    },
+    {
+      "english": "  -AuthorizationTime '<ISO 8601>' `",
+      "canonical": "  -AuthorizationTime '<ISO 8601>' `"
+    },
+    {
+      "english": "  -AuthorizationSource '<auditable source>' `",
+      "canonical": "  -AuthorizationSource '<auditable source>' `"
+    },
+    {
+      "english": "  -AuthorizationScope '<limited scope>'",
+      "canonical": "  -AuthorizationScope '<limited scope>'"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The executor registers raw response bytes and response metadata already obtained with authorization and computes `SHA-256` from the raw bytes. This call does not access the network itself or substitute decoded text for the original content.",
+      "canonical": "\u6267\u884c\u5668\u767b\u8bb0\u5df2\u6388\u6743\u53d6\u5f97\u7684\u539f\u59cb\u54cd\u5e94\u5b57\u8282\u548c\u54cd\u5e94\u5143\u6570\u636e\uff0c\u5e76\u4ee5\u539f\u59cb\u5b57\u8282\u8ba1\u7b97 `SHA-256`\uff1b\u672c\u8c03\u7528\u4e0d\u4f1a\u81ea\u884c\u8054\u7f51\uff0c\u4e5f\u4e0d\u4ee5\u89e3\u7801\u6587\u672c\u66ff\u4ee3\u539f\u59cb\u5185\u5bb9\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Web input path contract",
+      "canonical": "### Web \u8f93\u5165\u8def\u5f84\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Web input item|Exact contract|",
+      "canonical": "|Web \u8f93\u5165\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Both inputs|WebRawBytesPath and WebResponseMetadataPath must be existing safe regular files; complete full Windows path and file identity validation before writing|",
+      "canonical": "|\u4e24\u9879\u8f93\u5165|WebRawBytesPath \u4e0e WebResponseMetadataPath \u5747\u4e3a\u65e2\u6709\u5b89\u5168\u5e38\u89c4\u6587\u4ef6\uff1b\u5199\u5165\u524d\u5b8c\u6210\u5b8c\u6574 Windows \u8def\u5f84\u4e0e\u6587\u4ef6\u8eab\u4efd\u9a8c\u8bc1|"
+    },
+    {
+      "english": "|Root boundary|Neither input may equal Root or Root/\u501f\u9274\u533a or be an ancestor/descendant of either; do not read back from the borrowing area to create a self-reference|",
+      "canonical": "|Root \u8fb9\u754c|\u4e24\u8f93\u5165\u4e0e Root \u53ca Root/\u501f\u9274\u533a \u5747\u4e0d\u5f97\u76f8\u7b49\u6216\u4e92\u4e3a ancestor/descendant\uff1b\u4e0d\u5f97\u4ece\u501f\u9274\u533a\u56de\u8bfb\u5f62\u6210\u81ea\u5f15\u7528|"
+    },
+    {
+      "english": "|Distinctness|Canonical paths must differ under OrdinalIgnoreCase and file identity triples must differ; reject the same path, a hardlink alias, or the same underlying entity|",
+      "canonical": "|\u4e92\u5f02|canonical path \u5fc5\u987b OrdinalIgnoreCase \u4e0d\u540c\u4e14\u6587\u4ef6\u8eab\u4efd\u4e09\u5143\u7ec4\u4e0d\u540c\uff1b\u540c\u8def\u5f84\u3001hardlink alias \u6216\u540c\u4e00\u5b9e\u4f53\u5747\u62d2\u7edd|"
+    },
+    {
+      "english": "|Link boundary|Any reparse/link/ADS/NumberOfLinks!=1 or unavailable identity API\u2192input/source-boundary|",
+      "canonical": "|\u94fe\u63a5\u8fb9\u754c|\u4efb\u4e00 reparse/link/ADS/NumberOfLinks!=1 \u6216\u8eab\u4efd API \u4e0d\u53ef\u7528\u2192input/source-boundary|"
+    },
+    {
+      "english": "|Network boundary|Read only the two authorized input files; do not issue network requests, redirects, or external processes|",
+      "canonical": "|\u8054\u7f51\u8fb9\u754c|\u53ea\u8bfb\u53d6\u4e24\u4e2a\u5df2\u6388\u6743\u8f93\u5165\u6587\u4ef6\uff1b\u4e0d\u5f97\u53d1\u8d77\u7f51\u7edc\u8bf7\u6c42\u3001\u91cd\u5b9a\u5411\u6216\u5916\u90e8\u8fdb\u7a0b|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### WebResponseMetadataPath input contract",
+      "canonical": "### WebResponseMetadataPath \u8f93\u5165\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "| Metadata item | Exact contract |",
+      "canonical": "| metadata \u9879 | \u7cbe\u786e\u5408\u540c |"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "| Container | UTF-8 JSON object without BOM |",
+      "canonical": "| \u5bb9\u5668 | UTF-8 \u65e0 BOM JSON \u5bf9\u8c61 |"
+    },
+    {
+      "english": "| Fixed, exclusive keys | schema, original_url, final_url, redirect_chain, status_code, mime, charset, etag, last_modified |",
+      "canonical": "| \u56fa\u5b9a\u4e14\u4ec5\u6709\u952e | schema, original_url, final_url, redirect_chain, status_code, mime, charset, etag, last_modified |"
+    },
+    {
+      "english": "| schema | borrowing-web-response/v1 |",
+      "canonical": "| schema | borrowing-web-response/v1 |"
+    },
+    {
+      "english": "| original_url / final_url | Sanitized absolute HTTPS; userinfo, query, fragment, CR, and LF prohibited |",
+      "canonical": "| original_url / final_url | \u51c0\u5316\u7edd\u5bf9 HTTPS\uff1b\u7981\u6b62 userinfo\u3001query\u3001fragment\u3001CR\u3001LF |"
+    },
+    {
+      "english": "| redirect_chain | Ordered JSON array; empty array means no redirects; array order equals visit order |",
+      "canonical": "| redirect_chain | \u6709\u5e8f JSON \u6570\u7ec4\uff1b\u7a7a\u6570\u7ec4\u8868\u793a\u65e0\u91cd\u5b9a\u5411\uff1b\u6570\u7ec4\u987a\u5e8f\u7b49\u4e8e\u8bbf\u95ee\u987a\u5e8f |"
+    },
+    {
+      "english": "| Fixed, exclusive keys in each redirect_chain item | status_code, location_url |",
+      "canonical": "| redirect_chain \u6bcf\u9879\u56fa\u5b9a\u4e14\u4ec5\u6709\u952e | status_code, location_url |"
+    },
+    {
+      "english": "| redirect_chain[].status_code | 300..399 and not 304 |",
+      "canonical": "| redirect_chain[].status_code | 300..399 \u4e14\u4e0d\u7b49\u4e8e 304 |"
+    },
+    {
+      "english": "| redirect_chain[].location_url | Resolved, sanitized absolute HTTPS; userinfo, query, fragment, CR, and LF prohibited |",
+      "canonical": "| redirect_chain[].location_url | \u89e3\u6790\u540e\u7684\u51c0\u5316\u7edd\u5bf9 HTTPS\uff1b\u7981\u6b62 userinfo\u3001query\u3001fragment\u3001CR\u3001LF |"
+    },
+    {
+      "english": "| Nonempty redirect_chain | Last location_url must equal final_url |",
+      "canonical": "| redirect_chain \u975e\u7a7a | \u672b\u9879 location_url \u5fc5\u987b\u7b49\u4e8e final_url |"
+    },
+    {
+      "english": "| Empty redirect_chain | original_url must equal final_url |",
+      "canonical": "| redirect_chain \u4e3a\u7a7a | original_url \u5fc5\u987b\u7b49\u4e8e final_url |"
+    },
+    {
+      "english": "| status_code | 100..599 |",
+      "canonical": "| status_code | 100..599 |"
+    },
+    {
+      "english": "| mime | Nonempty media type |",
+      "canonical": "| mime | \u975e\u7a7a\u5a92\u4f53\u7c7b\u578b |"
+    },
+    {
+      "english": "| charset / etag / last_modified | Strings without CR/LF, or null |",
+      "canonical": "| charset / etag / last_modified | \u65e0 CR/LF \u5b57\u7b26\u4e32\u6216 null |"
+    },
+    {
+      "english": "| Key validation | Decode JSON escapes in key names before duplicate detection; reject unknown, duplicate, or missing keys at the top level and in every redirect_chain item; a and \\u0061 count as duplicates |",
+      "canonical": "| \u952e\u6821\u9a8c | \u952e\u540d\u5148\u6309 JSON escape \u89e3\u7801\u518d\u5224\u91cd\uff1b\u9876\u5c42\u53ca redirect_chain \u6bcf\u9879\u5747\u62d2\u7edd\u672a\u77e5\u952e\u3001\u91cd\u590d\u952e\u3001\u7f3a\u5931\u952e\uff1ba \u4e0e \\u0061 \u89c6\u4e3a\u91cd\u590d |"
+    },
+    {
+      "english": "| JSON implementation | Strict tokenizer/parser; reject unpaired surrogates and trailing JSON; do not implement the machine contract with ConvertFrom-Json/ConvertTo-Json |",
+      "canonical": "| JSON \u5b9e\u73b0 | \u4e25\u683c tokenizer/parser\uff1b\u62d2\u7edd\u5b64\u7acb surrogate \u4e0e trailing JSON\uff1b\u7981\u6b62\u7528 ConvertFrom-Json/ConvertTo-Json \u5145\u5f53\u673a\u5668\u5408\u540c\u5b9e\u73b0 |"
+    },
+    {
+      "english": "| redirect_count | Derived only from redirect_chain array length; must not be an input key |",
+      "canonical": "| redirect_count | \u4ec5\u7531 redirect_chain \u6570\u7ec4\u957f\u5ea6\u6d3e\u751f\uff1b\u4e0d\u5f97\u4f5c\u4e3a\u8f93\u5165\u952e |"
+    },
+    {
+      "english": "| canonical_locator projection | Card canonical_locator=normalized final_url |",
+      "canonical": "| canonical_locator \u6295\u5f71 | \u5361\u7247 canonical_locator=\u89c4\u8303\u5316 final_url |"
+    },
+    {
+      "english": "| redirect_chain projection | Project in input order as JSON without whitespace; item key order status_code,location_url; empty chain is [] |",
+      "canonical": "| redirect_chain \u6295\u5f71 | \u6309\u8f93\u5165\u987a\u5e8f\u6295\u5f71\u4e3a\u65e0\u7a7a\u767d JSON\uff1b\u6bcf\u9879\u952e\u5e8f status_code,location_url\uff1b\u7a7a\u94fe\u4e3a [] |"
+    },
+    {
+      "english": "| nullable projection | Project JSON null in charset / etag / last_modified as the literal null |",
+      "canonical": "| nullable \u6295\u5f71 | charset / etag / last_modified \u7684 JSON null \u6295\u5f71\u4e3a\u5b57\u9762\u91cf null |"
+    },
+    {
+      "english": "| Response hash | Response hash=fingerprint=raw SHA-256; never trust a hash supplied by metadata |",
+      "canonical": "| \u54cd\u5e94\u54c8\u5e0c | \u54cd\u5e94\u54c8\u5e0c=fingerprint=raw SHA-256\uff1b\u4e0d\u5f97\u4fe1\u4efb metadata \u63d0\u4f9b\u7684 hash |"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|JSON integer item|Exact contract|",
+      "canonical": "|JSON \u6574\u6570\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|status_code token|JSON number token must match `0` or `[1-9][0-9]*`; then enforce range 100..599|",
+      "canonical": "|status_code token|JSON number token \u5fc5\u987b\u5339\u914d `0` \u6216 `[1-9][0-9]*`\uff1b\u968f\u540e\u8303\u56f4 100..599|"
+    },
+    {
+      "english": "|redirect status token|JSON number token must match `0` or `[1-9][0-9]*`; then enforce range 300..399 and exclude 304|",
+      "canonical": "|redirect status token|JSON number token \u5fc5\u987b\u5339\u914d `0` \u6216 `[1-9][0-9]*`\uff1b\u968f\u540e\u8303\u56f4 300..399 \u4e14\u4e0d\u7b49\u4e8e 304|"
+    },
+    {
+      "english": "|Fixed rejection set|Negative values, leading zeros, decimals, exponents, 200.0, 2e2, and numeric strings|",
+      "canonical": "|\u56fa\u5b9a\u62d2\u7edd|\u8d1f\u6570\u3001\u524d\u5bfc\u96f6\u3001\u5c0f\u6570\u3001\u6307\u6570\u3001200.0\u30012e2\u3001\u5b57\u7b26\u4e32\u6570\u5b57|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Web normalization item|Exact contract|",
+      "canonical": "|Web \u89c4\u8303\u5316\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|URL parsing|[Uri] absolute HTTPS; userinfo, query, fragment, backslash, CR, and LF prohibited|",
+      "canonical": "|URL \u89e3\u6790|[Uri] \u7edd\u5bf9 HTTPS\uff1b\u7981\u6b62 userinfo\u3001query\u3001fragment\u3001backslash\u3001CR\u3001LF|"
+    },
+    {
+      "english": "|host|Convert IDN to ASCII, then lowercase|",
+      "canonical": "|host|IDN \u8f6c ASCII \u540e\u5c0f\u5199|"
+    },
+    {
+      "english": "|port|Only default 443 allowed; remove the port from normalized output|",
+      "canonical": "|port|\u4ec5\u5141\u8bb8\u9ed8\u8ba4 443\uff1b\u89c4\u8303\u5316\u8f93\u51fa\u79fb\u9664\u7aef\u53e3|"
+    },
+    {
+      "english": "|path|RFC3986 dot-segment resolution; UriEscaped; uppercase percent hex digits; normalize an empty path to /|",
+      "canonical": "|path|RFC3986 dot-segment \u89e3\u6790\uff1bUriEscaped\uff1bpercent \u5341\u516d\u8fdb\u5236\u5927\u5199\uff1b\u7a7a\u8def\u5f84\u89c4\u8303\u4e3a /|"
+    },
+    {
+      "english": "|canonical_locator|normalized final_url|",
+      "canonical": "|canonical_locator|normalized final_url|"
+    },
+    {
+      "english": "|nullable JSON null|Project to the card as bare null|",
+      "canonical": "|nullable JSON null|\u5361\u7247\u6295\u5f71\u4e3a\u88f8 null|"
+    },
+    {
+      "english": "|nullable JSON string|Use the canonical JSON string algorithm|",
+      "canonical": "|nullable JSON string|\u4f7f\u7528 canonical JSON string \u7b97\u6cd5|"
+    },
+    {
+      "english": "|String \"null\"|Distinguishable from JSON null|",
+      "canonical": "|\u5b57\u7b26\u4e32 \"null\"|\u4e0e JSON null \u53ef\u533a\u5206|"
+    },
+    {
+      "english": "|mime|`^[a-z0-9][a-z0-9!#$%&'*+.^_~-]*/[a-z0-9][a-z0-9!#$%&'*+.^_~-]*$`|",
+      "canonical": "|mime|`^[a-z0-9][a-z0-9!#$%&'*+.^_~-]*/[a-z0-9][a-z0-9!#$%&'*+.^_~-]*$`|"
+    },
+    {
+      "english": "|mime input|Must already be lowercase and match the regex above; do not normalize case|",
+      "canonical": "|mime \u8f93\u5165|\u5fc5\u987b\u5df2\u4e3a\u5c0f\u5199\u5e76\u5339\u914d\u4e0a\u8ff0\u6b63\u5219\uff1b\u4e0d\u5f97\u505a\u5927\u5c0f\u5199\u5f52\u4e00|"
+    },
+    {
+      "english": "|Full mime length|C0/C1/U+2028/U+2029 prohibited; Match.Index=0 and Match.Length=input length; IsMatch alone is insufficient|",
+      "canonical": "|mime \u5168\u957f|\u7981\u6b62 C0/C1/U+2028/U+2029\uff1bMatch.Index=0 \u4e14 Match.Length=\u8f93\u5165\u957f\u5ea6\uff1b\u4e0d\u5f97\u4ec5\u7528 IsMatch|"
+    },
+    {
+      "english": "|Additional mime prohibitions|pipe / backtick / parameters|",
+      "canonical": "|mime \u9644\u52a0\u7981\u6b62|pipe / backtick / \u53c2\u6570|"
+    },
+    {
+      "english": "|redirect_chain|Compact JSON; fixed key order status_code,location_url; strings use the same escaping; empty chain []|",
+      "canonical": "|redirect_chain|\u7d27\u51d1 JSON\uff1b\u56fa\u5b9a\u952e\u5e8f status_code,location_url\uff1b\u5b57\u7b26\u4e32\u4f7f\u7528\u76f8\u540c\u8f6c\u4e49\uff1b\u7a7a\u94fe []|"
+    },
+    {
+      "english": "|Card cells|Raw pipe, TAB, CR, and LF prohibited|",
+      "canonical": "|\u5361\u7247\u5355\u5143\u683c|\u7981\u6b62\u539f\u59cb pipe\u3001TAB\u3001CR\u3001LF|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Canonical JSON string item|Exact contract|",
+      "canonical": "|canonical JSON string \u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Preprocessing|NFC; wrap in double quotes|",
+      "canonical": "|\u9884\u5904\u7406|NFC\uff1b\u53cc\u5f15\u53f7\u5305\u88f9|"
+    },
+    {
+      "english": "|Short escapes|quote\u2192\\\"; backslash\u2192\\\\; BS/FF/LF/CR/TAB\u2192\\b/\\f/\\n/\\r/\\t|",
+      "canonical": "|\u77ed\u8f6c\u4e49|quote\u2192\\\"\uff1bbackslash\u2192\\\\\uff1bBS/FF/LF/CR/TAB\u2192\\b/\\f/\\n/\\r/\\t|"
+    },
+    {
+      "english": "|Unicode escapes|Other C0, all C1, pipe, U+2028, U+2029\u2192uppercase 4-digit \\uXXXX|",
+      "canonical": "|unicode \u8f6c\u4e49|\u5176\u4f59 C0\u3001\u5168\u90e8 C1\u3001pipe\u3001U+2028\u3001U+2029\u2192\u5927\u5199 4 \u4f4d \\uXXXX|"
+    },
+    {
+      "english": "|Unchanged UTF-8|Other Unicode scalars; preserve non-BMP characters as-is|",
+      "canonical": "|\u539f\u6837 UTF-8|\u5176\u4ed6 Unicode scalar\uff1b\u975e BMP \u539f\u6837|"
+    },
+    {
+      "english": "|slash|Do not escape|",
+      "canonical": "|slash|\u4e0d\u8f6c\u4e49|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "### Web canonical metadata on-disk contract",
+      "canonical": "### Web canonical metadata \u843d\u76d8\u5408\u540c"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "|Web snapshot item|Exact contract|",
+      "canonical": "|Web \u5feb\u7167\u9879|\u7cbe\u786e\u5408\u540c|"
+    },
+    {
+      "english": "|---|---|",
+      "canonical": "|---|---|"
+    },
+    {
+      "english": "|Raw path|\u5feb\u7167/response.bin|",
+      "canonical": "|raw \u8def\u5f84|\u5feb\u7167/response.bin|"
+    },
+    {
+      "english": "|Metadata path|\u5feb\u7167/response.metadata.json|",
+      "canonical": "|metadata \u8def\u5f84|\u5feb\u7167/response.metadata.json|"
+    },
+    {
+      "english": "|raw bytes|Preserve original response bytes byte for byte|",
+      "canonical": "|raw bytes|\u539f\u59cb\u54cd\u5e94\u5b57\u8282\u9010\u5b57\u8282\u4fdd\u5b58|"
+    },
+    {
+      "english": "|Top-level key order|schema,original_url,final_url,redirect_chain,status_code,mime,charset,etag,last_modified|",
+      "canonical": "|\u9876\u5c42\u952e\u5e8f|schema,original_url,final_url,redirect_chain,status_code,mime,charset,etag,last_modified|"
+    },
+    {
+      "english": "|redirect item key order|status_code,location_url|",
+      "canonical": "|redirect item \u952e\u5e8f|status_code,location_url|"
+    },
+    {
+      "english": "|Values|Use normalized values specified by the input contract|",
+      "canonical": "|\u503c|\u4f7f\u7528\u8f93\u5165\u5408\u540c\u89c4\u5b9a\u7684\u89c4\u8303\u5316\u503c|"
+    },
+    {
+      "english": "|canonical bytes|Compact JSON; UTF-8 without BOM; exactly one final LF|",
+      "canonical": "|canonical bytes|compact JSON\uff1bUTF-8 \u65e0 BOM\uff1b\u6070\u597d\u4e00\u4e2a\u672b\u5c3e LF|"
+    },
+    {
+      "english": "|Metadata measurement|Measure input bytes and canonical file bytes separately; canonical measurement includes the final LF|",
+      "canonical": "|metadata \u8ba1\u91cf|\u8f93\u5165\u5b57\u8282\u4e0e canonical \u6587\u4ef6\u5b57\u8282\u5404\u81ea\u8ba1\u91cf\uff1bcanonical \u8ba1\u91cf\u5305\u542b\u672b\u5c3e LF|"
+    },
+    {
+      "english": "|MIME input|Must already be lowercase and match the MIME regex; do not normalize case|",
+      "canonical": "|MIME \u8f93\u5165|\u5fc5\u987b\u5df2\u4e3a\u5c0f\u5199\u5e76\u5339\u914d MIME \u6b63\u5219\uff1b\u4e0d\u5f97\u505a\u5927\u5c0f\u5199\u5f52\u4e00|"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Authorization parameters",
+      "canonical": "## \u6388\u6743\u53c2\u6570"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The public permission parameters are `RightsStatus`, `AccessPolicy`, `ReuseScope`, `ExecutionPolicy`, `NetworkPolicy`, `StoragePolicy`, `DistributionPolicy`, `UpstreamWritePolicy`, and `AutoRefresh`; their allowed values and defaults are not redefined in this appendix.",
+      "canonical": "\u516c\u5f00\u6743\u9650\u53c2\u6570\u4e3a `RightsStatus`\u3001`AccessPolicy`\u3001`ReuseScope`\u3001`ExecutionPolicy`\u3001`NetworkPolicy`\u3001`StoragePolicy`\u3001`DistributionPolicy`\u3001`UpstreamWritePolicy`\u3001`AutoRefresh`\uff1b\u5176\u5141\u8bb8\u503c\u548c\u9ed8\u8ba4\u503c\u4e0d\u5728\u672c\u9644\u5f55\u91cd\u590d\u5b9a\u4e49\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Whenever any effective value differs from its default, provide authorization time, source, and scope together; none may be omitted. The public parameters are `AuthorizationTime`, `AuthorizationSource`, and `AuthorizationScope`, respectively. The executor writes evidence into the fixed permissions table for each dimension; authorization for one dimension does not imply authorization for another.",
+      "canonical": "\u4efb\u4f55\u751f\u6548\u503c\u504f\u79bb\u9ed8\u8ba4\u503c\u65f6\uff0c\u5fc5\u987b\u540c\u65f6\u63d0\u4f9b\u6388\u6743\u65f6\u95f4\u3001\u6388\u6743\u6765\u6e90\u548c\u9002\u7528\u8303\u56f4\uff0c\u7f3a\u4e00\u4e0d\u53ef\uff1b\u516c\u5171\u53c2\u6570\u5206\u522b\u4e3a `AuthorizationTime`\u3001`AuthorizationSource`\u3001`AuthorizationScope`\u3002\u6267\u884c\u5668\u628a\u8bc1\u636e\u9010\u7ef4\u5199\u5165\u56fa\u5b9a\u6743\u9650\u8868\uff0c\u4e00\u4e2a\u7ef4\u5ea6\u7684\u6388\u6743\u4e0d\u80fd\u63a8\u5bfc\u53e6\u4e00\u4e2a\u7ef4\u5ea6\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Close an item",
+      "canonical": "## \u5173\u95ed\u4e8b\u9879"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Before closing, follow [borrowing governance](../rules/\u501f\u9274\u6cbb\u7406.md) to generate `borrowing-evidence/v1` binding time, command, exit, and the target-manifest digest. Then record implementation targets, adaptation differences, implementation records, and machine-format fresh evidence in the active card while it remains `verifying`. For reject, complete assessment evidence and rejection reasons in `assessing`. Then call only the trusted close entry point:",
+      "canonical": "\u5173\u95ed\u524d\u5148\u6309 [\u501f\u9274\u6cbb\u7406](../rules/\u501f\u9274\u6cbb\u7406.md) \u751f\u6210\u7ed1\u5b9a time\u3001command\u3001exit \u4e0e\u76ee\u6807\u6e05\u5355\u6458\u8981\u7684 `borrowing-evidence/v1`\uff0c\u518d\u628a\u5b9e\u65bd\u76ee\u6807\u3001\u9002\u914d\u5dee\u5f02\u3001\u5b9e\u65bd\u8bb0\u5f55\u4e0e\u673a\u5668\u683c\u5f0f fresh evidence \u5199\u5728\u4ecd\u5904\u4e8e `verifying` \u7684\u6d3b\u52a8\u5361\u4e2d\uff1breject \u5219\u5728 `assessing` \u5b8c\u6210\u8bc4\u4f30\u8bc1\u636e\u4e0e\u62d2\u7edd\u7406\u7531\u3002\u968f\u540e\u53ea\u8c03\u7528\u53d7\u4fe1\u4efb\u5173\u95ed\u5165\u53e3\uff1a"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```powershell",
+      "canonical": "```powershell"
+    },
+    {
+      "english": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\close-borrowing-item.ps1 `",
+      "canonical": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\close-borrowing-item.ps1 `"
+    },
+    {
+      "english": "  -Root $PWD.Path `",
+      "canonical": "  -Root $PWD.Path `"
+    },
+    {
+      "english": "  -CardPath '.\\\u501f\u9274\u533a\\\u4e8b\u9879\\<borrow_id>\\\u501f\u9274\u5361.md' `",
+      "canonical": "  -CardPath '.\\\u501f\u9274\u533a\\\u4e8b\u9879\\<borrow_id>\\\u501f\u9274\u5361.md' `"
+    },
+    {
+      "english": "  -ClosedAt '<ISO 8601>' `",
+      "canonical": "  -ClosedAt '<ISO 8601>' `"
+    },
+    {
+      "english": "  -Reason '<closing reason>' `",
+      "canonical": "  -Reason '<closing reason>' `"
+    },
+    {
+      "english": "  -Confirmation '<auditable confirmer>'",
+      "canonical": "  -Confirmation '<auditable confirmer>'"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The entry point places the original active card and closed candidate in `.staging-close-<32hex>/` under the item's parent directory. It installs the candidate with a no-overwrite move, calls the seal helper, and uses the full root P4t as the final gate. Neither candidate installation nor seal commit may overwrite later objects. After P4t exit 0, it must still lock the formal card, verify identity and sealed bytes, and clean up this transaction's owned staging while holding the lock before succeeding. Restore the original active card and retain the failed candidate at `.staging-close-<32hex>/\u501f\u9274\u5361.md` only when ownership is provable and `content-deleted` has not been reached. If the first formal-card snapshot after seal exit 0, attestation parsing, or its identity/length/SHA-256 binding fails, report exactly `stage=seal / reason_code=seal-ownership-unproven` and preserve the current formal card and staging. If the materials prove binding to the current formal object but `borrow_id` differs, ownership remains provable, and the original active card can be safely restored from the full snapshot. Failures after the irreversible `content-deleted` completion point must not roll back the formal card. Every branch outputs actual normalized paths; never manually invoke seal as a replacement for the close transaction.",
+      "canonical": "\u5165\u53e3\u628a\u539f\u6d3b\u52a8\u5361\u548c closed \u5019\u9009\u653e\u5165\u4e8b\u9879\u7236\u76ee\u5f55\u7684 `.staging-close-<32hex>/`\uff0c\u4ee5 no-overwrite \u79fb\u52a8\u88c5\u5165\u5019\u9009\u540e\u8c03\u7528 seal helper\uff0c\u5e76\u4ee5\u5b8c\u6574\u6839 P4t \u4f5c\u6700\u7ec8\u95f8\u95e8\u3002\u5019\u9009\u4e0e seal \u63d0\u4ea4\u5747\u4e0d\u5f97\u8986\u76d6\u540e\u6765\u5bf9\u8c61\u3002P4t exit 0 \u540e\u4ecd\u987b\u9501\u4f4f\u6b63\u5f0f\u5361\u5e76\u590d\u6838\u8eab\u4efd\u4e0e sealed \u5b57\u8282\uff0c\u9501\u5185\u6e05\u7406\u672c\u4e8b\u52a1\u81ea\u6709 staging \u540e\u624d\u6210\u529f\u3002\u53ea\u6709 ownership \u53ef\u8bc1\u660e\u4e14\u672a\u8fdb\u5165 `content-deleted` \u7684\u5931\u8d25\u624d\u6062\u590d\u539f\u6d3b\u52a8\u5361\u5e76\u4fdd\u7559\u5931\u8d25\u5019\u9009 `.staging-close-<32hex>/\u501f\u9274\u5361.md`\uff1bseal exit 0 \u540e\u9996\u6b21\u6b63\u5f0f\u5361\u5feb\u7167\u3001attestation \u89e3\u6790\u6216\u5176 identity/length/SHA-256 \u7ed1\u5b9a\u5931\u8d25\u65f6\uff0c\u7cbe\u786e\u8bca\u65ad\u4e3a `stage=seal / reason_code=seal-ownership-unproven`\uff0c\u5fc5\u987b\u4fdd\u7559\u5f53\u524d\u6b63\u5f0f\u5361\u4e0e staging\u3002\u82e5\u6750\u6599\u8bc1\u660e\u5df2\u7ed1\u5b9a\u5f53\u524d\u6b63\u5f0f\u5bf9\u8c61\u4f46 `borrow_id` \u4e0d\u4e00\u81f4\uff0cownership \u4ecd\u53ef\u8bc1\u660e\uff0c\u53ef\u6309\u5b8c\u6574\u5feb\u7167\u5b89\u5168\u6062\u590d\u539f\u6d3b\u52a8\u5361\u3002`content-deleted` \u4e0d\u53ef\u9006\u5b8c\u6210\u70b9\u540e\u7684\u5931\u8d25\u4e0d\u56de\u6eda\u6b63\u5f0f\u5361\u3002\u6240\u6709\u5206\u652f\u90fd\u8f93\u51fa\u5b9e\u9645\u89c4\u8303\u5316\u8def\u5f84\uff0c\u4e0d\u5f97\u624b\u5de5\u8c03\u7528 seal \u4ee3\u66ff\u5173\u95ed\u4e8b\u52a1\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Optional path output must use an explicit state object with a writable `Value` property, not optional `[ref]` parameters. The executor computes the attempted path and writes it to the state object before creating the staging directory. This lets it report the path actually attempted even if creation or compensation fails, while zero-write preflight still outputs `none(not-created)`.",
+      "canonical": "\u53ef\u9009\u8def\u5f84\u8f93\u51fa\u5fc5\u987b\u4f7f\u7528\u5e26\u53ef\u5199 `Value` \u5c5e\u6027\u7684\u663e\u5f0f\u72b6\u6001\u5bf9\u8c61\uff0c\u4e0d\u5f97\u4f7f\u7528\u53ef\u9009 `[ref]` \u53c2\u6570\u3002\u6267\u884c\u5668\u5148\u8ba1\u7b97\u5c1d\u8bd5\u8def\u5f84\u5e76\u5148\u5199\u5165\u72b6\u6001\u5bf9\u8c61\uff0c\u518d\u521b\u5efa staging \u76ee\u5f55\uff1b\u56e0\u6b64\u521b\u5efa\u6216\u8865\u507f\u5931\u8d25\u4e5f\u80fd\u62a5\u544a\u672c\u6b21\u5b9e\u9645\u5c1d\u8bd5\u8def\u5f84\uff0c\u800c\u96f6\u5199\u5165 preflight \u4ecd\u8f93\u51fa `none\uff08\u672a\u521b\u5efa\uff09`\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The staging ownership chain is fixed: atomically create the staging directory relative to the trusted parent directory handle; create the first `\u539f\u6d3b\u52a8\u5361.bin` using directory-handle-relative CreateNew, then write, flush, and bind through that same handle. Keep its file lease for the entire transaction so the directory remains nonempty. Create candidate `\u501f\u9274\u5361.md` with directory-handle-relative CreateNew as well.",
+      "canonical": "staging \u6240\u6709\u6743\u94fe\u56fa\u5b9a\uff1a\u901a\u8fc7\u53d7\u4fe1\u7236\u76ee\u5f55\u53e5\u67c4\u76f8\u5bf9\u539f\u5b50\u521b\u5efa staging \u76ee\u5f55\uff1b\u9996\u4e2a `\u539f\u6d3b\u52a8\u5361.bin` \u4ee5\u76ee\u5f55\u53e5\u67c4\u76f8\u5bf9 CreateNew\uff0c\u5e76\u5728\u540c\u4e00 handle \u5199\u5165\u3001flush \u5e76\u7ed1\u5b9a\uff0c\u6587\u4ef6 lease \u8d2f\u7a7f\u6574\u4e2a\u4e8b\u52a1\u4ee5\u8ba9\u76ee\u5f55\u4fdd\u6301\u975e\u7a7a\uff1b\u5019\u9009 `\u501f\u9274\u5361.md` \u4e5f\u4ee5\u76ee\u5f55\u53e5\u67c4\u76f8\u5bf9 CreateNew\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "The cleanup order is fixed: `Candidate\u2192retained Original\u2192content-deleted\u2192directory`. Open Candidate once through its bound handle, validate it, and set delete-pending on that same handle. Set delete-pending for retained Original through the same handle held by its retained lease. Immediately enter `content-deleted`, then delete the directory through its original creation handle. Leave no window between validation and opening a path; on creation failure, delete only objects bound to this transaction's handles.",
+      "canonical": "\u6e05\u7406\u987a\u5e8f\u56fa\u5b9a\u4e3a `Candidate\u2192retained Original\u2192content-deleted\u2192directory`\uff1aCandidate \u4ee5\u5355\u6b21\u6253\u5f00\u7684\u7ed1\u5b9a handle \u5b8c\u6210\u9a8c\u8bc1\u5e76\u5728\u540c\u4e00 handle \u8bbe\u7f6e delete-pending\uff1bretained Original \u901a\u8fc7\u4fdd\u7559 lease \u5728\u540c\u4e00 handle \u8bbe\u7f6e delete-pending\uff1b\u968f\u540e\u7acb\u5373\u8fdb\u5165 `content-deleted`\uff0c\u6700\u540e\u7531\u76ee\u5f55\u521b\u5efa\u53e5\u67c4\u540c\u53e5\u67c4\u5220\u9664\u3002\u9a8c\u8bc1\u4e0e\u8def\u5f84\u6253\u5f00\u4e4b\u95f4\u4e0d\u5f97\u7559\u7a97\u53e3\uff1b\u521b\u5efa\u5931\u8d25\u53ea\u5220\u9664\u672c\u4e8b\u52a1\u53e5\u67c4\u7ed1\u5b9a\u5bf9\u8c61\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "After P4t exit 0, acquire the formal card's final lock with one OPEN_REPARSE_POINT open and verify canonical path, regular non-reparse type, link count=1, identity, length, and bytes through the same handle. Hold this exclusive lease until staging cleanup ends. Never perform a separate safe-path check followed by reopening the path.",
+      "canonical": "P4t exit 0 \u540e\uff0c\u6b63\u5f0f\u5361\u7ec8\u9501\u5fc5\u987b\u5355\u6b21 OPEN_REPARSE_POINT \u6253\u5f00\uff0c\u5e76\u4ece\u540c\u4e00 handle \u590d\u6838 canonical path\u3001\u5e38\u89c4\u975e reparse \u7c7b\u578b\u3001link count=1\u3001identity\u3001length \u4e0e bytes\uff1b\u8be5\u6392\u4ed6 lease \u6301\u6709\u5230 staging \u6e05\u7406\u7ed3\u675f\u3002\u7981\u6b62\u201c\u5148\u5b89\u5168\u8def\u5f84\u9a8c\u8bc1\u518d\u6309\u8def\u5f84\u91cd\u5f00\u201d\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "After seal, staging candidate updates follow a two-state contract: the formal-card ownership snapshot and current staging-candidate snapshot are independent states that rollback must validate separately. Do not prematurely change the expected staging contents to sealed bytes. After the Set commit in `Set-BctCandidateBytes`, update the state object before any further verification that can fail, so exception branches observe the candidate actually committed.",
+      "canonical": "seal \u540e staging \u5019\u9009\u66f4\u65b0\u9075\u5faa\u53cc\u72b6\u6001\u5408\u540c\uff1a\u6b63\u5f0f\u5361\u6240\u6709\u6743\u5feb\u7167\u4e0e\u5f53\u524d staging \u5019\u9009\u5feb\u7167\u662f\u4e24\u4e2a\u72ec\u7acb\u72b6\u6001\uff0c\u56de\u6eda\u5fc5\u987b\u5206\u522b\u9a8c\u8bc1\uff1b\u4e0d\u5f97\u63d0\u524d\u628a staging \u671f\u671b\u6539\u6210 sealed \u5b57\u8282\u3002`Set-BctCandidateBytes` \u7684 Set \u63d0\u4ea4\u540e\u72b6\u6001\u5bf9\u8c61\u5148\u66f4\u65b0\uff0c\u518d\u6267\u884c\u540e\u7eed\u53ef\u5931\u8d25\u590d\u6838\uff0c\u786e\u4fdd\u5f02\u5e38\u5206\u652f\u770b\u5230\u5b9e\u9645\u5df2\u63d0\u4ea4\u5019\u9009\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Failure recovery",
+      "canonical": "## \u5931\u8d25\u6062\u590d"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "Failure output must identify the failed stage and `staging path`. After correcting authorization, input, or environment issues, retry through the main skill. A failure must not produce ready, manually promote incomplete output, overwrite an old capture, or silently delete user data.",
+      "canonical": "\u5931\u8d25\u8f93\u51fa\u5fc5\u987b\u7ed9\u51fa\u5931\u8d25\u9636\u6bb5\u548c `staging \u8def\u5f84`\u3002\u4fee\u6b63\u6388\u6743\u3001\u8f93\u5165\u6216\u73af\u5883\u540e\uff0c\u901a\u8fc7\u4e3b Skill \u91cd\u8bd5\uff1b\u5931\u8d25\u4e0d\u5f97\u751f\u6210 ready\uff0c\u4e5f\u4e0d\u5f97\u624b\u5de5\u664b\u5347\u534a\u6210\u54c1\u3001\u8986\u76d6\u65e7 capture \u6216\u9759\u9ed8\u5220\u9664\u7528\u6237\u6570\u636e\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "For zero-write preflight failures, the fixed staging output is `none(not-created)`.",
+      "canonical": "\u96f6\u5199\u5165 preflight \u5931\u8d25\uff1astaging \u8f93\u51fa\u56fa\u5b9a\u4e3a `none\uff08\u672a\u521b\u5efa\uff09`\u3002"
+    },
+    {
+      "english": "Output its normalized path only when staging already exists.",
+      "canonical": "\u4ec5\u5728\u5df2\u6709 staging \u65f6\u8f93\u51fa\u5176\u89c4\u8303\u5316\u8def\u5f84\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "## Diagnostics",
+      "canonical": "## \u8bca\u65ad"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "```powershell",
+      "canonical": "```powershell"
+    },
+    {
+      "english": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\check-os\\p4t-borrowing-consistency.ps1 -Root $PWD.Path",
+      "canonical": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\\u80fd\u529b\u8d44\u4ea7\\tools\\scripts\\check-os\\p4t-borrowing-consistency.ps1 -Root $PWD.Path"
+    },
+    {
+      "english": "```",
+      "canonical": "```"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    },
+    {
+      "english": "`P4t` diagnostics remain read-only and offline. They do not refresh sources, execute source content, or replace authorization for failure recovery.",
+      "canonical": "`P4t` \u8bca\u65ad\u4fdd\u6301\u53ea\u8bfb\u3001\u79bb\u7ebf\uff1b\u5b83\u4e0d\u5237\u65b0\u6765\u6e90\u3001\u4e0d\u6267\u884c\u6765\u6e90\u5185\u5bb9\uff0c\u4e5f\u4e0d\u4ee3\u66ff\u5931\u8d25\u6062\u590d\u6388\u6743\u3002"
+    },
+    {
+      "english": "",
+      "canonical": ""
+    }
+  ]
+}

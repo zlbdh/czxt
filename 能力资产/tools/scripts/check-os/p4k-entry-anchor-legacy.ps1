@@ -15,10 +15,10 @@ foreach ($check in @(Get-P4kEntryAnchorChecks)) {
 }
 
 if ($hits.Count -gt 0) {
-    Write-Host "  🔴 入口/填实旧口径残留：$($hits.Count) 处" -ForegroundColor Red
+    Write-Host "  🔴 Obsolete entry/completion language remains: $($hits.Count) matches" -ForegroundColor Red
     foreach ($hit in $hits) { Write-Host "    - $hit" -ForegroundColor Red }
     exit 10
 }
 
-Write-Host "  ✅ 入口锚点 / PM 工作区 / 填实状态旧口径未回退" -ForegroundColor Green
+Write-Host "  ✅ Entry anchors, PM workspaces, and completion status contain no obsolete language" -ForegroundColor Green
 exit 0

@@ -115,15 +115,26 @@ function Assert-BorrowingReadmeProjectionOnly {
 
 function Assert-BorrowingWorkflowTriggerProjection {
   param([string]$Text)
-  $target = '[借鉴闭环.md](借鉴闭环.md)'
-  $table = Get-BorrowingMarkdownTableByHeader $Text @('触发', '进入哪个 workflow') 'workflow trigger table'
+  $english = $Text -cmatch '(?m)^\| *Trigger *\| *Workflow *\| *$'
+  if ($english) {
+    $target = '[Borrowing lifecycle](借鉴闭环.md)'
+    $table = Get-BorrowingMarkdownTableByHeader $Text @('Trigger', 'Workflow') 'workflow trigger table'
+  } else {
+    $target = '[借鉴闭环.md](借鉴闭环.md)'
+    $table = Get-BorrowingMarkdownTableByHeader $Text @('触发', '进入哪个 workflow') 'workflow trigger table'
+  }
   $matches = @()
   foreach ($row in @($table.Rows)) {
     if ($row.Count -eq 2 -and $row[1] -ceq $target) { $matches += ,$row }
   }
   Assert-CzxtEqual 1 $matches.Count 'workflow borrowing trigger row count'
   $triggerCell = $matches[0][0]
-  foreach ($word in @('借鉴', '参考', '对标', '吸收')) {
-    Assert-CzxtTrue $triggerCell.Contains($word) ("workflow trigger cell missing: {0}" -f $word)
+  if ($english) {
+    Assert-CzxtTrue ($triggerCell -ceq 'Borrow, reference, compare, or incorporate') `
+      'workflow English trigger cell must preserve all four triggers on one row'
+  } else {
+    foreach ($word in @('借鉴', '参考', '对标', '吸收')) {
+      Assert-CzxtTrue $triggerCell.Contains($word) ("workflow trigger cell missing: {0}" -f $word)
+    }
   }
 }

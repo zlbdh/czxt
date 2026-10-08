@@ -69,7 +69,7 @@ try {
       Write-CzxtText (Join-Path $scripts 'p4b-file-size.ps1') $rendered $script:CzxtUtf8Bom
       $result=Invoke-CzxtPowerShell (Join-Path $scripts 'p4b-file-size.ps1') @('-Root',$project)
       Assert-CzxtEqual 0 $result.ExitCode ('P4b格式输出异常: '+$result.StdErr)
-      Assert-CzxtTrue ($result.StdOut.Contains('文件 ('+$appDir+'/src + 操作系统 + 能力资产)')) 'P4b再次解释了路径中的格式占位符'
+      Assert-CzxtTrue ($result.StdOut.Contains('files ('+$appDir+'/src + 操作系统 + 能力资产)')) 'P4b再次解释了路径中的格式占位符'
     }
   }
 }

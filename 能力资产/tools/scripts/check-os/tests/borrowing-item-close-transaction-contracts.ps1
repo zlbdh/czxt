@@ -268,6 +268,19 @@ try {
   }
 
   if ($script:CloseReady) {
+    Invoke-CzxtContract 'close preflight reports the exact not-created sentinel' {
+      $missingRoot = Join-Path $script:P4tFixtureRoot 'missing-close-root'
+      $result = Invoke-CzxtPowerShell -ScriptPath $script:CloseFacadeTemplatePath `
+        -ScriptArguments @('-Root', $missingRoot, '-CardPath', 'missing-card.md',
+          '-ClosedAt', '2026-07-19T06:00:00+00:00', '-Reason', 'fixture',
+          '-Confirmation', 'fixture-owner') -TimeoutMilliseconds 300000
+      Assert-ExitCode $result 10 'close preflight rejection'
+      Assert-CzxtTrue ($result.StdOut -cmatch '(?m)^staging_path=none\(not-created\)\r?$') `
+        'close preflight must report the exact not-created sentinel'
+      Assert-CzxtTrue (-not (Test-Path -LiteralPath $missingRoot)) `
+        'close preflight created the missing root'
+    }
+
     Invoke-CzxtContract 'staging compensates a directory-stage failure' {
       $itemRoot = Join-Path $script:P4tFixtureRoot 'close-staging-directory-failure'
       [void](New-Item -ItemType Directory -Path $itemRoot)
@@ -540,7 +553,7 @@ try {
         }
       }
       Assert-CzxtEqual 10 $result.ExitCode 'staging report failure exit code'
-      Assert-CzxtTrue ($result.StagingPath -cne 'none（未创建）') `
+      Assert-CzxtTrue ($result.StagingPath -cne 'none(not-created)') `
         'staging creation failure was falsely reported as never created'
       Assert-CzxtEqual 0 @(Get-ChildItem -LiteralPath $itemRoot -Directory -Force |
         Where-Object { $_.Name -like '.staging-close-*' }).Count `
@@ -1153,6 +1166,8 @@ try {
       $result = Invoke-P4tCloseFacade $fixture
       Assert-ExitCode $result 0 'successful close transaction'
       Assert-CzxtTrue $result.StdOut.Contains('result=CLOSED') 'close success output'
+      Assert-CzxtTrue ($result.StdOut -cmatch '(?m)^staging_path=none\(cleaned\)\r?$') `
+        'close success must report the exact cleaned sentinel'
       $text = [IO.File]::ReadAllText($fixture.Item.CardPath, $script:P4tUtf8NoBom)
       Assert-CzxtTrue $text.Contains('lifecycle_status: closed') 'formal item not closed'
       $seal = [regex]::Match(

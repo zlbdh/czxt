@@ -18,7 +18,7 @@ try {
 
 $scriptPath = Join-Path $Root "能力资产\tools\hooks\scheduled\daily-framework-check.ps1"
 if (-not (Test-Path -LiteralPath $scriptPath)) {
-  throw "找不到 scheduled 入口脚本：$scriptPath"
+  throw "Scheduled entry script not found: $scriptPath"
 }
 
 function Get-TaskOrNull {
@@ -32,12 +32,12 @@ if ($Mode -eq "Check") {
   Write-Host "🔎 scheduled task check"
   Write-Host "  task: $TaskName"
   if (-not $task) {
-    Write-Host "  🟡 未注册 Windows 计划任务"
+    Write-Host "  🟡 Windows scheduled task is not registered"
     exit 5
   }
   $info = Get-ScheduledTaskInfo -TaskName $TaskName -ErrorAction SilentlyContinue
   $issues = @()
-  Write-Host "  ✅ 已注册：$($task.State)"
+  Write-Host "  ✅ Registered: $($task.State)"
   if ($info) {
     Write-Host "  last run: $($info.LastRunTime)"
     Write-Host "  last result: $($info.LastTaskResult)"
@@ -60,7 +60,7 @@ if ($Mode -eq "Check") {
     }
   }
   if ($issues.Count -gt 0) {
-    Write-Host "  🟡 scheduled 计划任务需重装：$($issues -join '; ')" -ForegroundColor Yellow
+    Write-Host "  🟡 Scheduled task must be reinstalled: $($issues -join '; ')" -ForegroundColor Yellow
     exit 5
   }
   exit 0
@@ -68,16 +68,16 @@ if ($Mode -eq "Check") {
 
 if ($Mode -eq "Remove") {
   if (-not $task) {
-    Write-Host "🟡 计划任务不存在：$TaskName"
+    Write-Host "🟡 Scheduled task does not exist: $TaskName"
     exit 0
   }
   Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
-  Write-Host "✅ 已删除计划任务：$TaskName"
+  Write-Host "✅ Scheduled task removed: $TaskName"
   exit 0
 }
 
 if ($task) {
-  Write-Host "🟡 计划任务已存在，先删除后重建：$TaskName"
+  Write-Host "🟡 Scheduled task already exists; remove it before recreating: $TaskName"
   Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
 }
 
@@ -93,9 +93,9 @@ Register-ScheduledTask `
   -Trigger $trigger `
   -Settings $settings `
   -Principal $principal `
-  -Description "{{PROJECT_NAME}}操作系统 hooks daily framework check" | Out-Null
+  -Description "{{PROJECT_NAME}} operating system hooks daily framework check" | Out-Null
 
-Write-Host "✅ 已注册计划任务：$TaskName"
-Write-Host "  每日时间：$At"
-Write-Host "  脚本：$scriptPath"
+Write-Host "✅ Scheduled task registered: $TaskName"
+Write-Host "  Daily time: $At"
+Write-Host "  Script: $scriptPath"
 exit 0

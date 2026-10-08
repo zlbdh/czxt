@@ -29,7 +29,7 @@ function Test-RequiredFile {
   param([string]$RelativePath)
   $path = Join-Path $Root $RelativePath
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    $failureSink.Add("🔴 缺必查文件：$RelativePath")
+    $failureSink.Add("🔴 Required file is missing: $RelativePath")
   } else {
     $passSink.Add($RelativePath)
   }
@@ -39,7 +39,7 @@ function Test-OptionalFile {
   param([string]$RelativePath)
   $path = Join-Path $Root $RelativePath
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    $warningSink.Add("🟡 缺可选文件（低活跃）：$RelativePath")
+    $warningSink.Add("🟡 Optional low-activity file is missing: $RelativePath")
   } else {
     $passSink.Add($RelativePath)
   }
@@ -49,7 +49,7 @@ function Test-RequiredDirectory {
   param([string]$RelativePath)
   $path = Join-Path $Root $RelativePath
   if (-not (Test-Path -LiteralPath $path -PathType Container)) {
-    $failureSink.Add("🔴 缺必查目录：$RelativePath")
+    $failureSink.Add("🔴 Required directory is missing: $RelativePath")
   } else {
     $passSink.Add($RelativePath)
   }
@@ -59,28 +59,28 @@ function Test-InstallerProjectZoneSkeleton {
   $installerRel = "实例化项目.ps1"
   $installerPath = Join-Path $Root $installerRel
   if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
-    $failureSink.Add("🔴 缺实例化脚本：$installerRel")
+    $failureSink.Add("🔴 Instantiation script is missing: $installerRel")
     return
   }
   $scriptText = Get-Content -LiteralPath $installerPath -Raw -Encoding UTF8
 
-  # 防递归回归：项目区 不得进 $copyItems 总递归复制清单（否则自实例化时无限套娃）
+  # Prevent recursive-copy regressions: exclude 项目区 from $copyItems, or self-instantiation nests indefinitely.
   $match = [regex]::Match($scriptText, '\$copyItems\s*=\s*@\((?<body>[\s\S]*?)\)')
   $copyItemList = @()
   if ($match.Success) {
     $copyItemList = @([regex]::Matches($match.Groups["body"].Value, '"([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
   }
   if ($copyItemList -contains "项目区") {
-    $failureSink.Add("🔴 实例化脚本 `$copyItems 不应含 项目区（会递归套娃）：改为只拷骨架")
+    $failureSink.Add("🔴 Instantiation script `$copyItems must exclude 项目区 to prevent recursive nesting; copy only its scaffold")
   } else {
-    $passSink.Add("实例化脚本 项目区 未进总递归清单（防套娃）")
+    $passSink.Add("Instantiation script excludes 项目区 from recursive copying")
   }
 
-  # 防漏拷回归：项目区 仍须以骨架方式复制（README/清单/.gitignore + 本地实例/.gitkeep）
+  # Prevent incomplete copies: still copy the 项目区 scaffold (README/index/.gitignore + 本地实例/.gitkeep).
   if (($scriptText -match '项目区') -and ($scriptText -match '本地实例') -and ($scriptText -match '\.gitkeep')) {
-    $passSink.Add("实例化脚本 项目区 骨架复制（含 本地实例/.gitkeep）")
+    $passSink.Add("Instantiation script copies the 项目区 scaffold, including 本地实例/.gitkeep")
   } else {
-    $failureSink.Add("🔴 实例化脚本缺 项目区 骨架复制（README/清单/.gitignore + 本地实例/.gitkeep）")
+    $failureSink.Add("🔴 Instantiation script lacks the 项目区 scaffold copy (README/index/.gitignore + 本地实例/.gitkeep)")
   }
 
 }
@@ -202,7 +202,7 @@ if ($isTemplateRoot) {
   Test-InstallerProjectZoneSkeleton
 }
 
-Write-Host ("  ✅ P4a 通过项：{0}" -f $passSink.Count) -ForegroundColor Green
+Write-Host ("  ✅ P4a passed checks: {0}" -f $passSink.Count) -ForegroundColor Green
 if ($failureSink.Count -gt $initialFailureCount) {
   exit 10
 }

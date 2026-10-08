@@ -2,7 +2,7 @@
 if (Test-Path -LiteralPath $statePath -PathType Leaf) {
   $stateHead = (Get-Content -LiteralPath $statePath -TotalCount 120 -Encoding UTF8) -join "`n"
   if ($stateHead -match 'P4a[-–]P4p|P4j[-–]P4p|主-元-子-子子|git\s+push\s+origin\s+master|hotfix/|创建\s+hotfix\s+分支|AskUserQuestion|TaskCreate|Set-Content\s+-Encoding\s+utf8NoBOM') {
-    Add-Failure "状态.md 顶部 120 行含当前口径旧词"
+    Add-Failure "The first 120 lines of 状态.md contain obsolete current-guidance terms"
   }
 }
 
@@ -11,7 +11,7 @@ if (Test-Path -LiteralPath $pendingDir -PathType Container) {
   foreach ($card in Get-ChildItem -LiteralPath $pendingDir -Filter "*.md" -File -ErrorAction SilentlyContinue) {
     $text = Get-Content -LiteralPath $card.FullName -Raw -Encoding UTF8
     if ($text -match 'git\s+push\s+origin\s+master|hotfix/|创建\s+hotfix\s+分支|AskUserQuestion|TaskCreate|chat 简版\s*⑥(?!.*①-⑦)') {
-      Add-Failure "待接手卡含当前口径旧词：$($card.Name)"
+      Add-Failure "Pending handoff contains obsolete current-guidance terms: $($card.Name)"
     }
   }
 }
@@ -27,6 +27,6 @@ foreach ($rel in @(
   $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
   $normalized = $text -replace '禁止\s*TODO', 'SAFE-TODO' -replace '不可直接复制执行', 'SAFE-HISTORY'
   if ($normalized -match '(?i)\bTODO\b|TBD|待补|待完善|占位|填实') {
-    Add-Failure "活入口含占位/待补语义：$rel"
+    Add-Failure "Active entry contains placeholders or incomplete-content language: $rel"
   }
 }

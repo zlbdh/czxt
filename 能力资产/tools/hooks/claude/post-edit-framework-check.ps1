@@ -1,8 +1,8 @@
 ﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
-# Claude Code PostToolUse 适配器（PROP-038）：Edit/Write 改 framework/PM 工作区/治理入口后，跑 readme-index 快检，
-# 仅在索引漂移时非阻塞提醒（systemMessage）；普通业务代码静默放行，触碰 {{APP_REPO_DIR}}/src 红/软区大文件时仅软提醒。
-# 全程 fail-safe：任何不确定 / 出错都输出 {continue:true}，绝不 block 写操作（PostToolUse 误 block 会很扰）。
+# Claude Code PostToolUse adapter (PROP-038): after Edit/Write changes framework, PM workspace, or governance entries, run the readme-index quick check.
+# Warn through systemMessage only when indexes drift. Ordinary business code passes silently; large red/advisory files under {{APP_REPO_DIR}}/src receive a soft warning.
+# Fail safe throughout: uncertainty or errors return {continue:true}; never block writes, since false PostToolUse blocks disrupt work.
 
 $ErrorActionPreference = "Stop"
 try {
@@ -21,7 +21,7 @@ function Pass {
 }
 
 $raw = [Console]::In.ReadToEnd()
-if (-not [string]::IsNullOrEmpty($raw)) { $raw = $raw.TrimStart([char]0xFEFF) }  # 防个别宿主在 stdin 头塞 BOM 导致 JSON 解析失败
+if (-not [string]::IsNullOrEmpty($raw)) { $raw = $raw.TrimStart([char]0xFEFF) }  # Strip a leading stdin BOM from hosts that would otherwise cause JSON parsing to fail.
 if ([string]::IsNullOrWhiteSpace($raw)) { Pass }
 try { $e = $raw | ConvertFrom-Json } catch { Pass }
 
@@ -40,7 +40,7 @@ try {
   $p4bMsg = $null
 }
 
-# 仅对 framework / PM 工作区 / 治理入口文件触发（含 Docs/3、Docs/7、根状态/README/AGENTS/TASKS）
+# Trigger only for framework, PM workspace, or governance entries, including Docs/3, Docs/7, and root status/README/AGENTS/TASKS.
 $rootN = ([System.IO.Path]::GetFullPath($Root) -replace '\\', '/').TrimEnd('/')
 try {
   if ([System.IO.Path]::IsPathRooted($fp)) {
@@ -68,7 +68,7 @@ if (-not $isFw) { Pass $p4bMsg }
 try {
   $checker = Join-Path $Root "能力资产\tools\scripts\check-readme-indexes.ps1"
   if (-not (Test-Path -LiteralPath $checker)) { Pass $p4bMsg }
-  # 原生子进程调用：临时降 EAP 防 PS5.1 stderr 误终止（已知技术约束 #12），真实成败看 $LASTEXITCODE
+  # Native subprocess: temporarily lower EAP to avoid PS5.1 stderr termination (known constraint #12); use $LASTEXITCODE as the outcome.
   $prev = $ErrorActionPreference
   $ErrorActionPreference = "Continue"
   $out = & powershell -NoProfile -ExecutionPolicy Bypass -File $checker 2>&1
@@ -77,7 +77,7 @@ try {
   if ($code -eq 0) { Pass $p4bMsg }
   $txt = ($out -join ' ')
   if ($txt.Length -gt 220) { $txt = $txt.Substring(0, 220) }
-  $msg = "🟡 改 framework 后 readme-index 快检发现索引漂移，收尾前请跑完整体检并修：" + $txt
+  $msg = "🟡 The readme-index quick check found index drift after framework edits. Run the full health check and fix it before completion:" + $txt
   if ($p4bMsg) { $msg = "$msg `n$p4bMsg" }
   Pass $msg
 } catch {

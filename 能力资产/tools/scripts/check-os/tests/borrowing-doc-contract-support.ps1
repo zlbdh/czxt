@@ -1,6 +1,7 @@
 ﻿$ErrorActionPreference = 'Stop'
 
 . (Join-Path $PSScriptRoot 'borrowing-doc-markdown-parser.ps1')
+. (Join-Path $PSScriptRoot 'borrowing-doc-language.ps1')
 
 function Get-BorrowingDocPath {
   param([string]$Root, [string]$RelativePath)
@@ -16,7 +17,8 @@ function Get-BorrowingDocText {
   param([string]$Root, [string]$RelativePath)
   $path = Get-BorrowingDocPath $Root $RelativePath
   Assert-CzxtTrue (Test-Path -LiteralPath $path -PathType Leaf) ("missing file: {0}" -f $RelativePath)
-  return Get-Content -LiteralPath $path -Raw -Encoding UTF8
+  $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
+  return ConvertTo-BorrowingDocContractText $text $RelativePath
 }
 
 function Assert-BorrowingDocContainsAll {

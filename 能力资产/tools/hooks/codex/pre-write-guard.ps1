@@ -1,12 +1,12 @@
 ﻿param([string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path)
 
-# Codex PreToolUse 适配器（PROP-038 镜像 / 与 claude/pre-write-guard.ps1 同源逻辑 + PROP-001 / 路径 C 类铁律软门禁）：
-# (1) Edit/Write/apply_patch 若往「非 .env」文件写疑似密钥（结构化 key 模式）时，经 additionalContext 软提醒 Codex 模型确认。
-# (2) PROP-001：写「Docs/6-历史归档/」（任意层级）或「已存在的 apk/ 历史 APK」时，同样经 additionalContext 软提醒（兜底 C 类铁律）。
-# ⚠️ 与 Claude 版差异：Claude 用 permissionDecision=ask（真弹确认）；Codex 侧权限决策格式未核实，
-#    故采用 Codex 已验证可靠的 additionalContext 软警告（注入上下文让模型自行复核），**非硬 block**，更保守。
-#    PROP-001 的路径裁决在 Codex 侧亦走同一 additionalContext 软警告路径（不照搬 Claude 的 permissionDecision）。
-# 全程 fail-safe：任何不确定/出错都放行（continue）。只认 {20,}+ 长度结构化 key（避免文档省略号误报）。
+# Codex PreToolUse adapter (PROP-038), sharing logic with claude/pre-write-guard.ps1 and PROP-001 Class C path warnings.
+# (1) Edit/Write/apply_patch of suspected structured secrets to non-.env files supplies an additionalContext warning for model review.
+# (2) PROP-001: writes under Docs/6-历史归档/ at any depth or to existing historical APKs under apk/ receive the same Class C additionalContext warning.
+# Difference from Claude: Claude uses permissionDecision=ask for an actual confirmation; Codex's permission-decision format has not been verified.
+# Use the verified Codex additionalContext soft warning so the model can review it; this is not a hard block.
+# PROP-001 path decisions follow that same Codex warning route without copying Claude's permissionDecision format.
+# Fail safe: uncertainty or errors continue. Recognize only structured keys of length {20,}+ to avoid abbreviated documentation examples.
 
 $ErrorActionPreference = "Stop"
 try {
@@ -26,19 +26,19 @@ function Warn {
   exit 0
 }
 
-# PROP-001 路径 C 类裁决：对一组候选路径求是否命中（历史归档 / 已存在 apk）；命中返回软警告文案，否则 $null。
-# Codex 侧按各自契约走 Warn（additionalContext 软警告），不照搬 Claude 的 permissionDecision。全程 fail-safe：异常吞掉返回 $null。
+# PROP-001 Class C check over candidate paths: return a warning for an archive or existing APK match, otherwise $null.
+# Codex uses its own Warn/additionalContext contract, not Claude permissionDecision. Catch errors and return $null.
 function Get-CodexPathClassCReason {
   param([string[]]$Candidates, [string]$RepoRoot)
   try {
     foreach ($cand in @($Candidates)) {
       if ([string]::IsNullOrWhiteSpace($cand)) { continue }
       $fpN = ([string]$cand) -replace '\\', '/'
-      # C 类：历史归档不动（Docs/6-历史归档/ 任意层级）；新建/修改都软提醒。
+      # Class C: preserve historical archives under Docs/6-历史归档/ at any depth; warn on both creation and modification.
       if ($fpN -match '(^|/)Docs/6-历史归档/') {
-        return "⚠️ 写入命中『Docs/6-历史归档/』历史归档区：$cand。按三类行为铁律 C 类『改 Docs/6-历史归档/ 已归档的内容（历史就是历史）』——历史归档不动。若确属必要改动请走 PROP/ADR，否则请放弃此次写入。"
+        return "⚠️ Write targets the historical archive Docs/6-历史归档/: $cand. Class C rules prohibit changing archived content; preserve the historical archive. If necessary, follow PROP/ADR; otherwise abandon this write."
       }
-      # C 类：改 apk/ 下已存在的历史 APK；仅「修改已存在」才软提醒，新建放行。
+      # Class C: warn before modifying existing historical APKs under apk/; allow new files.
       if ($fpN -match '(^|/)apk/') {
         $abs = $null
         try {
@@ -51,7 +51,7 @@ function Get-CodexPathClassCReason {
           }
         } catch { $abs = $null }
         if ($abs -and (Test-Path -LiteralPath $abs -PathType Leaf)) {
-          return "⚠️ 写入命中 apk/ 下已存在的历史 APK：$cand。按三类行为铁律 C 类『改 apk/ 下已存在的历史 APK 文件（历史归档不动）』。若确属必要请走 PROP/ADR，否则请放弃此次写入。"
+          return "⚠️ Write targets an existing historical APK under apk/: $cand. Class C rules prohibit changing existing historical APK files. If necessary, follow PROP/ADR; otherwise abandon this write."
         }
       }
     }
@@ -123,4 +123,4 @@ $hit = $null
 foreach ($p in $patterns) { if ($content -match $p) { $hit = $p; break } }
 if (-not $hit) { Allow }
 
-Warn ("⚠️ 疑似密钥/凭据将写入非 .env 文件：$($nonEnvPaths -join ', ')（命中模式 $hit）。按议题 CG + 安全与隐私铁律：密钥不进 git tracked 文件 / 不贴文档。若是占位或示例可继续；真实密钥请改放 .env.local 后再写。")
+Warn ("⚠️ Suspected key or credential would be written to non-.env files: $($nonEnvPaths -join ', ') (matched pattern $hit). Issue CG and security/privacy rules prohibit secrets in tracked files or documentation. Placeholders and examples may proceed; move real keys to .env.local before writing.")

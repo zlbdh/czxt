@@ -17,10 +17,10 @@
 
   $issues = New-Object System.Collections.Generic.List[string]
   foreach ($id in $expected) {
-    if ($ids -notcontains $id) { $issues.Add("缺少 $id section") }
+    if ($ids -notcontains $id) { $issues.Add("Missing $id section") }
   }
   foreach ($group in @($ids | Group-Object | Where-Object { $_.Count -gt 1 })) {
-    $issues.Add("重复 section：$($group.Name)")
+    $issues.Add("Duplicate section: $($group.Name)")
   }
   foreach ($section in $sections) {
     $m = [regex]::Match($section.Title, '【(P4[a-t])】')
@@ -29,40 +29,40 @@
     foreach ($check in @($section.Checks)) {
       $script = [string]$check.Script
       if ($script -notmatch "^check-os\\$prefix-") {
-        $issues.Add("$($m.Groups[1].Value) 脚本前缀不匹配：$script")
+        $issues.Add("$($m.Groups[1].Value) script prefix mismatch: $script")
       }
       if (-not (Test-Path -LiteralPath (Join-Path $ScriptsRoot $script) -PathType Leaf)) {
-        $issues.Add("计划脚本不存在：$script")
+        $issues.Add("Planned script does not exist: $script")
       }
     }
   }
   foreach ($group in @($checks.Script | Group-Object | Where-Object { $_.Count -gt 1 })) {
-    $issues.Add("重复脚本：$($group.Name)")
+    $issues.Add("Duplicate script: $($group.Name)")
   }
 
   $p4d = @($checks | Where-Object { $_.Script -eq "check-os\p4d-state-freshness.ps1" })
   if ($p4d.Count -ne 1 -or $p4d[0].After -ne "StateStale") {
-    $issues.Add("P4d 必须声明 After=StateStale")
+    $issues.Add("P4d must declare After=StateStale")
   }
   if (@($checks | Where-Object { $_.Script -eq "check-os\p4e-mount-cache-reminder.ps1" }).Count -ne 1) {
-    $issues.Add("P4e mount 提醒必须执行一次")
+    $issues.Add("The P4e mount reminder must run exactly once")
   }
   if (@($checks | Where-Object { $_.Script -like "check-os\p4h-*" }).Count -ne 2) {
-    $issues.Add("P4h 必须包含版本/Sprint与台账双脚本")
+    $issues.Add("P4h must include both version/Sprint and ledger scripts")
   }
   if (@($checks | Where-Object { $_.Script -like "check-os\p4k-*-legacy.ps1" }).Count -ne 3) {
-    $issues.Add("P4k 必须包含入口、角色边界、工具主语三脚本")
+    $issues.Add("P4k must include entry, role-boundary, and tool-subject scripts")
   }
   $p4a = @($checks | Where-Object { $_.Script -eq "check-os\p4a-basic-integrity.ps1" })
   if ($p4a.Count -ne 1 -or $p4a[0].Args -ne "P4aPasses") {
-    $issues.Add("P4a 必须写入 Passes 计数")
+    $issues.Add("P4a must record the Passes count")
   }
   $p4t = @($checks | Where-Object { $_.Script -eq "check-os\p4t-borrowing-consistency.ps1" })
   if ($p4t.Count -ne 1) {
-    $issues.Add("P4t 借鉴闭环 façade 必须且只能执行一次")
+    $issues.Add("The P4t borrowing completion facade must run exactly once")
   }
 
   if ($issues.Count -gt 0) {
-    throw "P4 check plan 自校验失败：$($issues -join '；')"
+    throw "P4 check plan self-check failed: $($issues -join '；')"
   }
 }

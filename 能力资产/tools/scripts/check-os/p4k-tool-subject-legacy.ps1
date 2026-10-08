@@ -19,10 +19,10 @@ foreach ($check in $checks) {
 }
 
 if ($hits.Count -gt 0) {
-    Write-Host "  🔴 工具主语旧口径残留：$($hits.Count) 处" -ForegroundColor Red
+    Write-Host "  🔴 Obsolete tool-subject language remains: $($hits.Count) matches" -ForegroundColor Red
     foreach ($hit in $hits) { Write-Host "    - $hit" -ForegroundColor Red }
     exit 10
 }
 
-Write-Host "  ✅ 工具主语 / 工具战场旧口径未回退" -ForegroundColor Green
+Write-Host "  ✅ No obsolete tool-subject or tool-ownership language remains" -ForegroundColor Green
 exit 0

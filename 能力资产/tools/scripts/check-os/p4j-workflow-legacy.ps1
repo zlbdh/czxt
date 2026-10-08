@@ -30,10 +30,10 @@ foreach ($check in $checks) {
 }
 
 if ($hits.Count -gt 0) {
-    Write-Host "  🔴 decision-checkpoint 旧口径残留：$($hits.Count) 处" -ForegroundColor Red
+    Write-Host "  🔴 Obsolete decision-checkpoint language remains: $($hits.Count) matches" -ForegroundColor Red
     foreach ($hit in $hits) { Write-Host "    - $hit" -ForegroundColor Red }
     exit 10
 }
 
-Write-Host "  ✅ 现行活文档未发现 decision-checkpoint 3 问/Q1-Q6 旧口径" -ForegroundColor Green
+Write-Host "  ✅ Current live documents contain no obsolete three-question/Q1-Q6 decision-checkpoint language" -ForegroundColor Green
 exit 0

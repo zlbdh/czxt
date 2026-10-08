@@ -3,14 +3,14 @@
 $ErrorActionPreference = "Stop"
 $frameworkScope = Join-Path $PSScriptRoot "framework-scope.ps1"
 if (-not (Test-Path -LiteralPath $frameworkScope -PathType Leaf)) {
-  Write-Host "  🔴 framework-scope.ps1 缺失" -ForegroundColor Red
+  Write-Host "  🔴 framework-scope.ps1 is missing" -ForegroundColor Red
   exit 10
 }
 . $frameworkScope
 
 $rootMode = Get-CzxtRootMode -Root $Root
 if ($rootMode -notin @('template', 'project')) {
-  Write-Host "  🔴 P4q 根模式非法：$rootMode" -ForegroundColor Red
+  Write-Host "  🔴 Invalid P4q root mode: $rootMode" -ForegroundColor Red
   exit 10
 }
 $isLegacyProject = Test-IsCzxtLegacyProjectProfile -Root $Root
@@ -41,8 +41,8 @@ $helpers = @(
 )
 
 if (-not $isLegacyProject) {
-  $profileLabel = if ($rootMode -eq 'template') { '模板根模式' } else { 'generic project' }
-  Write-Host "  ℹ️ ${profileLabel}：跳过旧来源业务专属需求 / PROP / edge-doc 等锚点" -ForegroundColor Gray
+  $profileLabel = if ($rootMode -eq 'template') { 'template root mode' } else { 'generic project' }
+  Write-Host "  ℹ️ ${profileLabel}: skipping source-project-specific requirements, PROP, and edge-document anchors" -ForegroundColor Gray
   $templateSkip = @(
     "docs-edge-ops-anchor.ps1",
     "docs-edge-history-anchor.ps1",
@@ -56,7 +56,7 @@ if (-not $isLegacyProject) {
 foreach ($helperName in $helpers) {
   $helper = Join-Path (Split-Path -Parent $PSScriptRoot) "check-readme-indexes\$helperName"
   if (-not (Test-Path -LiteralPath $helper -PathType Leaf)) {
-    Write-Host "  🔴 $helperName 缺失" -ForegroundColor Red
+    Write-Host "  🔴 $helperName is missing" -ForegroundColor Red
     exit 10
   }
   & $helper -Root $Root

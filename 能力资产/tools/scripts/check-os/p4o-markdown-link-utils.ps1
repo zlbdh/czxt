@@ -135,7 +135,7 @@ function Check-Link([object]$Source, [int]$Index, [string]$Raw) {
   $rootFull = [System.IO.Path]::GetFullPath($Root).TrimEnd('\') + '\'
   $script:linkCount++
   if (-not $target.StartsWith($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
-    $issues.Add("$(Get-Rel $Source.Path):L$(Get-Line $Source.Text $Index) 越界链接：$raw") | Out-Null
+    $issues.Add("$(Get-Rel $Source.Path):L$(Get-Line $Source.Text $Index) link escapes the root: $raw") | Out-Null
     return
   }
   if (-not (Test-Path -LiteralPath $target)) {
@@ -145,14 +145,14 @@ function Check-Link([object]$Source, [int]$Index, [string]$Raw) {
         return
       }
     }
-    $issues.Add("$(Get-Rel $Source.Path):L$(Get-Line $Source.Text $Index) 断链：$raw") | Out-Null
+    $issues.Add("$(Get-Rel $Source.Path):L$(Get-Line $Source.Text $Index) broken link: $raw") | Out-Null
     return
   }
   if (-not [string]::IsNullOrWhiteSpace($anchor) -and (Test-Path -LiteralPath $target -PathType Leaf) -and $target.ToLowerInvariant().EndsWith(".md")) {
     if (-not $slugCache.ContainsKey($target)) { $slugCache[$target] = Get-SlugSet $target }
     $slug = ConvertTo-Slug $anchor
     if (-not $slugCache[$target].Contains($slug)) {
-      $issues.Add("$(Get-Rel $Source.Path):L$(Get-Line $Source.Text $Index) 缺锚点：$raw") | Out-Null
+      $issues.Add("$(Get-Rel $Source.Path):L$(Get-Line $Source.Text $Index) missing anchor: $raw") | Out-Null
     }
   }
 }

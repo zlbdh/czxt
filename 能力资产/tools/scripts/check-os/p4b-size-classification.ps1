@@ -15,13 +15,13 @@ function Get-P4bSizeLevel {
   param([long]$Size)
 
   if ($Size -ge 8000) {
-    return [PSCustomObject]@{ Level = "danger"; Counter = "Danger"; Tag = "🔴"; Note = "Cowork 危险 + 所有工具软建议拆" }
+    return [PSCustomObject]@{ Level = "danger"; Counter = "Danger"; Tag = "🔴"; Note = "Cowork danger; splitting is advisory for all tools" }
   }
   if ($Size -ge 6500) {
-    return [PSCustomObject]@{ Level = "soft"; Counter = "Soft"; Tag = "🟡"; Note = "Cowork 软建议 — Python/Bash 写" }
+    return [PSCustomObject]@{ Level = "soft"; Counter = "Soft"; Tag = "🟡"; Note = "Cowork advisory: write with Python/Bash" }
   }
   if ($Size -ge 6000) {
-    return [PSCustomObject]@{ Level = "warn"; Counter = "Warn"; Tag = "🟢"; Note = "Cowork 警戒区" }
+    return [PSCustomObject]@{ Level = "warn"; Counter = "Warn"; Tag = "🟢"; Note = "Cowork caution zone" }
   }
   return [PSCustomObject]@{ Level = "safe"; Counter = "Safe"; Tag = ""; Note = "" }
 }

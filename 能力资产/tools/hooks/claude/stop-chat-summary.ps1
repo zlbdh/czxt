@@ -2,10 +2,10 @@
   [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..\..\..")).Path
 )
 
-# Claude Code 侧 Stop 适配器（PROP-038 议题 CK / 镜像 codex/stop-chat-summary.ps1）。
-# 差异：Codex 在 Stop 事件直接传 last_assistant_message；Claude Code 传 transcript_path（JSONL）。
-# 本脚本两者都吃：优先 last_assistant_message，否则从 transcript_path 读最后一条 assistant 文本，
-# 再复用同一条 run-hooks chat-output 检查（①-⑦ 交接卡 + PM 切换轨迹）。全程 fail-safe（任何不确定都 continue，绝不误 block）。
+# Claude Code Stop adapter (PROP-038 issue CK), mirroring codex/stop-chat-summary.ps1.
+# Codex provides last_assistant_message directly in Stop; Claude Code provides transcript_path as JSONL.
+# Accept both: prefer last_assistant_message, otherwise read the final assistant text from transcript_path.
+# Reuse run-hooks chat-output checks for the seven-part handoff and PM role trace. Fail safe: uncertainty continues without a false block.
 
 $ErrorActionPreference = "Stop"
 try {
@@ -33,10 +33,10 @@ try {
 
 if ($event.stop_hook_active -eq $true) { Continue-Hook }
 
-# 1) Codex 风格：last_assistant_message 直接给文本
+# 1) Codex format: last_assistant_message provides the text directly.
 $message = if ($event.last_assistant_message) { [string]$event.last_assistant_message } else { "" }
 
-# 2) Claude 风格：从 transcript_path JSONL 倒序找最后一条 assistant 的 text 块
+# 2) Claude format: search transcript_path JSONL backward for the final assistant text blocks.
 if ([string]::IsNullOrWhiteSpace($message) -and $event.transcript_path -and (Test-Path -LiteralPath $event.transcript_path)) {
   try {
     $lines = Get-Content -LiteralPath $event.transcript_path -ErrorAction Stop
@@ -60,11 +60,11 @@ if ([string]::IsNullOrWhiteSpace($message) -and $event.transcript_path -and (Tes
 
 if ([string]::IsNullOrWhiteSpace($message)) { Continue-Hook }
 
-$readOnlyNoChange = $message -match '只读审计|未修改文件|未改文件|没有改文件'
+$readOnlyNoChange = $message -match '只读审计|未修改文件|未改文件|没有改文件|\bRead-only audit\b|\bNo files changed\b|\bNo files modified\b'
 if ($readOnlyNoChange) {
   Continue-Hook
 }
-$hasCloseoutSignal = $message -match '文件变更|已修改|修改了|新增|测试[:：]|验证[:：]|PM 切换轨迹|交接区/待接手|commit hash|vitest|build|smoke|APK|push|commit|发布|验证|测试|构建|提交'
+$hasCloseoutSignal = $message -match '文件变更|已修改|修改了|新增|测试[:：]|验证[:：]|PM 切换轨迹|交接区/待接手|commit hash|vitest|build|smoke|APK|push|commit|发布|验证|测试|构建|提交|\bFile changes\b|\bFiles changed\b|\bModified files\b|\bFiles modified\b|\bAdded files\b|\bTests\s*:|\bVerification\s*:|\bPM (?:role )?transitions\b'
 
 $looksLikeImplementationCloseout = $hasCloseoutSignal
 
@@ -80,7 +80,7 @@ Remove-Item -LiteralPath $tmpPath -Force -ErrorAction SilentlyContinue
 
 if ($code -eq 0) { Continue-Hook }
 
-$reason = "本次回复像实施收尾，但缺少{{PROJECT_NAME}} ①-⑦ 交接卡或 PM 切换轨迹说明。请补齐交接卡后再结束。检查输出：$($output -join ' ')"
+$reason = "This response appears to complete implementation but lacks the {{PROJECT_NAME}} seven-part handoff or PM role-transition trace. Complete the handoff before ending. Check output: $($output -join ' ')"
 [ordered]@{
   decision = "block"
   reason = $reason

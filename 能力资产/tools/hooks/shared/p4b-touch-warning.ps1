@@ -41,6 +41,6 @@ function Get-P4bTouchedWarning {
 
   if ($hits.Count -eq 0) { return $null }
   $shown = @($hits | Select-Object -First 5)
-  $more = if ($hits.Count -gt 5) { "；另 $($hits.Count - 5) 个" } else { "" }
-  return "🟡 触碰业务大文件：$($shown -join '；')$more。开发 PM按功能判断是否顺手拆；不为数字单独动业务代码。"
+  $more = if ($hits.Count -gt 5) { "; $($hits.Count - 5) more" } else { "" }
+  return "🟡 Large business files touched: $($shown -join '；')$more. Development PM should assess splitting as part of feature work; do not change business code solely to clear counts."
 }

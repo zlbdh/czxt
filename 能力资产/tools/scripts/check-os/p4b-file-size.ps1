@@ -38,12 +38,12 @@ foreach ($scope in $scopes) {
     }
 }
 
-Write-Host (("  扫描 {0} 文件 (" -f $sizeStats.Total) + $scopes[0] + " + 操作系统 + 能力资产)") -ForegroundColor Gray
-Write-Host ("  ✅ 安全 (<6000B): {0}" -f $sizeStats.Safe) -ForegroundColor Green
-if ($sizeStats.Warn -gt 0) { Write-Host ("  🟢 警戒 (6000-6500B): {0}" -f $sizeStats.Warn) -ForegroundColor Green }
-if ($sizeStats.Soft -gt 0) { Write-Host ("  🟡 软建议 (6500-8000B): {0}" -f $sizeStats.Soft) -ForegroundColor Yellow }
-if ($sizeStats.Danger -gt 0) { Write-Host ("  🔴 危险 (>=8000B): {0}" -f $sizeStats.Danger) -ForegroundColor Red }
-Write-Host "  📦 分域摘要：" -ForegroundColor Gray
+Write-Host (("  Scanned {0} files (" -f $sizeStats.Total) + $scopes[0] + " + 操作系统 + 能力资产)") -ForegroundColor Gray
+Write-Host ("  ✅ Safe (<6000B): {0}" -f $sizeStats.Safe) -ForegroundColor Green
+if ($sizeStats.Warn -gt 0) { Write-Host ("  🟢 Caution (6000-6500B): {0}" -f $sizeStats.Warn) -ForegroundColor Green }
+if ($sizeStats.Soft -gt 0) { Write-Host ("  🟡 Advisory (6500-8000B): {0}" -f $sizeStats.Soft) -ForegroundColor Yellow }
+if ($sizeStats.Danger -gt 0) { Write-Host ("  🔴 Danger (>=8000B): {0}" -f $sizeStats.Danger) -ForegroundColor Red }
+Write-Host "  📦 Summary by area:" -ForegroundColor Gray
 foreach ($scope in $scopes) {
     $stats = $areaStats[$scope]
     if ($stats.Total -eq 0) { continue }
@@ -60,22 +60,22 @@ if ($businessDebtList.Count -gt 0) {
     $dangerCount = @($businessDebtList | Where-Object { $_.Level -eq "danger" }).Count
     $softCount = @($businessDebtList | Where-Object { $_.Level -eq "soft" }).Count
     Write-Host ""
-    Write-Host "  🧭 {{APP_REPO_DIR}}/src 业务 P4b 治理摘要（owner=开发 PM「实施者」；不代表操作系统未完成）" -ForegroundColor Gray
-    Write-Host ("    红区/软区：danger {0} / soft {1}；prod {2} / test {3}" -f $dangerCount, $softCount, $prodCount, $testCount) -ForegroundColor Gray
-    Write-Host "    原则：先判可拆性 vs 核心性；按功能触发拆，不为数字清零单独动业务代码。" -ForegroundColor Gray
-    Write-Host "    目录域 Top：" -ForegroundColor Gray
+    Write-Host "  🧭 {{APP_REPO_DIR}}/src business P4b governance summary (owner=Development PM 'Implementer'; does not indicate unfinished operating-system work)" -ForegroundColor Gray
+    Write-Host ("    Danger/advisory: danger {0} / soft {1}; prod {2} / test {3}" -f $dangerCount, $softCount, $prodCount, $testCount) -ForegroundColor Gray
+    Write-Host "    Assess separability and core responsibilities first; split when a feature change calls for it, not solely to reduce a number." -ForegroundColor Gray
+    Write-Host "    Leading directory areas:" -ForegroundColor Gray
     $businessDebtList |
         Group-Object Domain |
         Sort-Object -Property @{ Expression = { $_.Count }; Descending = $true }, @{ Expression = { $_.Name }; Ascending = $true } |
         Select-Object -First 8 |
         ForEach-Object {
-            Write-Host ("      - {0}: {1} 个" -f $_.Name, $_.Count) -ForegroundColor Gray
+            Write-Host ("      - {0}: {1} items" -f $_.Name, $_.Count) -ForegroundColor Gray
         }
 }
 
 if ($sizeList.Count -gt 0) {
     Write-Host ""
-    Write-Host "  📋 文件清单（按字节降序，{{APP_REPO_DIR}}/src + 操作系统 + 能力资产 范围）：" -ForegroundColor Gray
+    Write-Host "  📋 Files by descending byte size ({{APP_REPO_DIR}}/src + 操作系统 + 能力资产):" -ForegroundColor Gray
     $sizeList | Sort-Object Size -Descending | ForEach-Object {
         $line = "    {0} {1,5}B  {2}  ({3})" -f $_.Tag, $_.Size, $_.Rel, $_.Note
         if ($_.Tag -eq '🔴') { Write-Host $line -ForegroundColor Red }

@@ -3,18 +3,18 @@ name: handoff-history-archive-index
 scope: project
 type: semantic
 loaded: on-demand
-description: 交接区历史归档入口 — 历史卡只作追溯，不代表当前待办
+description: Historical handoff index; archived cards support tracing and are not current tasks.
 ---
 
-# 交接区历史归档
+# Historical Handoffs
 
-这里放 30 天以上或已完成沉淀的交接卡，通常按 `yyyy-mm/` 分目录归档。
+Store handoff cards older than 30 days, or whose lessons have been incorporated, usually in `yyyy-mm/` directories.
 
-历史归档保留当时原貌，可能包含旧路径、旧工具名、旧待办、旧命令或当时的事故记录。不代表当前待办，也不可直接复制执行。
+Archives preserve the circumstances at the time, including obsolete paths, tools, tasks, commands, or incident records. They are not current tasks and must not be copied and executed directly.
 
-## 规则
+## Rules
 
-- 不删除历史交接卡。
-- 不批量重写历史卡主体。
-- 需要判断当前状态时，先读 `状态.md` 和 `交接区/待接手/`。
-- 历史卡中的命令、路径和权限口径必须回到当前 `操作系统/` 与 `能力资产/` 复核后再使用。
+- Do not delete historical handoff cards.
+- Do not bulk-rewrite historical card bodies.
+- To determine current status, read `状态.md` and `交接区/待接手/` first.
+- Revalidate archived commands, paths, and authorization descriptions against the current `操作系统/` and `能力资产/` before use.

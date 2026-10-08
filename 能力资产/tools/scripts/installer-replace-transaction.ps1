@@ -28,7 +28,7 @@ function New-CzxtInstallerTransactionPath {
       return $path
     }
   }
-  throw ("无法分配实例化事务路径：{0}" -f $Kind)
+  throw ("Cannot allocate an installer transaction path: {0}" -f $Kind)
 }
 
 function Remove-CzxtInstallerOwnedTransactionFile {
@@ -73,7 +73,7 @@ function Invoke-CzxtInstallerPreparedReplace {
   }
   try { [IO.File]::Move($PreparedPath, $TargetPath) }
   catch {
-    $message = ("{0}提交未完成；backup={1}；" +
+    $message = ("{0} commit did not complete; backup={1}; " +
       'backup=retained,target=untouched,prepared=retained-for-owned-cleanup') -f `
       $Context, $backup
     $failure = [InvalidOperationException]::new($message, $_.Exception)
@@ -87,14 +87,14 @@ function Invoke-CzxtInstallerPreparedReplace {
   $backupError = ''
   try {
     $backupState = Get-CzxtInstallerFileState -Path $backup `
-      -Context ($Context + '被替换目标备份') -AllowHardLinks
+      -Context ($Context + ' replaced target backup') -AllowHardLinks
   }
   catch { $backupError = $_.Exception.Message }
   $installedState = $null
   $installedError = ''
   try {
     $installedState = Get-CzxtInstallerFileState -Path $TargetPath `
-      -Context ($Context + '已落盘目标')
+      -Context ($Context + ' installed target')
   }
   catch { $installedError = $_.Exception.Message }
   $backupMatches = Test-CzxtInstallerStateMaterialEqual `
@@ -104,11 +104,11 @@ function Invoke-CzxtInstallerPreparedReplace {
   if (-not $backupMatches) {
     if ($null -ne $BeforeRecovery) { & $BeforeRecovery $TargetPath $backup }
     if ($null -ne $BeforeRestoreReplace) { & $BeforeRestoreReplace $TargetPath $backup }
-    throw ("{0}CAS 身份漂移；禁止 path-based 恢复并保留全部对象：{1}；{2}" -f `
+    throw ("{0} CAS identity drift; path-based recovery prohibited; preserve all objects: {1}; {2}" -f `
       $Context, $backup, ($backupError + $installedError))
   }
   if (-not $installedMatches) {
-    throw ("{0}已落盘目标发生变化；backup 保留于 {1}：{2}" -f `
+    throw ("{0} installed target changed; backup retained at {1}: {2}" -f `
       $Context, $backup, $installedError)
   }
 
@@ -116,7 +116,7 @@ function Invoke-CzxtInstallerPreparedReplace {
     & $BeforeCommitVerification $TargetPath $backup
   }
   $targetLease = Open-CzxtInstallerFileLease -Path $TargetPath `
-    -ExpectedState $PreparedState -Context ($Context + '提交目标')
+    -ExpectedState $PreparedState -Context ($Context + ' commit target')
   try {
     if ($null -ne $AfterCommitTargetRead) { & $AfterCommitTargetRead $TargetPath }
     Remove-CzxtInstallerOwnedTransactionFile -Path $backup `

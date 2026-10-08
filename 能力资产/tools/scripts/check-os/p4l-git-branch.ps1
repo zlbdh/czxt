@@ -12,15 +12,15 @@ if ((Test-Path -LiteralPath $gitFlowPath) -and (Test-Path -LiteralPath $releaseF
     if ($gitFlowText -match "单 main 分支|Single main branch") {
         $matches = [regex]::Matches($releaseFlowText, "hotfix/|创建\s+hotfix\s+分支|merge\s+回\s+main|create\s+a\s+hotfix\s+branch|merge\s+back\s+into\s+main")
         if ($matches.Count -gt 0) {
-            Write-Host "  🔴 发布流程仍含 hotfix 分支步骤：$($matches.Count) 处" -ForegroundColor Red
+            Write-Host "  🔴 Release flow still includes hotfix branch steps: $($matches.Count) matches" -ForegroundColor Red
             exit 10
         }
-        Write-Host "  ✅ 发布流程未发现 hotfix 分支步骤，符合单 main 策略" -ForegroundColor Green
+        Write-Host "  ✅ Release flow has no hotfix branch steps and follows the single-main policy" -ForegroundColor Green
         exit 0
     }
-    Write-Host "  ℹ️ git流程未声明单 main 分支，跳过 P4l" -ForegroundColor Gray
+    Write-Host "  ℹ️ Git flow does not declare a single main branch; skipping P4l" -ForegroundColor Gray
     exit 0
 }
 
-Write-Host "  ℹ️ git流程.md 或 发布流程.md 不存在，P4a 已应提示" -ForegroundColor Gray
+Write-Host "  ℹ️ git流程.md or 发布流程.md is missing; P4a should already have reported it" -ForegroundColor Gray
 exit 0

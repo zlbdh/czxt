@@ -20,18 +20,18 @@ $retroDirI = Join-Path $repoRoot "Docs/7-复盘"
 $sotRetroCount = $null
 
 $adrTruth = Get-CzxtAdrGovernanceTruth -Root $repoRoot
-Write-Host "  📌 ADR 真源：$($adrTruth.Text)（总数/现行/被替代覆盖；文件系统 + ADR 索引状态）" -ForegroundColor Gray
+Write-Host "  📌 Authoritative ADR counts: $($adrTruth.Text) (total/current/superseded; filesystem + ADR index status)" -ForegroundColor Gray
 foreach ($failure in $adrTruth.Failures) {
-    Write-Host "  🔴 ADR 真源失败：$failure" -ForegroundColor Red
+    Write-Host "  🔴 ADR source check failed: $failure" -ForegroundColor Red
     $failures += $failure
 }
 
 $entryFailures = @(Test-CzxtAdrMainEntryAnchor -Root $repoRoot -Truth $adrTruth)
 if ($entryFailures.Count -eq 0) {
-    Write-Host "  ✅ 00_总入口 ADR 计数：$($adrTruth.Text) = 真源" -ForegroundColor Green
+    Write-Host "  ✅ Main-entry ADR count: $($adrTruth.Text) = authoritative source" -ForegroundColor Green
 } else {
     foreach ($failure in $entryFailures) {
-        Write-Host "  🔴 00_总入口 ADR 计数漂移：$failure" -ForegroundColor Red
+        Write-Host "  🔴 Main-entry ADR count mismatch: $failure" -ForegroundColor Red
         $failures += $failure
     }
 }
@@ -45,7 +45,7 @@ if (Test-Path -LiteralPath $retroDirI) {
 }
 
 if ($null -ne $sotRetroCount) {
-    Write-Host "  📌 RETRO 真知识源：$sotRetroCount RETRO（去重编号 / 文件系统）" -ForegroundColor Gray
+    Write-Host "  📌 Authoritative RETRO count: $sotRetroCount RETROs (deduplicated numbers / filesystem)" -ForegroundColor Gray
 }
 
 $readmePathI = Join-Path $repoRoot "README.md"
@@ -55,13 +55,13 @@ if (Test-Path -LiteralPath $readmePathI) {
         $mRmRetro = [regex]::Match($rmRawI, "现行\s*/\s*(\d+)\s*RETRO")
         if ($mRmRetro.Success) {
             if ([int]$mRmRetro.Groups[1].Value -eq $sotRetroCount) {
-                Write-Host "  ✅ README RETRO 计数：$($mRmRetro.Groups[1].Value) = 真实 $sotRetroCount" -ForegroundColor Green
+                Write-Host "  ✅ README RETRO count: $($mRmRetro.Groups[1].Value) = actual $sotRetroCount" -ForegroundColor Green
             } else {
-                Write-Host "  🔴 README RETRO 计数漂移：$($mRmRetro.Groups[1].Value) vs 真实 $sotRetroCount" -ForegroundColor Red
-                $failures += "README RETRO 计数锚点 $($mRmRetro.Groups[1].Value) != 真实 $sotRetroCount"
+                Write-Host "  🔴 README RETRO count mismatch: $($mRmRetro.Groups[1].Value) vs actual $sotRetroCount" -ForegroundColor Red
+                $failures += "README RETRO count anchor $($mRmRetro.Groups[1].Value) != actual $sotRetroCount"
             }
         } else {
-            Write-Host "  ℹ️ README 未找到「现行 / N RETRO」锚点（跳过）" -ForegroundColor Gray
+            Write-Host "  ℹ️ README has no current / N RETRO anchor; skipping" -ForegroundColor Gray
         }
     }
 }
@@ -88,17 +88,17 @@ if (Test-Path -LiteralPath $propReadmeI) {
         $propClaimText = $propClaim -join "/"
         $propActualText = $propActual -join "/"
         if ($propClaimText -eq $propActualText) {
-            Write-Host "  ✅ PROP README 计数：$propClaimText = 真实 $propActualText（待审批/进行中/已完成/已弃用/拒绝）" -ForegroundColor Green
+            Write-Host "  ✅ PROP README counts: $propClaimText = actual $propActualText (pending/active/completed/deprecated/rejected)" -ForegroundColor Green
         } else {
-            Write-Host "  🔴 PROP README 计数漂移：$propClaimText vs 真实 $propActualText" -ForegroundColor Red
-            $failures += "PROP README 计数锚点 $propClaimText != 真实 $propActualText"
+            Write-Host "  🔴 PROP README count mismatch: $propClaimText vs actual $propActualText" -ForegroundColor Red
+            $failures += "PROP README count anchor $propClaimText != actual $propActualText"
         }
     } else {
-        Write-Host "  🔴 PROP README 未找到五列计数行" -ForegroundColor Red
-        $failures += "PROP README 五列计数锚点缺失"
+        Write-Host "  🔴 PROP README lacks the five-column count row" -ForegroundColor Red
+        $failures += "PROP README five-column count anchor is missing"
     }
 } else {
-    Write-Host "  🔴 找不到 确认改动/README.md" -ForegroundColor Red
+    Write-Host "  🔴 确认改动/README.md is missing" -ForegroundColor Red
     $failures += "确认改动/README.md 缺失"
 }
 

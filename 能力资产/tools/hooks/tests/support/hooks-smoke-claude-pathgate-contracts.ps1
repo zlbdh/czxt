@@ -1,33 +1,33 @@
 ﻿$ErrorActionPreference = "Stop"
 
-# PROP-001 路径 C 类软门禁契约（claude）。
-# 从 hooks-smoke-claude-contracts.ps1 拆出：历史归档 / 嵌套归档 / apk 已存在 / apk 新建 / 普通 framework 放行。
-# 本文件只负责 PROP-001 路径门禁断言，密钥检测契约仍在 claude-contracts。
+# PROP-001 Class C path-warning contracts for Claude.
+# Extracted from hooks-smoke-claude-contracts.ps1: archives, nested archives, existing/new APKs, and ordinary framework writes.
+# This file covers PROP-001 path gates only; secret-detection contracts remain in claude-contracts.
 function Invoke-HooksSmokeClaudePathGateContracts {
   param(
     [string]$Root,
     [object]$Paths
   )
 
-  # PROP-001 路径 C 类软门禁（claude：permissionDecision=ask）
-  # 正向 1：写 Docs/6-历史归档/ 历史归档（任意层级，无密钥也 ask；新建也 ask）。
+  # PROP-001 Class C path warnings: Claude uses permissionDecision=ask.
+  # Positive 1: any write under Docs/6-历史归档/ asks, at any depth, even without secrets and even for new files.
   $archiveInput = [ordered]@{
     hook_event_name = "PreToolUse"
-    tool_input = [ordered]@{ file_path = "Docs/6-历史归档/x.md"; content = "普通历史归档内容，无密钥。" }
+    tool_input = [ordered]@{ file_path = "Docs/6-历史归档/x.md"; content = "Ordinary historical archive content without secrets." }
   } | ConvertTo-Json -Depth 5 -Compress
   $archiveJson = ($archiveInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePreWrite -Root $Root) | ConvertFrom-Json
   Assert-True ($archiveJson.hookSpecificOutput.permissionDecision -eq "ask") "Claude PreToolUse should ask for Docs/6-历史归档"
-  Assert-True ($archiveJson.hookSpecificOutput.permissionDecisionReason -match "历史归档") "Claude PreToolUse archive reason should cite 历史归档"
+  Assert-True ($archiveJson.hookSpecificOutput.permissionDecisionReason -match "historical archive") "Claude PreToolUse archive reason should cite the historical archive"
 
-  # 正向 1b：归档命中也对子层级 / 绝对路径生效。
+  # Positive 1b: archive detection also applies to nested and absolute paths.
   $archiveDeepInput = [ordered]@{
     hook_event_name = "PreToolUse"
-    tool_input = [ordered]@{ file_path = "D:/WGKJ/x/Docs/6-历史归档/2025/old.md"; new_string = "改归档" }
+    tool_input = [ordered]@{ file_path = "D:/WGKJ/x/Docs/6-历史归档/2025/old.md"; new_string = "Update archive content" }
   } | ConvertTo-Json -Depth 5 -Compress
   $archiveDeepJson = ($archiveDeepInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePreWrite -Root $Root) | ConvertFrom-Json
   Assert-True ($archiveDeepJson.hookSpecificOutput.permissionDecision -eq "ask") "Claude PreToolUse should ask for nested/absolute Docs/6-历史归档"
 
-  # 正向 2：写已存在的 apk/ 历史 APK → ask（构造真实存在文件）。
+  # Positive 2: writing an existing historical APK asks; create a real fixture file.
   $apkRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("czxt-hooks-claude-apk-" + [guid]::NewGuid().ToString("N"))
   try {
     $apkDir = Join-Path $apkRoot "apk"
@@ -35,16 +35,16 @@ function Invoke-HooksSmokeClaudePathGateContracts {
     Set-Content -LiteralPath (Join-Path $apkDir "old.apk") -Encoding UTF8 -Value "fake-apk-bytes"
     $apkExistingInput = [ordered]@{
       hook_event_name = "PreToolUse"
-      tool_input = [ordered]@{ file_path = "apk/old.apk"; content = "覆盖历史 APK" }
+      tool_input = [ordered]@{ file_path = "apk/old.apk"; content = "Overwrite historical APK" }
     } | ConvertTo-Json -Depth 5 -Compress
     $apkExistingJson = ($apkExistingInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePreWrite -Root $apkRoot) | ConvertFrom-Json
     Assert-True ($apkExistingJson.hookSpecificOutput.permissionDecision -eq "ask") "Claude PreToolUse should ask for existing apk/ file"
-    Assert-True ($apkExistingJson.hookSpecificOutput.permissionDecisionReason -match "APK") "Claude PreToolUse apk reason should cite 历史 APK"
+    Assert-True ($apkExistingJson.hookSpecificOutput.permissionDecisionReason -match "APK") "Claude PreToolUse APK reason should cite the historical APK"
 
-    # 负向 2b：写 apk/ 下不存在的新文件 → 放行（仅"修改已存在"才 ask）。
+    # Negative 2b: allow a new file under apk/; only modification of an existing file asks.
     $apkNewInput = [ordered]@{
       hook_event_name = "PreToolUse"
-      tool_input = [ordered]@{ file_path = "apk/brand-new.apk"; content = "新建 APK" }
+      tool_input = [ordered]@{ file_path = "apk/brand-new.apk"; content = "Create new APK" }
     } | ConvertTo-Json -Depth 5 -Compress
     $apkNewJson = ($apkNewInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePreWrite -Root $apkRoot) | ConvertFrom-Json
     Assert-True ($apkNewJson.continue -eq $true) "Claude PreToolUse should allow new (non-existing) apk/ file"
@@ -52,10 +52,10 @@ function Invoke-HooksSmokeClaudePathGateContracts {
     if (Test-Path -LiteralPath $apkRoot) { Remove-Item -LiteralPath $apkRoot -Recurse -Force }
   }
 
-  # 负向 1：写普通 framework 文件（无密钥、非归档、非 apk）→ 放行 continue。
+  # Negative 1: an ordinary framework file without secrets, outside archives and apk/, continues.
   $normalInput = [ordered]@{
     hook_event_name = "PreToolUse"
-    tool_input = [ordered]@{ file_path = "操作系统/00_总入口.md"; content = "普通 framework 文档内容。" }
+    tool_input = [ordered]@{ file_path = "操作系统/00_总入口.md"; content = "Ordinary framework documentation." }
   } | ConvertTo-Json -Depth 5 -Compress
   $normalJson = ($normalInput | powershell -NoProfile -ExecutionPolicy Bypass -File $Paths.ClaudePreWrite -Root $Root) | ConvertFrom-Json
   Assert-True ($normalJson.continue -eq $true) "Claude PreToolUse should allow normal framework file"

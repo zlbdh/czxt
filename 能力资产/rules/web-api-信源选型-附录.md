@@ -3,7 +3,7 @@ name: web-api-source-selection-appendix
 scope: project
 type: reference
 loaded: on-demand
-description: Web API data-source selection appendix: historical counterexamples, related meta-rules, and the proposed Q4 extension.
+description: "Web API data-source selection appendix: historical counterexamples, related meta-rules, and the proposed Q4 extension."
 ---
 
 # Web API Data Source Selection Appendix

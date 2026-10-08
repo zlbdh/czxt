@@ -22,8 +22,12 @@ function Invoke-BorrowingDocSkillCases {
 
   Invoke-CzxtContract 'skills index lists only the main borrowing Skill once' {
     $index = Get-BorrowingDocText $Root $indexRelative
-    Assert-BorrowingIndexLink $index '主入口清单' '借鉴.md' '借鉴.md' 1
-    Assert-BorrowingDocMatchCount $index '\[借鉴\.md\]\(借鉴\.md\)' 1 'skills index main Skill count'
+    if ($index.Contains('## Main entry points')) {
+      Assert-BorrowingIndexLink $index 'Main entry points' 'Borrowing' '借鉴.md' 1
+    } else {
+      Assert-BorrowingIndexLink $index '主入口清单' '借鉴.md' '借鉴.md' 1
+    }
+    Assert-BorrowingDocMatchCount $index '\[(?:借鉴\.md|Borrowing)\]\(借鉴\.md\)' 1 'skills index main Skill count'
     Assert-BorrowingDocMatchCount $index '借鉴-命令附录\.md' 0 'skills index must not list command appendix'
   }
 }

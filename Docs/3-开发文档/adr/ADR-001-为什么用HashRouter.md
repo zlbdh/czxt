@@ -1,59 +1,59 @@
-# ADR-001 · 路由用 HashRouter 而不是 BrowserRouter
+# ADR-001 · Use HashRouter for Routing Instead of BrowserRouter
 
-- **状态**：现行
-- **日期**：2026-05-08（追溯写入，决策实际发生在 v2.0 起）
-- **决策人**：zlbdh
-- **关联**：—（底层基础设施决策）
+- **Status**: Current
+- **Date**: 2026-05-08 (recorded retrospectively; the decision took effect starting with v2.0)
+- **Decision maker**: zlbdh
+- **Related**: — (underlying infrastructure decision)
 
-## 背景
+## Context
 
-「{{PROJECT_NAME}}」要同时跑在三个环境：
+“{{PROJECT_NAME}}” must run in three environments:
 
-1. **Vite dev server**（开发用 `npm run dev`）
-2. **PWA**（把 dist/ 放到任意静态服务器或 GitHub Pages）
-3. **Capacitor Android WebView**（最终 APK 形态，用 `file://` 协议加载本地 HTML）
+1. **Vite dev server** (`npm run dev` for development)
+2. **PWA** (serve dist/ from any static server or GitHub Pages)
+3. **Capacitor Android WebView** (the final APK, loading local HTML through `file://`)
 
-BrowserRouter（HTML5 history API）有两个硬伤：
+BrowserRouter (the HTML5 history API) has two major limitations:
 
-- 在 `file://` 协议下 **不工作**（Capacitor WebView 的真实加载方式）。任何子路由刷新会直接 404。
-- PWA 部署到静态服务器需要服务端 fallback 配置（所有路由 rewrite 到 index.html），不是所有静态托管都好做。
+- It **does not work** under `file://` (the Capacitor WebView loading mechanism recorded here). Refreshing any subroute produces a 404.
+- PWA deployment to static hosting requires a server fallback (rewrite every route to index.html), which is not straightforward on every static host.
 
-候选方案：
+Options:
 
-| 选项 | dev | PWA | Capacitor |
+| Option | Development | PWA | Capacitor |
 |---|---|---|---|
-| **HashRouter** | ✅ | ✅ 零配置 | ✅ 直接能用 |
-| BrowserRouter | ✅ | ⚠️ 需服务端 fallback | ❌ file:// 下崩 |
-| MemoryRouter | ✅ | ✅ | ✅，但 URL 不可见、刷新丢状态 |
+| **HashRouter** | ✅ | ✅ No configuration | ✅ Works directly |
+| BrowserRouter | ✅ | ⚠️ Server fallback required | ❌ Fails under file:// |
+| MemoryRouter | ✅ | ✅ | ✅, but routes are not visible in the URL and refresh loses state |
 
-## 决定
+## Decision
 
-**用 HashRouter**（`react-router-dom`）。所有路由用 `#/path` 形式（如 `#/health`、`#/accounting`）。
+**Use HashRouter** from `react-router-dom`. All routes use `#/path`, such as `#/health` and `#/accounting`.
 
-涉及代码：`src/App.jsx` `<HashRouter>` 包裹 `<AppShell />`。
+Code: `<HashRouter>` wraps `<AppShell />` in `src/App.jsx`.
 
-## 后果
+## Consequences
 
-### 好处
-- 三个环境零配置，一份代码同时跑
-- Capacitor APK 不会因为 router 崩
-- PWA 部署到任意静态托管（Vercel / Netlify / GitHub Pages / 内网）都不用改服务端
-- 用户 share 链接（如果未来要做）也不会因协议不同失效
+### Benefits
+- One codebase runs in all three environments without configuration.
+- Routing does not break the Capacitor APK.
+- PWA deployment to any static host (Vercel / Netlify / GitHub Pages / an internal network) requires no server changes.
+- Shared links, if added later, will not fail because the protocol differs.
 
-### 代价
-- URL 里多个 `#`，肉眼看不"专业"（但用户是 zlbdh 自己，不在乎）
-- SEO 友好性差（但 APP 不需要 SEO）
-- 跟一些第三方分析工具兼容性差（目前没用）
+### Costs
+- The URL contains an extra `#`, which looks less “professional” (the user is zlbdh, who does not mind).
+- Poorer SEO support (the app does not require SEO).
+- Less compatibility with some third-party analytics tools (none are currently used).
 
-### 后续如果反悔了
-- 翻案触发条件：需要做深度链接 + SEO + share + 服务端渲染
-- 撤销路径：换 BrowserRouter 同时给 PWA 配 fallback、给 Capacitor 改用 webDir 服务模式
-- 数据迁移：无（路由是无状态的）
-- 文档影响：信息架构 + 项目结构 + 这条 ADR 标"已弃用"，新建 ADR 描述切换
+### Reconsideration
+- Trigger: deep links, SEO, sharing, and server rendering are required.
+- Reversal: switch to BrowserRouter, configure a PWA fallback, and switch Capacitor to a webDir server mode.
+- Data migration: none; routing is stateless.
+- Documentation: update information architecture and project structure, mark this ADR “Deprecated,” and create a new ADR describing the switch.
 
 ---
 
-## 备注
+## Notes
 
-- 现有所有页面跳转都已经用 `<Link to="/...">` 形式，迁移到 BrowserRouter 时代码层无需大改，只需改 router 类型。
-- Capacitor `capacitor.config.json` 没有覆盖默认 webDir，所以是按 file:// 加载的。这点跟 HashRouter 选择是绑定的。
+- Existing page navigation already uses `<Link to="/...">`. Switching to BrowserRouter requires little application code change beyond the router type.
+- The recorded `capacitor.config.json` does not override the default webDir and therefore loads through file://. This recorded configuration is tied to the HashRouter choice.

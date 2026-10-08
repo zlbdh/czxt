@@ -1,161 +1,161 @@
-# ADR-029 · 议题 BE 永久化：PM 工作区元记忆中枢化（PROP-023 收档 P6）
+# ADR-029 · Make topic BE permanent: PM workspaces as meta-memory hubs (PROP-023 P6 closeout)
 
-- **状态**：现行
-- **日期**：2026-05-22
-- **关联**：[PROP-023 项目 PM 记忆中枢化](../../../确认改动/已审批/已完成/PROP-023-2026-05-15-项目PM记忆中枢化.md) · [PM 自纠 #43-#48 累积 6 次](../../../状态.md) · [PM工作区/](../../../PM工作区/) · [元规则池.md](../../../操作系统/01_架构/元规则池.md)
-- **议题 BE 关闭条件**：PM 工作区物理目录 + 6 PM × 速查表/实战回顾/PM自纠 全部就位 + 起手必查机制 累计 100+ 次实战 ✅ 达成
+- **Status**: Current
+- **Date**: 2026-05-22
+- **Related**: [PROP-023 Project PM memory hub](../../../确认改动/已审批/已完成/PROP-023-2026-05-15-项目PM记忆中枢化.md) · [Six accumulated PM self-corrections #43-#48](../../../状态.md) · [PM workspaces](../../../PM工作区/) · [Meta-rule pool](../../../操作系统/01_架构/元规则池.md)
+- **Topic BE closure criteria**: Physical PM workspaces; quick references / field reviews / self-corrections for six PMs; mandatory startup checks used in 100+ field cases ✅ Met
 
-> ⚠️ **术语更新（2026-06-15）**：早期“子子 PM”统一称为“实施 PM”。本文 PM 工作区机制仍现行，层级术语以 `主-元-决策-实施` 为准。
+> ⚠️ **Current terminology (2026-06-15)**: Earlier "grandchild PMs" are now called "implementation PMs." The workspace mechanism remains current; hierarchy terminology follows `lead–meta–decision–implementation`.
 
-## 背景
+## Context
 
-议题 BE 起源 2026-05-15 PROP-023 + PM 自纠 #43-#48 累积 6 次同模式（一日内 framework 元规则记忆错向 6 次）：
+Topic BE originated in PROP-023 on 2026-05-15 and six same-pattern PM self-corrections #43-#48, all involving framework meta-rule recall failures within one day:
 
-| # | 类型 | 描述 |
+| # | Type | Description |
 |---|---|---|
-| #43 | 规则记忆错向 | F-SYSCHECK-1 handoff 卡列 CHANGELOG entry 违反 header |
-| #44 | PROP 状态字段语义边界 | PROP-021 切「已完成」过早 |
-| #45 | 跨平台 API 假设 | navigator.* fallback 假设跨平台同语义 |
-| #46 | Capacitor 主版本假设 | handoff 卡 `^7.x` 实际项目 `^6.x` |
-| #47 | plugin 集成防御缺失 | F-ALARM-1 handoff 卡未明示 plugin 必静态 import + NotificationChannel 必创建 |
-| #48 | chat 输出冗余 | 同一轮 chat 列 2 个相同复制贴代码块 |
+| #43 | Incorrect rule recall | F-SYSCHECK-1 handoff included a CHANGELOG entry that violated the header |
+| #44 | PROP status semantics | PROP-021 was marked Completed too early |
+| #45 | Cross-platform API assumption | navigator.* fallback was assumed to behave identically across platforms |
+| #46 | Capacitor major-version assumption | Handoff specified `^7.x`; project actually used `^6.x` |
+| #47 | Missing plugin integration defenses | F-ALARM-1 handoff omitted mandatory static plugin import and NotificationChannel creation |
+| #48 | Redundant chat output | Two identical copy/paste code blocks in one chat turn |
 
-**根因**：framework 散落 19 PROP / 22 ADR / 8 RETRO / 21 议题 / 5 PM 角色 md / 多 workflow → PM 切角色帽子前理论上 grep 5-8 文件，实际多次凭记忆 → 元规则记忆错向。
+**Root cause**: Rules were dispersed across 19 PROPs / 22 ADRs / eight RETROs / 21 topics / five PM role files / multiple workflows. A role switch theoretically required searching five to eight files, but the PM repeatedly relied on memory and recalled meta-rules incorrectly.
 
-**议题 BE 一句话**：PM 切角色 / 新对话 / 新会话起手时**必查** INDEX + 状态.md + PM 工作区私人速查表 + 待接手交接卡，**不靠记忆**。
+**Topic BE in one sentence**: On a role switch, new conversation, or new session, a PM **must check** INDEX + 状态.md + personal workspace quick references + pending handoff cards, **not rely on memory**.
 
-## 决定
+## Decision
 
-议题 BE **正式永久关闭**，对应元规则池第 6 元规则（BE 起手必查），ADR-029 永久化其物理实现机制。
+**Permanently close topic BE**. It remains meta-rule six, mandatory startup checks; ADR-029 makes its physical implementation permanent.
 
-### 决定 1 — PM 工作区物理目录永久化（PROP-023 P2-P5 已完成）
+### Decision 1 — Permanent physical PM workspaces (PROP-023 P2-P5 complete)
 
-`PM工作区/` 顶级目录 + 9 PM 子目录永久确立（task #95-#107 累积完成）：
+Establish top-level `PM工作区/` and nine PM subdirectories, completed across tasks #95-#107:
 
 ```
 PM工作区/
-├── README.md                  ← v1→v3.1 5 次迭代历史
-├── 项目PM-咪咪/                ← 主 PM
-├── 沉淀PM-沉淀者/              ← 元-层 PM（紧贴主 PM）
-├── 操作系统PM-框架管家/         ← 决策 PM
-├── 产品PM-需求拆解者/           ← 决策 PM
-├── 技术PM-修复决策者/           ← 决策 PM
-├── 测试PM-质量门户/             ← 决策 PM
-├── 运营PM-运营咪咪/             ← 决策 PM
-├── 开发PM-实施者/               ← 实施 PM
-└── 测试发布PM-闭环者/           ← 实施 PM
+├── README.md                  ← Five iterations, v1→v3.1
+├── 项目PM-咪咪/                ← Lead PM
+├── 沉淀PM-沉淀者/              ← Meta-layer PM beside the lead PM
+├── 操作系统PM-框架管家/         ← Decision PM
+├── 产品PM-需求拆解者/           ← Decision PM
+├── 技术PM-修复决策者/           ← Decision PM
+├── 测试PM-质量门户/             ← Decision PM
+├── 运营PM-运营咪咪/             ← Decision PM
+├── 开发PM-实施者/               ← Implementation PM
+└── 测试发布PM-闭环者/           ← Implementation PM
 ```
 
-每个 PM 工作区目录**必含**：
-- `README.md` — PM 入口 + 索引
-- `速查表/` — 触发 trigger 时按需读（PROP-031 + ADR-028 scope=agent）
-- `INDEX.md` — 该 PM 私人记忆条目索引
+Each workspace **must include**:
+- `README.md`: PM entry point and index.
+- `速查表/`: Read on demand when a trigger matches, PROP-031 + ADR-028 `scope=agent`.
+- `INDEX.md`: Index of that PM's private memories.
 
-### 决定 2 — 起手必查 6 项硬约束（永久化 / 状态.md 顶部）
+### Decision 2 — Six mandatory startup readings, at the top of 状态.md
 
-任何 PM 起手**必读 6 项**（议题 BE 起手必查铁律，已落地状态.md 顶部）：
+Every PM **must read all six**, implementing topic BE's startup rule:
 
-1. **状态.md 顶部 3 秒起手速查** — 当前里程碑
-2. **`能力资产/rules/codex-push后防御.md`** — 议题 BK 防御 / ADR-025
-3. **`能力资产/rules/git-commit-编码规范.md`** — 议题 BG 防御
-4. **`能力资产/shared/品牌词典.md`** — AI 模型 = 小米 MiMo（非 Claude）
-5. **`操作系统/01_架构/演化哲学.md`** — 不模仿现实公司架构（3 问判断）
-6. **`PM工作区/项目PM-咪咪/速查表/` 7 文件** — 议题 BE 起手必查核心
+1. **Three-second quick reference at the top of 状态.md**: Current milestone.
+2. **`能力资产/rules/codex-push后防御.md`**: Topic BK / ADR-025 defenses.
+3. **`能力资产/rules/git-commit-编码规范.md`**: Topic BG defenses.
+4. **`能力资产/shared/品牌词典.md`**: The AI model is Xiaomi MiMo, not Claude.
+5. **`操作系统/01_架构/演化哲学.md`**: Do not imitate real-company structures; apply the three-question test.
+6. **Seven files in `PM工作区/项目PM-咪咪/速查表/`**: The core topic BE startup checks.
 
-新 PM 加入 framework 时**必须**在 6 项之外建立自己的速查表（参考 PROP-031 + ADR-028 frontmatter schema）。
+A new PM **must** create personal quick references in addition to these six readings, following PROP-031 + ADR-028 frontmatter.
 
-### 决定 3 — speedsheet 触发机制永久化（PROP-031 落地）
+### Decision 3 — Permanent speedsheet trigger mechanism (PROP-031)
 
-PM 切角色帽子时通过 [decision-checkpoint Q4](../../../操作系统/07_完整工作流/decision-checkpoint.md) 自动 grep 触发 speedsheet：
+On a role switch, [decision-checkpoint Q4](../../../操作系统/07_完整工作流/decision-checkpoint.md) searches for a matching speedsheet trigger:
 
 ```
-Q4：当前 PM 帽子的速查表是否有 trigger 匹配当前任务？
+Q4: Does a quick reference for the current PM role have a trigger matching this task?
 ↓
-有 → 读对应 speedsheet
+Yes → Read the matching speedsheet
 ↓
-无 → 走 default workflow
+No → Follow the default workflow
 ```
 
-`PROP-031 + decision-checkpoint Q4` 已落地 / 本 ADR 永久化机制。
+PROP-031 + decision-checkpoint Q4 are implemented; this ADR makes the mechanism permanent.
 
-### 决定 4 — 9 PM 私人记忆中枢机制（PROP-023 自然延伸）
+### Decision 4 — Private memory hubs for nine PMs (a natural extension of PROP-023)
 
-每个 PM 私有 3 类记忆（scope=agent / ADR-028 frontmatter）：
+Each PM owns three memory categories, with agent scope and ADR-028 frontmatter:
 
-| 类型 | 位置 | scope/type/loaded |
+| Type | Location | scope/type/loaded |
 |---|---|---|
-| 速查表 | `PM工作区/<PM>/速查表/*.md` | agent / procedural / on-demand |
-| 实战回顾 | `PM工作区/<PM>/实战回顾/*.md` | agent / episodic / on-demand |
-| PM 自纠 | `PM工作区/<PM>/PM自纠/*.md` | agent / episodic+反思 / triggered |
+| Quick references | `PM工作区/<PM>/速查表/*.md` | agent / procedural / on-demand |
+| Field reviews | `PM工作区/<PM>/实战回顾/*.md` | agent / episodic / on-demand |
+| PM self-corrections | `PM工作区/<PM>/PM自纠/*.md` | agent / episodic+reflection / triggered |
 
-跨 PM 监督由 [沉淀 PM「沉淀者」](../../../操作系统/02_智能体/沉淀PM-沉淀者.md) 主导（ADR-027 元-层 PM）。
+Cross-PM oversight is led by [Knowledge PM Curator](../../../操作系统/02_智能体/沉淀PM-沉淀者.md), the ADR-027 meta-layer PM.
 
-### 决定 5 — 议题 BE 元规则 ADR 加持（不变更编号）
+### Decision 5 — Add an ADR to topic BE without renumbering it
 
-议题 BE 早已是元规则池第 6 永久化元规则（v1.0 / 6 个起点之一），本 ADR-029 **不改变其元规则编号**，仅永久化其**物理实现机制**（PM 工作区目录 + 起手必查 6 项 + speedsheet trigger）。
+BE was already the sixth permanent meta-rule, one of the six starting rules in v1.0. ADR-029 **does not change its number**; it makes the **physical mechanism** permanent: PM workspace directories, six startup readings, and speedsheet triggers.
 
-元规则池 v3.2 → v3.3：BE 行加 ADR-029 标注。
+Meta-rule pool v3.2 → v3.3: add ADR-029 to the BE row.
 
 ```
-G  PRD 来源遵循         (累积实战)
-AT 路径遵循             (累积实战)
-AM 多角色协作           (累积实战)
-AO 错误隔离             (累积实战)
-BC Cowork 工程一致性    (累积实战)
-🆕 BE 起手必查          → ADR-029 (本 ADR 加持 / 元规则编号不变)
-AJ PM 子类化            → ADR-023
-P  用户输入三态边界     → ADR-024
-BK Cowork mount stale   → ADR-025
-CT PM 角色去工具绑定    → ADR-026
-CU+DD 沉淀 PM 元-层     → ADR-027
-CW 记忆 scope YAML      → ADR-028
+G  PRD source adherence          (accumulated field evidence)
+AT Path adherence                (accumulated field evidence)
+AM Multi-role collaboration      (accumulated field evidence)
+AO Error isolation               (accumulated field evidence)
+BC Cowork engineering consistency (accumulated field evidence)
+🆕 BE Mandatory startup checks   → ADR-029 (adds an ADR; rule number unchanged)
+AJ PM subroles                   → ADR-023
+P  Three-state input boundaries  → ADR-024
+BK Cowork mount stale            → ADR-025
+CT PM/tool decoupling            → ADR-026
+CU+DD Knowledge PM meta layer    → ADR-027
+CW Memory scope YAML            → ADR-028
 ```
 
-## 后果
+## Consequences
 
-### 收益
+### Benefits
 
-- ✅ PM 自纠 #43-#48 类型错向**0 复发**（task #95 后实战 100+ 次未触发同模式）
-- ✅ 跨 session PM 切换持久化加强（PM 工作区比临时记忆持久）
-- ✅ 9 PM 私人记忆中枢统一物理位置（沉淀 PM 跨 PM 监督有具体目录）
-- ✅ 议题 BE 元规则 + 物理实现 + speedsheet trigger 三位一体
+- ✅ **Zero recurrences** of the #43-#48 failure types in 100+ trials after task #95.
+- ✅ More durable cross-session PM transitions: workspaces persist beyond temporary memory.
+- ✅ One physical location for nine private memory hubs gives the Knowledge PM concrete oversight directories.
+- ✅ Topic BE unifies the meta-rule, physical implementation, and speedsheet trigger.
 
-### 风险与缓解
+### Risks and mitigations
 
-| 风险 | 缓解 |
+| Risk | Mitigation |
 |---|---|
-| 9 PM 工作区目录密度过高 | 议题 CM v3.1 已通过物理拆分 + 命名一致化解决 |
-| PM 不读速查表凭记忆 | speedsheet trigger 自动化（PROP-031 / decision-checkpoint Q4 ✅ 落地）|
-| 速查表本身散落 | 议题 CL 长尾监控 + 沉淀 PM 跨 PM 检查 |
+| Excessive density across nine workspaces | Topic CM v3.1 addressed it through physical splitting and consistent names |
+| PM relies on memory instead of quick references | Automated speedsheet triggers through PROP-031 / decision-checkpoint Q4 ✅ |
+| Quick references themselves become dispersed | Topic CL long-tail monitoring and cross-PM Knowledge PM checks |
 
-### 验证
+### Verification
 
-| 维度 | 验证方式 | 结果 |
+| Dimension | Method | Result |
 |---|---|---|
-| PM 工作区物理目录 | `ls PM工作区/` 9 子目录 | ✅ |
-| 起手必查 6 项 | 状态.md 顶部段存在 | ✅ |
-| speedsheet trigger | decision-checkpoint Q4 + PROP-031 落地 | ✅ |
-| 议题 BE 元规则 | 元规则池.md 第 6 元规则就位 | ✅ |
-| 同模式 0 复发 | PM 自纠 #43-#48 类型 task #95 后 0 触发 | ✅（100+ 次实战）|
+| Physical workspaces | `ls PM工作区/` shows nine subdirectories | ✅ |
+| Six startup readings | Section exists at the top of 状态.md | ✅ |
+| Speedsheet triggers | decision-checkpoint Q4 + PROP-031 implemented | ✅ |
+| Topic BE meta-rule | Rule six in 元规则池.md | ✅ |
+| Zero same-pattern recurrences | No #43-#48-type triggers after task #95 | ✅ 100+ field cases |
 
-## 实施清单（追溯）
+## Implementation checklist (retrospective)
 
-- ✅ PROP-023 P0+P1 approve（2026-05-15 zlbdh）
-- ✅ PROP-023 P2-P4 物理落地（task #95-#100 累积）
-- ✅ PROP-023 P5 跨 Sprint 渐进迁移（task #95-#107 PM 自纠 73 独立 .md + 议题全景 + 角色切换轨迹）
-- ✅ **PROP-023 P6 本 ADR 收档**（task #108.1 / 2026-05-22）
-- ✅ PROP-031 speedsheet trigger 落地（已 ADR）
-- ✅ ADR-028 scope frontmatter 配套（议题 CW）
-- ✅ ADR-027 沉淀 PM 跨 PM 监督机制（议题 CU+DD）
+- ✅ PROP-023 P0+P1 approved by zlbdh, 2026-05-15.
+- ✅ PROP-023 P2-P4 physical implementation across tasks #95-#100.
+- ✅ PROP-023 P5 gradual cross-Sprint migration across #95-#107: 73 standalone PM self-correction files, topic panorama, and role-transition history.
+- ✅ **PROP-023 P6 closes with this ADR**, task #108.1 / 2026-05-22.
+- ✅ PROP-031 speedsheet triggers implemented and already recorded in an ADR.
+- ✅ ADR-028 scope frontmatter companion, topic CW.
+- ✅ ADR-027 cross-PM Knowledge PM oversight, CU+DD.
 
-## 引用决议
+## Referenced decisions
 
-- PM 自纠 #43-#48（2026-05-15 一日累积 6 次同模式）
-- PROP-023 项目 PM 记忆中枢化（2026-05-15 zlbdh approve A+自己执行）
-- 元规则池 v1.0 议题 BE 起点 6 元规则之一
-- decision-checkpoint Q4 speedsheet trigger（PROP-031）
-- ADR-023 议题 AJ PM 子类化（嵌套架构延伸）
+- PM self-corrections #43-#48: six same-pattern cases on 2026-05-15.
+- PROP-023 Project PM memory hub: zlbdh approved option A + direct implementation, 2026-05-15.
+- Meta-rule pool v1.0: BE was one of the original six rules.
+- decision-checkpoint Q4 speedsheet triggers, PROP-031.
+- ADR-023 topic AJ PM subroles: extension of the nested architecture.
 
 ---
 
-⭐ **ADR-029 永久现行 / 与 ADR-022/023/024/025/026/027/028 并列 framework 元规则 ADR**
+⭐ **ADR-029 is permanently current, alongside ADR-022/023/024/025/026/027/028 as a framework meta-rule ADR.**

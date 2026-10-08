@@ -1,136 +1,136 @@
-# ADR-025 · Cowork mount stale 防御机制永久化（议题 BK v3 升级）
+# ADR-025 · Permanent Cowork stale-mount defenses (topic BK v3)
 
-- **状态**：现行
-- **日期**：2026-05-19
-- **关联**：[ADR-023 议题 AJ PM 子类化](ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) · [ADR-024 议题 P 永久化](ADR-024-议题P用户输入三态边界永久化.md) · [PROP-024 Phase 2 防御机制实施](../../../确认改动/已审批/已完成/PROP-024-2026-05-19-架构债治理v4-4包综合治理.md) · [codex-push 后防御当前真源](../../../能力资产/rules/codex-push后防御.md)
-- **议题 BK 关闭条件**：实战 ≥3 次累积 + 0 业务事故 + 多维度症状识别完整 + 防御机制稳定有效 ✅ 达成
+- **Status**: Current
+- **Date**: 2026-05-19
+- **Related**: [ADR-023 topic AJ PM subroles](ADR-023-议题AJ落地-PM角色子类化+decision-checkpoint.md) · [ADR-024 permanent topic P](ADR-024-议题P用户输入三态边界永久化.md) · [PROP-024 Phase 2 defenses](../../../确认改动/已审批/已完成/PROP-024-2026-05-19-架构债治理v4-4包综合治理.md) · [Current source of truth for post-codex-push defenses](../../../能力资产/rules/codex-push后防御.md)
+- **Topic BK closure criteria**: ≥3 accumulated trials + zero application incidents + complete multidimensional symptom identification + stable, effective defenses ✅ Met
 
-> ⚠️ **当前安全覆盖说明（2026-06-15）**：本文保留 2026-05 mount stale 证据，但“reset 预批路径”已被当前 B/C 边界取代。现在遇到疑似 stale/dirty，只能先做只读 verify；任何会改写工作区的恢复命令都必须按 [`能力资产/rules/codex-push后防御.md`](../../../能力资产/rules/codex-push后防御.md) 获取本次明确授权，不能照抄本文历史命令。
+> ⚠️ **Current safety override notice (2026-06-15)**: This record preserves the May 2026 stale-mount evidence, but the preapproved reset path has been superseded by current Class B/C boundaries. Suspected stale/dirty state now requires read-only verification first. Any recovery command that rewrites the working tree requires explicit authorization for this occurrence under [`能力资产/rules/codex-push后防御.md`](../../../能力资产/rules/codex-push后防御.md); historical commands here must not be copied and executed directly.
 
-## 背景
+## Context
 
-议题 BK 从 Sprint-5 v3.6.1 Codex push 后首次暴露，跨 3 次实战累积**多维度症状**：
+Topic BK first appeared after Codex pushed Sprint-5 v3.6.1. Three cases accumulated **symptoms across several dimensions**:
 
-| 实战 | 时间 | 维度 | 症状 |
+| Trial | Time | Dimension | Symptoms |
 |---|---|---|---|
-| #1 | 2026-05-19 12:00（v3.6.1）| working tree 假 dirty + git index 损坏 | 5 文件 modified（含 F-DEVIATION-3 真代码删除 143 行）+ `.git/index` `bad signature 0x00000000` |
-| #2 | 2026-05-19 14:45（v3.6.2）| 文件截断假象 | Profile.jsx 删 7 行 + 末尾加空格 + 无 newline |
-| #3 | 2026-05-19 17:00（v3.6.3）| 多模式同时 | 18 文件假 dirty + `alarmManager.js` 物理存在但 `no read permission` + `personaPrompts/` 首次 ls 缺 2/3 文件第二次自动刷新 |
+| #1 | 2026-05-19 12:00 (v3.6.1) | Falsely dirty working tree + corrupt git index | Five modified files, including apparent deletion of 143 real F-DEVIATION-3 code lines; `.git/index` reported `bad signature 0x00000000` |
+| #2 | 2026-05-19 14:45 (v3.6.2) | Apparent file truncation | Profile.jsx appeared to lose seven lines, gain trailing spaces, and lose its final newline |
+| #3 | 2026-05-19 17:00 (v3.6.3) | Multiple simultaneous patterns | 18 falsely dirty files; physically present `alarmManager.js` reported `no read permission`; the first ls of `personaPrompts/` missed two of three files, while the second refreshed automatically |
 
-**根因确认**（PROP-024 Phase 2 调查结论）：
-- Cowork mount POSIX 权限模型 + cross-tool stale cache + 不同步刷新窗口
-- **不是 bug**，是 mount 设计权衡（速度 vs 实时性）
-- **不阻塞业务**：Codex 端 fresh fs 看真实状态，所有 push 始终正确 + GitHub 代码完整
+**Confirmed root cause**, from PROP-024 Phase 2:
+- Cowork mount POSIX permissions + cross-tool stale cache + unsynchronized refresh windows.
+- **Not a bug**, but a mount design tradeoff between speed and freshness.
+- **No application blocker**: Codex's fresh filesystem showed the real state; every push was correct and GitHub code remained complete.
 
-**防御机制实战**：3 次都用 `git reset --hard HEAD` 一键恢复（前期 #1 还含 `rm .git/index + git reset`）+ 双 verify 全过 → **0 业务事故**。
+**Historical recovery evidence**: All three cases used `git reset --hard HEAD` for recovery; early case #1 also used `rm .git/index + git reset`. Both verification checks passed each time, with **zero application incidents**.
 
-## 决定
+## Decision
 
-议题 BK **正式永久关闭**，纳入 framework「跨工具基础设施限制」类元规则永久化。
+**Permanently close topic BK** and add it to the framework's permanent cross-tool infrastructure limitation meta-rules.
 
-### 决定 1 — Codex push 后 PM 双 verify 硬规则（永久化）
+### Decision 1 — Mandatory dual PM verification after a Codex push
 
-每次 Codex 报告「push 完成 / working tree clean」后，Cowork PM **必须**执行：
+After every Codex report of "push complete / working tree clean," the Cowork PM **must** run:
 
 ```bash
-# 1. push 后立即 verify
+# 1. Verify immediately after the push
 cd "$PROJECT_ROOT"
-git status --short    # 看是否 dirty
-git log --oneline -1  # 看 HEAD 是否对应 Codex 报告的 commit hash
+git status --short    # Check for a dirty tree
+git log --oneline -1  # Check HEAD against the commit hash reported by Codex
 ```
 
-若 `git status` 不 clean → 立即跳决定 2 恢复路径。
+If `git status` is not clean, proceed immediately to the recovery guidance in decision 2.
 
-PM 任何 Edit / Write / mv 操作前，**必须**再 verify 一次（防 mount stale 自动刷新延迟污染后续操作）。
+Before any PM Edit / Write / mv operation, **verify again** to prevent delayed stale-mount refresh from contaminating later work.
 
-### 决定 2 — 历史恢复路径（已被当前安全边界取代）
+### Decision 2 — Historical recovery path, superseded by current safety boundaries
 
-2026-05 当时的恢复路径如下，仅作历史证据。**当前不再预批执行**：
+The May 2026 recovery path below is historical evidence only. **It is no longer preapproved for execution**:
 
 ```bash
 cd "$PROJECT_ROOT"
-git status --short              # 确认 dirty
-git diff <file> | head -30      # 看是真代码删除还是 mount stale 假象（一般是 stale）
-git reset --hard HEAD           # 恢复 working tree
-git status                      # verify clean
+git status --short              # Confirm the dirty state
+git diff <file> | head -30      # Distinguish real deletion from a stale-mount artifact, usually the latter
+git reset --hard HEAD           # Restore the working tree
+git status                      # Verify a clean tree
 ```
 
-⭐ **当前执行**：只读确认后，按 `codex-push后防御.md` 要求请求本次明确授权，再决定是否恢复工作区。
+⭐ **Current execution**: After read-only checks, request explicit authorization for this occurrence under `codex-push后防御.md`, then decide whether to restore the working tree.
 
-### 决定 3 — index 损坏特殊路径（历史记录 / 罕见）
+### Decision 3 — Special index-corruption path, historical and rare
 
-若当时 `git reset` 报 `bad signature 0x00000000 / fatal: index file corrupt`（仅 #1 v3.6.1 实战出现），曾采用：
+When `git reset` reported `bad signature 0x00000000 / fatal: index file corrupt`, which occurred only in case #1 on v3.6.1, the following was used:
 
 ```bash
-rm .git/index           # 删损坏 index
-git reset               # 软 reset 重建 index from HEAD
-git reset --hard HEAD   # 走基础恢复
+rm .git/index           # Remove the corrupt index
+git reset               # Rebuild the index from HEAD with a soft reset
+git reset --hard HEAD   # Apply the basic recovery
 ```
 
-### 决定 4 — 防御机制写入 framework（当前真源已迁移）
+### Decision 4 — Record the defense in the framework; its current source has moved
 
-当前真源为 [`能力资产/rules/codex-push后防御.md`](../../../能力资产/rules/codex-push后防御.md)；历史 `agent/rules/` 路径不再作为执行入口。
+The current source of truth is [`能力资产/rules/codex-push后防御.md`](../../../能力资产/rules/codex-push后防御.md). Historical `agent/rules/` paths are no longer execution entry points.
 
-### 决定 5 — 元规则池升级 8 → 9
+### Decision 5 — Expand the meta-rule pool from eight to nine
 
-`议题 BK 防御`（mount stale 双 verify + reset 预批）作为第 9 元规则进入永久化池（与 G/AT/AM/AO/BC/BE/AJ/P 并列），命名「**议题 BK · Cowork mount stale 防御**」。
+`Topic BK defenses` — dual stale-mount verification + preapproved reset — becomes the ninth permanent meta-rule, alongside G/AT/AM/AO/BC/BE/AJ/P, named **Topic BK · Cowork stale-mount defenses**.
 
-未来「跨工具基础设施限制」类规则统一归入此类（如未来若发现 Codex 端 fresh fs 也有类似问题）。
+Future cross-tool infrastructure limitations belong in this category, including similar issues that might appear in Codex's fresh filesystem.
 
-## 后果
+## Consequences
 
-### 收益
+### Benefits
 
-1. **跨 Sprint 长期生效** — 每次 Codex push 后 PM 自动 verify，业务零事故保障
-2. **PM 切对话不影响** — 任何新 PM 起手读本 ADR + `codex-push后防御.md` 即可上手
-3. **3 次累积证据完整** — 不再需要每次解释「mount stale 是什么 / 为什么 reset」
-4. **元规则永久化升级 8 → 9** — framework 资产巩固
+1. **Persistent cross-Sprint protection**: The PM verifies after every Codex push, protecting the zero-incident record.
+2. **Independent of PM conversation changes**: A new PM reads this ADR and `codex-push后防御.md` to begin.
+3. **Complete evidence from three cases**: No need to explain stale mounts and the historical reset rationale repeatedly.
+4. **Eight permanent meta-rules become nine**, strengthening framework assets.
 
-### 代价
+### Costs
 
-1. **每次 Codex push 后 PM 起手 +5 秒 verify**（成本极低）
-2. **mount stale 根因未根治** — 取决于 Cowork mount 底层是否未来优化（议题 BK v4 候选保留）
-3. **新对话 PM 必须读 ADR-025 + codex-push后防御.md** 才能避免被 mount stale 吓到
+1. **Five seconds of PM verification after each Codex push**, a very low cost.
+2. **The stale-mount root cause remains** and depends on future Cowork mount improvements; topic BK v4 remains a candidate.
+3. **A PM in a new conversation must read ADR-025 and codex-push后防御.md** to recognize stale-mount symptoms.
 
-### 议题 BK 关闭后跨 Sprint 监控
+### Cross-Sprint monitoring after topic BK closes
 
-- ✅ 不再标记「议题 BK 第 N 次实战」（每次 Codex push 都默认走 verify）
-- ❌ 若未来发现**新维度**（如 Codex 端也出现 stale / GitHub Actions push 后 stale）→ 议题 BK **重开** + 起新 ADR 翻案
-- ✅ 累积 ≥10 次 push 后 verify 0 触发 → 评估是否 mount 底层已改进（可降级到「监控级」规则）
+- ✅ Stop labeling cases as "topic BK trial N"; verification is routine after every Codex push.
+- ❌ If a **new dimension** appears, such as stale state in Codex or after a GitHub Actions push, **reopen BK** and create a new ADR to revise the decision.
+- ✅ After ≥10 post-push verifications without a trigger, assess whether the mount implementation has improved and whether the rule can become monitoring-only.
 
-## 翻案规则
+## Reversal rule
 
-如未来 Cowork mount stale 出现**未识别新维度**：**不修本 ADR**，新建 ADR-N 写明原因，本 ADR 标「被 ADR-N 部分替代」（按 ADR README 翻案铁律）。
+If a previously unidentified stale-mount dimension appears, **do not revise this ADR**. Create ADR-N explaining why and mark this ADR "Partially superseded by ADR-N," following the ADR README.
 
-## 关联文件
+## Related files
 
-- [agent/rules/codex-push后防御.md](../../../agent/rules/codex-push后防御.md) — 防御机制具体实施（6 段 / 双 verify / 3 级恢复路径）
-- [PROP-024 Phase 2 实施](../../../确认改动/已审批/已完成/PROP-024-2026-05-19-架构债治理v4-4包综合治理.md) — 防御机制首次 ship
-- [RETRO-009 §议题 BK v3 升级](../../7-复盘/RETRO-009-2026-05.md) — 3 次实战完整记录 + ADR 决议
-- [agent/rules/]/ — framework 元规则池（议题 BK 加入第 9 元规则）
+- [agent/rules/codex-push后防御.md](../../../agent/rules/codex-push后防御.md) — defense implementation: six sections, dual verification, three recovery levels.
+- [PROP-024 Phase 2 implementation](../../../确认改动/已审批/已完成/PROP-024-2026-05-19-架构债治理v4-4包综合治理.md) — first delivery of the defense.
+- [RETRO-009 topic BK v3](../../7-复盘/RETRO-009-2026-05.md) — full records of three trials and the ADR decision.
+- [agent/rules/]/ — framework meta-rule pool; BK becomes rule nine.
 
-## 议题 BK 关闭后里程碑
+## Milestone after topic BK closes
 
-议题 BK 永久关闭 = **framework 9 元规则永久化池**：
+Permanent BK closure establishes the **nine-rule permanent framework pool**:
 
-| # | 议题 | ADR |
+| # | Topic | ADR |
 |---|---|---|
-| 1 | 议题 G（hook 反应式）| 隐含 PROP-021 |
-| 2 | 议题 AT（web API 信源）| 隐含 PROP-022 |
-| 3 | 议题 AM（CHANGELOG header）| 隐含 PROP-018 |
-| 4 | 议题 AO（PROP 状态字段语义）| 隐含 PROP-020 |
-| 5 | 议题 BC（Capacitor plugin 静态 import）| 隐含 PROP-024 Phase 1 |
-| 6 | 议题 BE（PM 起手必查速查表）| 隐含 PROP-023 |
-| 7 | 议题 AJ（PM 子类化 + decision-checkpoint）| **ADR-023** |
-| 8 | 议题 P（用户输入三态边界）| **ADR-024** |
-| **9** | **议题 BK（Cowork mount stale 防御）** | **ADR-025（本）** |
+| 1 | G: reactive hooks | Implicit in PROP-021 |
+| 2 | AT: web API source authority | Implicit in PROP-022 |
+| 3 | AM: CHANGELOG headers | Implicit in PROP-018 |
+| 4 | AO: PROP status-field semantics | Implicit in PROP-020 |
+| 5 | BC: static Capacitor plugin imports | Implicit in PROP-024 Phase 1 |
+| 6 | BE: mandatory PM startup quick-reference check | Implicit in PROP-023 |
+| 7 | AJ: PM subroles + decision-checkpoint | **ADR-023** |
+| 8 | P: three-state user-input boundaries | **ADR-024** |
+| **9** | **BK: Cowork stale-mount defenses** | **ADR-025, this record** |
 
 ---
 
-## 2026-06-09 补录（PROP-043 / RETRO-016 教训3）— mount 防御打法 4 条
+## 2026-06-09 addendum (PROP-043 / RETRO-016 lesson 3) — Four mount defenses
 
-实战提炼的 Cowork mount stale/截断防御 4 条（与 ADR-033 大文件 mount 不可信同族，本条专注协作 git + 状态.md append 场景）：
-1. **git show HEAD:<path>** 绕 mount 缓存读 committed 真值（diff/status 元数据可信，wc/Read 内容可能 stale）。
-2. **wc/grep 大文件不可信**（stale chimera：读旧字节/函数体读不全）→ Read 工具直读 + 正向命中（grep 命中=新内容真在；stale 造不出新串）才可信。
-3. **状态.md 等 append-only 文件用 `cat >> ` O_APPEND**，绝不 read-modify-write（会覆盖其他 PM 同期 append 的行）。
-4. **build/vitest 真 shell 全绿 = 代码完整性 ground truth**（实施者真 shell 是基准；Cowork 侧 mount 读不全不代表代码缺失；Codex 真 shell 门禁兜底）。
+Four defenses distilled from Cowork stale-mount / truncation incidents, related to ADR-033's large-file mount distrust and focused here on collaborative git use and 状态.md append operations:
+1. **git show HEAD:<path>** bypasses the mount cache to read committed truth. diff/status metadata is trustworthy; wc/Read content may be stale.
+2. **Do not trust wc/grep on large files**: A stale chimera may expose old bytes or incomplete function bodies. Use the Read tool directly plus a positive match: a new string matched by grep must really exist, because stale content cannot invent it.
+3. **Use `cat >> ` with O_APPEND for append-only files such as 状态.md**. Never use read-modify-write, which can overwrite concurrent PM append entries.
+4. **Green build/vitest results in a real shell are code-integrity ground truth**. The implementer's real shell is authoritative; incomplete Cowork mount reads do not mean missing code. Codex's real-shell gates provide the final check.

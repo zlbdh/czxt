@@ -3,29 +3,29 @@ name: adr-index
 scope: project
 type: semantic
 loaded: on-demand
-description: ADR 永久决策档案索引（39 个 ADR / ADR-039 统一借鉴区与闭环治理 2026-07-18）
+description: "Permanent ADR index (39 ADRs / ADR-039 unified borrowing area and lifecycle governance, 2026-07-18)"
 ---
-# ADR — 架构决策记录（Architecture Decision Records）
+# ADR — Architecture Decision Records
 
-📐 这里记录"为什么这么设计"。代码看不出来 _why_ 的决策都要写一条。
+📐 Record why the design is this way. Write an ADR whenever the code alone cannot explain a decision's _why_.
 
-## ADR 是什么
+## What is an ADR?
 
-每个 ADR = **一次架构选择 + 它的代价**。回答这种问题：
-- 为什么用 HashRouter 不用 BrowserRouter？
-- 为什么数据存 IndexedDB 不存 localStorage？
-- 为什么不上 Redux？
-- 为什么 AI 调用直连不走自家后端？
+Each ADR records **one architecture choice and its costs**, answering questions such as:
+- Why HashRouter instead of BrowserRouter?
+- Why IndexedDB instead of localStorage?
+- Why not Redux?
+- Why call AI directly instead of through our own backend?
 
-写 ADR 的目的：**3 个月后你（或咪咪、或别的人）回来看代码，不用从 0 重新猜「当初为啥这么选」**。
+The goal: **Three months later, you, Mimi, or another reader can understand the original choice without guessing from scratch.**
 
-## 什么时候写 ADR
+## When to write one
 
-只有 **L4 改动**（架构 / schema 变化）必写。日常 L1/L2/L3 不写。
+Only **L4 changes**, such as architecture / schema changes, require an ADR. Routine L1/L2/L3 work does not.
 
-也可以**追溯写**：现在代码里某个非常规选择没人解释过，回头补一条。
+**Retrospective records** are also allowed: document an unconventional existing choice that nobody has explained.
 
-## 文件命名
+## Filenames
 
 ```
 ADR-001-为什么用HashRouter.md
@@ -34,66 +34,66 @@ ADR-003-Agent整合到rules.md
 ...
 ```
 
-编号递增、不复用、不跳号。
+Numbers increase sequentially; never reuse or skip them.
 
-## 模板
+## Template
 
-见 `_模板.md`。三段式：**背景 / 决定 / 后果**。短即好，5-15 行最合适。
+See `_模板.md`. Use three sections: **Context / Decision / Consequences**. Prefer brevity; 5-15 lines is ideal.
 
-## 翻案怎么办
+## Reversing a decision
 
-如果以后这个决定推翻了，**不要修改原 ADR**。新建一个 ADR：
+If a decision is reversed later, **do not modify the original ADR**. Create a new ADR:
 
 ```
 ADR-007-放弃HashRouter改用BrowserRouter.md
 ```
 
-里面写清楚：之前 ADR-001 说 X，现在改成 Y，原因是 ...
+Explain that ADR-001 previously chose X, the new choice is Y, and why.
 
-历史保留，演化可见。
+Preserve history so evolution remains visible.
 
-## 现有 ADR 索引
+## Existing ADR index
 
-| 编号 | 标题 | 状态 | 日期 |
+| ID | Title | Status | Date |
 |---|---|---|---|
-| ADR-001 | 为什么用 HashRouter | 现行 | 2026-05-08（追溯） |
-| ADR-002 | 项目代码迁移到 {{APP_REPO_DIR}}/ 子目录 | 现行 | 2026-05-08 |
-| ADR-003 | Agent/ 整合到 rules/ | 被 ADR-007 部分替代 | 2026-05-08 |
-| ADR-004 | 大文件拆分（PROP-001 B3 实施） | 现行 | 2026-05-08 |
-| ADR-005 | 聊天历史归档机制（F-203） | 现行 | 2026-05-09 |
-| ADR-006 | 导航重构与聊天独立化（PROP-003） | 现行 | 2026-05-09 |
-| ADR-007 | rules/ 按语义重构为 agent/（PROP-004；历史结构决策，当前由 `操作系统/` + `能力资产/` 覆盖） | 被现行结构覆盖 | 2026-05-09 |
-| ADR-008 | 框架自动化升级（PROP-005） | 现行 | 2026-05-09 |
-| ADR-009 | 框架自动化 v2 边际优化（PROP-006） | 现行 | 2026-05-09 |
-| ADR-010 | 框架自动化 v3 — 9 隐患全封堵（PROP-007） | 现行 | 2026-05-09 |
-| ADR-011 | 6500B 越线文件拆分（PROP-008；历史一次性拆分，阈值口径已由 ADR-017 分层化） | 被 ADR-017 部分替代 | 2026-05-11 |
-| ADR-012 | 交接卡机制（PROP-009） | 现行 | 2026-05-11 |
-| ADR-013 | 交接卡格式独立拆出（PROP-010） | 现行 | 2026-05-11 |
-| ADR-014 | 习惯补签字段不升 Dexie 版本（F-006） | 现行 | 2026-05-11 |
-| ADR-015 | 交接区机制（PROP-011） | 现行 | 2026-05-11 |
-| ADR-016 | AI git 权限下放（PROP-012） | 现行 | 2026-05-11 |
-| ADR-017 | 6500B 规则按工具分层化（PROP-013） | 现行 | 2026-05-12 |
-| ADR-018 | 流程优先 + 交接卡强制（PROP-014；chat 简版后续由 PROP-027 v2 扩为 ①-⑦） | 现行 | 2026-05-12 |
-| ADR-019 | 数据双源治理：profiles 合并到 userProfile（PROP-015） | 现行 | 2026-05-12 |
-| ADR-020 | 架构债清理：4 文件拆分 + 2 处死代码删除（PROP-016） | 现行 | 2026-05-12 |
-| ADR-021 | 反向学习机制：AGENTS.md + check-operating-system.ps1 + agent/CHANGELOG.md（PROP-017） | 现行 | 2026-05-12 |
-| ADR-022 | 跨工具同步规范 + AI 配置 C 类下放 + 角色边界规则（PROP-018a，合并 V/X/P/D/AF/AG 6 议题） | 现行 | 2026-05-13 |
-| ADR-023 | 议题 AJ 落地 — PM 角色子类化 + decision-checkpoint（PROP-020 路径 D 收档 / 跨 Sprint 实战 3/3 + 0 越界）⭐ | 现行 | 2026-05-15 |
-| ADR-024 | 议题 P 用户输入三态边界永久化（跨 Sprint 实战 10 次 + 设计/测试/UI 三层一致 + 0 越界 / Sprint-5 F-WEEKLY-1 收档触发）⭐ | 现行 | 2026-05-19 |
-| ADR-025 | Cowork mount stale 防御机制永久化（议题 BK v3 升级 / 3 次实战 0 业务事故 / framework 第 9 元规则）⭐ | 现行 | 2026-05-19 |
-| ADR-026 | 议题 CT 永久化 — PM 角色去工具绑定（PM 抽象 ⊥ 工具载体 / 跨工具可移植 / 第 10 元规则）⭐ | 现行 | 2026-05-22 |
-| ADR-027 | 议题 CU+DD 永久化 — 沉淀 PM 元-层架构 + 9 PM × 主-元-决策-实施四层（第 11 元规则）⭐ | 现行 | 2026-05-22 |
-| ADR-028 | 议题 CW 永久化 — 记忆 scope YAML 显式化（4 tier × 3 type frontmatter / 第 12 元规则）⭐ | 现行 | 2026-05-22 |
-| ADR-029 | 议题 BE 永久化 — PM 工作区元记忆中枢化（PROP-023 收档 / 起手必查物理实现 / 第 6 元规则 ADR 加持）⭐ | 现行 | 2026-05-22 |
-| ADR-030 | 议题 CC 永久化 — AC 实证驱动 + token 预算真机实证（单测过 ≠ 真机过 / thinking-model.test 必建 / 第 13 元规则）⭐ | 现行 | 2026-05-28 |
-| ADR-031 | 项目 PM 对外身份完整铁律（议题 DH+DK+DF 合并 / 唯一署名 + 自主拍板 + 极简 + 人话 + 4 态分明 / 第 14 元规则）⭐ | 现行 | 2026-05-28 |
-| ADR-032 | 议题 DN 永久化 — Framework 体检质量 SOP（入口类文件扩展 + 可拆性 vs 核心性 + 历史档案豁免 / 第 15 元规则）⭐ | 现行 | 2026-05-28 |
-| ADR-033 | 议题 CY 永久化 — 大文件 mount 操作不可信（读 wc/grep 不准 + 写 truncate / Read 工具唯一真值 + >6500B 写后验尾 + 改 framework 工具必真机整跑 / 扩 ADR-025 到写向 / 第 16 元规则）⭐ | 现行 | 2026-05-30 |
-| ADR-034 | LLM 关键路径工程铁律 — 加固闸(canonical 正则为准)+ marker AC + 多层门控全链同词 + prompt 动词配边界（RETRO-018/019 / 元规则 DO+DP / PROP-043）⭐ | 现行 | 2026-06-09 |
-| ADR-035 | LLM 链路确定性测试 + #95 source-grep 断言定式（mock→normalize→出卡全链测 / 断言只锁代码标识 / 元规则 DQ+DR / PROP-043）⭐ | 现行 | 2026-06-09 |
-| ADR-036 | schema 迁移安全定式 — 新表 4 处改 checklist + 无 upgrade + 真机零丢失 smoke（v15/v16 两刀验证 / 元规则 DS / PROP-043）⭐ | 现行 | 2026-06-09 |
-| ADR-037 | 敏感刀对抗审查 + 隐私 lens — 数据/安全/不可逆刀必 ultracode + 敏感数据截断/本地/可删/不批判（元规则 DT / PROP-043）⭐ | 现行 | 2026-06-09 |
-| ADR-038 | PM 实体化 agent 调度模型 — 9 PM 全量 agent 化（写=worker/只读=explorer）+ 项目 PM 单点调度·验收 + 单源主会话落笔 + 禁嵌套 + B-lite 受控并行（PROP-044 升永久 / 元规则 DX / RETRO-021+022）⭐ | 现行 | 2026-06-14 |
-| ADR-039 | 统一借鉴区与闭环治理 — 单根借鉴区 + 不可变来源快照 + 双卡状态合同 + 显式根模式 + 离线 P4t 守卫 | 现行 | 2026-07-18 |
+| ADR-001 | Why HashRouter | Current | 2026-05-08 (retrospective) |
+| ADR-002 | Move application code into {{APP_REPO_DIR}}/ | Current | 2026-05-08 |
+| ADR-003 | Consolidate Agent/ into rules/ | Partially superseded by ADR-007 | 2026-05-08 |
+| ADR-004 | Split large files, PROP-001 B3 | Current | 2026-05-08 |
+| ADR-005 | Chat-history archiving, F-203 | Current | 2026-05-09 |
+| ADR-006 | Restructure navigation and separate chat, PROP-003 | Current | 2026-05-09 |
+| ADR-007 | Restructure rules/ into semantic agent/ groups, PROP-004; Historical structural decision, now covered by `操作系统/` + `能力资产/` | Superseded by the current structure | 2026-05-09 |
+| ADR-008 | Framework automation upgrade, PROP-005 | Current | 2026-05-09 |
+| ADR-009 | Framework automation v2 incremental optimization, PROP-006 | Current | 2026-05-09 |
+| ADR-010 | Framework automation v3: address all nine risks, PROP-007 | Current | 2026-05-09 |
+| ADR-011 | Split files over 6500B, PROP-008; historical one-time split, thresholds now follow ADR-017 tool-specific tiers | Partially superseded by ADR-017 | 2026-05-11 |
+| ADR-012 | Handoff-card mechanism, PROP-009 | Current | 2026-05-11 |
+| ADR-013 | Extract the handoff-card format, PROP-010 | Current | 2026-05-11 |
+| ADR-014 | Habit-backfill field without a Dexie version bump, F-006 | Current | 2026-05-11 |
+| ADR-015 | Handoff-area mechanism, PROP-011 | Current | 2026-05-11 |
+| ADR-016 | Delegate AI git permissions, PROP-012 | Current | 2026-05-11 |
+| ADR-017 | Tool-specific tiers for the 6500B rule, PROP-013 | Current | 2026-05-12 |
+| ADR-018 | Process first + mandatory handoff cards, PROP-014; chat shorthand later expanded to ①–⑦ by PROP-027 v2 | Current | 2026-05-12 |
+| ADR-019 | Dual-source data governance: merge profiles into userProfile, PROP-015 | Current | 2026-05-12 |
+| ADR-020 | Architecture debt cleanup: split four files + remove two dead-code areas, PROP-016 | Current | 2026-05-12 |
+| ADR-021 | Reverse learning: AGENTS.md + check-operating-system.ps1 + agent/CHANGELOG.md, PROP-017 | Current | 2026-05-12 |
+| ADR-022 | Cross-tool synchronization + AI configuration reclassified from Class C + role boundaries; PROP-018a consolidates six topics V/X/P/D/AF/AG | Current | 2026-05-13 |
+| ADR-023 | Topic AJ: PM subroles + decision-checkpoint; PROP-020 path D closeout, 3/3 cross-Sprint trials + zero boundary violations ⭐ | Current | 2026-05-15 |
+| ADR-024 | Permanent topic P three-state input boundaries: ten cross-Sprint trials, consistent design/tests/UI, zero violations; triggered by Sprint-5 F-WEEKLY-1 closeout ⭐ | Current | 2026-05-19 |
+| ADR-025 | Permanent Cowork stale-mount defenses: BK v3, three trials / zero application incidents, meta-rule nine ⭐ | Current | 2026-05-19 |
+| ADR-026 | Permanent CT: PM/tool decoupling, PM abstraction ⊥ tool host, cross-tool portability, meta-rule ten ⭐ | Current | 2026-05-22 |
+| ADR-027 | Permanent CU+DD: Knowledge PM meta layer + nine PMs across lead–meta–decision–implementation, meta-rule eleven ⭐ | Current | 2026-05-22 |
+| ADR-028 | Permanent CW: explicit memory scope in YAML, four tiers × three frontmatter types, meta-rule twelve ⭐ | Current | 2026-05-22 |
+| ADR-029 | Permanent BE: PM workspaces as memory hubs, PROP-023 closeout, physical startup checks, ADR support for unchanged meta-rule six ⭐ | Current | 2026-05-22 |
+| ADR-030 | Permanent CC: evidence-driven acceptance + device-tested token budgets, unit tests passing ≠ device passing, mandatory thinking-model.test, meta-rule thirteen ⭐ | Current | 2026-05-28 |
+| ADR-031 | Complete outward-facing Project PM identity, DH+DK+DF: sole speaker, autonomous decisions, brevity, plain language, four distinct states; meta-rule fourteen ⭐ | Current | 2026-05-28 |
+| ADR-032 | Permanent DN health-check quality SOP: broader entry coverage, separability versus core importance, archive exemptions; meta-rule fifteen ⭐ | Current | 2026-05-28 |
+| ADR-033 | Permanent CY: untrustworthy large-file mount operations, inaccurate wc/grep, truncated writes, Read as sole truth, tail verification after >6500B writes, full device runs for framework-tool changes; extends ADR-025 to writes, meta-rule sixteen ⭐ | Current | 2026-05-30 |
+| ADR-034 | LLM critical-path rules: authoritative canonical-regex guard, marker acceptance, aligned multilayer gates, bounded prompt verbs; RETRO-018/019, DO+DP, PROP-043 ⭐ | Current | 2026-06-09 |
+| ADR-035 | Deterministic LLM-chain tests + #95 source-grep pattern: mock→normalize→card, code-identifier-only assertions; DQ+DR, PROP-043 ⭐ | Current | 2026-06-09 |
+| ADR-036 | Safe schema migration: four edits for a new table, no upgrade callback, zero-loss device smoke; v15/v16 demonstrated, DS, PROP-043 ⭐ | Current | 2026-06-09 |
+| ADR-037 | Sensitive-change adversarial review + privacy lens: mandatory ultracode for data/safety/irreversible changes; truncate sensitive data, local storage, deletion controls, neutral tone; DT, PROP-043 ⭐ | Current | 2026-06-09 |
+| ADR-038 | Concrete PM agent scheduling: all nine PMs, writing=worker/read-only=explorer, sole Project PM scheduling/acceptance, main-session final writes to single sources, no nesting, controlled B-lite parallelism; permanent PROP-044, DX, RETRO-021+022 ⭐ | Current | 2026-06-14 |
+| ADR-039 | Unified borrowing area and lifecycle governance: one root, immutable source snapshots, dual-card state contracts, explicit root modes, offline P4t guards | Current | 2026-07-18 |
 
-⭐ **新增 ADR 后必须更新本表**（PM 自纠 #91 教训：软规则失守 / 议题 DN 体检 SOP 应集成「ADR 文件数 vs README 表格行数一致性核查」）。维护责任：操作系统 PM-框架管家（起 ADR 时同步更新）+ 沉淀 PM-沉淀者（每 Sprint RETRO 时复核）。
+⭐ **Update this table whenever an ADR is added.** PM self-correction #91 showed a soft-rule failure; topic DN's health-check SOP must compare ADR file count with README table rows. Operating System PM Framework Steward updates the index when creating an ADR; Knowledge PM Curator rechecks it at every Sprint RETRO.

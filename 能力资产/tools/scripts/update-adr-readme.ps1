@@ -17,17 +17,17 @@ function Get-AdrMetadata {
   $lines = Get-Content -LiteralPath $File.FullName -Encoding UTF8
   $id = [regex]::Match($File.BaseName, 'ADR-\d{3}').Value
   $title = $File.BaseName -replace '^ADR-\d{3}-', ''
-  $status = "现行"
+  $status = $script:defaultAdrStatus
   $date = "—"
 
   foreach ($line in $lines) {
     if ($line -match '^#\s+ADR-\d{3}\s*[·\-—]\s*(.+)$') {
       $title = $matches[1].Trim()
     }
-    if ($line -match '^\-\s+\*\*状态\*\*[:：]\s*(.+)$') {
+    if ($line -match '^\-\s+\*\*(?:状态|Status)\*\*[:：]\s*(.+)$') {
       $status = $matches[1].Trim()
     }
-    if ($line -match '^\-\s+\*\*日期\*\*[:：]\s*(.+)$') {
+    if ($line -match '^\-\s+\*\*(?:日期|Date)\*\*[:：]\s*(.+)$') {
       $date = $matches[1].Trim()
     }
     if ($line -match '^##\s+') { break }
@@ -59,6 +59,8 @@ if (-not (Test-Path -LiteralPath $readmePath)) { throw "找不到 ADR README：$
 
 $readmeLines = Get-Content -LiteralPath $readmePath -Encoding UTF8
 $existingRows = Parse-ExistingRows $readmeLines
+$englishTable = @($readmeLines | Where-Object { $_ -match '^\| ID \| Title \| Status \| Date \|$' }).Count -gt 0
+$script:defaultAdrStatus = if ($englishTable) { "Current" } else { "现行" }
 $adrFiles = @(Get-ChildItem -LiteralPath $adrDir -Filter "ADR-*.md" -File | Sort-Object Name)
 
 $generatedRows = New-Object System.Collections.Generic.List[string]
@@ -73,7 +75,7 @@ foreach ($file in $adrFiles) {
 
 $tableStart = -1
 for ($i = 0; $i -lt $readmeLines.Count; $i++) {
-  if ($readmeLines[$i] -match '^\| 编号 \| 标题 \| 状态 \| 日期 \|$') {
+  if ($readmeLines[$i] -match '^(?:\| 编号 \| 标题 \| 状态 \| 日期 \||\| ID \| Title \| Status \| Date \|)$') {
     $tableStart = $i
     break
   }
@@ -86,14 +88,14 @@ while ($tableEnd + 1 -lt $readmeLines.Count -and $readmeLines[$tableEnd + 1] -ma
 }
 
 $newTable = @(
-  "| 编号 | 标题 | 状态 | 日期 |",
+  $(if ($englishTable) { "| ID | Title | Status | Date |" } else { "| 编号 | 标题 | 状态 | 日期 |" }),
   "|---|---|---|---|"
 ) + $generatedRows.ToArray()
 
 $currentTable = $readmeLines[$tableStart..$tableEnd]
 $needsUpdate = (($currentTable -join "`n") -ne ($newTable -join "`n"))
 
-$countPattern = 'description: ADR 永久决策档案索引（\d+ 个 ADR'
+$countPattern = '(?<prefix>^description:\s*["'']?(?:ADR 永久决策档案索引（|Permanent ADR index \())\d+(?<suffix> 个 ADR| ADRs)'
 $newLines = New-Object System.Collections.Generic.List[string]
 for ($i = 0; $i -lt $readmeLines.Count; $i++) {
   if ($i -eq $tableStart) {
@@ -103,7 +105,7 @@ for ($i = 0; $i -lt $readmeLines.Count; $i++) {
   }
   $lineToAdd = $readmeLines[$i]
   if ($lineToAdd -match $countPattern) {
-    $lineToAdd = [regex]::Replace($lineToAdd, $countPattern, "description: ADR 永久决策档案索引（$($adrFiles.Count) 个 ADR")
+    $lineToAdd = [regex]::Replace($lineToAdd, $countPattern, ('${prefix}' + $adrFiles.Count + '${suffix}'))
   }
   $newLines.Add($lineToAdd)
 }

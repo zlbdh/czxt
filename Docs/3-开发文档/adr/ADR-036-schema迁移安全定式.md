@@ -1,38 +1,38 @@
-# ADR-036 · schema 迁移安全定式（新表 4 处改 checklist + 真机零丢失 smoke）
+# ADR-036 · Safe schema migration (four edits for a new table + zero-data-loss device smoke)
 
-- **状态**：现行
-- **日期**：2026-06-09
-- **决策人**：zlbdh approve / 沉淀 PM 起草（PROP-043）
-- **关联**：RETRO-020（E 重量曲线 v15 + M 偏离记录 v16 两把 schema 刀）/ 元规则 DS / 承 ADR-014（习惯补签不升版本）
+- **Status**: Current
+- **Date**: 2026-06-09
+- **Decision maker**: zlbdh approved; Knowledge PM drafted, PROP-043.
+- **Related**: RETRO-020, E weight chart v15 + M deviation records v16; meta-rule DS; follows ADR-014, habit backfill without a version bump.
 
-## 背景
+## Context
 
-项目曾约 28 刀靠 schema-less（profile spread / 复用现表）刻意避开 Dexie 版本升级。E 重量曲线（v3.41，IndexedDB v140→v150）首次有意打破，M 偏离记录（v3.42，v150→v160）第二把。两把刀真机验证了一套安全升级定式 + 一个高危陷阱（exportAllData 漏加新表 = 用户备份丢数据 = C 类红线相邻）。需固化为「以后所有 schema bump 必走的 checklist」。
+About 28 changes deliberately avoided Dexie version bumps through schemaless profile spreads or reuse of existing tables. E weight charts, v3.41 / IndexedDB v140→v150, intentionally broke that pattern; M deviation records, v3.42 / v150→v160, followed. Both demonstrated a safe upgrade pattern on-device and a serious trap: omitting the new table from exportAllData loses backup data, adjacent to a Class C prohibition. Every future schema bump needs a mandatory checklist.
 
-## 决定
+## Decision
 
-- **DS schema 迁移安全定式**：新增 Dexie 表（schema bump）必须四处改齐 + 一处真机验，缺一不可：
-  1. `schema.js`：`V_N_STORES = {...V_{N-1}_STORES, newTable}` + `db.version(N).stores()`，🔴 **无 .upgrade() 回调**（纯新空表，Dexie 增量升级只建空表不碰老表 = 零丢失）；绝不改老表 store 定义。
-  2. `snapshot.js · exportAllData`：tables 数组 **必加新表名**（漏 = 备份不含 = 导出后导入丢数据 / C 类红线相邻）。
-  3. `snapshot.js · loadSnapshot`：`db.newTable?.toArray().catch(()=>[]) || []` 容错读（旧库无表→空数组）。
-  4. `useAppData.js`：initial state 加 `newTable: []`（setData 兜底）。
-  5. 🔴 **真机零丢失 smoke**：装旧版→造数据→覆盖装新版→逐项核老表数据全在 + IndexedDB version 升对。
-- 适用边界：纯新增表用本定式；**若需改老表结构/数据迁移（带 .upgrade()）→ 风险骤升，必须停下专门设计 + ultracode 审**（不在本定式快速通道内）。
+- **DS: Safe schema migration**. Adding a Dexie table requires all four edits and one device check, without exception:
+  1. `schema.js`: `V_N_STORES = {...V_{N-1}_STORES, newTable}` + `db.version(N).stores()`. 🔴 **No .upgrade() callback**: this is a new empty table; Dexie's incremental upgrade creates it without touching old tables, preserving data. Never change existing store definitions.
+  2. `snapshot.js · exportAllData`: **Add the new table name to the tables array**. Omitting it excludes the data from backups and loses it after export/import, adjacent to a Class C boundary.
+  3. `snapshot.js · loadSnapshot`: Fault-tolerant `db.newTable?.toArray().catch(()=>[]) || []`, returning an empty array for an old database without the table.
+  4. `useAppData.js`: Add `newTable: []` to initial state as a setData fallback.
+  5. 🔴 **Zero-data-loss device smoke**: Install the old version, create data, install the new version over it, and verify every old-table item remains and the IndexedDB version advanced correctly.
+- Scope: This pattern covers new tables only. **Changing existing structures or migrating data with .upgrade() sharply increases risk: stop for dedicated design and ultracode review**. It is outside this expedited path.
 
-## 后果
+## Consequences
 
-### 好处
-- schema bump 从「高风险动作」变为「照 checklist 走的安全操作」，两把刀真机零丢失实证。
-- 解除 schema-less 的自我设限，daysLeft/月报等需数据基建的功能可放心做。
+### Benefits
+- Schema bumps become checklist-driven safe operations, with two zero-loss device demonstrations.
+- Removing the self-imposed schemaless restriction enables features needing data infrastructure, such as daysLeft / monthly reports.
 
-### 代价
-- 每次 bump 多 4 处改 + 1 次真机升级 smoke（比 schema-less 重）。
-- 仍需 ultracode 审（与 ADR-037 叠加）。
+### Costs
+- Four edits and an upgrade smoke test for every bump, more work than schemaless changes.
+- ultracode review is still required under ADR-037.
 
-### 后续如果反悔了
-- 不可逆性高（用户数据已按新 schema 落地），翻案需数据迁移。故 bump 前必须确认必要性（能 schema-less 则优先 schema-less，承 ADR-014 精神）。
+### If the decision is reversed later
+- Reversal is difficult once user data exists in the new schema and requires migration. Confirm necessity before a bump; prefer schemaless changes where feasible, following ADR-014.
 
 ---
 
-## 备注
-与 ADR-014（习惯补签字段不升 Dexie 版本）不矛盾：ADR-014 说「能不升就不升」，ADR-036 说「确需升时怎么安全升」。两者共同构成 Dexie 版本治理。
+## Notes
+This does not conflict with ADR-014. ADR-014 says to avoid Dexie version bumps when possible; ADR-036 explains safe bumps when necessary. Together they govern Dexie versions.

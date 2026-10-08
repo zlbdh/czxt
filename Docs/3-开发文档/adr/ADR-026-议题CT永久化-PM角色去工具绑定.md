@@ -1,128 +1,128 @@
-# ADR-026 · 议题 CT 永久化：PM 角色去工具绑定（PM 抽象层 ⊥ 工具载体层）
+# ADR-026 · Make topic CT permanent: decouple PM roles from tools (PM abstraction layer ⊥ tool layer)
 
-- **状态**：现行
-- **日期**：2026-05-22
-- **关联**：[PROP-035 PM 角色去工具绑定](../../../确认改动/已审批/已完成/PROP-035-2026-05-22-PM角色去工具绑定.md) · [PM 自纠 #64](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-64.md) · [PM 自纠 #66](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-66.md) · [工具载体矩阵.md](../../../操作系统/01_架构/工具载体矩阵.md) · [角色边界.md](../../../操作系统/01_架构/角色边界.md)
-- **议题 CT 关闭条件**：3 实证（task #104.2 / task #104.4 / task #104.5）+ 累计 2 PM 自纠（#64/#66）+ v4.0 终态架构 9 PM 全部去工具绑定 ✅ 达成
+- **Status**: Current
+- **Date**: 2026-05-22
+- **Related**: [PROP-035 PM/tool decoupling](../../../确认改动/已审批/已完成/PROP-035-2026-05-22-PM角色去工具绑定.md) · [PM self-correction #64](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-64.md) · [PM self-correction #66](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-66.md) · [Tool matrix](../../../操作系统/01_架构/工具载体矩阵.md) · [Role boundaries](../../../操作系统/01_架构/角色边界.md)
+- **Topic CT closure criteria**: Three pieces of evidence, task #104.2 / #104.4 / #104.5; two accumulated PM self-corrections, #64/#66; and all nine PMs decoupled from tools in the v4.0 target architecture ✅ Met
 
-> 术语现行统一：早期文中的“子 / 子子”对应现在的“决策 / 实施”；当前四层统一写作“主-元-决策-实施”。
+> Current terminology: Earlier "child / grandchild" roles correspond to today's "decision / implementation" roles. The four layers are now consistently called lead–meta–decision–implementation.
 
-## 背景
+## Context
 
-议题 CT 起源 PM 自纠 #64（zlbdh 提问 "8 PM matrix 里写「Claude Code PM」「Codex PM」是不是把 PM 绑死在工具上了？以后换工具怎么办？"）。
+Topic CT originated in PM self-correction #64, when zlbdh asked whether names such as "Claude Code PM" and "Codex PM" in the eight-PM matrix bind roles to tools, and what would happen if tools changed.
 
-历史问题：
-- v3.x PM 矩阵把工具名直接当 PM 名（如「Claude Code PM」「Codex PM」「Cowork PM」）
-- 实际上 PM 是**抽象协作角色**（决策 / 实施 / 验证 / 沉淀）；工具是**可替换载体**（Cowork、Cursor、Cline、Codex、Roo Code 等都能跑同一个 PM）
-- 工具一换 framework 全废 → **跨工具不可移植**
+Historical problems:
+- The v3.x PM matrix used tool names as PM names, including Claude Code PM, Codex PM, and Cowork PM.
+- PMs are actually **abstract collaboration roles** for decisions, implementation, verification, and knowledge consolidation. Tools are **replaceable hosts**: Cowork, Cursor, Cline, Codex, and Roo Code can run the same PM.
+- Changing tools invalidated the whole framework, making it **nonportable across tools**.
 
-PM 自纠 #66 进一步揭示："跨工具调度" 这个表述本身就是错的 — 实际是 **跨 PM 调度**（PM 之间用 markdown 协议沟通，至于哪个 PM 跑在哪个工具上是另一回事）。
+PM self-correction #66 further identified that "cross-tool scheduling" is itself inaccurate. The activity is **cross-PM scheduling** through a Markdown protocol; which tool hosts each PM is a separate concern.
 
-## 决定
+## Decision
 
-议题 CT **正式永久关闭**，作为第 10 元规则进入永久化池。
+**Permanently close topic CT** and add it as the tenth permanent meta-rule.
 
-### 决定 1 — PM 角色定义文件禁含工具名（永久化）
+### Decision 1 — PM role definitions must not use tool-based names
 
-`操作系统/02_智能体/*.md` 9 PM 角色定义**全部以抽象身份命名**（已落地 ✅ task #104.2）：
+All nine definitions in `操作系统/02_智能体/*.md` use **abstract identities**, implemented in task #104.2 ✅:
 
-| PM 角色 | 抽象身份 | ❌ 禁止命名 |
+| PM role | Abstract identity | ❌ Prohibited name |
 |---|---|---|
-| 项目 PM | 「咪咪」 | ~~Cowork PM~~ |
-| 沉淀 PM | 「沉淀者」 | ~~Cowork PM~~ |
-| 开发 PM | 「实施者」 | ~~Claude Code PM~~ |
-| 测试发布 PM | 「闭环者」 | ~~Codex PM~~ |
-| 5 决策 PM | 操作系统/产品/技术/测试/运营 | ~~xxx 工具 PM~~ |
+| Project PM | Mimi | ~~Cowork PM~~ |
+| Knowledge PM | Curator | ~~Cowork PM~~ |
+| Development PM | Implementer | ~~Claude Code PM~~ |
+| Test and Release PM | Closer | ~~Codex PM~~ |
+| Five decision PMs | Operating System / Product / Technical / Test / Operations | ~~Tool-name PM~~ |
 
-未来新增 PM 角色**必须**用职责名（如「沉淀者」「闭环者」），禁止用工具名（如「xxx Code PM」）。
+Future PM roles **must** use responsibility names such as Curator or Closer, never tool names such as "xxx Code PM."
 
-### 决定 2 — 工具载体映射 ≠ 角色定义（永久化）
+### Decision 2 — Tool mapping is separate from role definitions
 
-`操作系统/01_架构/工具载体矩阵.md` 维护 **PM 抽象层 ↔ 工具载体层** 的映射（已落地 ✅ task #104.4）：
+`操作系统/01_架构/工具载体矩阵.md` maps the **PM abstraction layer to the tool layer**, implemented in task #104.4 ✅:
 
-| 层 | 文件 | 内容 | 可变 |
+| Layer | File | Content | Mutable? |
 |---|---|---|---|
-| PM 抽象层 | `操作系统/02_智能体/*.md` | 9 PM 角色定义 / 职责 / 决策权 | ❌ 稳定 |
-| 工具载体层 | `操作系统/01_架构/工具载体矩阵.md` | 哪个 PM 当前跑哪个工具 | ✅ 可换 |
+| PM abstraction | `操作系统/02_智能体/*.md` | Nine roles, responsibilities, and decision authority | ❌ Stable |
+| Tool hosting | `操作系统/01_架构/工具载体矩阵.md` | The current tool hosting each PM | ✅ Replaceable |
 
-工具替换（如 Cowork → Cursor）**只需改工具载体矩阵.md / 不改 PM 角色定义**。
+Replacing a tool, such as Cowork → Cursor, **changes only 工具载体矩阵.md, not PM role definitions**.
 
-### 决定 3 — 跨 PM 调度纯 markdown 协议（永久化）
+### Decision 3 — Pure Markdown protocol for cross-PM scheduling
 
-PM 之间沟通**只用 markdown 协议**，不依赖任何工具特定 API：
+PM communication uses **only a Markdown protocol**, with no tool-specific API dependency:
 
-- handoff 卡（`交接区/`）
-- chat 简版 ①-⑦（PROP-014 + PROP-027 v2）
-- 状态.md 跨 PM 切换轨迹
-- PROP / ADR / RETRO / CHANGELOG
-- decision-checkpoint Q1-Q6
+- Handoff cards in `交接区/`.
+- Chat shorthand ①-⑦, PROP-014 + PROP-027 v2.
+- Cross-PM transition history in 状态.md.
+- PROP / ADR / RETRO / CHANGELOG.
+- decision-checkpoint Q1-Q6.
 
-➡️ 任何兼容 markdown 的工具都能加入 framework / 0 工具锁定。
+Any Markdown-compatible tool can join the framework, with zero tool lock-in.
 
-### 决定 4 — 元规则池升级 9 → 10（永久化第 10 元规则）
+### Decision 4 — Expand the meta-rule pool from nine to ten
 
-新增 **议题 CT · PM 角色去工具绑定** 进入永久化池（与 G/AT/AM/AO/BC/BE/AJ/P/BK 并列）：
+Add **Topic CT · PM/tool decoupling**, alongside G/AT/AM/AO/BC/BE/AJ/P/BK:
 
 ```
-G  PRD 来源遵循         (累积实战)
-AT 路径遵循             (累积实战)
-AM 多角色协作           (累积实战)
-AO 错误隔离             (累积实战)
-BC Cowork 工程一致性    (累积实战)
-BE 起手必查             (累积实战)
-AJ PM 子类化            → ADR-023
-P  用户输入三态边界     → ADR-024
-BK Cowork mount stale   → ADR-025
-🆕 CT PM 角色去工具绑定  → ADR-026 本 ADR
+G  PRD source adherence          (accumulated field evidence)
+AT Path adherence                (accumulated field evidence)
+AM Multi-role collaboration      (accumulated field evidence)
+AO Error isolation               (accumulated field evidence)
+BC Cowork engineering consistency (accumulated field evidence)
+BE Mandatory startup checks      (accumulated field evidence)
+AJ PM subroles                   → ADR-023
+P  Three-state input boundaries  → ADR-024
+BK Cowork mount stale            → ADR-025
+🆕 CT PM/tool decoupling         → ADR-026, this record
 ```
 
-未来「PM 角色与工具载体解耦」类规则统一归入议题 CT 域。
+Future rules that decouple PM roles from their tool hosts belong to topic CT.
 
-### 决定 5 — 9 PM 矩阵跨工具可移植性永久成立（推论）
+### Decision 5 — Permanent portability of the nine-PM matrix (inference)
 
-由决定 1-4 推导：当前 9 PM × 主-元-决策-实施四层架构可移植到任何兼容 markdown 协议的工具组合（如 Cowork+Claude Code+Codex / 或 Cursor+Cline / 或 Roo Code 单工具）。
+Decisions 1-4 imply that the nine-PM lead–meta–decision–implementation architecture is portable to any Markdown-compatible tool combination: Cowork + Claude Code + Codex, Cursor + Cline, or Roo Code alone.
 
-未来工具栈升级路径详见 [工具载体矩阵.md](../../../操作系统/01_架构/工具载体矩阵.md) v4.0 候选 A/B/C/D。
+See v4.0 candidates A/B/C/D in the [tool matrix](../../../操作系统/01_架构/工具载体矩阵.md) for future tool-stack upgrades.
 
-## 后果
+## Consequences
 
-### 收益
+### Benefits
 
-- ✅ Framework 跨工具可移植（PM 角色稳定，工具可替换）
-- ✅ PM 角色定义文件**不会因工具升级而失效**
-- ✅ 工具替换决策与 PM 决策**完全解耦**（议题 CT 永久解决）
-- ✅ 后续接入新工具（Cursor / Cline / Roo Code）只需改一个文件（工具载体矩阵.md）
+- ✅ Cross-tool framework portability: PM roles remain stable while tools are replaceable.
+- ✅ PM definitions **do not become invalid when tools change**.
+- ✅ Tool-replacement decisions and PM decisions are **fully decoupled**, permanently resolving topic CT.
+- ✅ Introducing Cursor / Cline / Roo Code requires changing only the tool-matrix file.
 
-### 风险与缓解
+### Risks and mitigations
 
-| 风险 | 缓解 |
+| Risk | Mitigation |
 |---|---|
-| 抽象身份命名（如「沉淀者」）可能让人不知道实际跑在哪个工具 | 工具载体矩阵.md 维护当前映射 + PM 角色文件顶部注明「当前载体」 |
-| 工具特性差异（如 Cowork mount stale）跨工具表现不同 | ADR-025 防御机制本身就工具相关 / 但已通过 markdown 协议表达，新工具实施时按本工具实际情况调整 |
+| An abstract identity such as Curator may not reveal the actual hosting tool | Maintain the current mapping in 工具载体矩阵.md and state the current host at the top of each role file |
+| Tool-specific behavior differs, such as Cowork stale mounts | ADR-025 is tool-specific but expressed through Markdown; adapt implementation to each tool's actual behavior |
 
-### 验证
+### Verification
 
-| 维度 | 验证方式 | 结果 |
+| Dimension | Method | Result |
 |---|---|---|
-| 角色定义不含工具名 | grep `Claude Code\|Codex\|Cowork` 操作系统/02_智能体/*.md | ✅ 0 命中（任何工具名都不出现在角色文件） |
-| 跨 PM 沟通无 API 依赖 | 检查 handoff 卡 / chat 简版 / 状态.md 是否全 markdown | ✅ 100% markdown |
-| 工具载体可换 | 工具载体矩阵.md 维护 v4.0 候选 A/B/C/D 4 方案 | ✅ 已实证可换 |
+| No tool names in role definitions | grep `Claude Code\|Codex\|Cowork` in 操作系统/02_智能体/*.md | ✅ Zero matches; no tool names in role files |
+| No API dependency in cross-PM communication | Check handoff cards, chat shorthand, and 状态.md for Markdown | ✅ 100% Markdown |
+| Replaceable hosting tools | Four v4.0 candidates A/B/C/D in 工具载体矩阵.md | ✅ Replacement demonstrated |
 
-## 实施清单（追溯）
+## Implementation checklist (retrospective)
 
-- ✅ task #104.2 — 3 新 PM 角色文件去工具绑定命名（开发 PM「实施者」/ 测试发布 PM「闭环者」/ 沉淀 PM「沉淀者」）
-- ✅ task #104.4 — 工具载体矩阵.md 新建（6.5KB）
-- ✅ task #104.5 — 9 PM 工作区物理目录新建
-- ✅ task #106.1 — 议题 CT 在议题全景.md 同步
-- ✅ task #107.2 — 本 ADR 永久化（2026-05-22）
+- ✅ task #104.2 — Three new roles with tool-independent names: Development PM Implementer / Test and Release PM Closer / Knowledge PM Curator.
+- ✅ task #104.4 — Create 工具载体矩阵.md, 6.5KB.
+- ✅ task #104.5 — Create physical workspaces for nine PMs.
+- ✅ task #106.1 — Synchronize topic CT in 议题全景.md.
+- ✅ task #107.2 — Make this ADR permanent, 2026-05-22.
 
-## 引用决议
+## Referenced decisions
 
-- PM 自纠 #64：8 PM matrix 被工具名绑死，必须解耦
-- PM 自纠 #66：跨工具调度 → 跨 PM 调度（命名升级）
-- v4.0 终态愿景 §一 9 PM × 4 大类 / §三 工具载体矩阵层
-- 工具载体矩阵.md（操作系统/01_架构/）— PM 抽象 vs 工具载体映射表
+- PM self-correction #64: The eight-PM matrix is bound to tool names and must be decoupled.
+- PM self-correction #66: Rename cross-tool scheduling to cross-PM scheduling.
+- v4.0 target vision §I: nine PMs × four categories; §III: tool-matrix layer.
+- 工具载体矩阵.md in 操作系统/01_架构/: PM abstractions versus tool-host mapping.
 
 ---
 
-⭐ **ADR-026 永久现行 / 与 ADR-022/023/024/025 并列 framework 元规则 ADR**
+⭐ **ADR-026 is permanently current, alongside ADR-022/023/024/025 as a framework meta-rule ADR.**

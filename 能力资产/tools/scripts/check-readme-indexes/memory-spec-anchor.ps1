@@ -35,8 +35,8 @@ Assert-Contains "操作系统\07_完整工作流\实施循环.md" '(?:状态推�
 Assert-NotContains "操作系统\07_完整工作流\实施循环.md" '第一个响应之前[\s\S]{0,80}状态推断|before the first response[\s\S]{0,120}status inference' "状态推断先于起手链路"
 Assert-NotContains "能力资产\skills\状态推断-推断项.md" '立刻切 ✅' "状态推断立刻切状态"
 Assert-NotContains "操作系统\07_完整工作流\实施循环-DoD.md" 'confirm 后立刻切换|立刻切换|switch immediately after confirmation|switch immediately' "DoD 立刻切状态"
-Assert-Contains "Docs\3-开发文档\adr\ADR-028-议题CW永久化-记忆scope-YAML显式化.md" '当前口径补记（2026-06-17）' "ADR-028 当前口径补记"
-Assert-Contains "Docs\3-开发文档\adr\ADR-028-议题CW永久化-记忆scope-YAML显式化.md" 'PROP-037 待重审状态' "ADR-028 PROP-037 待重审"
+Assert-Contains "Docs\3-开发文档\adr\ADR-028-议题CW永久化-记忆scope-YAML显式化.md" '当前口径补记（2026-06-17）|Current guidance addendum \(2026-06-17\)' "ADR-028 当前口径补记"
+Assert-Contains "Docs\3-开发文档\adr\ADR-028-议题CW永久化-记忆scope-YAML显式化.md" 'PROP-037 待重审状态|PROP-037 pending rereview status' "ADR-028 PROP-037 待重审"
 Assert-Contains "操作系统\04_台账\逐文件审计覆盖台账.md" '操作系统/05_记忆' "覆盖台账已登记 05"
 
 if ($failures.Count -gt 0) {

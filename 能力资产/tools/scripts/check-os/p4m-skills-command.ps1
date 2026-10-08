@@ -26,7 +26,7 @@ $checks = @(
     @{ Path = "能力资产/skills/项目体检-检查项-1-4-附录.md"; Pattern = 'find __CZXT_APP_REPO_DIR_REGEX__/src 操作系统 能力资产 -type f[^\r\n]+-exec wc -c'; Label = "项目体检 1-4 附录 P4b 粗扫命令未排除历史归档/状态归档" },
     @{ Path = "能力资产/skills/项目体检-检查项-1-4-附录.md"; Pattern = '(?s)find __CZXT_APP_REPO_DIR_REGEX__/src 操作系统 能力资产 -type f(?:(?!\*\.ps1).)*xargs -r wc -c'; Label = "项目体检 1-4 附录 P4b 粗扫命令未覆盖 ps1/json 工具文件" },
     @{ Path = "能力资产/skills/项目体检-检查项-1-4-附录.md"; Pattern = 'lines=\$\(echo -n "\$out" \| wc -l\)'; Label = "项目体检 1-4 附录旧路径判断仍用 echo -n + wc -l，可能漏报单行残留" },
-    @{ Path = "能力资产/rules/已知技术约束-附录.md"; Pattern = '(?m)^- 6-9KB：优先脚本写入或拆分。$|(?m)^- >9KB：优先拆分；'; Label = "已知技术约束附录仍把旧 6-9KB/9KB 粗阈值写成现行建议" },
+    @{ Path = "能力资产/rules/已知技术约束-附录.md"; Pattern = '(?m)^- 6-9KB：优先脚本写入或拆分。$|(?m)^- >9KB：优先拆分；|(?im)^- 6-9KB: prefer scripted writes or splitting\.$|(?im)^- >9KB: prefer splitting;'; Label = "已知技术约束附录仍把旧 6-9KB/9KB 粗阈值写成现行建议" },
     @{ Path = "操作系统/07_完整工作流/需求接收.md"; Pattern = 'AskUserQuestion|TaskCreate'; Label = "需求接收流程仍引用旧载体工具名" },
     @{ Path = "操作系统/02_智能体/产品PM-需求拆解者.md"; Pattern = 'AskUserQuestion'; Label = "产品 PM playbook 仍引用旧载体工具名" },
     @{ Path = "操作系统/02_智能体/PM-产品经理.md"; Pattern = 'AskUserQuestion|TaskCreate'; Label = "产品 PM 历史档案仍引用旧载体工具名" },

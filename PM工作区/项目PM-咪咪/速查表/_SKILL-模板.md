@@ -1,61 +1,59 @@
 ---
-name: skill-template
-description: SKILL.md 规范模板（PROP-031）— PM 角色起新速查表时复制此模板。Progressive Context Loading 标准格式。
-loaded: 参考文档（不会被加载，仅作为模板）
+name: "skill-template"
+description: "Standard SKILL.md template under PROP-031 for PM quick references, using Progressive Context Loading."
+loaded: "参考文档（不会被加载，仅作为模板）"
 ---
 
-# SKILL.md 模板 · Progressive Context Loading
+# SKILL.md Template: Progressive Context Loading
 
-> 📚 **PROP-031 落地**（2026-05-21 / task #83）
+> 📚 PROP-031 implementation: May 21, 2026 / task #83.
 
-## 标准 YAML front matter（4 字段必填）
+## Standard YAML frontmatter: four required fields
 
 ```yaml
 ---
-name: kebab-case-唯一标识        # 例: chat-summary-dedup
+name: unique-kebab-case-identifier # Example: chat-summary-dedup
 description: |
-  一句话描述用途（30 字以内）+ 防什么 PM 自纠 # 触发条件（关键词）
-trigger: 当 X 时 / 准备 Y 时 / 判定 Z 时   # 关键词触发条件
-loaded: 条件加载（按 trigger 匹配时由 PM 调度）
+  Core purpose within 30 characters, the PM self-correction prevented,
+  and trigger keywords.
+trigger: When X / before Y / while deciding Z
+loaded: Conditional loading; the PM dispatches when the trigger matches.
 ---
 ```
 
-## 写作铁律
+## Writing rules
 
-| 字段 | 必填 | 写作要点 |
+| Field | Required | Guidance |
 |---|---|---|
-| `name` | ✅ | kebab-case / 全局唯一 / 描述场景非动作 |
-| `description` | ✅ | 30 字内核心用途 + 防什么 PM 自纠 |
-| `trigger` | ✅ | 关键词列表 / 用「时 / 前 / 后」描述时间点 |
-| `loaded` | ✅ | 始终写「条件加载（按 trigger 匹配时由 PM 调度）」 |
+| `name` | Yes | Globally unique kebab-case; describe the scenario, not the action |
+| `description` | Yes | Core purpose within 30 characters plus the self-correction prevented |
+| `trigger` | Yes | Keywords identifying when, before, or after an event |
+| `loaded` | Yes | Always state conditional loading by PM dispatch when the trigger matches |
 
-## 内容部分
+## Body
 
-YAML front matter 后写正文，结构建议：
+Suggested structure after frontmatter:
 
-1. **铁律 / 核心规则**（带 emoji 加强）
-2. **判定流程 / 检查步骤**
-3. **同模式累积 / 来源 PM 自纠**
-4. **真知识源链接**
+1. Mandatory/core rule, with emoji for emphasis.
+2. Decision flow/checklist.
+3. Repeated-pattern evidence/source PM self-corrections.
+4. Authoritative knowledge-source links.
 
-## 文件大小原则
+## File-size principle
 
-- 入口优先短、能快速扫读；超过约 2KB 时先判断是否仍适合做速查表。
-- 真正的文件大小阈值按 AGENTS / 项目体检 P4b 的工具分层规则执行，不把 2KB 当硬限制。
+- Keep entry points short and scannable. Above roughly 2 KB, first reconsider whether the content still fits a quick reference.
+- Actual size thresholds follow tool-specific layers in AGENTS / P4b health checks; 2 KB is not a hard limit.
 
-## Progressive Loading 收益验证
+## Progressive-loading benefit check
 
-PM 切角色 decision-checkpoint Q1-Q3 时加 Q4：
+During role-switch decision-checkpoint Q1-Q3, add Q4:
 
-```
-Q4: 当前任务匹配哪个速查表 trigger？
-- 命中 1 个 → 仅 load 该速查表
-- 命中 2-3 个 → load 全部命中
-- 0 命中 → 跳过（仅 INDEX 入口足够）
-```
+> Which quick-reference triggers match this task?
+> One match: load that reference only. Two or three: load every match.
+> No matches: skip; the INDEX entry is sufficient.
 
-→ 30 速查表场景下 context 5-10x 节省
+The original estimate is a 5–10× context saving for 30 quick references.
 
 ---
 
-📌 **使用步骤**：复制本文件到 `PM工作区/<X-PM>/速查表/<scenario>.md` → 改 frontmatter + 正文 → 加到对应 PM 工作区 INDEX
+📌 Copy this file to `PM工作区/<X-PM>/速查表/<scenario>.md`, update frontmatter/body, and add it to that PM workspace's INDEX.

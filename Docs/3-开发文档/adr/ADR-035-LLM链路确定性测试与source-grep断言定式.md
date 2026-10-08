@@ -1,33 +1,33 @@
-# ADR-035 · LLM 链路确定性测试 + #95 source-grep 断言定式
+# ADR-035 · Deterministic LLM-chain tests + the #95 source-grep assertion pattern
 
-- **状态**：现行
-- **日期**：2026-06-09
-- **决策人**：zlbdh approve / 沉淀 PM 起草（PROP-043）
-- **关联**：RETRO-016（#95 三撞）+ RETRO-018/019（LLM 链路）/ 元规则 DQ + DR
+- **Status**: Current
+- **Date**: 2026-06-09
+- **Decision maker**: zlbdh approved; Knowledge PM drafted, PROP-043.
+- **Related**: RETRO-016, three #95 collisions; RETRO-018/019, LLM call chains; meta-rules DQ + DR.
 
-## 背景
+## Context
 
-两类测试教训反复出现：(1) LLM 新形态刀「单测全绿但真机挂」多次（F 钠盐/G-F6），因为单测只测纯函数没测 mock→normalize→出卡全链；(2) source-grep 断言（#95）在 RETRO-016 一批撞了 3 次——禁词断言锁了会出现在注释/中文裸词里的词，导致断言假绿或假红。两者都是「测试没测到真正该测的东西」。
+Two lessons recur. First, new LLM forms repeatedly pass unit tests and fail on devices, such as F sodium / G-F6, because tests cover pure functions instead of the complete mock → normalize → card-output chain. Second, source-grep assertions (#95) in RETRO-016 failed three times in one batch: forbidden-word checks matched terms appearing in comments or unqualified Chinese words, producing false passes or false failures. Both are cases of tests missing their real target.
 
-## 决定
+## Decision
 
-- **DQ LLM 链路确定性测试规范**：新增任何 LLM 形态（新 caller / 新 prompt 注入 / 新 parse），必须带「mock LLM 响应 → normalize → 出卡/出结果」的确定性链路测，含：合规响应→正确产物、畸形/null 响应→优雅 fallback、关键 marker 存在性。单测纯函数 ≠ 链路通。
-- **DR #95 source-grep 断言定式**：source-grep 类测试断言只锁**代码标识**——组件名、testid、`fn(` 带括号调用、import 路径；**绝不锁**会出现在注释/中文文案/裸词里的字符串（否则注释改一下就假绿，或文案撞词假红）。需要锁行为时优先用带括号调用 + 反向锁（`not.toMatch`）。
+- **DQ: Deterministic LLM-chain tests**. Every new LLM form — caller, prompt injection, or parser — must include a deterministic mock LLM response → normalize → card/result test. Cover compliant response → correct artifact, malformed/null response → graceful fallback, and required markers. A passing pure-function test does not prove the chain works.
+- **DR: #95 source-grep assertion pattern**. Assert only **code identifiers**: component names, testids, parenthesized calls such as `fn(`, and import paths. **Never assert strings that can also occur in comments, Chinese copy, or bare words**; a comment edit can create a false pass, while copy can create a false failure. To lock behavior, prefer parenthesized calls plus a negative assertion such as `not.toMatch`.
 
-## 后果
+## Consequences
 
-### 好处
-- LLM 刀的「真机会不会出卡」在 CI 阶段就有确定性代理（mock 全链复现设备故障形态，如 v3.34 mock recurrence:null→兜底纠正）。
-- source-grep 断言不再因注释/文案变动假绿假红，断言真正锁住代码契约。
+### Benefits
+- CI gains a deterministic proxy for whether an LLM feature can produce a card on-device. Full-chain mocks reproduce device failures, such as v3.34 recurrence:null corrected by fallback.
+- Source-grep checks enforce code contracts without false passes/failures caused by comments or copy changes.
 
-### 代价
-- LLM 刀测试编写成本上升（要 mock callAIFn 注入）。
-- DR 要求写断言时多想一层「这个词会不会出现在注释里」。
+### Costs
+- More test-writing effort for LLM changes, including mocked callAIFn injection.
+- DR requires considering whether an asserted term could occur in a comment.
 
-### 后续如果反悔了
-- 删除链路测退回纯函数测即可，但重新暴露「单测绿真机挂」风险。低成本翻案、不推荐。
+### If the decision is reversed later
+- Delete chain tests and return to pure-function tests, but the unit-green/device-fail risk returns. Reversal is inexpensive and not recommended.
 
 ---
 
-## 备注
-DQ 是 ADR-030（CC AC 实证驱动）的测试侧具体化：CC 说「单测过≠真机过」，DQ 给出「那就把链路 mock 进单测」的具体打法。
+## Notes
+DQ makes ADR-030's evidence-driven CC rule concrete in tests: if passing unit tests does not imply device success, mock the full chain into the unit tests.

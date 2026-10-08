@@ -1,76 +1,74 @@
 ---
-name: capacitor-plugin-defense
-description: Capacitor plugin 集成 3 项防御：必静态 import + NotificationChannel + cap sync。防 PM 自纠 #47 议题 BC plugin 集成错向。
-trigger: 写 Capacitor plugin 集成 handoff 卡前
-loaded: 条件加载（按 trigger 匹配时由 PM 调度）
+name: "capacitor-plugin-defense"
+description: "Three Capacitor plugin safeguards: static imports, NotificationChannel creation, and cap sync. Prevents self-correction #47 / issue BC."
+trigger: "Before writing a Capacitor plugin integration handoff"
+loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
 ---
 
-# 速查：Capacitor plugin 集成防御 3 项（PM 自纠 #47）
+# Quick Reference: Three Capacitor Plugin Safeguards — Self-Correction #47
 
-> 写 Capacitor plugin 集成 handoff 卡前 — **3 项必明示**
+> Explicitly include all three safeguards before writing a plugin-integration handoff.
 
-## 3 项防御铁律
-
-### 1. **必静态 import**（不用 dynamic）
+## 1. Require static imports
 
 ```js
-// ✅ 正确
+// Correct.
 import { LocalNotifications } from '@capacitor/local-notifications';
 
-// ❌ 错误（F-ALARM-1 v3.5.9 smoke 阻塞实证）
+// Incorrect in the recorded F-ALARM-1 v3.5.9 smoke failure.
 const mod = await import('@capacitor/local-notifications');
 const plugin = mod?.LocalNotifications;
-// → Android WebView 报 "LocalNotifications.then() is not implemented on android"
+// Android WebView reported: "LocalNotifications.then() is not implemented on android"
 ```
 
-**根因**：Android Capacitor WebView 对 dynamic import 解析不一致；静态 import 是 Capacitor 推荐方式（plugin 注册到 native 桥）。
+Recorded cause: inconsistent dynamic-import handling in Android Capacitor WebView. The reference recommends static imports to register the plugin with the native bridge.
 
-### 2. **NotificationChannel 必创建**（Android 8.0+）
+## 2. Create NotificationChannel on Android 8.0+
 
 ```js
-// ✅ 启动时（init / setup）调用，idempotent
+// Call idempotently at startup: init / setup.
 await LocalNotifications.createChannel({
   id: 'mimi-alarms',
-  name: '咪咪闹钟',
-  description: 'F-ALARM-1 起床 / 睡前 / 训练 / 自定义闹钟',
-  importance: 5,    // IMPORTANCE_HIGH，锁屏可见
+  name: 'Mimi Alarms',
+  description: 'F-ALARM-1 wake-up / bedtime / training / custom alarms',
+  importance: 5,    // IMPORTANCE_HIGH; visible on the lock screen.
   visibility: 1,    // VISIBILITY_PUBLIC
   sound: 'default',
   vibration: true,
 });
 ```
 
-**根因**：Android 8.0+ 强制要求 channel 已创建才能 schedule 通知；不创建 → logcat 报 `No Channel found for pkg=..., channelId=...`。
+Recorded cause: Android 8.0+ requires an existing channel before scheduling notifications. Without it, logcat reported `No Channel found for pkg=..., channelId=...`.
 
-### 3. **cap sync android** 必跑（npm install 后）
+## 3. Run cap sync android after npm install
 
 ```bash
 cd {{APP_REPO_DIR}}
 npm install @capacitor/xxx@^N.x
-npx cap sync android   # ← 把 plugin 注册到 native Android 工程
+npx cap sync android   # Register the plugin with the native Android project.
 ```
 
-**根因**：npm install 仅装 JS 层；native 集成需 sync。
+npm install adds only the JavaScript layer; native integration requires sync.
 
-## 历史实证
+## Historical evidence
 
-### PM 自纠 #47（2026-05-15 F-ALARM-1 v3.5.9 smoke 阻塞）
+### Self-correction #47: May 15, 2026, F-ALARM-1 v3.5.9 blocked smoke test
 
-- alarmManager.js:158 用 `mod?.LocalNotifications ?? null` 动态 import
-- 启动时**没调** createChannel
-- 真机 smoke AC3 闹钟不响 → 3 根因联合（A1 + A2 + A3）
+- alarmManager.js:158 used `mod?.LocalNotifications ?? null` with dynamic import.
+- Startup did not call createChannel.
+- Physical-device smoke AC3 produced no alarm: three combined causes, A1 + A2 + A3.
 
-## handoff 卡模板（涉及 Capacitor plugin）
+## Plugin handoff template
 
+```text
+⑤ Required cautions:
+- 🔴 Static import: import { XXX } from '@capacitor/yyy'; do not use dynamic import.
+- 🔴 Create NotificationChannel or equivalent at startup; Android 8.0+ requires it.
+- 🟡 Rerun npx cap sync android after npm install.
+- 🟡 Use vi.mock in tests instead of dynamic-import injection.
 ```
-⑤ 警戒（必含）：
-- 🔴 必静态 import：`import { XXX } from '@capacitor/yyy'`（不用 dynamic）
-- 🔴 NotificationChannel / 类似 channel 启动时必创建（Android 8.0+ 强制）
-- 🟡 npm install 后 `npx cap sync android` 复跑
-- 🟡 测试改用 vi.mock（替代 dynamic import 注入模式）
-```
 
-## 跟其他元规则关系
+## Related rules
 
-- [Capacitor版本核对.md](Capacitor版本核对.md) — 装之前的版本检查
-- [能力资产/rules/web-api-信源选型.md](../../../能力资产/rules/web-api-信源选型.md) — 议题 AT 矩阵（plugin 是首选方案）
+- [Capacitor version verification](Capacitor版本核对.md): check before installation.
+- [Web API source selection](../../../能力资产/rules/web-api-信源选型.md): issue AT matrix; plugins are the preferred option.

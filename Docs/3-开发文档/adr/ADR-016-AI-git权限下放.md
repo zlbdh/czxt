@@ -1,104 +1,104 @@
-# ADR-016 · AI git 权限下放（PROP-012）
+# ADR-016 · Delegate Conditional Git Permissions to AI (PROP-012)
 
-- **状态**：现行
-- **日期**：2026-05-11
-- **决策人**：zlbdh
-- **关联**：[PROP-012](../../../确认改动/已审批/已完成/PROP-012-2026-05-11-AI-git权限下放.md) · 修订 [ADR-008](ADR-008-框架自动化升级.md) / [ADR-010](ADR-010-框架自动化v3-9隐患全封堵.md) 中关于 AI 边界的部分
+- **Status**: Current
+- **Date**: 2026-05-11
+- **Decision maker**: zlbdh
+- **Related**: [PROP-012](../../../确认改动/已审批/已完成/PROP-012-2026-05-11-AI-git权限下放.md) · Revises AI-boundary portions of [ADR-008](ADR-008-框架自动化升级.md) / [ADR-010](ADR-010-框架自动化v3-9隐患全封堵.md)
 
-> ⚠️ **当前覆盖说明（2026-06-15）**：本文的 git commit / push B 类 6 条件仍是现行基础。AI 配置分类已被 ADR-022 与 [`../../../操作系统/01_架构/三类行为铁律.md`](../../../操作系统/01_架构/三类行为铁律.md) 细化：`{{APP_REPO_DIR}}/.env.local` 本机 baseUrl/model/apiKey 配置属 B 类护栏；真实密钥外传、写 tracked 文件、分享真实 key 属 C 类。
+> ⚠️ **Current override notice (2026-06-15)**: The 6 Class B conditions for git commit / push remain the foundation. ADR-022 and [`../../../操作系统/01_架构/三类行为铁律.md`](../../../操作系统/01_架构/三类行为铁律.md) refine AI configuration: local baseUrl/model/apiKey configuration in `{{APP_REPO_DIR}}/.env.local` follows Class B safeguards; disclosing real secrets, writing them into tracked files, or sharing real keys is Class C.
 
-## 背景
+## Context
 
-PROP-011（交接区机制）实施后，跨工具协作流畅度大幅提升，但暴露出**新的工作流摩擦点**：
+PROP-011's handoff area improved collaboration but exposed **new workflow friction**.
 
-### 3 次违规/破例信号（2026-05-11 一天内）
+### 3 Violations or Exceptions on 2026-05-11
 
-| 时间 | 事件 | 性质 |
+| Time | Event | Nature |
 |---|---|---|
-| 15:30 | 「清债 push」zlbdh 明确要求 Codex 跑 git push | 一次性破例 |
-| 16:00 | F-002 smoke 完成后 zlbdh 再次要求 Codex 跑 git push | 第二次同方向反馈 |
-| 16:05 | Cowork PM 用 Edit 改 `{{APP_REPO_DIR}}/package.json` version 2.3.0 → 2.7.0，事后才发现这是 C 类第 1 条 | PM 自己违规 |
+| 15:30 | zlbdh explicitly asked Codex to push the debt-cleanup changes | One-time exception |
+| 16:00 | After F-002 smoke, zlbdh again asked Codex to run git push | Second signal in the same direction |
+| 16:05 | Cowork PM used Edit to change `{{APP_REPO_DIR}}/package.json` from 2.3.0 to 2.7.0, only later recognizing Class C rule 1 | PM violated its own rules |
 
-### 痛点
+### Pain Points
 
-- zlbdh 角色是 PM/Owner，不是 git 执行者；每次 push 让他手动 = 工作流摩擦
-- C 类「永不」假设的是「不可逆 + 高风险」，但 {{APP_REPO_DIR}}/ 仓库实际：
-  - 私人仓库（不公开）
-  - zlbdh 是 owner（可 force-push 回滚）
-  - 没有 collaborator（不会影响他人）
-  - 实际风险：低
-- 让 AI 出 APK 但禁止 bump version = 流程断点
-- 破例 ≥ 2 次 = 规则跟现实脱节
+- zlbdh is PM/Owner, not the Git operator; requiring a manual push each time adds friction.
+- Class C's “never” assumed irreversible, high-risk operations. The application repository was recorded at that time as:
+  - Private, not public.
+  - Owned by zlbdh, who could roll back with force-push.
+  - Having no collaborators to affect.
+  - Low actual risk.
+- Allowing AI to build APKs while forbidding version bumps interrupts the workflow.
+- ≥2 exceptions indicate a rule that no longer matches practice.
 
-## 决策
+## Decision
 
-把以下行为从 C 类（永不能动）**下放到 B 类（条件性 AI 可动）**：
+Move the following from Class C, forbidden, to **Class B, conditionally allowed for AI**:
 
-| 原 C 类 | 新分类 | 条件 |
+| Former Class C action | New class | Conditions |
 |---|---|---|
-| 改 `package.json` version | **B 类** | 配套 APK 发版任务可执行；单独 bump 仍需 ask |
-| git commit / push（main 分支常规）| **B 类** | 必满足 6 条件 |
+| Change `package.json` version | **Class B** | Allowed with an APK release task; an isolated bump still requires asking |
+| Routine git commit / push on main | **Class B** | All 6 conditions must hold |
 
-### B 类 git push 6 条件
+### 6 Class B Git Push Conditions
 
-1. ✅ 仅 `{{APP_REPO_DIR}}/` 主仓 main 分支
-2. ✅ commit message 真实（基于 working tree 实际改动，不虚标）
-3. ✅ 不 force / 不 rebase / 不 rewrite history
-4. ✅ push 失败立刻停手 + 写交接卡报错 + 不重试
-5. ✅ 交接卡明示 commit hash + push 结果
-6. ✅ contextual 授权（zlbdh 明确要求 / 或上一棒交接卡含「下一棒可 push」）
+1. ✅ Only the main branch of the primary `{{APP_REPO_DIR}}/` repository.
+2. ✅ Truthful commit message based on actual working-tree changes; no false claims.
+3. ✅ No force, rebase, or history rewriting.
+4. ✅ On push failure, stop immediately, record the error in a handoff card, and do not retry.
+5. ✅ State the commit hash and push result in the handoff card.
+6. ✅ Contextual authorization: zlbdh explicitly requested it, or the previous handoff explicitly allows the next recipient to push.
 
-任何一条违反 → 立刻停手 + 写交接卡 + 等 zlbdh 决策。
+If any condition fails, stop immediately, write a handoff, and await zlbdh's decision.
 
-### 保留在 C 类的硬护栏
+### Hard Class C Safeguards Retained
 
-| C 类条款 | 理由 |
+| Class C action | Reason |
 |---|---|
-| `git push --force` / force push | 重写历史不可逆 |
-| `git rebase` 已 push 的 commit | 同上 |
-| 删除分支 / 删除 tag / 操作其他 fork-remote | 不可逆 / 越界 |
-| 打 git tag / 推 release | 发版决策 |
-| 上传 APK 到分发渠道 | 发布决策 |
-| AI 配置 baseUrl / apiKey | 历史口径；当前 `.env.local` 本机配置属 B 类护栏，真实 key 外传 / 写 tracked 文件属 C 类 |
-| 删除用户笔记 / 备份 / 数据 | 数据归属 |
-| 改 `apk/` 历史 / `Docs/6-历史归档/` | 历史不动 |
-| 伪造数据 | 诚实第一 |
+| `git push --force` / force push | Irreversible history rewriting |
+| `git rebase` of pushed commits | Same |
+| Delete branches or tags; operate on another fork-remote | Irreversible or out of scope |
+| Create Git tags or publish releases | Release decision |
+| Upload APKs to distribution channels | Publication decision |
+| AI baseUrl / apiKey configuration | Historical classification; local `.env.local` now follows Class B safeguards, while disclosing real keys or writing them into tracked files remains Class C |
+| Delete user notes, backups, or data | User ownership |
+| Change historical `apk/` or `Docs/6-历史归档/` content | Historical records stay unchanged |
+| Fabricate data | Honesty first |
 
-## 实施细节
+## Implementation Details
 
-| 阶段 | 文件 | 改动 |
+| Phase | File | Change |
 |---|---|---|
-| P1 | `agent/agents/AI边界.md` | C 类移除 version + 添加 force push 硬护栏；B 类新增 git commit/push + version bump 行；L1-L4 对照表更新 |
-| P2 | `agent/workflows/实施循环.md` | DoD 端能力对照表 git commit/push 行 ❌ → ✅ 条件性；新增 force push 行 ❌；4 端 DoD 段更新；加 6 条件速查 |
-| P3 | 本 ADR + ADR README 索引 | — |
-| P4 | `确认改动/README.md` 计数 + 已完成列表 + PROP-012 收档 | — |
+| P1 | `agent/agents/AI边界.md` | Remove version from C; add force-push safeguard; add commit/push and version rows to B; update L1–L4 matrix |
+| P2 | `agent/workflows/实施循环.md` | Change commit/push capability from ❌ to conditional ✅; add force push ❌; update 4 environments' DoD; add 6-condition reference |
+| P3 | This ADR and ADR README index | — |
+| P4 | `确认改动/README.md` counts/completed list and PROP-012 closure | — |
 
-## 后果
+## Consequences
 
-### 收益
-- ✅ 消除工作流摩擦（zlbdh 不再每次手动 push）
-- ✅ Codex / Claude Code / Cowork 都能完成完整闭环（含 commit/push）
-- ✅ 规则跟实际工作流对齐，不再需要破例
-- ✅ 保留硬护栏：force push / 发版决策 / 私钥 / 用户数据 仍 C 类
+### Benefits
+- ✅ Removes repeated manual pushes from zlbdh's workflow.
+- ✅ Codex / Claude Code / Cowork can complete the cycle, including commit/push.
+- ✅ Rules match actual work without repeated exceptions.
+- ✅ Force push, publication decisions, private keys, and user data remain protected by Class C.
 
-### 代价
-- ❌ AI 需要自律遵守 6 条件（依赖交接卡 ⑤ 复核）
-- ❌ contextual 授权边界模糊（需在交接卡明示）
+### Costs
+- ❌ AI must follow all 6 conditions, checked through handoff warning section ⑤.
+- ❌ Contextual authorization can be ambiguous and must be explicit in the handoff.
 
-### 风险（已防）
-- ✅ commit msg 虚标 → 6 条件 ②「真实」+ ⑤「交接卡明示 hash」事后核查
-- ✅ AI 误判授权 → 6 条件 ⑥ 必须明示授权来源
-- ✅ push 失败连续重试 → 6 条件 ④ 立刻停手
-- ✅ 误操作其他分支 / force → 6 条件 ①③ 硬限定
+### Mitigated Risks
+- ✅ False commit claims: condition ② requires truth and ⑤ records a verifiable hash.
+- ✅ Misread authorization: condition ⑥ requires identifying its source explicitly.
+- ✅ Repeated failed pushes: condition ④ requires immediate stop.
+- ✅ Wrong branches or force: conditions ① and ③ set hard limits.
 
-## 这是项目第几个 L3+
+## L3+ Change Sequence
 
-| # | 改动 | ADR |
+| # | Change | ADR |
 |---|---|---|
-| 12 | **PROP-012 AI git 权限下放**（本 ADR）| **ADR-016** |
+| 12 | **PROP-012 AI Git delegation** (this ADR) | **ADR-016** |
 
-PROP-012 是 RETRO-004 后第 2 个新 L3+。下一个 RETRO-005 在第 14 个 L3+ 完成时触发（还差 2 个）。
+PROP-012 is the second new L3+ after RETRO-004. RETRO-005 follows the fourteenth L3+, 2 changes later.
 
-## 一句话
+## Summary of the Recorded Decision
 
-ADR-016 把 git push 从「永不」改成「条件性可」，让 AI 真正能完成开发-测试-发布闭环，同时用 6 条件硬护栏防止越界。
+ADR-016 changes git push from forbidden to conditional, enabling the development/test/release cycle while retaining 6 safeguards against exceeding authority.

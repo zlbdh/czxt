@@ -1,92 +1,92 @@
-# ADR-030 · 议题 CC 永久化：AC 实证驱动 + token 预算真机实证（单测过 ≠ 真机过）
+# ADR-030 · Make topic CC permanent: evidence-driven acceptance + device-tested token budgets (unit tests passing ≠ device passing)
 
-- **状态**：现行
-- **日期**：2026-05-28
-- **关联**：[PROP-040 F-F1](../../../确认改动/已审批/已完成/PROP-040-2026-05-22-Sprint-8-W-1-F-F1-AI餐食推荐.md) · [PROP-041 F-F2+F-F4](../../../确认改动/已审批/已完成/PROP-041-2026-05-24-Sprint-9-W-1-F-F2+F-F4-食谱+采购闭环.md) · [PM 自纠 #51/#53](../../../PM工作区/项目PM-咪咪/PM自纠/) · [RETRO-013](../../7-复盘/RETRO-013-2026-05.md)
-- **议题 CC 关闭条件**：同模式累积 ≥3 次（实际 4 次跨 Sprint-5/8/9）+ 实证防御机制有效（thinking-model.test）+ 跨 PM/跨工具适用 ✅ 达成
+- **Status**: Current
+- **Date**: 2026-05-28
+- **Related**: [PROP-040 F-F1](../../../确认改动/已审批/已完成/PROP-040-2026-05-22-Sprint-8-W-1-F-F1-AI餐食推荐.md) · [PROP-041 F-F2+F-F4](../../../确认改动/已审批/已完成/PROP-041-2026-05-24-Sprint-9-W-1-F-F2+F-F4-食谱+采购闭环.md) · [PM self-corrections #51/#53](../../../PM工作区/项目PM-咪咪/PM自纠/) · [RETRO-013](../../7-复盘/RETRO-013-2026-05.md)
+- **Topic CC closure criteria**: ≥3 repeated cases, actually four across Sprint-5/8/9; effective defenses demonstrated through thinking-model.test; applicability across PMs / tools ✅ Met
 
-## 背景
+## Context
 
-议题 CC「AC 实证驱动 / 单测须覆盖真机调用链」起源 PM 自纠 #51/#53，**4 次跨 Sprint 累积**实证「单测过 ≠ 真机过」，尤其 **token 预算**领域：
+Topic CC, "evidence-driven acceptance / unit tests must cover the device call chain," originated in PM self-corrections #51/#53. **Four cross-Sprint cases** established that passing unit tests does not imply device success, especially for **token budgets**:
 
-| # | 时间 | 场景 | 单测 | 真机 |
+| # | Time | Scenario | Unit tests | Device |
 |---|---|---|---|---|
-| 1 | Sprint-5 | F-DEVIATION-2 deviation 检测 | ✅ 过 | ❌ smoke#1 max_tokens 空回复 |
-| 2 | Sprint-5 | F-NIGHT-1 凌晨保护 | ✅ 过 | ❌ 150 token 不够 → 改 2000 |
-| 3 | **Sprint-8** | **F-F1 AI 餐食推荐** | ✅ 过（2000）| ❌ **真机 thinking 吃光 → 改 4000** |
-| 4 | **Sprint-9** | **F-F2+F-F4 食谱+采购** | ✅ 过（直接锁 4000）| ✅ **真机过**（吸取教训直接锁 + thinking-model.test）|
+| 1 | Sprint-5 | F-DEVIATION-2 detection | ✅ Passed | ❌ smoke#1: empty max_tokens response |
+| 2 | Sprint-5 | F-NIGHT-1 early-morning protection | ✅ Passed | ❌ 150 tokens insufficient → 2000 |
+| 3 | **Sprint-8** | **F-F1 AI meal recommendations** | ✅ Passed at 2000 | ❌ **Thinking exhausted the device budget → 4000** |
+| 4 | **Sprint-9** | **F-F2+F-F4 recipes + shopping** | ✅ Passed, set directly to 4000 | ✅ **Device passed**, using the lesson and thinking-model.test |
 
-**根因**：MiMo 是 thinking 模型 / `thinking` 段消耗大量 token / 若 `max_tokens` 不足 → `stop_reason=max_tokens` 只产 thinking 不产 text → JSON.parse 失败 → 永远走 fallback。**普通单测 mock 不覆盖 thinking 路径**,所以单测全过但真机永久 fallback。
+**Root cause**: MiMo is a thinking model. Its `thinking` segment consumes many tokens; insufficient `max_tokens` causes `stop_reason=max_tokens` with thinking but no text, then JSON.parse failure and permanent fallback. **Ordinary mocked unit tests do not cover the thinking path**, so tests pass while the device always falls back.
 
-## 决定
+## Decision
 
-议题 CC **正式永久关闭**,作为第 13 元规则进入永久化池。
+**Permanently close CC** and add it as the thirteenth meta-rule.
 
-### 决定 1 — AC 实证驱动铁律（永久化）
+### Decision 1 — Evidence-driven acceptance
 
-任何 LLM 集成 feature 的验收条件（AC）**必须覆盖真机调用链** / 不能只靠单测 mock：
-- 单测验证**逻辑**（happy / fallback / 字段解析）
-- 真机 smoke 验证**实际 LLM 行为**（token 消耗 / thinking 路径 / 实际输出体量）
-- **两者都过才算 AC 达成**
+Acceptance criteria for any LLM-integrated feature **must cover the actual device call chain**, not just mocked unit tests:
+- Unit tests verify **logic**: happy path, fallback, and field parsing.
+- Device smoke tests verify **actual LLM behavior**: token use, thinking paths, and output volume.
+- **Both must pass for acceptance.**
 
-### 决定 2 — token 预算真机实证（永久化 / 核心）
+### Decision 2 — Device-tested token budgets (core)
 
-新 LLM caller 设计 token 预算时：
-1. **不靠记忆 / 不抄其他 caller 的值**（F-F1 教训：抄 SUGGESTION_MAX_TOKENS 2000 仍不够）
-2. 按「**输出体量 × thinking 系数**」估：thinking 模型预算 ≥ 输出 JSON 体量的 2-3 倍
-3. **直接锁较大值起步**（F-F2+F-F4 实证：直接锁 4000 一次过 / 不试小值反复打脸）
-4. 真机实测是**最终裁判**(不是单测)
+When designing a new LLM caller's budget:
+1. **Do not rely on memory or copy another caller's value**. F-F1 copied SUGGESTION_MAX_TOKENS=2000 and still failed.
+2. Estimate **output volume × thinking multiplier**: a thinking-model budget should be at least 2-3 times the output JSON volume.
+3. **Start with a larger value**. F-F2+F-F4 passed on the first attempt at 4000, avoiding repeated small-budget failures.
+4. Actual device measurement is the **final authority**, not unit tests.
 
-### 决定 3 — thinking-model.test 必建（永久化）
+### Decision 3 — Mandatory thinking-model.test
 
-每个调用 thinking 模型的 LLM caller **必须**配套 `*.thinking-model.test.js`：
-- 显式验证 `MAX_TOKENS ≥ 阈值` guard
-- mock `stop_reason=max_tokens` + 只 thinking 不 text → 验证走 fallback（复现真机阻塞路径）
-- mock 正常 thinking + text → 验证返回真数据
-- 参考模板：`{{APP_REPO_DIR}}/src/shared/__tests__/dailyBriefing-llm.thinking-model.test.js` + `llmMealRecommend.thinking-model.test.js`
+Every caller of a thinking model **must** have `*.thinking-model.test.js` coverage:
+- Explicit `MAX_TOKENS ≥ threshold` guard.
+- Mock `stop_reason=max_tokens` with thinking only and no text; verify fallback to reproduce the device-blocking path.
+- Mock normal thinking + text; verify real data is returned.
+- Reference templates: `{{APP_REPO_DIR}}/src/shared/__tests__/dailyBriefing-llm.thinking-model.test.js` + `llmMealRecommend.thinking-model.test.js`.
 
-### 决定 4 — 元规则池升级 12 → 13（永久化第 13 元规则）
+### Decision 4 — Expand the meta-rule pool from twelve to thirteen
 
 ```
 G / AT / AM / AO / BC / BE(ADR-029) / AJ(ADR-023) / P(ADR-024)
 BK(ADR-025) / CT(ADR-026) / CU+DD(ADR-027) / CW(ADR-028)
-🆕 CC AC 实证驱动 + token 预算真机实证 → ADR-030 本 ADR
+🆕 CC Evidence-driven acceptance + device-tested token budgets → ADR-030, this record
 ```
 
-## 后果
+## Consequences
 
-### 收益
-- ✅ 新 LLM feature 不再因 token 预算被真机打脸（F-F2+F-F4 已验证：直接锁 4000 + thinking-model.test 一次过）
-- ✅ 单测 mock 盲区（thinking 路径）被显式覆盖
-- ✅ 跨 PM 共识：AC 不是单测过就行 / 真机是裁判
+### Benefits
+- ✅ New LLM features avoid device failures from token budgets, as demonstrated by F-F2+F-F4 passing immediately with 4000 + thinking-model.test.
+- ✅ Thinking paths, formerly a mock-test blind spot, are explicitly covered.
+- ✅ Shared PM understanding: unit tests alone do not establish acceptance; devices are authoritative.
 
-### 风险与缓解
-| 风险 | 缓解 |
+### Risks and mitigations
+| Risk | Mitigation |
 |---|---|
-| 4000 token 增加 LLM 成本 | 可接受（vs 永久 fallback 功能废掉）/ PROP-034 模型分层未来优化 |
-| thinking-model.test 增加测试维护 | 模板化（dailyBriefing 模式）/ 一次写多次复用 |
+| 4000 tokens increases LLM cost | Acceptable compared with a feature permanently in fallback; future optimization through PROP-034 model tiers |
+| thinking-model.test adds maintenance | Template the dailyBriefing pattern and reuse it |
 
-### 验证
-| 维度 | 结果 |
+### Verification
+| Dimension | Result |
 |---|---|
-| F-F1 真机阻塞修复 | ✅ 2000→4000 / v3.9.0 smoke 8/8 |
-| F-F2+F-F4 直接锁 4000 | ✅ v3.10.0 smoke 8/8 一次过 |
-| thinking-model.test 覆盖 | ✅ 4 个 caller 全配套 |
+| F-F1 device blocker fixed | ✅ 2000→4000; v3.9.0 smoke 8/8 |
+| F-F2+F-F4 set directly to 4000 | ✅ v3.10.0 smoke 8/8 on the first attempt |
+| thinking-model.test coverage | ✅ All four callers covered |
 
-## 引用决议
-- PM 自纠 #51（AC2 字数实证修订）+ #53（MiMo thinking max_tokens 空回复）
-- F-DEVIATION-2 / F-NIGHT-1 / F-F1 / F-F2+F-F4 四次实证
-- RETRO-013（Sprint-8+9 复盘）
+## Referenced decisions
+- PM self-correction #51: evidence-driven AC2 text-length revision; #53: empty MiMo thinking max_tokens response.
+- Four field cases: F-DEVIATION-2 / F-NIGHT-1 / F-F1 / F-F2+F-F4.
+- RETRO-013, Sprint-8+9 retrospective.
 
 ---
 
-⭐ **ADR-030 永久现行 / 第 13 元规则 / token 预算真机实证铁律**
+⭐ **ADR-030 is permanently current: meta-rule thirteen, mandatory device evidence for token budgets.**
 
 ---
 
-## 2026-06-09 补录（PROP-043 / RETRO-018 教训3+4）— maxTokens path-dependent 升级
+## 2026-06-09 addendum (PROP-043 / RETRO-018 lessons 3+4) — Path-dependent maxTokens
 
-CC「单测过≠真机过」的 token 维度具体化：
-- **maxTokens 是 path-dependent**：thinking 模型在「prompt 注入块累积」下，通用 4000 下限不够。新 LLM JSON 输出路必做 **output_tokens 实测头寸**（real-shell 真调看 stop_reason/output_tokens），而非套用通用值。
-- **注入块全局记账**：每刀往同一 caller prompt 加注入块（钠盐/过敏/便当…）都在消耗该 caller 所有场景的 thinking 头寸——注入块字数应全局记账。
-- **实证（v3.34 四轮取证）**：采购路 rich profile @maxTokens=4000 → thinking 吃光预算、可见 JSON 0 字、确定性 fallback；→8000 出单（4940/62% 利用）。根因是 prompt 太长致 thinking 溢出，故**加 prompt 文字会反噬**（item 上限句被刻意拒）。
+Specific token-budget consequences of CC's "unit tests passing ≠ device passing":
+- **maxTokens is path-dependent**: Accumulated prompt-injection blocks make a generic 4000 floor insufficient for thinking models. Every new JSON-output path needs **measured output_tokens headroom**, using a real-shell call and stop_reason/output_tokens, rather than a generic value.
+- **Account for injected blocks globally**: Each sodium / allergy / packed-lunch block added to a caller's prompt consumes thinking headroom across all that caller's scenarios. Track the total injected text.
+- **Evidence from four v3.34 rounds**: A rich-profile shopping path at maxTokens=4000 exhausted the budget on thinking, emitted zero visible JSON characters, and fell back deterministically. At 8000 it produced a list, using 4940 tokens / 62%. The root cause was an overlong prompt causing thinking overflow; **adding prompt text can backfire**, so an item-limit sentence was deliberately rejected.

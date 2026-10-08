@@ -1,178 +1,178 @@
-# ADR-027 · 议题 CU + DD 永久化：沉淀 PM 元-层架构 + 9 PM × 主-元-决策-实施四层
+# ADR-027 · Make topics CU + DD permanent: Knowledge PM meta layer + nine PMs across lead–meta–decision–implementation
 
-- **状态**：现行
-- **日期**：2026-05-22
-- **关联**：[PROP-036 沉淀 PM 元-层](../../../确认改动/已审批/已完成/PROP-036-2026-05-22-沉淀PM角色元层.md) · [PM 自纠 #65](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-65.md) · [PM 自纠 #72](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-72.md) · [沉淀PM-沉淀者.md](../../../操作系统/02_智能体/沉淀PM-沉淀者.md) · [角色边界.md](../../../操作系统/01_架构/角色边界.md)
-- **议题 CU + DD 关闭条件**：v4.0 架构落地（task #104 全棒）+ 累计 6 PM 自纠（#57/#58/#62/#65/#69-72）+ 沉淀 3 层 + 紧贴主 PM ✅ 达成
+- **Status**: Current
+- **Date**: 2026-05-22
+- **Related**: [PROP-036 Knowledge PM meta layer](../../../确认改动/已审批/已完成/PROP-036-2026-05-22-沉淀PM角色元层.md) · [PM self-correction #65](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-65.md) · [PM self-correction #72](../../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-72.md) · [Knowledge PM role](../../../操作系统/02_智能体/沉淀PM-沉淀者.md) · [Role boundaries](../../../操作系统/01_架构/角色边界.md)
+- **Topics CU + DD closure criteria**: v4.0 architecture implemented across all task #104 stages; six accumulated PM self-corrections (#57/#58/#62/#65/#69-72); three knowledge layers; direct alignment with the lead PM ✅ Met
 
-> 术语现行统一：本文早期“子 / 子子”分别对应“决策 / 实施”；当前四层统一写作“主-元-决策-实施”。
+> Current terminology: Earlier "child / grandchild" roles correspond to "decision / implementation." The four layers are now consistently called lead–meta–decision–implementation.
 
-## 背景
+## Context
 
-议题 CU + DD 起源 PM 自纠 #65 + #72，两个紧密关联：
+Topics CU and DD originated in PM self-corrections #65 and #72 and are closely linked.
 
-**议题 CU（PM 自纠 #65）**：之前框架里"沉淀"职责散落在各 PM 私人 — 每个 PM 自己写自纠 / 自己记反思 / 自己做 RETRO，导致：
-- 议题 AJ 留痕崩塌 9 次复发（PM 自纠 #57/#58/#62 多次复发）
-- 沉淀质量参差不齐（项目 PM 写得勤，决策 PM 写得稀）
-- 没有跨 PM 视角看「框架是否在退化」
-- → 需要**专职沉淀 PM**
+**Topic CU, PM self-correction #65**: Knowledge consolidation was dispersed across private PM work. Each PM wrote their own corrections, reflections, and RETROs, causing:
+- Nine recurrences of topic AJ traceability collapse, including repeated #57/#58/#62 patterns.
+- Uneven knowledge capture: frequent for the Project PM, sparse for decision PMs.
+- No cross-PM view of framework degradation.
+- A need for a **dedicated Knowledge PM**.
 
-**议题 DD（PM 自纠 #72）**：起初把新建的沉淀 PM 分类为「子子 PM」（与开发 PM / 测试发布 PM 并列），但 zlbdh 反问 "他负责的不应该是整个项目的沉淀嘛？为什么是子子？"
-- 子子 PM = 实施层（执行决策 PM 命令）
-- 沉淀 PM 实际是 **元-层**（监督所有 PM、为主 PM 提供反思与升级建议）
-- 子子层不够 / 应升元-层紧贴主 PM
-- → 9 PM 矩阵升级为 **主-元-决策-实施四层**
+**Topic DD, PM self-correction #72**: The new Knowledge PM was initially classified as a "grandchild PM" beside Development and Test and Release. zlbdh asked, "Shouldn't this role consolidate knowledge for the whole project? Why is it a grandchild?"
+- Grandchild PMs are the implementation layer, executing decision-PM instructions.
+- The Knowledge PM actually belongs in the **meta layer**, observing all PMs and providing the lead PM with reflection and improvement proposals.
+- The implementation layer is insufficient; this role must sit beside the lead PM.
+- The nine-PM matrix therefore becomes **lead–meta–decision–implementation**.
 
-## 决定
+## Decision
 
-议题 CU + DD **正式永久关闭**，作为第 11 元规则进入永久化池（合并条款）。
+**Permanently close CU + DD**, consolidating them into the eleventh permanent meta-rule.
 
-### 决定 1 — 9 PM × 主-元-决策-实施四层矩阵（永久化）
+### Decision 1 — Nine PMs across four layers
 
-framework PM 矩阵**正式定型为 4 层 9 角色**（已落地 ✅ task #104.1 角色边界.md）：
+The framework matrix is formally **four layers and nine roles**, implemented in task #104.1 in 角色边界.md ✅:
 
 ```
-                    🎩 主 PM (1)
-                    项目 PM「咪咪」(唯一对外身份)
+                    🎩 Lead PM (1)
+                    Project PM "Mimi" (sole outward-facing identity)
                          │
               ┌──────────┴──────────┐
               │                     │
-        🪞 元-层 PM (1)          (其他 PM 不再向上)
-        沉淀 PM「沉淀者」
+        🪞 Meta-layer PM (1)     (other PMs do not move upward)
+        Knowledge PM "Curator"
               │
-              │ 紧贴主 PM / 跨决策层监督
+              │ Beside the lead PM / oversight across the decision layer
               │
    ┌──────────┴──────────────────────┐
-   │   🧠 决策 PM (5)                   │
-   │   操作系统 / 产品 / 技术 / 测试 / 运营 │
+   │   🧠 Decision PMs (5)           │
+   │   Operating System / Product / Technical / Test / Operations
    └────────────────┬───────────────────┘
                     │
               ┌─────┴──────┐
               │            │
-        🔨 子子 PM (2 实施层)
-        开发 PM「实施者」 / 测试发布 PM「闭环者」
+        🔨 Grandchild PMs (2, implementation layer)
+        Development PM "Implementer" / Test and Release PM "Closer"
 ```
 
-新 PM 加入时**必须**先定位到 4 层中的某一层（主 / 元-层 / 决策 / 实施）。禁止「漂浮层」PM。
+Every new PM **must** belong to one of the four layers: lead / meta / decision / implementation. Floating roles are prohibited.
 
-### 决定 2 — 沉淀 PM「沉淀者」职责清单（永久化）
+### Decision 2 — Permanent responsibilities of Knowledge PM Curator
 
-[沉淀PM-沉淀者.md](../../../操作系统/02_智能体/沉淀PM-沉淀者.md)（4.7KB）已落地，**6 项核心职责**永久确立：
+The [Knowledge PM role file](../../../操作系统/02_智能体/沉淀PM-沉淀者.md), 4.7KB, establishes **six core responsibilities**:
 
-| # | 职责 | 频率 |
+| # | Responsibility | Frequency |
 |---|---|---|
-| 1 | 议题 AJ 留痕监控（防 PM 自纠 #57/#58/#62 复发） | 每次 chat 收到 |
-| 2 | PM 自纠累积识别（候选元规则发现） | 周 |
-| 3 | RETRO 起稿（Sprint 末） | Sprint 末 |
-| 4 | 元规则池治理（候选 → 永久升级提案） | 月 |
-| 5 | decision-checkpoint Q1-Q6 自检（PM 越权 / 漂浮层检测） | 抽查 |
-| 6 | Framework 体检（结构性偏移检测） | Sprint 中 |
+| 1 | Monitor topic AJ traceability to prevent #57/#58/#62 recurrence | On every received chat |
+| 2 | Detect accumulated PM self-correction patterns and candidate meta-rules | Weekly |
+| 3 | Draft RETROs | Sprint end |
+| 4 | Govern the meta-rule pool; propose promotion from candidate to permanent | Monthly |
+| 5 | Audit decision-checkpoint Q1-Q6 for authority violations / floating roles | Sampling |
+| 6 | Check framework health for structural drift | Mid-Sprint |
 
-沉淀 PM **不参与决策**（只提供升级建议给主 PM）/ **不参与实施**（不动 {{APP_REPO_DIR}}/src/）。
+The Knowledge PM **does not make decisions**, but proposes improvements to the lead PM, and **does not implement application code** in {{APP_REPO_DIR}}/src/.
 
-### 决定 3 — 元-层 PM 紧贴主 PM（永久化）
+### Decision 3 — The meta layer sits beside the lead PM
 
-沉淀 PM 位于**元-层**（不在决策层 / 不在子子层）：
+The Knowledge PM belongs in the **meta layer**, not the decision or grandchild layer:
 
-- ✅ **能力范围**：跨 5 决策 PM + 2 子子 PM 监督，发现结构性偏移
-- ✅ **汇报对象**：直接对主 PM「咪咪」汇报，不走决策 PM 链路
-- ❌ **禁止行为**：决策 PM 的具体决策（如产品 PM 的功能取舍 / 技术 PM 的架构选型）/ 子子 PM 的实施（如改 {{APP_REPO_DIR}}/src/）
+- ✅ **Scope**: Observe five decision PMs and two grandchild PMs for structural drift.
+- ✅ **Reporting**: Report directly to lead PM Mimi, outside the decision-PM chain.
+- ❌ **Prohibited**: Taking a decision PM's specific decisions, such as product feature tradeoffs or technical architecture choices; performing grandchild-PM implementation, such as editing {{APP_REPO_DIR}}/src/.
 
-元-层 PM 关系图：主 PM ←→ 沉淀 PM ←（监督）→ 5 决策 PM + 2 子子 PM。
+Relationship: Lead PM ←→ Knowledge PM ← oversight → five decision PMs + two grandchild PMs.
 
-未来若新增元-层 PM（如「治理 PM」），必须满足"跨 PM 监督 / 汇报主 PM"特征。
+A future meta-layer role, such as Governance PM, must provide cross-PM oversight and report to the lead PM.
 
-### 决定 4 — 三层沉淀架构（永久化 / 议题 DC + DD 同源）
+### Decision 4 — Three-layer knowledge architecture (shared origin with DC + DD)
 
-沉淀**正式确立为 3 层**（已落地 ✅ task #102 + task #104.5）：
+Knowledge consolidation has **three layers**, implemented in task #102 + #104.5 ✅:
 
-| Layer | 名称 | 位置 | 职责 PM |
+| Layer | Name | Location | Responsible PM |
 |---|---|---|---|
-| 1 | PM 私人沉淀 | `PM工作区/{PM名}/` | 各 PM 自己 |
-| 2 | 沉淀 PM 主沉淀 | `PM工作区/沉淀PM-沉淀者/` | 沉淀 PM「沉淀者」|
-| 3 | 项目沉淀（全周期）| `操作系统/04_台账/项目沉淀/` | 沉淀 PM 主导 + 主 PM 审 |
+| 1 | Private PM knowledge | `PM工作区/{PM名}/` | Each PM |
+| 2 | Main Knowledge PM consolidation | `PM工作区/沉淀PM-沉淀者/` | Knowledge PM Curator |
+| 3 | Project-wide knowledge across the lifecycle | `操作系统/04_台账/项目沉淀/` | Knowledge PM leads; lead PM reviews |
 
-- Layer 1：个 PM 第一时间反思（PM 自纠 / 速查表 / 工具实战）
-- Layer 2：沉淀 PM 跨 PM 累积 + 候选元规则发现 + RETRO 起稿
-- Layer 3：跨 Sprint 长周期项目级沉淀（议题全景 / ADR 永久化 / 元规则池治理结果）
+- Layer 1: Immediate personal reflection through self-corrections, quick references, and tool field notes.
+- Layer 2: Cross-PM aggregation, candidate meta-rule discovery, and RETRO drafting.
+- Layer 3: Long-term cross-Sprint project knowledge: topic panorama, permanent ADRs, and meta-rule governance outcomes.
 
-### 决定 5 — 双层验证架构（永久化 / 议题 DB 同源）
+### Decision 5 — Two-layer verification architecture (shared origin with DB)
 
-验证**正式确立为 2 层**：
+Verification has **two layers**:
 
-| Layer | 验证主体 | 验证范围 |
+| Layer | Verifier | Scope |
 |---|---|---|
-| 1 | 每 PM 私人验证 | PM 自己产出（如：操作系统 PM 验证自己改的角色边界.md）|
-| 2 | 测试发布 PM 主验证 | 跨 PM 集成产出（如：业务代码 ship 前的真机闭环）|
+| 1 | Each PM's own verification | Their own output; for example, Operating System PM checks its edits to 角色边界.md |
+| 2 | Main verification by Test and Release PM | Integrated cross-PM output, such as device verification before application code ships |
 
-避免 Layer 1 缺失（"我以为对就行"）+ Layer 2 唯一兜底（"反正 Codex 会兜")。
+Avoid missing layer 1 ("I think it is right") and making layer 2 the only defense ("Codex will catch it anyway").
 
-### 决定 6 — 元规则池升级 10 → 11（永久化第 11 元规则 / 议题 CU + DD 合并）
+### Decision 6 — Expand the permanent meta-rule pool from ten to eleven
 
-新增 **议题 CU + DD · 沉淀 PM 元-层架构** 进入永久化池：
+Add the consolidated **CU + DD · Knowledge PM meta-layer architecture**:
 
 ```
-G  PRD 来源遵循         (累积实战)
-AT 路径遵循             (累积实战)
-AM 多角色协作           (累积实战)
-AO 错误隔离             (累积实战)
-BC Cowork 工程一致性    (累积实战)
-BE 起手必查             (累积实战)
-AJ PM 子类化            → ADR-023
-P  用户输入三态边界     → ADR-024
-BK Cowork mount stale   → ADR-025
-CT PM 角色去工具绑定    → ADR-026
-🆕 CU+DD 沉淀 PM 元-层  → ADR-027 本 ADR
+G  PRD source adherence          (accumulated field evidence)
+AT Path adherence                (accumulated field evidence)
+AM Multi-role collaboration      (accumulated field evidence)
+AO Error isolation               (accumulated field evidence)
+BC Cowork engineering consistency (accumulated field evidence)
+BE Mandatory startup checks      (accumulated field evidence)
+AJ PM subroles                   → ADR-023
+P  Three-state input boundaries  → ADR-024
+BK Cowork mount stale            → ADR-025
+CT PM/tool decoupling            → ADR-026
+🆕 CU+DD Knowledge PM meta layer → ADR-027, this record
 ```
 
-议题 CU 与 DD 合并永久化（同源问题：CU 提"需要专职 PM" / DD 完成"层级定型"）。
+CU and DD are promoted together because they share a root: CU establishes the dedicated PM; DD fixes its layer.
 
-## 后果
+## Consequences
 
-### 收益
+### Benefits
 
-- ✅ 议题 AJ 留痕崩塌可防御（专职沉淀 PM 主动监控）
-- ✅ 跨 PM 视角看 framework 退化（避免"各扫门前雪"）
-- ✅ PM 自纠累积有专人识别（防漏候选元规则）
-- ✅ 9 PM 矩阵层级清晰（主 1 / 元-层 1 / 决策 5 / 子子 2 = 4 层）
-- ✅ 沉淀 3 层 + 验证 2 层 — 防御深度足够
+- ✅ Dedicated Knowledge PM monitoring defends against topic AJ traceability collapse.
+- ✅ A cross-PM view detects framework degradation instead of each PM attending only to its own area.
+- ✅ A named owner identifies recurring self-corrections and avoids missing candidate meta-rules.
+- ✅ Clear nine-PM hierarchy: one lead / one meta / five decision / two grandchild roles across four layers.
+- ✅ Three knowledge layers and two verification layers provide sufficient defensive depth.
 
-### 风险与缓解
+### Risks and mitigations
 
-| 风险 | 缓解 |
+| Risk | Mitigation |
 |---|---|
-| 沉淀 PM 自己也漏看（议题 AJ 第 10 次复发？） | Sprint-9 后引入 Layer 4 真自动化（PROP-038）/ Layer 5 AI 自反思（未来）|
-| 元-层 PM 职责膨胀（什么都管） | 决定 2 锁定 6 职责 / 新增需经主 PM approve |
-| 子子 PM 与决策 PM 边界模糊 | ADR-022 已澄清 / 角色边界.md C 类清单已永久化 |
+| The Knowledge PM also misses something, allowing a tenth AJ recurrence | Introduce Layer 4 actual automation after Sprint-9, PROP-038; Layer 5 AI self-reflection later |
+| Meta-layer scope expands without limit | Decision 2 fixes six responsibilities; additions require lead-PM approval |
+| Boundaries between grandchild and decision PMs are unclear | ADR-022 clarifies them; the Class C list in 角色边界.md is permanent |
 
-### 验证
+### Verification
 
-| 维度 | 验证方式 | 结果 |
+| Dimension | Method | Result |
 |---|---|---|
-| 9 PM 4 层矩阵就位 | `操作系统/02_智能体/` 9 文件存在 + 4 层标注 | ✅ |
-| 沉淀 PM 角色定义 | `沉淀PM-沉淀者.md` 6 职责完整 | ✅ |
-| 沉淀 PM 工作区 | `PM工作区/沉淀PM-沉淀者/` 存在 | ✅ |
-| 项目沉淀 Layer 3 | `操作系统/04_台账/项目沉淀/README.md` 存在 | ✅ |
-| 议题 AJ 留痕本会话防御 | 本会话 chat 简版 ⑦ 段 / 状态.md 留痕轨迹 | ✅（持续监控）|
+| Nine-PM, four-layer matrix exists | Nine files in `操作系统/02_智能体/` with four-layer labels | ✅ |
+| Knowledge PM definition | All six responsibilities in `沉淀PM-沉淀者.md` | ✅ |
+| Knowledge PM workspace | `PM工作区/沉淀PM-沉淀者/` exists | ✅ |
+| Layer 3 project knowledge | `操作系统/04_台账/项目沉淀/README.md` exists | ✅ |
+| Topic AJ defense in this session | Chat shorthand section ⑦ and transition history in 状态.md | ✅ Ongoing monitoring |
 
-## 实施清单（追溯）
+## Implementation checklist (retrospective)
 
-- ✅ task #104.1 — 角色边界.md 升级到 9 PM × 主-元-子-子子四层
-- ✅ task #104.2 — 沉淀 PM-沉淀者.md 角色定义新建
-- ✅ task #104.5 — PM 工作区/沉淀PM-沉淀者/ 物理目录新建
-- ✅ task #102 — 项目沉淀 Layer 3 README 新建
-- ✅ task #106.1 — 议题 CU + DD 在议题全景.md 同步
-- ✅ task #107.3 — 本 ADR 永久化（2026-05-22）
+- ✅ task #104.1 — Upgrade 角色边界.md to nine PMs across lead–meta–child–grandchild.
+- ✅ task #104.2 — Create the 沉淀 PM-沉淀者.md role definition.
+- ✅ task #104.5 — Create the physical PM 工作区/沉淀PM-沉淀者/ directory.
+- ✅ task #102 — Create the Layer 3 project-knowledge README.
+- ✅ task #106.1 — Synchronize CU + DD in 议题全景.md.
+- ✅ task #107.3 — Make this ADR permanent on 2026-05-22.
 
-## 引用决议
+## Referenced decisions
 
-- PM 自纠 #65：需要专职沉淀 PM
-- PM 自纠 #69：双层沉淀架构（升级为 3 层）
-- PM 自纠 #70：双层验证架构
-- PM 自纠 #71：沉淀 Layer 3 项目沉淀
-- PM 自纠 #72 ⭐⭐⭐：沉淀 PM 升元-层 / 9 PM 主-元-子-子子四层
-- v4.0 终态愿景 §一 9 PM × 4 大类 / §五 沉淀架构 / §九 元-层 PM
+- PM self-correction #65: A dedicated Knowledge PM is needed.
+- PM self-correction #69: Two knowledge layers, later expanded to three.
+- PM self-correction #70: Two verification layers.
+- PM self-correction #71: Layer 3 project knowledge.
+- PM self-correction #72 ⭐⭐⭐: Promote the Knowledge PM to the meta layer; nine PMs across lead–meta–child–grandchild.
+- v4.0 target vision §I: nine PMs × four categories; §V: knowledge architecture; §IX: meta-layer PM.
 
 ---
 
-⭐ **ADR-027 永久现行 / 与 ADR-022/023/024/025/026 并列 framework 元规则 ADR**
+⭐ **ADR-027 is permanently current, alongside ADR-022/023/024/025/026 as a framework meta-rule ADR.**

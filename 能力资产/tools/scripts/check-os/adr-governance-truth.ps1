@@ -15,8 +15,9 @@ function Get-CzxtAdrStatusClass {
   param([string]$Status)
 
   $normalized = ($Status -replace '\s+', ' ').Trim()
-  if ($normalized -eq '现行') { return 'current' }
+  if ($normalized -eq '现行' -or $normalized -eq 'Current') { return 'current' }
   if (($normalized -match '被') -and ($normalized -match '(替代|覆盖)')) { return 'replaced' }
+  if ($normalized -match '^(?:Partially )?Superseded by (?:ADR-\d{3}|the current structure)$') { return 'replaced' }
   return 'unknown'
 }
 

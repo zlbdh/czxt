@@ -1,51 +1,44 @@
 ---
-name: chat-summary-dedup
-description: 写完 chat 简版 ①-⑦ 后最后扫一遍防同段重复。防 PM 自纠 #48 chat 输出重复。
-trigger: 写完 chat 简版输出前
-loaded: 条件加载（按 trigger 匹配时由 PM 调度）
+name: "chat-summary-dedup"
+description: "Scan chat summary items ①-⑦ for repeated content before sending. Prevents PM self-correction #48."
+trigger: "After drafting the short chat summary and before sending"
+loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
 ---
 
-# 速查：chat 简版输出去重（PM 自纠 #48）
+# Quick Reference: Deduplicate Chat Summaries — Self-Correction #48
 
-> 写完 chat 简版 ①-⑦ 后**最后扫一遍** — 防同段重复
+> After drafting chat summary items ①-⑦, **scan once more** for repeated sections.
 
-## 铁律
+## Mandatory sequence
 
-```
-chat 简版 ①-⑦ 写完
-    ↓
-① 扫代码块（```...```）是否有重复内容
-    ↓
-② 扫「等你切 Claude Code/Codex」段是否重复
-    ↓
-③ 扫「复制贴」标题是否重复
-    ↓
-④ 发送前最后 grep 自检
-```
+1. Check fenced code blocks for duplicate content.
+2. Check repeated requests to switch to Claude Code/Codex.
+3. Check repeated copy-and-paste headings.
+4. Perform a final search before sending.
 
-## 历史实证
+## Historical evidence
 
-### PM 自纠 #48（2026-05-15 F-ALARM-1 阻塞 chat）
+### Self-correction #48: May 15, 2026, blocked F-ALARM-1 chat
 
-- chat 同一轮输出**2 个相同**「复制贴 Claude Code 启动」代码块
-- zlbdh 截图发问「这里粘贴两次嘛？」
-- 根因：PM 操作疲劳（今日累计 21+ 切角色 + 6 PM 自纠）→ chat 编织时未自检去重
+- One response contained two identical Claude Code startup blocks.
+- zlbdh sent a screenshot asking whether the text should be pasted twice.
+- Cause: PM fatigue after 21+ role switches and six self-corrections that day; no final deduplication check.
 
-## 防御措施
+## Defenses
 
-### 写 chat 简版后 30 秒自检
+Spend 30 seconds checking after writing the summary:
 
-1. **代码块计数**：复制贴代码块应 1 个/任务（不应 2 个相同）
-2. **「等你切 XXX」段计数**：同一切换提示应 1 个/段
-3. **总输出长度**：> 200 行时**强制**扫描去重（疲劳信号阈值）
-4. **议题候选段**：新议题候选段不应跟「警戒」段重复列
+1. One copy-and-paste code block per task, not two identical blocks.
+2. One occurrence of each role/tool-switch request per section.
+3. Above 200 lines, a deduplication scan is mandatory; this is a fatigue warning threshold.
+4. A new issue-candidate section must not duplicate the caution section.
 
-### 工具帮助
+Helpful practices:
 
-- 用 markdown 渲染预览（如 chat 内置）— 视觉上能立刻看到重复代码块
-- 长输出分多段发（每段 < 100 行）— 防一次性大段难自检
+- Preview rendered Markdown to spot duplicate code blocks visually.
+- Split long output into sections of fewer than 100 lines, making checks easier.
 
-## 跟其他元规则关系
+## Related rules
 
-- [PROP-014 chat 简版强制](../../../操作系统/03_交接/交接卡格式.md) — chat 简版 ①-⑦ 强制格式（本规则是其补充）
-- [PROP-020 路径 D decision-checkpoint](../../../操作系统/07_完整工作流/decision-checkpoint.md) — Q4.g 候选：chat 输出去重校验
+- [PROP-014 mandatory chat summary](../../../操作系统/03_交接/交接卡格式.md): required ①-⑦ format; this rule supplements it.
+- [PROP-020 path D decision checkpoint](../../../操作系统/07_完整工作流/decision-checkpoint.md): Q4.g candidate for output deduplication.

@@ -1,80 +1,71 @@
 ---
-name: pm-self-correction-74-87-batch
-scope: pm-workspace
-pm: 项目PM-咪咪
-type: episodic
-loaded: triggered
-trigger: Sprint-8/9 实战 PM 自纠回溯 / 议题 CN v2 批次 artifact 化机制
-description: PM 自纠 #74-#87 批次汇总（Sprint-8/9 业务实战 12 个 / 议题 CN v2 轻量化：高频节奏用批次汇总替代逐个独立 .md）
+name: "pm-self-correction-74-87-batch"
+scope: "pm-workspace"
+pm: "项目PM-咪咪"
+type: "episodic"
+loaded: "triggered"
+trigger: "Reviewing Sprint-8/9 PM corrections or issue CN v2 batch recording"
+description: "Batch of PM corrections #74–#87: 12 Sprint-8/9 cases, recorded together under issue CN v2 instead of individual high-frequency artifacts."
 ---
 
-# PM 自纠 #74-#87 批次汇总（Sprint-8+9 业务实战 / 议题 CN v2）
+# PM Corrections #74–#87: Sprint-8/9 Batch — Issue CN v2
 
-> **背景**：2026-05-22~28 Sprint-8（F-F1）+ Sprint-9（F-F2+F-F4）业务实战中,项目 PM 高频自纠 12 个。
-> **议题 CN v2 改进**：逐个独立 .md（PROP-030 标准）在高频节奏下跟不上 → 本批次用**汇总文件**轻量化。
-> **共性**：v4.0 9 PM × 4 层架构首次跨工具实战暴露的项目 PM 协作盲区。
+> **Context:** Twelve frequent corrections occurred during May 22–28, 2026: Sprint-8 F-F1 and Sprint-9 F-F2+F-F4.
+> **Issue CN v2:** Individual Markdown artifacts under PROP-030 could not keep pace; this batch uses one summary.
+> **Common theme:** Collaboration blind spots exposed during the first cross-tool use of the v4.0 nine-PM/four-layer architecture.
 
----
+## Batch inventory
 
-## 批次清单
-
-| # | 一句话 | 议题 | 根因类型 |
+| # | Finding | Issue | Cause category |
 |---|---|---|---|
-| **#74** | 沉淀 PM 越权对外发言（"🪞 沉淀者建议"给 zlbdh）/ 应项目 PM 唯一对外 | DF | 角色边界（元-层 vs 主 PM 对外）|
-| **#77** | 项目 PM 用 AskUserQuestion 推诿决策（zlbdh "你是项目 PM"）/ 应自主拍板 | DH | PM 自纠 #63 同模式第 2 次 |
-| **#78** | 跨工具任务派发没给完整起手提示词（只说"启动新会话"）| DI | 协议不完整 |
-| **#79** | handoff 卡 PRD 参数引用不准（MAX_TOKENS 写 800 实为 2000）| DJ | 议题 G 字面 vs 真核 |
-| **#80** | 起手提示词太长（80 行违反议题 CO Progressive Context Loading）| DK | 极简入口失守 |
-| **#81** | token 预算反复打脸（800→2000 仍不够）/ 同 #79 延续 | DJ | 参数估算不实证 |
-| **#82** | bash mount cache verify 假象（grep+wc 看旧版报 0）/ 应用 Read verify | DG | 议题 BK 互补（verify 工具选择）|
-| **#83** | "代码完成" ≠ "feature 用户可用" / 报告未分 4 态 | DL | 对外报告歧义 |
-| **#84** | 选 F-F1"代码层最小可行"非"用户价值最小可行"/ 半成品 | DM | 产品决策盲区 |
-| **#85** | （守住）API key C 类铁律 / zlbdh 测试未触发 | — | ✅ 防御成功（非自纠）|
-| **#86** | 对外报告滥用内部代号（F-F1/议题号）/ zlbdh "看不懂" | DK 延伸 | 人话失守 |
-| **#87** | F-F1 半成品反思时机错位（阻塞后追悔 vs 决议前反思）| DM 延伸 | 决议时机 |
+| #74 | Knowledge PM addressed zlbdh directly as “Curator recommends”; only Project PM should speak externally | DF | Meta/lead external-identity boundary |
+| #77 | Project PM shifted a decision back through AskUserQuestion; zlbdh reminded it that it was Project PM and should decide | DH | Second recurrence of #63 |
+| #78 | Cross-tool dispatch gave no complete startup prompt, only an instruction to start a new session | DI | Incomplete protocol |
+| #79 | Handoff cited PRD MAX_TOKENS as 800 when it was 2000 | DJ | Issue G: literal recall versus actual checking |
+| #80 | An 80-line startup prompt violated issue CO Progressive Context Loading | DK | Minimal entry-point failure |
+| #81 | Token estimates failed repeatedly; raising 800 to 2000 was still insufficient | DJ | Continuation of #79; unverified estimates |
+| #82 | Bash mount-cache grep/wc read old content and reported zero; Read verification was required | DG | Complements issue BK; wrong verification tool |
+| #83 | Completed code was reported as a user-usable feature without distinguishing four states | DL | Ambiguous external reporting |
+| #84 | F-F1 selected the minimum viable code implementation rather than minimum viable user value, producing an incomplete feature | DM | Product-decision blind spot |
+| #85 | API-key Class C rule held; zlbdh's test did not trigger disclosure | — | Successful defense, not a correction |
+| #86 | External reports overused F-F1/issue IDs; zlbdh could not understand them | DK extension | Failure to use plain language |
+| #87 | Reflection on F-F1's incompleteness came after blockage rather than before the decision | DM extension | Decision timing |
 
----
+## Shared causes: Knowledge PM cross-PM review
 
-## 共性根因（沉淀 PM 跨 PM 监督结论）
+### External-identity rule failed repeatedly: #74/#77/#80/#83/#86
 
-### 1. 项目 PM 对外身份铁律反复失守（#74/#77/#80/#83/#86）
-- PM 自纠 #63 之后仍 5 次复发同类（越权署名 / 推诿决策 / 长文 / 歧义报告 / 内部代号）
-- **本质**：项目 PM「唯一对外身份」不仅是"自称项目 PM",还包括**对外沟通方式**（人话 / 极简 / 4 态分明 / 自主拍板）
+Five related recurrences followed #63: unauthorized attribution, avoiding decisions, long output, ambiguous reporting, and internal codes. Project PM's sole external identity also governs communication: plain language, brevity, four distinct states, and independent decisions.
 
-### 2. 决议前反思缺位（#84/#87）
-- F-F1 选型时只看"代码层最小"没看"用户价值最小可行"
-- 阻塞后才追悔 → 浪费 Claude Code 9 文件 + Codex smoke
+### Missing reflection before decisions: #84/#87
 
-### 3. 参数/协议不实证（#78/#79/#81）
-- handoff 参数靠记忆不真核 → 议题 CC（已 ADR-030 永久化）
+F-F1 selection optimized the smallest code implementation instead of minimum viable user value. Reflecting only after blockage wasted nine Claude Code files of work plus Codex smoke testing.
 
-### 4. verify 工具选择（#82）
-- bash mount cache 假象 → 必用 Read 工具 + 行号（议题 BK 互补 / 议题 DG）
+### Unverified parameters/protocols: #78/#79/#81
 
----
+Handoff parameters came from memory rather than actual checks. Issue CC was already permanent through ADR-030.
 
-## 永久化去向（RETRO-013 评估）
+### Verification tool selection: #82
 
-| 议题 | 候选元规则 | RETRO-013 建议 |
+Bash mount-cache results were misleading. Use the Read tool with line numbers; this complements issue BK and forms issue DG.
+
+## Proposed permanent rules: RETRO-013 assessment
+
+| Issue | Candidate | RETRO-013 recommendation |
 |---|---|---|
-| DF | 元-层 PM 内部信号 vs 主 PM 对外发言边界 | 🟡 P1 升 ADR-031（与 ADR-026 同源）|
-| DH | 项目 PM 自主拍板（不推诿）| 🔴 P0（#63 同模式 3 次）|
-| DK | 对外极简 + 人话 + 4 态分明（议题 CO 应用）| 🔴 P0（#80/#83/#86 累积 3 次）|
-| DM | 决议前用户价值最小可行反思 | 🟡 P1 |
-| DG | verify 必用 Read 不信 bash mount cache | 🟢 P2（议题 BK 互补）|
-| DJ | （已 ADR-030 覆盖 token 预算实证）| ✅ 已永久化 |
+| DF | Internal meta-PM signals versus external Project PM speech | P1: promote to ADR-031, sharing origins with ADR-026 |
+| DH | Project PM makes decisions without shifting responsibility | P0: three occurrences of #63's pattern |
+| DK | Concise plain-language reporting with four distinct states | P0: three cases, #80/#83/#86; applies issue CO |
+| DM | Reflect on minimum viable user value before decisions | P1 |
+| DG | Verify through Read rather than trusting bash mount cache | P2: complements issue BK |
+| DJ | Token-budget verification already covered by ADR-030 | Already permanent |
 
----
+## Issue CN v2: improve the recording mechanism
 
-## 议题 CN v2 自身结论（元机制改进）
+Individual correction files under PROP-030 could not keep up with the recorded pace of 12 in a day.
 
-**问题**：PM 自纠 artifact 化逐个独立 .md（PROP-030）在高频节奏（一天 12 个）下跟不上。
+- Batch related corrections from one Sprint into one summary plus an INDEX link.
+- Retain individual files for major ⭐⭐⭐ corrections such as #63 external identity and #72 Knowledge PM's meta-level position.
+- Submit issue CN v2 to RETRO-013 for possible ADR promotion.
 
-**改进**：
-- **批次汇总**（本文件）：同 Sprint 同批次 PM 自纠 → 1 个汇总文件 + INDEX 链接
-- **逐个独立**保留给：⭐⭐⭐ 重大自纠（如 #63 对外身份 / #72 沉淀 PM 升元-层）
-- 议题 CN v2 候选 → RETRO-013 评估升 ADR
-
----
-
-⭐ **本批次 12 个 PM 自纠汇总 / 议题 CN v2 轻量化首次实战 / 待 RETRO-013 评估 DF/DH/DK/DM 升 ADR-031+**
+This historical batch contains 12 entries and is the first trial of issue CN v2. DF/DH/DK/DM were awaiting RETRO-013 assessment for ADR-031 and later decisions.

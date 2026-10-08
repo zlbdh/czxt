@@ -42,7 +42,7 @@ foreach ($rel in @(
 )) {
   if ($rel -in @("AGENTS.md", "README.md")) {
     Assert-Contains $rel "lead, meta, decision, and implementation" "Current nine-PM layer terminology"
-  } elseif ($rel -eq "操作系统\00_总入口.md") {
+  } elseif ($rel -in @("操作系统\00_总入口.md", "操作系统\01_架构\README.md")) {
     Assert-Contains $rel "主-元-决策-实施|lead, meta, decision, and implementation" "Current nine-PM layer terminology"
   } else {
     Assert-Contains $rel "主-元-决策-实施" "9 PM 四层现行术语"

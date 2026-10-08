@@ -1,41 +1,50 @@
 ---
-name: pm-self-correction-96
-scope: project
-type: episodic
-loaded: on-demand
-description: PM 自纠 #96 — Cowork 沙箱跑 git reset --hard 清假 dirty 失败且残留 index.lock 污染真机 / ADR-025⊗ADR-033 交叉 / 2026-05-30 B-F7 v3.12.0 收档时
+name: "pm-self-correction-96"
+scope: "project"
+type: "episodic"
+loaded: "on-demand"
+description: "PM correction #96: a Cowork sandbox git reset --hard failed while clearing false dirty state and left index.lock on the host; ADR-025 and ADR-033 boundary, during B-F7 v3.12.0 closure on 2026-05-30."
 ---
 
-# PM 自纠 #96 — Cowork 沙箱 git 写操作 = 真机污染源
+# PM Correction #96 — Sandbox Git Writes Can Leave Host Artifacts
 
-**触发**：2026-05-30 B-F7 v3.12.0 ship 收档真值复核时，`git status` 显示 3 文件假 dirty（议题 BK「Codex push 后 mount stale」+ ADR-033 mount 截断幻影）。PM 按 ADR-025 决策 2「预批 `git reset --hard HEAD` 清假 dirty」在 **Cowork 沙箱 bash** 执行 → 失败。
+**Trigger:** During the final source-of-truth check for B-F7 v3.12.0 on 2026-05-30, `git status` showed three falsely dirty files: issue BK's stale mount after a Codex push, combined with ADR-033's apparent mount truncation. Following ADR-025 decision 2's then-recorded preapproval for `git reset --hard HEAD` to clear false dirty state, PM ran it in **Cowork sandbox Bash**. It failed.
 
-**失误链**：
-1. `git reset --hard HEAD` → `error: unable to unlink ... Operation not permitted`（沙箱 mount 无真机 working tree 写权限）。
-2. reset 中断 + 残留 `.git/index.lock`（空 0 字节锁），沙箱 `rm` 亦 `Operation not permitted` 清不掉。
-3. 后果：真机 `.git/index.lock` 残留 → 挡真机下一棒 `git add/commit/reset`（报 index.lock exists）。**commit `4420167` = 远端安全没动**，但留了个真机要手动清的尾巴。
+## Failure sequence
 
-**Why**：误把 ADR-025「预批 git reset --hard」当成 Cowork 沙箱可执行。实则 ADR-033 已立「Cowork 沙箱真机写操作不可信」——`git reset --hard` 是**写 working tree**操作，沙箱 mount 对真机文件**无 unlink 权限**，失败还残留 lock。ADR-025 那条预批的隐含前提是「在有真机写权限的环境执行」（Claude Code / Codex 真机），不是 Cowork 沙箱。
+1. `git reset --hard HEAD` returned `error: unable to unlink ... Operation not permitted`; the sandbox mount lacked permission to write the host working tree.
+2. The interrupted reset left an empty, zero-byte `.git/index.lock`. Sandbox `rm` also returned `Operation not permitted` and could not remove it.
+3. The host lock blocked the next host `git add/commit/reset` with an index-lock-exists error. **Commit `4420167` remained safe and unchanged on the remote**, but the lock required manual host cleanup.
 
-**正确做法**：
-1. **Cowork 沙箱对 git 只做只读诊断**：`git rev-parse HEAD` / `git status` / `git diff` / `git ls-tree` 判定 ship 是否安全 —— HEAD=origin/main=ship commit + 假 dirty diff 是截断幻影 + blob 在 commit 完整 → **ship 安全，不需要清 working tree**。
-2. **清假 dirty / index.lock 必真机执行**（Claude Code 或 Codex）：`rm {{APP_REPO_DIR}}/.git/index.lock` +（可选）`git reset --hard HEAD`。
-3. **沙箱可靠写通道 = file-tool（Read/Write/Edit）**，不是 bash mount；bash 仅可 `>>` append（不 unlink/不重写，故 mount 受限下仍可能成）。本次台账 4 处 Edit + 状态.md append 均经此通道成功落地。
+## Cause
 
-**How to apply**：
-- PM 收 Codex ship 卡做真值复核见 `git status` 假 dirty → **只读诊断三件套**（HEAD vs origin/main 对齐 + diff 方向是截断幻影 + blob 在 origin/main 完整）判 ship 安全，**不在沙箱跑任何 git 写命令**（reset/checkout/clean/add）。
-- 真有 working tree 需复原 → 写进 ship 卡⑥「下一棒真机起手」交接，或当场交代 zlbdh 真机一行清理。
-- 沙箱误跑 git 写残留 lock → **必须当场诚实交代 zlbdh + 给真机清理命令，不藏**。
+I incorrectly treated ADR-025's reset preapproval as permission to execute the command from the Cowork sandbox. ADR-033 already established that host writes through that sandbox were unreliable. `git reset --hard` **writes the working tree**; the sandbox mount lacked host-file unlink permission, and failure left a lock. The old preapproval implicitly assumed an environment with host write access, such as Claude Code or Codex on the host, rather than the Cowork sandbox.
 
-**议题候选**：ADR-025 补注一条边界「git reset --hard HEAD 仅真机执行；Cowork 沙箱遇假 dirty 只读诊断判定 ship 安全即可，严禁沙箱 git 写命令」→ 起手时升 议题 BK/ADR-025 patch。
+## Correct procedure recorded at the time
 
-## 历史 PM 自纠系列（近）
-- #92 verify 盲区 / #93 对外拍板回避 / #94 Edit 截断大文件尾部 / #95 handoff AC 矛盾
-- **#96（本条）** — Cowork 沙箱 git reset --hard 清假 dirty 失败 + 残留 index.lock 污染真机
+1. **Use Git only for read-only diagnosis in the Cowork sandbox:** `git rev-parse HEAD`, `git status`, `git diff`, and `git ls-tree`. If HEAD, origin/main, and the ship commit agree; the apparent dirty diff is mount truncation; and the committed blob is complete, **the shipment is safe and the working tree does not need clearing**.
+2. **Perform false-dirty or index-lock cleanup on the host**, through Claude Code or Codex. The historical cleanup instruction was `rm {{APP_REPO_DIR}}/.git/index.lock`, optionally followed by `git reset --hard HEAD`.
+3. **The reliable sandbox write channel was the file tools, Read/Write/Edit, rather than Bash through the mount.** Bash `>>` append could still succeed because it did not unlink or rewrite files. Four ledger edits and the `状态.md` append succeeded through the recorded channels in this incident.
 
-## 关联
-- ADR-025 Cowork mount stale 防御（本条 = 其边界补丁：清假 dirty 必真机）
-- ADR-033 大文件 mount 不可信（本条 = 其 git 写向延伸）
-- 议题 BK Cowork mount stale
-- [[project-{{APP_REPO_DIR}}-git-branch-main]] — git 操作前 verify
-- [[feedback-pm-no-default-inference]] — 不默认推测（误以为 ADR-025 沙箱可跑）
+## Application
+
+- When PM receives a Codex ship card and sees a falsely dirty `git status`, use three read-only checks: HEAD matches origin/main; the diff indicates apparent truncation; and the origin/main blob is complete. Use them to determine shipment safety. **Do not run any Git write command in the sandbox**, including reset, checkout, clean, or add.
+- If the working tree actually needs restoration, add it to ship-card section ⑥, “Next host startup,” for handoff, or immediately give zlbdh the host cleanup command.
+- If an accidental sandbox Git write leaves a lock, **tell zlbdh immediately and honestly, and provide the host cleanup command. Do not conceal it.**
+
+## Candidate issue
+
+Add this boundary to ADR-025: `git reset --hard HEAD` is host-only; a Cowork sandbox encountering false dirty state should use read-only diagnosis to establish shipment safety, and must not execute Git writes. Promote the issue BK/ADR-025 patch at startup.
+
+## Recent correction history
+
+- #92: verification blind spots; #93: avoidance of external decisions; #94: Edit truncated a large file's tail; #95: contradictory handoff acceptance criteria.
+- **#96, this record:** sandbox `git reset --hard` failed while clearing false dirty state and left an `index.lock` artifact on the host.
+
+## Related records
+
+- ADR-025, Cowork stale-mount defenses: this record adds the boundary that clearing false dirty state requires the host.
+- ADR-033, unreliable large-file mount reads/writes: this record extends it to Git writes.
+- Issue BK, stale Cowork mounts.
+- [[project-{{APP_REPO_DIR}}-git-branch-main]] — verify before Git operations.
+- [[feedback-pm-no-default-inference]] — do not assume that ADR-025 permits sandbox execution.

@@ -22,7 +22,7 @@ TASKS.md§5KB\s*/\s*8KB 红区|trainingFixtures\.js 14\.7KB|Chat\.jsx 11827B§TA
 操作系统/01_架构/子agent调度机制.md§单源禁并行文件：[^。]*`角色边界\.md`。|禁并行写：[^。]*`角色边界\.md`。§调度漏自身单源
 操作系统/02_智能体/沉淀PM-沉淀者.md§写入 `元规则池\.md`§沉淀直写元规则池
 操作系统/02_智能体/测试发布PM-闭环者.md§`__CZXT_APP_REPO_DIR_REGEX__/package\.json` version 字段 / `__CZXT_APP_REPO_DIR_REGEX__/\.gitattributes`§闭环者配置旧口径
-操作系统/01_架构/状态机.md§单人单 PM§状态机旧单 PM
+操作系统/01_架构/状态机.md§单人单 PM|one person, one PM§状态机旧单 PM
 操作系统/01_架构/README设计规范.md§远端 latest tag|31 README|## 六、关联§README 设计规范旧锚
 操作系统/05_记忆/scope-schema.md§Sprint-10 PROP-039 集成 Mem0 后§scope-schema 旧排期
 操作系统/01_架构/角色边界.md§不动手\s*\+\s*编排|No direct work\s*\+\s*orchestration§角色边界旧不动手

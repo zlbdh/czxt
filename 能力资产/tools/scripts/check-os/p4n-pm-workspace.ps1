@@ -96,7 +96,7 @@ if (Test-Path -LiteralPath $selfDir -PathType Container) {
 $selfIndex = Read-Text "PM工作区/项目PM-咪咪/PM自纠/INDEX.md"
 if ($null -eq $selfIndex) {
   $failures.Add("PM工作区/项目PM-咪咪/PM自纠/INDEX.md 缺失")
-} elseif ($artifactCount -gt 0 -and $selfIndex -notmatch "$artifactCount\s*个独立") {
+} elseif ($artifactCount -gt 0 -and $selfIndex -notmatch "(?:$artifactCount\s*个独立|(?<!\d)$artifactCount\s+independent artifacts\b)") {
   $failures.Add("PM自纠 INDEX 未同步当前 artifact 文件数：实际 $artifactCount")
 }
 

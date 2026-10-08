@@ -3,103 +3,108 @@ name: build-apk
 scope: project
 type: procedural
 loaded: on-demand
-description: 出 APK 的标准 SOP — Windows build-apk.ps1 自动归档 / GitHub Actions 备用 / 装机 smoke / release 签名 / 失败回退。
+description: APK build procedure — automatic archiving with Windows build-apk.ps1, GitHub Actions fallback, device smoke testing, release signing, and recovery.
 ---
 
-# 技能：出 APK
+# Skill: Build an APK
 
-## 当前推荐入口
+## Recommended entry point
 
-Codex / Windows 本机优先跑：
+For Codex on a local Windows machine, prefer:
 
 ```powershell
 cd {{PROJECT_ROOT}}\{{APP_REPO_DIR}}
 powershell -NoProfile -ExecutionPolicy Bypass -File .\build-apk.ps1
 ```
 
-产物会自动归档到：
+The output is automatically archived at:
 
 ```text
 {{APP_REPO_DIR}}/apk/{{PROJECT_NAME}}-vX.Y.Z-debug.apk
 ```
 
-`build-apk.bat` 只负责 build + assemble 并提示手动复制；需要自动归档时用 `build-apk.ps1`。
+`build-apk.bat` only builds and assembles, then asks you to copy the output manually. Use `build-apk.ps1` for automatic archiving.
 
-## 让 zlbdh 出 APK 的标准回复
+## Standard message asking zlbdh to build an APK
 
-测试都过了之后（数字必须来自本次真实 `npm test -- --run` / `npm run build` 输出，不沿用历史样例）：
+After all tests pass, use the following message. Every number must come from this run's actual `npm test -- --run` / `npm run build` output; never reuse historical example results.
 
-```
-QA 全过 ✓ <N>/<N> 测试 / vite build <N> modules / <耗时>
-vX.Y.Z 代码就绪。
+```text
+QA passed: <N>/<N> tests / Vite build: <N> modules / <duration>
+Version X.Y.Z is ready.
 
-请在 Windows 出 APK：
+Please build the APK on Windows:
 
 powershell -NoProfile -ExecutionPolicy Bypass -File {{PROJECT_ROOT}}\{{APP_REPO_DIR}}\build-apk.ps1
 
-产物会在 {{APP_REPO_DIR}}\apk\{{PROJECT_NAME}}-vX.Y.Z-debug.apk。
+Output: {{APP_REPO_DIR}}\apk\{{PROJECT_NAME}}-vX.Y.Z-debug.apk
 ```
 
-## GitHub Actions 路（备用）
+## GitHub Actions fallback
 
-如果 zlbdh 现在不在 Windows，但有 GitHub repo：
+If zlbdh does not currently have Windows access but has a GitHub repository:
 
-1. 先按 [`操作系统/07_完整工作流/git流程.md`](../../操作系统/07_完整工作流/git流程.md) 和 ADR-016 核对 commit/push 6 条件。
-2. 只有满足条件且 zlbdh 明确授权时，才由测试发布 PM「闭环者」执行提交与 push。
-3. GitHub → Actions → "Build Android APK" → 手动 `Run workflow` → 等 8-12 分钟 → Artifacts 下载 APK。
+1. Check all six commit/push requirements in the [Git workflow](../../操作系统/07_完整工作流/git流程.md) and ADR-016.
+2. Only the Test and Release PM “Closer” may commit and push, after the requirements are met and zlbdh explicitly authorizes the action.
+3. Open GitHub → Actions → “Build Android APK” → manually select `Run workflow` → wait 8–12 minutes → download the APK from Artifacts.
 
-当前 `build-apk.yml` 只保留 `workflow_dispatch`；`git push` 不会自动触发出包。
+The current `build-apk.yml` uses only `workflow_dispatch`; `git push` does not automatically trigger an APK build.
 
-⚠️ 本 skill 不提供可直接复制的 `git add` / `git commit` / `git push` 裸命令，避免绕过 ADR-016。
+This skill intentionally omits standalone copy-and-paste `git add`, `git commit`, and `git push` commands to preserve the ADR-016 approval boundary.
 
-## 装机后的 smoke test 必跑
+## Required smoke test after installation
 
-按 `Docs/4-测试文档/手动测试用例.md` 单子过核心路径。
+Exercise the core flows listed in `Docs/4-测试文档/手动测试用例.md`.
 
-要 zlbdh 截图：
+Ask zlbdh for screenshots of:
+
 - Home
 - Health
 - Accounting
 - Timeline
 - Profile
 
-存到 `Docs/4-测试文档/smoke截图/vX.Y.Z-任务名/`。
+Save them under `Docs/4-测试文档/smoke截图/vX.Y.Z-任务名/`.
 
-## release APK（vX.Y.Z / zlbdh 决策）
+## Release APK: vX.Y.Z, subject to zlbdh's decision
 
-第一次走完整流程：
+For the first release, complete every step below.
 
-### 1. 出 keystore
+### 1. Create a keystore
+
 ```cmd
 keytool -genkey -v -keystore zlbdh-release.keystore ^
   -alias mimi -keyalg RSA -keysize 2048 -validity 10000
 ```
 
-### 2. 配 build.gradle
-看 `Docs/5-运维文档/APK打包指南.md` 「打 release 签名 APK」段。
+### 2. Configure build.gradle
 
-### 3. 出 release
+See the release-signing section in `Docs/5-运维文档/APK打包指南.md`.
+
+### 3. Build the release
+
 ```cmd
 cd android
 gradlew.bat assembleRelease
 ```
 
-### 4. 拷到 {{APP_REPO_DIR}}/apk/
-```
+### 4. Copy the output to {{APP_REPO_DIR}}/apk/
+
+```text
 {{APP_REPO_DIR}}/apk/{{PROJECT_NAME}}-vX.Y.Z-release.apk
 ```
 
-### 5. tag 归发布闭环处理
+### 5. Handle the tag within the release process
 
-仅当代码、测试、build、APK、smoke、版本号、交接卡一致，并满足 ADR-016 6 条件时，才由测试发布 PM「闭环者」按 [`操作系统/07_完整工作流/git流程.md`](../../操作系统/07_完整工作流/git流程.md) / [`发布流程.md`](../../操作系统/07_完整工作流/发布流程.md) 处理常规版本 tag；不得删除 / 改写 / 移动已有 tag。
+Only after the code, tests, build, APK, smoke results, version, and handoff card agree, and all six ADR-016 requirements are met, may the Test and Release PM “Closer” handle a normal version tag under the [Git workflow](../../操作系统/07_完整工作流/git流程.md) and [release workflow](../../操作系统/07_完整工作流/发布流程.md). Never delete, rewrite, or move an existing tag.
 
-本 skill 不提供可直接复制的 tag / push 裸命令，避免绕过发布闭环。
+This skill omits standalone copy-and-paste tag and push commands to preserve the complete release process.
 
-## 出 APK 失败的紧急回退
+## Emergency recovery after a failed APK build or installation
 
-如果当前版本装机崩 / 数据丢：
+If the installed version crashes or loses data:
 
-1. 让 zlbdh 立刻装回上一个 dev APK：
+1. Ask zlbdh to reinstall the previous development APK immediately:
    - `{{APP_REPO_DIR}}/apk/{{PROJECT_NAME}}-vX.Y.Z-debug.apk`
-2. 数据如果之前有备份能恢复
-3. 咪咪修 bug → 出下一 patch 版本 dev APK
+2. Restore data from an earlier backup if one exists.
+3. Mimi fixes the bug and builds the next patch version's development APK.

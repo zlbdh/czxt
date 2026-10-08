@@ -37,8 +37,8 @@ Assert-NotContains "操作系统\01_架构\角色边界.md" '用户明确裁决�
 Assert-Contains "操作系统\00_总入口.md" '(?:除项目 PM 主会话外，每个 PM|Except for the Project PM.s main session, each PM)' "总入口 agent 例外"
 Assert-Contains "操作系统\01_架构\子agent调度机制.md" '除项目 PM 主会话外，每个 PM' "子 agent 正文例外"
 Assert-Contains "操作系统\01_架构\子agent调度机制-附录.md" '除项目 PM 主会话外，每个 PM' "子 agent 附录例外"
-Assert-NotContains "操作系统\01_架构\演化哲学.md" 'Claude Code 等载体|Codex 等载体|只读 Docs/4-测试文档/' "演化哲学旧载体/窄读口径"
-Assert-Contains "操作系统\01_架构\状态机.md" '5\+2 态' "状态机 5+2 口径"
+Assert-NotContains "操作系统\01_架构\演化哲学.md" 'Claude Code 等载体|Codex 等载体|只读 Docs/4-测试文档/|runtimes such as Claude Code|runtimes such as Codex|read-only Docs/4-测试文档/' "演化哲学旧载体/窄读口径"
+Assert-Contains "操作系统\01_架构\状态机.md" '5\+2 态|5\+2 state model' "状态机 5+2 口径"
 
 if ($failures.Count -gt 0) {
   exit 10

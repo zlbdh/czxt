@@ -33,8 +33,8 @@ $checks = @(
     @{ Path = "能力资产/rules/安全与隐私.md"; Pattern = 'AskUserQuestion'; Label = "安全隐私规则仍引用旧载体确认工具名" },
     @{ Path = "能力资产/rules/F编号规则.md"; Pattern = '现有占用清单（截至 2026-05-09）|grep -ohE "F-\[A-Z0-9-\]\+" Docs/1-需求文档/Sprint-\*需求清单\.md Docs/1-需求文档/需求历史\.md'; Label = "F编号规则仍使用旧静态占用清单或窄范围查询命令" },
     @{ Path = "能力资产/skills/跑测试.md"; Pattern = '28 passed|2229 modules transformed'; Label = "跑测试 skill 仍含旧测试/构建数字样例" },
-    @{ Path = "能力资产/skills/出APK.md"; Pattern = '28 测试|23 语法'; Label = "出APK skill 标准回复仍含旧测试数字" },
-    @{ Path = "能力资产/skills/出APK.md"; Pattern = 'release APK（v3\.0）|(?m)^\s*git (tag -a|push origin) vX\.Y\.Z'; Label = "出APK skill release/tag 旧口径" },
+    @{ Path = "能力资产/skills/出APK.md"; Pattern = '28 测试|23 语法|\b28 tests\b|\b23 syntax checks\b'; Label = "出APK skill 标准回复仍含旧测试数字" },
+    @{ Path = "能力资产/skills/出APK.md"; Pattern = 'release APK（v3\.0）|release APK \(v3\.0\)|(?m)^\s*git (tag -a|push origin) vX\.Y\.Z'; Label = "出APK skill release/tag 旧口径" },
     @{ Path = "能力资产/skills/README.md"; Pattern = '项目体检\.md\)\s*\|\s*9 项检查'; Label = "skills README 项目体检旧 9 项口径" },
     @{ Path = "能力资产/skills/README.md"; Pattern = '\| 打 APK \|[^\r\n]*build-apk\.bat'; Label = "skills README 仍把 build-apk.bat 作为打 APK 推荐入口" }
 )

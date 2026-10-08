@@ -7,7 +7,7 @@
     @{ Path = "操作系统/02_智能体/运营PM-运营咪咪-附录.md"; Pattern = "三工具协作"; Label = "运营 PM 附录仍以三工具作为协作主语" },
     @{ Path = "能力资产/shared/品牌词典.md"; Pattern = "三工具协作|three-tool collaboration"; Label = "品牌词典仍以三工具作为协作主语" },
     @{ Path = "操作系统/01_架构/角色边界.md"; Pattern = "四类外部角色分工（跨工具|\|\s*\*\*业务代码\*\*[^\r\n]*\|\s*\*\*Claude Code\*\*|\|\s*\*\*闭环验证\*\*[^\r\n]*\|\s*\*\*Codex\*\*|写测试代码\*\*\s*=\s*Claude Code|真机 smoke\s*=\s*Codex 专属|Four external role responsibilities \(cross-tool|\|\s*\*\*Business code\*\*[^\r\n]*\|\s*\*\*Claude Code\*\*|\|\s*\*\*Completion verification\*\*[^\r\n]*\|\s*\*\*Codex\*\*|Writing test code\*\*\s*=\s*Claude Code|Physical-device smoke\s*=\s*Codex only"; Label = "角色边界仍把工具当责任主体" },
-    @{ Path = "操作系统/01_架构/状态机.md"; Pattern = "接手者动手中（Claude Code / Codex / PM）"; Label = "状态机仍把工具和 PM 并列为接手者" },
+    @{ Path = "操作系统/01_架构/状态机.md"; Pattern = "接手者动手中（Claude Code / Codex / PM）|Receiver at work \(Claude Code / Codex / PM\)"; Label = "状态机仍把工具和 PM 并列为接手者" },
     @{ Path = "操作系统/01_架构/元规则池.md"; Pattern = "Claude Code\s*战场"; Label = "元规则池仍把工具当战场主体" },
     @{ Path = "操作系统/01_架构/元规则池-候选.md"; Pattern = "Claude Code\s*战场"; Label = "元规则池候选仍把工具当战场主体" },
     @{ Path = "操作系统/01_架构/元规则池-附录.md"; Pattern = "Claude Code\s*战场"; Label = "元规则池附录仍把工具当战场主体" },

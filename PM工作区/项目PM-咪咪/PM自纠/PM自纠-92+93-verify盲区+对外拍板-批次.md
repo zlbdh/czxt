@@ -1,108 +1,106 @@
 ---
-name: pm-self-correction-92-93
-scope: pm-workspace
-pm: 项目PM-咪咪
-type: episodic
-loaded: triggered
-trigger: verify 工具静默损坏未被发现 / zlbdh "你是项目PM" 第 N 次 trigger（问句代替拍板）
-description: PM 自纠 #92+#93 批次 — #92 check-operating-system + check-pm-tracking 双脚本路径残留致 verify 静默坏多日（体检盲区 #88-91 延续）/ #93 项目 PM 又用问句代替自主拍板（ADR-031 执行层失守）
+name: "pm-self-correction-92-93"
+scope: "pm-workspace"
+pm: "项目PM-咪咪"
+type: "episodic"
+loaded: "triggered"
+trigger: "Silent verification-tool damage, or another reminder from zlbdh that Project PM must make the decision rather than ask a closing question"
+description: "PM correction batch #92–#93: stale paths silently broke both verification scripts; Project PM again asked for permission instead of deciding under ADR-031."
 ---
 
-# PM 自纠 #92+#93 批次
+# PM Corrections #92–#93: Batch Record
 
-> 触发：zlbdh「跑一遍 verify」→ 真机暴露脚本崩溃 + 我用「要不要我接着写沉淀？」收尾 → zlbdh「你是项目PM」
-> 时间：2026-05-29 16:30
-> 议题：DN 体检质量（#92）+ ADR-031 对外拍板（#93）
+> **Trigger:** zlbdh requested a verification run. The host exposed script crashes; I closed by asking whether I should record the lesson, and zlbdh replied, “You are Project PM.”
+> **Time:** 2026-05-29 16:30
+> **Issues:** DN, health-check quality (#92), and ADR-031, external decision authority (#93).
 
----
+## #92 — Verification tools stayed silently broken for days
 
-## #92 — verify 工具静默损坏多日没被发现
+### Error
 
-### 错向
+The “Windows host verification left to zlbdh” item for `check-operating-system.ps1` had remained open since task #125, May 29 at 09:00. **The complete script had never been run on the host after P4g was added.** The first host run crashed:
 
-`check-operating-system.ps1` 的「⏳ Windows 真机 verify 留 zlbdh」自 task #125（05-29 09:00）一直挂着 = 加了 P4g 后**从没真机整跑过一次**。真机一跑直接崩：
+- `$root` ascended only one level, unchanged after task #109 moved the script into `能力资产\tools\scripts\`, so it incorrectly treated `能力资产\tools` as the project root.
+- P4a/P4b/P4c still referenced `agent\`; no follow-up scan occurred after the `agent/` → `操作系统/` + `能力资产/` refactor. P4c crashed because `agent\` was missing.
+- `check-pm-tracking.ps1` had the same `$root` defect. It could not find `状态.md`, making P4f ineffective.
 
-- `$root` 只上溯 1 层（task #109 把脚本移进 `能力资产\tools\scripts\` 后没改）→ 项目根误判成 `能力资产\tools`
-- P4a/P4b/P4c 仍引用 `agent\`（agent/→操作系统/+能力资产/ 重构后没回扫）→ P4c 崩在缺 `agent\`
-- `check-pm-tracking.ps1` 同 `$root` 病（P4f 形同虚设，找不到 状态.md）
+### Causes
 
-### 根因
+1. **No immediate complete host verification after framework tool or structure changes.** Neither task #109's move nor the `agent/` refactor prompted a rescan of the scripts' internal path assumptions.
+2. **“Left to zlbdh” became verification debt.** P4g alone was tested, using the correct three-level `$repoRoot`; the entire script was not run, allowing stale P4a–d assumptions to escape.
+3. This continued the #88/#89/#90/#91 blind-spot series: **the health-check scripts themselves had never been health-checked.**
 
-1. **改 framework 工具/结构后没立即真机整跑 verify** —— 两次结构变动（task #109 移位 + agent/ 重构）都没回扫这个脚本的内部路径假设。
-2. **「⏳ 留 zlbdh」= 验证债** —— 加 P4g 时只测了 P4g 自己（用对了 3 层 `$repoRoot`），没跑整脚本，旧的 P4a-d 残留躲过检查。
-3. **体检盲区系列（#88/#89/#90/#91）延续**：**体检脚本自己从没被体检**。
+### Corrections
 
-### 修正
+- ✅ Changed both scripts' `$root`/`$projectRoot` from one ancestor level to three, matching P4g's correct `$repoRoot`; migrated P4a–c paths to `操作系统\` + `能力资产\`; added historical-archive exemptions to P4b.
+- ✅ Executed the sandbox framework mirror: exit 0; P4a, 49 passed; P4c, zero dead-code findings; P4g, all passed, including ADR 32=32, meta-rule pool 15=15, and 100% frontmatter coverage.
+- ⏳ Host application and a final verification rerun remained pending. This time the requirement was to confirm them immediately, **without leaving verification debt**.
 
-- ✅ 两脚本 `$root`/`$projectRoot` 1 层→3 层（对齐 P4g 已用对的 `$repoRoot`）；P4a-c 路径迁 `操作系统\`+`能力资产\`；P4b 补历史档案豁免
-- ✅ 沙箱 framework 镜像实跑验证：exit 0 / P4a 49 过 / P4c 0 死代码 / P4g 全绿（ADR 32=32 / 元规则池 15=15 / frontmatter 100%）
-- ⏳ 真机落地 + 重跑 verify 收尾（这次**不留验证债**，当场确认）
+### Candidate meta-rule
 
-### 沉淀（候选元规则）
+**After changing any framework tool or script, run the entire verification on the host; testing only the new section is insufficient.** This combines issue D, stale mounts, with issue DN, health-check quality. Candidate placement: ADR-032 decision 7 or a separate ADR.
 
-**「改任何 framework 工具/脚本后，必须真机整跑一次，不接受『只测新增段』」** —— 议题 D（mount stale）+ 议题 DN（体检质量）合流。候选补进 ADR-032 决定 7 或独立升 ADR。
+## #93 — Project PM again asked instead of deciding under ADR-031
 
----
+### Error
 
-## #93 — 项目 PM 又用问句代替自主拍板（ADR-031 执行层失守）
+I closed the preceding item with “Should I go ahead and record this lesson?” That sent an obviously required documentation action back to zlbdh as though it needed approval. The repeated “You are Project PM” reminder followed the same pattern as #63/#77/#80/#83/#86.
 
-### 错向
+### Cause
 
-上一条我用「要不要我接着把这条沉淀写了？」收尾 = 把明摆着该做的沉淀**当成需要 zlbdh 批准的决策**抛回去。zlbdh「你是项目PM」第 N 次 trigger（同 #63 / #77 / #80 / #83 / #86 模式）。
+ADR-031's duty to make authorized decisions without deflection was already a **permanent rule, meta-rule 14**. This was an execution failure, not a missing rule. A habitual “Would you like me to…?” closing question disguised decision deflection as courtesy. Like #91, a soft rule failed at the closing step.
 
-### 根因
+### Corrections
 
-ADR-031「自主拍板不推诿」是**已永久化的铁律**（第 14 元规则），本次不是规则缺失，是**执行层失守**：收尾时习惯性加「要不要我…？」确认问句 = 礼貌外壳下的决策推诿。同 #91「软规则在收尾处最易破防」同病。
+- ✅ Recorded the lesson immediately without another question: this file, the `状态.md` activity trail, and the INDEX pointer.
+- Self-check: **if a closing “Would you like me to…?” or “Do you need me to…?” has an obvious yes answer, remove the question and do the work.** Perform the clearly required action; offer choices when genuinely different paths exist.
 
-### 修正
+### Recorded lesson
 
-- ✅ 当场不问，直接写沉淀（本文件 + 状态.md 轨迹 + INDEX 指针）
-- 自检钩子：**任何「要不要我…？/需要我…？」式收尾，若答案显然是「要」→ 删问句，直接做**（属于显然该做的事就做，真正多路径才用选择题）
+No new ADR is needed because ADR-031 already covers this. Add a counterexample to Knowledge PM's category B quick-reference table, “External PM rules”: **a question used to close and defer the decision is a concealed form of ADR-031 deflection.**
 
-### 沉淀
+**Lessons:** tools also need health checks, including a complete host run after changes (#92); courteous closing questions can be where an established decision rule fails (#93).
 
-不升新 ADR（ADR-031 已覆盖）→ 进**沉淀 PM 速查表 B 类「PM 对外铁律」**加一条反面实例：**问句式收尾 = ADR-031 推诿的隐蔽变体**。
+## Authoritative sources
 
----
+- This session, 2026-05-29: the 16:30 PM transition entry in [`状态.md`](../../../../状态.md).
+- Corrected scripts: `能力资产/tools/scripts/check-operating-system.ps1` and `check-pm-tracking.ps1`, with `FIX 2026-05-29` comments.
+- Related patterns: [[pm-self-correction-91]], soft-rule failure; #63/#77/#80, the ADR-031 series.
 
-⭐ **教训**：① 工具自己也要被体检，改完必须真机整跑（#92）② 软规则在「收尾礼貌」处最易破防 —— 问句式收尾是 ADR-031 的隐蔽变体（#93）
+## #94 — Repeated #92 while fixing it: Edit truncated a 21 KB output draft
 
-## 真知识源
+### Error
 
-- 本次 session（2026-05-29）：[`状态.md`](../../../../状态.md) PM 切换轨迹 2026-05-29 16:30 行
-- 修正版脚本：`能力资产/tools/scripts/check-operating-system.ps1` + `check-pm-tracking.ps1`（FIX 2026-05-29 注释）
-- 同模式：[[pm-self-correction-91]]（软规则失守）/ #63/#77/#80（ADR-031 系列）
+After producing the correction, I used Edit to add an archive exemption to the 21 KB `check-operating-system.ps1` draft under outputs. **Edit truncated the end of a file above 6500 B**, removing “Next steps” and `exit 0` and leaving the partial line `Wr`. I copied it to the host without checking the tail, and the host failed at line 421 on `Wr`.
 
----
+### Causes
 
-## #94 — 修 #92 的过程里当场又踩 #92（Edit 改 21KB outputs 截断尾部）
+- I followed AGENTS.md's rule to avoid Edit above 6500 B and use Python/Bash only for host framework files, **not for my own 21 KB outputs draft**. The draft was truncated too.
+- I stated #92's proposed complete-host-rerun rule but did not perform it. After changing the correction, I did not rerun the full script in the mirror or on the host to check the tail; I trusted the mirror's exit 0 from **before the edit**.
 
-### 错向
-出修正版后我用 Edit 工具给 outputs 的 check-operating-system.ps1（21KB）补「归档豁免」→ **Edit 把 >6500B 文件尾部截断**（丢了「下一步」+「exit 0」，只剩半行 `Wr`）→ 没复核尾部就 cp 到真机 → 真机跑到第 421 行 `Wr` 报错。
+### Corrections
 
-### 根因
-- AGENTS.md「>6500B 绕 Edit、用 Python/Bash 写」铁律**我只对真机 framework 文件守，对自己 outputs/ 的 21KB 草稿没守** → 一样被截。
-- #92 候选元规则「改完必真机整跑」嘴上说手上没做：出修正版后没在镜像/真机复跑整脚本验尾部，只信了「改之前」那次镜像 exit 0。
+- ✅ Used host `truncate` to cut at the end of line 420, then appended the correct tail with Bash as a small operation rather than a whole-file rewrite. PowerShell parsing passed, and a diff confirmed that the body matched the clean version line for line.
+- ✅ Strengthened the lesson: **after writing any file above 6500 B, including an outputs draft, check its final bytes and lines.** Edit can truncate drafts too.
 
-### 修正
-- ✅ 真机 `truncate`（截到第 420 行末）+ bash 追加正确尾部（小操作，不整块重写）→ pwsh 解析通过 + diff 确认 body 与干净版逐行一致
-- ✅ 教训升级：**任何 >6500B 文件（含 outputs/ 草稿）写入后必复核尾部字节/行**，Edit 工具同样会截
+### Candidate reinforcement
 
-### 沉淀
-强化 #92 候选元规则 → **「>6500B 文件任何写入（Edit/Write/cp）后必验尾部，不分真机/草稿」**（议题 D + DN 合流 / 下个治理 sprint 升 ADR）
+Extend #92: **verify the tail after every Edit/Write/cp operation on a file above 6500 B, whether a host file or a draft.** Issues D and DN converge here; promotion to an ADR was deferred to the next governance Sprint.
 
----
+## #95 — Contradictory handoff acceptance criteria: no test inspection before requiring zero test edits
 
-## #95 — handoff AC 内部矛盾（没 grep 测试就写「0 测试改动」/ #54 复发）
+### Error
 
-### 错向
-CA+CB handoff 卡 AC#2「0 现有测试改动」+ AC#3「Chat.jsx <8KB」。但 Chat.test.js 是**源码 grep 契约**（~13 断言锁逻辑字符串在 Chat.jsx）→ CA 把逻辑搬到 useChatController.js 后这些 grep 必红 → AC#2 与 AC#3 **数学互斥**。我起卡时没 grep Chat.test.js 就写了「0 测试改动」。
+The CA+CB handoff required AC #2, “zero changes to existing tests,” and AC #3, “Chat.jsx below 8 KB.” However, `Chat.test.js` used **source-text grep contracts**, with about 13 assertions pinning logic strings to `Chat.jsx`. Moving the logic into `useChatController.js` for CA necessarily broke those grep assertions. The two criteria were mutually exclusive. I wrote “zero test edits” without inspecting `Chat.test.js`.
 
-### 根因
-PM 自纠 #54 同模式复发：**起 handoff 卡前没 grep 测试/caller 实际形态就假设**。#54 是 caller import 风格，#95 是测试契约形态 —— 同一个「凭假设写 AC」。
+### Cause
 
-### 修正
-- ✅ Claude Code 实施时逮住、用 AskUserQuestion 升 PM（议题 CD 防御机制有效）→ zlbdh 选 A（grep 目标随代码合法搬家 / 断言 regex 逐字不变 / PROP-024 SuggestionCard 先例）→ 修订卡 AC#2 → CA+CB v3.10.1 ship 成功、0 业务事故。
+This repeated PM correction #54: **assuming the actual shape of tests or callers before inspecting them while drafting the handoff**. #54 concerned caller import style; #95 concerned test contracts. Both wrote acceptance criteria from assumptions.
 
-### 沉淀
-强化议题 CD「PM 起卡 verify checklist」：加「源码 grep 契约 + 拆分重构 → AC 预先豁免 grep 目标跟随」维度。CD 仍候选（暂不升 ADR）。
+### Correction
+
+- ✅ Claude Code caught the conflict during implementation and escalated to PM through AskUserQuestion, showing that issue CD's safeguard worked. zlbdh chose option A: move the grep target with the relocated code while preserving assertion regexes byte for byte, following the PROP-024 SuggestionCard precedent. AC #2 was revised; CA+CB shipped as v3.10.1 with zero business incidents.
+
+### Recorded lesson
+
+Strengthen issue CD's PM handoff-verification checklist: when source-text grep contracts accompany a splitting refactor, explicitly allow their target to follow the code in the acceptance criteria. CD remained a candidate, without a new ADR yet.

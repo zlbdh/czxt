@@ -3,84 +3,77 @@ name: web-api-source-selection
 scope: project
 type: semantic
 loaded: on-demand
-description: web API 在 Capacitor/Android WebView 场景下的信源选型规则入口 — 先真机验证再选用，矩阵独立维护（议题 AT）
+description: Rules for choosing web API data sources in Capacitor and Android WebView. Verify on a physical device before adoption; maintain the matrix separately (issue AT).
 ---
 
-# 规则：web API 信源选型（议题 AT 元规则）
+# Rule: Choosing Web API Data Sources (Issue AT Meta-Rule)
 
-> ⭐ PROP-022 Phase 3 落地（2026-05-15，议题 AT 元规则永久化）— PM 自纠 #45 同模式防御
-> 触发证据：F-SYSCHECK-1 v3.5.8 smoke #3 阻塞 — `navigator.onLine` Android WebView 不响应运行时切换
-> 已知 API 判定矩阵见 [`web-api-信源矩阵.md`](web-api-信源矩阵.md)；历史反例、Q4 扩展候选和元规则关系详见 [`web-api-信源选型-附录.md`](web-api-信源选型-附录.md)。
+> ⭐ Implemented in PROP-022 Phase 3 on May 15, 2026: made the issue AT meta-rule permanent to prevent repeats of PM self-correction #45.
+> Triggering evidence: F-SYSCHECK-1 v3.5.8 smoke test #3 was blocked because `navigator.onLine` did not respond to runtime changes in Android WebView.
+> See the [known API matrix](web-api-信源矩阵.md). The [appendix](web-api-信源选型-附录.md) covers historical counterexamples, the proposed Q4 extension, and related meta-rules.
 
-## 核心原则
+## Core Principle
 
-**任何 `navigator.*` / `Intl.*` / `window.*` web API 在 Capacitor / Android WebView 场景下，先真机验证可靠性，再决定是否选用**。
+**Before using any `navigator.*`, `Intl.*`, or `window.*` web API in Capacitor or Android WebView, verify its reliability on a physical device.**
 
-不假设浏览器 API 跨平台同语义 — Chrome / Firefox / Safari 上的行为不能直接推断到 Android WebView 上。
+Do not assume browser APIs have identical semantics across platforms. Behavior in Chrome, Firefox, or Safari does not establish behavior in Android WebView.
 
-## 适用范围
+## When This Applies
 
-- 写 PRD / handoff 卡 / 起 PROP 时**选 web API 作为业务信源**之前
-- 实施 feature 涉及"系统状态感知"/"设备能力探测"类需求
-- 任何 Capacitor 项目集成跨平台 API 选型
+- Before choosing a web API as an application data source in a PRD, handoff card, or PROP.
+- When implementing system-state awareness or device-capability detection.
+- When selecting a cross-platform API for any Capacitor project.
 
-## 验证流程（写 PRD / handoff 卡时必跑）
+## Required Verification During PRD or Handoff Preparation
 
-```
-准备选某 API 作为信源
-    ↓
-① grep `web-api-信源矩阵.md`
-    ↓
-② 命中矩阵？
-    ├─ 已记录可靠 ✅ → 直接选
-    ├─ 已记录不可靠 ❌ → 用矩阵推荐的替代方案（Capacitor plugin / 原生 / fallback）
-    └─ 未记录 ❓ → 跳 ③
-    ↓
-③ handoff 卡 / PRD 必明示「真机验证 + 入矩阵」步骤
-    - 验证范围：Capacitor localhost + Android WebView + 你的目标 Android 版本
-    - 验证方式：build dev APK + ADB install + WebView console.log
-    - 验证结果：填入 `web-api-信源矩阵.md`；若伴随 `{{APP_REPO_DIR}}/` 代码提交，commit msg 明示议题 AT 矩阵 +1 行，否则在 PRD / 交接卡 / 状态留痕中说明
-    ↓
-④ 不直接 ship 未验证的 API（PM 自纠 #45 反例 — 假设跨平台同语义直接 fallback）
-```
+1. Search `web-api-信源矩阵.md` for the proposed API.
+2. Follow the recorded result:
+   - Reliable ✅: use it.
+   - Unreliable ❌: use the recommended alternative, such as a Capacitor plugin, native API, or fallback.
+   - Not recorded ❓: continue to step 3.
+3. Explicitly include **physical-device verification and a matrix update** in the handoff card or PRD.
+   - Scope: Capacitor localhost, Android WebView, and the target Android version.
+   - Method: build a development APK, install it with ADB, and inspect WebView `console.log` output.
+   - Record the result in `web-api-信源矩阵.md`. If the change accompanies a code commit in `{{APP_REPO_DIR}}/`, state that one row was added to the issue AT matrix in the commit message. Otherwise, record it in the PRD, handoff card, or status log.
+4. Do not ship an unverified API. PM self-correction #45 records the failure caused by assuming equivalent cross-platform behavior and choosing a fallback without verification.
 
-## 已知矩阵
+## Known API Matrix
 
-矩阵真源见 [`web-api-信源矩阵.md`](web-api-信源矩阵.md)。
+The source of truth is [web-api-信源矩阵.md](web-api-信源矩阵.md).
 
-当前已覆盖 10 类 API：网络在线 / 网络事件 / 电量 / CPU 核数 / RAM / 时区 / serviceWorker / focus / visibilitychange / keydown。
+It currently covers 10 API categories: network connectivity, network events, battery, CPU core count, RAM, time zone, service workers, focus, visibility changes, and keyboard events.
 
-快速结论：
+Quick findings:
 
-- `navigator.onLine` 与 `online/offline`：不可单独作为业务信源，改用 Capacitor Network。
-- `visibilitychange` / `document.hidden`：Android WebView 可作为跨午夜刷新主信号。
-- `window focus/blur`：Android WebView 后台↔前台不触发，只能作兜底。
-- `serviceWorker.register()`：Capacitor 下被 `!window.Capacitor` 守卫跳过，App 内安全不执行。
+- `navigator.onLine` and `online/offline`: do not use them as the sole application data source; use Capacitor Network.
+- `visibilitychange` and `document.hidden`: can provide the primary signal for refreshes across midnight in Android WebView.
+- `window focus/blur`: background/foreground transitions do not trigger them in Android WebView; use them only as a fallback.
+- `serviceWorker.register()`: the `!window.Capacitor` guard skips registration under Capacitor, so it does not run inside the app.
 
-## 矩阵填充流程
+## Updating the Matrix
 
-新 web API 验证后入矩阵 4 步：
+After verifying a new web API:
 
-1. 在 [`web-api-信源矩阵.md`](web-api-信源矩阵.md) 添加一行
-2. **证据来源** 列必含：feature 名 / 实测时间 / 关键实证（命令 + 期望 vs 实际）
-3. 推荐方案优先级：
-   - **首选** Capacitor 官方 plugin（@capacitor/* 系列）
-   - **次选** 原生 Android API（通过 Capacitor 自定义 plugin）
-   - **兜底** 浏览器 API + fallback `(默认)` UI 提示
-4. 改 PROP-XXX 文件「关联议题 AT 矩阵」段；若伴随 `{{APP_REPO_DIR}}/` 代码提交，再在 commit msg 加注脚，否则写入交接卡或状态留痕
+1. Add a row to [web-api-信源矩阵.md](web-api-信源矩阵.md).
+2. The **Evidence** column must include the feature name, test date, and key evidence: commands, expected results, and actual results.
+3. Prefer alternatives in this order:
+   - Official Capacitor plugins in the `@capacitor/*` family.
+   - Native Android APIs exposed through a custom Capacitor plugin.
+   - Browser APIs with a fallback and a `(Default)` UI indicator.
+4. Update the related issue AT matrix section in the PROP-XXX file. If application code in `{{APP_REPO_DIR}}/` is also committed, add a note to the commit message. Otherwise, record the update in the handoff card or status log.
 
-## 历史背景与扩展
+## History and Extensions
 
-- 历史反例：F-SYSCHECK-1 v3.5.8 smoke #3，`navigator.onLine` 在 Android WebView 下不响应运行时网络切换。
-- 根因：把“浏览器 API fallback”误当成跨平台可靠信源。
-- 当前防御：写 PRD / handoff 卡时跑本文件验证流程；未验证 web API 选型默认不降为 A 类。
-- 详情见 [`web-api-信源选型-附录.md`](web-api-信源选型-附录.md)。
+- Historical counterexample: F-SYSCHECK-1 v3.5.8 smoke test #3 found that `navigator.onLine` did not respond to runtime network changes in Android WebView.
+- Root cause: treating a browser API fallback as a reliable cross-platform data source.
+- Current safeguard: follow this verification process when preparing a PRD or handoff card. Do not automatically classify an unverified web API selection as Class A.
+- See the [appendix](web-api-信源选型-附录.md).
 
-## 关联
+## Related Records
 
-- 来源项目历史 PROP-022 主稿（模板实例不复制）：`确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md`
-- 来源项目历史 smoke #3 实证（模板实例不复制）：`交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md`
-- [`../../Docs/7-复盘/RETRO-009-候选议题.md`](../../Docs/7-复盘/RETRO-009-候选议题.md) — 议题 AT 候选 backlog
-- [`操作系统/01_架构/角色边界.md`](../../操作系统/01_架构/角色边界.md) — 9 PM 角色边界 + 路径白名单
-- [`web-api-信源矩阵.md`](web-api-信源矩阵.md) — Android WebView API 可靠性矩阵
-- [`web-api-信源选型-附录.md`](web-api-信源选型-附录.md) — 反例、元规则关系、decision-checkpoint Q4 候选背景
+- Historical PROP-022 from the source project, not copied into template instances: `确认改动/已审批/已完成/PROP-022-2026-05-15-navigator矩阵+capacitor-network依赖.md`.
+- Historical smoke test #3 evidence from the source project, not copied into template instances: `交接区/历史归档/2026-05/2026-05-14-1455-F-SYSCHECK-1-network-smoke阻塞-Codex到ClaudeCode.md`.
+- [RETRO-009 candidate issues](../../Docs/7-复盘/RETRO-009-候选议题.md): issue AT candidate backlog.
+- [Role boundaries](../../操作系统/01_架构/角色边界.md): nine PM roles and path allowlists.
+- [Android WebView API reliability matrix](web-api-信源矩阵.md).
+- [Appendix](web-api-信源选型-附录.md): counterexamples, meta-rule relationships, and the decision-checkpoint Q4 proposal.

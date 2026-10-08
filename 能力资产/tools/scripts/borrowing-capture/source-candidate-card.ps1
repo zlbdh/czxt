@@ -12,16 +12,18 @@ function global:Assert-BcvCardStructure {
   if ($Card.Lines.Count -ne $expectedCount -or $Skeleton.Lines.Count -ne 67) {
     Throw-BorrowingCandidateFailure 'source card line count is invalid'
   }
+  [string[]]$cardLines = ConvertTo-BorrowingLegacySourceCardLines $Card.Lines
+  [string[]]$skeletonLines = ConvertTo-BorrowingLegacySourceCardLines $Skeleton.Lines
   $dynamic = @(
     2..18; 23; 32..40; 46; 52; 58; 66
   )
   for ($index = 0; $index -lt 67; $index++) {
     if ($dynamic -notcontains $index -and
-        [string]$Card.Lines[$index] -cne [string]$Skeleton.Lines[$index]) {
+        [string]$cardLines[$index] -cne [string]$skeletonLines[$index]) {
       Throw-BorrowingCandidateFailure 'source card static structure is invalid'
     }
   }
-  if ($Card.Lines[23] -cne $ExpectedFormalLine) {
+  if ($cardLines[23] -cne $ExpectedFormalLine) {
     Throw-BorrowingCandidateFailure 'source card formal path is invalid'
   }
 }

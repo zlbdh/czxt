@@ -48,11 +48,11 @@ if (-not (Test-Path -LiteralPath $dir -PathType Container)) {
 $readmeSpecPath = Join-Path $Root "操作系统\01_架构\README设计规范.md"
 if (Test-Path -LiteralPath $readmeSpecPath -PathType Leaf) {
   $readmeSpecText = Get-Content -LiteralPath $readmeSpecPath -Raw -Encoding UTF8
-  if ($readmeSpecText -match "历史归档/2026-05/议题全景-2026-05-22-历史快照\.md.*ADR 永久现行表") {
+  if ($readmeSpecText -match "历史归档/2026-05/议题全景-2026-05-22-历史快照\.md.*(?:ADR 永久现行表|permanent/current ADR table)") {
     Add-Failure "README设计规范.md 将议题全景历史快照误列为当前 ADR 永久现行表"
   }
-  if ($readmeSpecText -notmatch "历史快照只作追溯抽检") {
-    Add-Failure "README设计规范.md 缺历史快照只作追溯抽检说明"
+  if ($readmeSpecText -notmatch "历史快照只作追溯抽检|Historical snapshots support traceability spot checks") {
+    Add-Failure "README设计规范.md 缺历史快照只作追溯抽检|Historical snapshots support traceability spot checks说明"
   }
 }
 
@@ -60,7 +60,7 @@ foreach ($rel in @("操作系统\01_架构\元规则池.md", "操作系统\01_�
   $path = Join-Path $Root $rel
   if (Test-Path -LiteralPath $path -PathType Leaf) {
     $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
-    if ($text -match "本文件归档") {
+    if ($text -match "本文件归档|This file is archived") {
       Add-Failure "$rel 是活文档，不应使用“本文件归档”"
     }
   }
@@ -70,7 +70,7 @@ foreach ($rel in @("操作系统\01_架构\工具载体矩阵.md", "操作系统
   $path = Join-Path $Root $rel
   if (Test-Path -LiteralPath $path -PathType Leaf) {
     $text = Get-Content -LiteralPath $path -Raw -Encoding UTF8
-    if ($text -match "历史归档\\|历史归档/" -and $text -notmatch "历史愿景快照，仅追溯|以下仅作演化追溯") {
+    if ($text -match "历史归档\\|历史归档/" -and $text -notmatch "历史愿景快照，仅追溯|以下仅作演化追溯|historical vision snapshot for traceability only|These support evolution traceability only") {
       Add-Failure "$rel 引用历史源时缺“仅追溯”语义"
     }
   }

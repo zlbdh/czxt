@@ -58,7 +58,12 @@ function New-BciClosedCandidate {
   $historyLine = '| {0} | {1} | closed | {2} | {3} | {4} |' -f
     $ClosedAt, $ActiveCard.Status, $ActiveCard.Decision, $Reason, $Confirmation
   $lastLine = [string]$ActiveCard.HistoryRows[-1].Line
-  $anchor = $lastLine + "`n`n## 阻塞信息"
+  $blockingHeadings = @($ActiveCard.Lines | Where-Object {
+      $_ -cin @('## 阻塞信息', '## Blocking information')
+    })
+  Assert-BciCondition ($blockingHeadings.Count -eq 1) 'closing blocking section is not unique'
+  $blockingHeading = $blockingHeadings[0]
+  $anchor = $lastLine + "`n`n" + $blockingHeading
   Assert-BciCondition ([regex]::Matches(
       $ActiveCard.Text, [regex]::Escape($anchor)).Count -eq 1) `
     '关闭历史插入点不唯一'
@@ -67,7 +72,7 @@ function New-BciClosedCandidate {
     ('lifecycle_status: ' + $ActiveCard.Status) 'lifecycle_status: closed'
   $text = Set-BciSingleLine $text ('updated_at: ' + $ActiveCard.UpdatedAt) `
     ('updated_at: ' + $ClosedAt)
-  $text = $text.Replace($anchor, $lastLine + "`n" + $historyLine + "`n`n## 阻塞信息")
+  $text = $text.Replace($anchor, $lastLine + "`n" + $historyLine + "`n`n" + $blockingHeading)
   Assert-BciCondition ([regex]::Matches(
       $text, '(?m)^closure_seal_sha256: ""$').Count -eq 1) `
     '关闭候选空 seal 行不唯一'

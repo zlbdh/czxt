@@ -384,7 +384,7 @@ function New-BctOwnedFileRelative {
     $canonical = ConvertFrom-BctNativeDirectoryPath $lease.FinalPath
     Assert-BciCondition ([string]::Equals(
         $canonical, $expected, [StringComparison]::OrdinalIgnoreCase)) `
-      'close staging 原子文件物理路径改变'
+      'close staging atomic file physical path changed'
     return [pscustomobject]@{
       Path = $canonical
       IdentityKey = '{0:x8}:{1:x8}:{2:x8}' -f `
@@ -402,7 +402,7 @@ function New-BctOwnedFileRelative {
       catch { $cleanupFailure = $_; try { $lease.Dispose() } catch { } }
     }
     if ($null -ne $cleanupFailure) {
-      throw ('close staging 原子文件验证失败且同句柄补偿失败：' +
+      throw ('close staging atomic file validation and same-handle compensation both failed: ' +
         $cleanupFailure.Exception.Message)
     }
     throw $creationFailure
@@ -412,7 +412,7 @@ function New-BctOwnedFileRelative {
 function Assert-BctOwnedFileLease {
   param($Owned)
   Assert-BciCondition ($null -ne $Owned -and $null -ne $Owned.Native) `
-    'close staging 缺少原子文件 lease'
+    'close staging is missing the atomic file lease'
   $Owned.Native.Verify()
   $canonical = ConvertFrom-BctNativeDirectoryPath $Owned.Native.FinalPath
   $identity = '{0:x8}:{1:x8}:{2:x8}' -f `
@@ -422,7 +422,7 @@ function Assert-BctOwnedFileLease {
       $canonical, [string]$Owned.Path, [StringComparison]::OrdinalIgnoreCase) -and
       $identity -ceq [string]$Owned.IdentityKey -and
       [uint64]$Owned.Native.Length -eq [uint64]$Owned.Length) `
-    'close staging 原子文件 lease 绑定改变'
+    'close staging atomic file lease binding changed'
 }
 
 function Close-BctOwnedFileLease {

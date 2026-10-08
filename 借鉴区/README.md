@@ -3,44 +3,43 @@ name: borrowing-zone
 scope: project
 type: semantic
 loaded: on-demand
-description: {{PROJECT_NAME}} 的借鉴事实区，只保存来源版本卡、借鉴卡和可审计轻量证据
+description: Borrowing facts for {{PROJECT_NAME}}; source capture cards, borrowing cards, and lightweight auditable evidence only.
 ---
-# 借鉴区
+# Borrowing Area
 
-这里回答两件事：**向谁学**，以及**学了什么**。它是项目事实区，不是第 9 个操作系统模块，也不承载目标业务代码。
+This area answers two questions: **which sources we learn from**, and **what we learn**. It records project facts. It is not a ninth operating system module and does not contain target business code.
 
-## 唯一操作入口
+## Sole operational entry point
 
-- 接入、评估、落地或审计来源时，统一使用[借鉴 Skill](../能力资产/skills/借鉴.md)。
-- 不要手工发明第二套状态、字段或执行入口；治理规则和完整工作流由 Skill 路由。
+- Use the [borrowing skill](../能力资产/skills/借鉴.md) to connect, assess, adopt, or audit a source.
+- Do not invent a second set of states, fields, or execution entry points. The skill routes governance rules and the complete workflow.
 
-## 静态结构
+## Static structure
 
-```text
-借鉴区/
-├── 模板/       # 来源版本卡与借鉴卡的空白模板
-├── 来源/       # <source_id>/<capture_id>/来源版本卡.md
-└── 事项/       # <borrow_id>/借鉴卡.md
-```
+| Path | Contents |
+|---|---|
+| `模板/` | Blank source capture and borrowing-card templates |
+| `来源/` | `<source_id>/<capture_id>/来源版本卡.md` |
+| `事项/` | `<borrow_id>/借鉴卡.md` |
 
-模板只提供骨架，不附带任何具体来源、活跃事项、源码快照或业务依赖。实例化时只复制本页、忽略规则和两张空白模板，并建立空的 `来源/`、`事项/`。
+The template provides only a skeleton, with no concrete sources, active items, source snapshots, or business dependencies. Instantiation copies this page, ignore rules, and the two blank templates, and creates empty `来源/` and `事项/` directories.
 
-业务零依赖是硬约束：业务仓库不得通过 `import`、`require`、`file:`、工作区/构建配置、脚本或运行时读取依赖 `借鉴区`。借鉴内容只有在完成评估、审批并落入目标责任路径后，才能成为业务实现的一部分。
+Zero business dependency is mandatory: the business repository must not depend on `借鉴区` through `import`, `require`, `file:`, workspace or build configuration, scripts, or runtime reads. Borrowed material can become business implementation only after assessment, approval, and placement in the responsible target path.
 
-## 扫描方式
+## Scanning
 
 ```powershell
 Get-ChildItem -LiteralPath '借鉴区/来源' -Recurse -Filter '来源版本卡.md' -File
 Get-ChildItem -LiteralPath '借鉴区/事项' -Recurse -Filter '借鉴卡.md' -File
 ```
 
-扫描文件系统即得到当前事实；本目录不维护第二份活跃索引表。
+Scanning the filesystem yields the current facts. This directory does not maintain a duplicate active-item index.
 
-## 缓存边界
+## Cache boundaries
 
-- 正式卡片和轻量验证摘要可以纳入版本管理。
-- `快照/`、`*.local.json`、`证据/raw/` 与 `.staging-*` 是本机缓存或原始材料，默认忽略。
-- `capture.local.json/v1` 只保存固定 schema 的规范化本机路径，不保存令牌、口令、Cookie 或其他秘密。
-- 真实凭据不由借鉴区持久化，必须留在借鉴区之外的操作系统或工具的凭据存储；私有 Git / Web 内容须在借鉴区外预取，只把净化后的公开定位或已预取内容的本机输入路径交给 capture。
-- 未来如需秘密接入能力，必须采用新增 schema、独立 B 类授权与专用秘密存储方案，不得扩写当前 v1 或在宽忽略目录中自建秘密文件。
-- 缓存缺失不能抹掉已记录的来源身份；缓存存在但与卡片指纹不一致时必须停止使用并重新审计。
+- Formal cards and lightweight verification summaries may be versioned.
+- `快照/`, `*.local.json`, `证据/raw/`, and `.staging-*` are local caches or raw material and are ignored by default.
+- `capture.local.json/v1` stores only normalized local paths in a fixed schema. It must not contain tokens, passwords, cookies, or other secrets.
+- The borrowing area does not persist real credentials. Keep them in operating-system or tool credential stores outside this area. Prefetch private Git or web content outside the area; supply capture with sanitized public locators or local input paths for prefetched content only.
+- Future secret-access support requires a new schema, separate Class B authorization, and a dedicated secret store. Do not extend the current v1 schema or create secret files in broadly ignored directories.
+- A missing cache does not erase a recorded source identity. If a present cache does not match the card fingerprint, stop using it and audit it again.

@@ -45,7 +45,7 @@ function global:Invoke-BsiOwnedObjectInjection {
 function global:Open-BsiOwnedFileLock {
   param($Expected, [string]$Context)
   if ($null -eq $Expected -or [string]::IsNullOrWhiteSpace($Expected.Path)) {
-    throw ($Context + '缺少受信文件快照')
+    throw ($Context + 'trusted file snapshot is missing')
   }
   Invoke-BsiOwnedObjectInjection 'before-file-handle-open' $Expected.Path $Context
   $handle = $null
@@ -55,7 +55,7 @@ function global:Open-BsiOwnedFileLock {
       $Expected.Path, [uint32]2147549312, 0, [IntPtr]::Zero, 3,
       [uint32]0x00200000, [IntPtr]::Zero)
     if ($null -eq $handle -or $handle.IsInvalid) {
-      throw ($Context + '无法独占打开受信文件')
+      throw ($Context + 'cannot open the trusted file exclusively')
     }
     $stream = New-Object IO.FileStream($handle, [IO.FileAccess]::Read)
     $handle = $null
@@ -66,17 +66,17 @@ function global:Open-BsiOwnedFileLock {
         $opened.IdentityKey -cne $Expected.IdentityKey -or
         [uint64]$opened.Length -ne [uint64]$Expected.Length -or
         [uint64]$opened.Length -gt [uint64][int]::MaxValue) {
-      throw ($Context + '受信文件身份或长度改变')
+      throw ($Context + 'trusted file identity or length changed')
     }
     [byte[]]$bytes = New-Object byte[] ([int]$opened.Length)
     $offset = 0
     while ($offset -lt $bytes.Length) {
       $read = $stream.Read($bytes, $offset, $bytes.Length - $offset)
-      if ($read -le 0) { throw ($Context + '受信文件读取提前结束') }
+      if ($read -le 0) { throw ($Context + 'trusted file read ended early') }
       $offset += $read
     }
     if (-not (Test-BsiOwnedBytesEqual $bytes ([byte[]]$Expected.Bytes))) {
-      throw ($Context + '受信文件字节改变')
+      throw ($Context + 'trusted file bytes changed')
     }
     return [pscustomobject]@{
       Stream = $stream
@@ -120,7 +120,7 @@ function global:Set-BsiOwnedHandleDeletePending {
       $Handle, 4, [ref]$disposition,
       [Runtime.InteropServices.Marshal]::SizeOf($disposition))) {
     $code = [Runtime.InteropServices.Marshal]::GetLastWin32Error()
-    throw ($Context + '同句柄删除失败，错误码：' + $code)
+    throw ($Context + 'same-handle deletion failed; error code: ' + $code)
   }
 }
 
@@ -137,7 +137,7 @@ function global:Remove-BsiBoundOwnedFile {
 function global:Remove-BsiBoundEmptyDirectory {
   param($Expected, [string]$Context)
   if ($null -eq $Expected -or [string]::IsNullOrWhiteSpace($Expected.Path)) {
-    throw ($Context + '缺少受信目录快照')
+    throw ($Context + 'trusted directory snapshot is missing')
   }
   Invoke-BsiOwnedObjectInjection 'before-directory-handle-open' `
     $Expected.Path $Context
@@ -147,12 +147,12 @@ function global:Remove-BsiBoundEmptyDirectory {
       $Expected.Path, [uint32]0x00010080, 0, [IntPtr]::Zero, 3,
       [uint32]0x02200000, [IntPtr]::Zero)
     if ($null -eq $handle -or $handle.IsInvalid) {
-      throw ($Context + '无法独占打开受信目录')
+      throw ($Context + 'cannot open the trusted directory exclusively')
     }
     $information = New-Object Czxt.B.FI
     if (-not [Czxt.B.NP]::GetFileInformationByHandle(
         $handle, [ref]$information)) {
-      throw ($Context + '无法读取受信目录身份')
+      throw ($Context + 'cannot read the trusted directory identity')
     }
     $identity = '{0:x8}:{1:x8}:{2:x8}' -f `
       $information.VolumeSerialNumber, $information.FileIndexHigh,
@@ -160,7 +160,7 @@ function global:Remove-BsiBoundEmptyDirectory {
     if (($information.FileAttributes -band 0x10) -eq 0 -or
         ($information.FileAttributes -band 0x400) -ne 0 -or
         $identity -cne $Expected.IdentityKey) {
-      throw ($Context + '受信目录身份或类型改变')
+      throw ($Context + 'trusted directory identity or type changed')
     }
     Set-BsiOwnedHandleDeletePending $handle $Context
   }

@@ -70,7 +70,7 @@ if (Test-Path -LiteralPath $visionEntryPath) {
 $memoryIndexPath = Join-Path $Root "操作系统\05_记忆\INDEX.md"
 if (Test-Path -LiteralPath $memoryIndexPath) {
   $text = Get-Content -LiteralPath $memoryIndexPath -Raw -Encoding UTF8
-  if ($text -match 'Claude\s*起手必读') {
+  if ($text -match 'Claude\s*起手必读|Claude\s*startup required reading') {
     Add-Failure "05_记忆 INDEX 仍使用 Claude 起手必读单工具主语"
   } else {
     Write-Host "  ✅ 05_记忆 INDEX 已使用多运行时/新会话中性入口口径"
@@ -80,7 +80,7 @@ if (Test-Path -LiteralPath $memoryIndexPath) {
 $memoryReflectionPath = Join-Path $Root "操作系统\05_记忆\行为反思.md"
 if (Test-Path -LiteralPath $memoryReflectionPath) {
   $text = Get-Content -LiteralPath $memoryReflectionPath -Raw -Encoding UTF8
-  if ($text -match 'Claude\s*起手必读|Cowork\s*↔\s*Codex\s*↔\s*Claude Code\s*三角协作') {
+  if ($text -match 'Claude\s*起手必读|Claude\s*startup required reading|Cowork\s*↔\s*Codex\s*↔\s*Claude Code\s*三角协作') {
     Add-Failure "05_记忆 行为反思仍使用旧单工具/工具三角入口口径"
   } else {
     Write-Host "  ✅ 05_记忆 行为反思未回退到旧单工具/工具三角入口口径"

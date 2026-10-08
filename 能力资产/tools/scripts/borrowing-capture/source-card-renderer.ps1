@@ -71,8 +71,10 @@ function global:New-BorrowingSourceCardArtifactCore {
     $stablePermissionParts += (ConvertTo-BorrowingCanonicalJsonString $dimensions[$index]) +
       ':' + (ConvertTo-BorrowingCanonicalJsonString $value)
   }
-  $lines[23] = '- 正式路径：`借鉴区/来源/' + $sourceId + '/' +
-    $captureId + '/来源版本卡.md`'
+  $formalPrefix = if ($lines[20] -ceq '# Source Capture Card') { '- Formal path: `' } else { '- 正式路径：`' }
+  $formalSuffix = if ($lines[20] -ceq '# Source Capture Card') { '`.' } else { '`' }
+  $lines[23] = $formalPrefix + '借鉴区/来源/' + $sourceId + '/' +
+    $captureId + '/来源版本卡.md' + $formalSuffix
   $authorizations = @($Permissions.PermissionAuthorizations)
   if ($authorizations.Count -ne 9) {
     Throw-BorrowingSourceCardFailure candidate candidate-invalid `

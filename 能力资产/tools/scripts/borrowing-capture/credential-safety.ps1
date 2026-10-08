@@ -50,7 +50,7 @@ function global:Get-BorrowingCredentialInspectionVariants {
   $variants = New-Object 'Collections.Generic.List[string]'
   $seen = New-Object 'Collections.Generic.HashSet[string]' ([StringComparer]::Ordinal)
   $current = $Value
-  # 最多允许四次内容变化，第五轮只用于确认解码已经稳定。
+  # Allow at most four content changes; the fifth pass only confirms that decoding has stabilized.
   $maximumDecodePasses = 5
   for ($depth = 0; $depth -lt $maximumDecodePasses; $depth++) {
     $formDecoded = $current.Replace('+', ' ')
@@ -73,7 +73,7 @@ function global:Get-BorrowingCredentialInspectionVariants {
     if ($next -ceq $current) { return $variants.ToArray() }
     $current = $next
   }
-  # 只有检测到稳定点才可放行；达到上限仍变化视为潜在隐藏凭据。
+  # Accept only after reaching a stable point; changes at the limit indicate potentially hidden credentials.
   throw 'credential inspection URL decode did not stabilize'
 }
 

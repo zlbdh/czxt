@@ -53,6 +53,16 @@ function Invoke-BorrowingTemplateContracts {
   Invoke-CzxtContract 'borrowing README is the static Skill entry with zero business dependency' {
     $path = Join-Path $TemplateRoot '借鉴区\README.md'
     $text = [IO.File]::ReadAllText($path)
+    if ($text.Contains('# Borrowing Area')) {
+    Assert-BorrowingContainsAll $text @(
+      '[borrowing skill](../能力资产/skills/借鉴.md)',
+      "Get-ChildItem -LiteralPath '借鉴区/来源'",
+      "Get-ChildItem -LiteralPath '借鉴区/事项'",
+      'does not maintain a duplicate active-item index',
+      'the business repository must not depend on', 'import', 'require', 'file:',
+      'workspace or build configuration', 'scripts', 'runtime reads'
+    ) 'borrowing README'
+    } else {
     Assert-BorrowingContainsAll $text @(
       '[借鉴 Skill](../能力资产/skills/借鉴.md)',
       "Get-ChildItem -LiteralPath '借鉴区/来源'",
@@ -61,6 +71,7 @@ function Invoke-BorrowingTemplateContracts {
       '业务仓库不得通过', 'import', 'require', 'file:',
       '工作区/构建配置', '脚本', '运行时读取'
     ) 'borrowing README'
+    }
     $skillLinks = [regex]::Matches($text, '\]\(\.\./能力资产/skills/借鉴\.md\)')
     Assert-CzxtEqual 1 $skillLinks.Count 'borrowing README must expose exactly one Skill link'
     $concreteSourceName = '小小' + '的我'
@@ -70,6 +81,18 @@ function Invoke-BorrowingTemplateContracts {
   Invoke-CzxtContract 'source card template follows appendix B' {
     $path = Join-Path $TemplateRoot '借鉴区\模板\来源版本卡.md'
     $text = [IO.File]::ReadAllText($path)
+    if ($text.Contains('# Source Capture Card')) {
+    Assert-BorrowingContainsAll $text @(
+      'schema: borrowing-source/v1', 'source_id:', 'capture_id:', 'source_type:',
+      'capture_status:', 'canonical_locator:', 'fingerprint_algorithm:', 'fingerprint:',
+      'captured_at:', 'rights_status:', 'access_policy:', 'reuse_scope:',
+      'execution_policy:', 'network_policy:', 'storage_policy:', 'distribution_policy:',
+      'upstream_write_policy: deny', 'auto_refresh: false',
+      'Permission dimension | Effective value | Authorization time | Authorization source | Scope',
+      '| auto_refresh | false |',
+      'ref', 'Object format', 'Manifest', 'Original URL', 'Management history'
+    ) 'source card template'
+    } else {
     Assert-BorrowingContainsAll $text @(
       'schema: borrowing-source/v1', 'source_id:', 'capture_id:', 'source_type:',
       'capture_status:', 'canonical_locator:', 'fingerprint_algorithm:', 'fingerprint:',
@@ -80,12 +103,24 @@ function Invoke-BorrowingTemplateContracts {
       '| auto_refresh | false |',
       'ref', 'object format', 'manifest', '原始 URL', '管理历史'
     ) 'source card template'
+    }
     Assert-CzxtTrue $text.Contains('{{PROJECT_NAME}}') 'source template lost project placeholder anchor'
   }
 
   Invoke-CzxtContract 'borrowing card template follows appendix C' {
     $path = Join-Path $TemplateRoot '借鉴区\模板\借鉴卡.md'
     $text = [IO.File]::ReadAllText($path)
+    if ($text.Contains('# Borrowing Card')) {
+    Assert-BorrowingContainsAll $text @(
+      'schema: borrowing-item/v1', 'borrow_id:', 'title:', 'lifecycle_status:',
+      'decision:', 'impact_level:', 'owner_pm:', 'blocked:', 'created_at:', 'updated_at:',
+      'supersedes:', 'closure_seal_sha256:', 'Problem and success criteria',
+      'source_id | capture_id | fingerprint | Evidence locator',
+      'Existing capability | Reusable element | Conflicts | Conclusion | Rationale', 'Explicitly adopted', 'Explicitly not adopted',
+      'Target file', 'Responsible PM', 'PROP/ADR', 'Acceptance criteria', 'Implementation record', 'Fresh verification evidence',
+      'Time | Previous status | New status | decision | Reason | Confirmation'
+    ) 'borrowing card template'
+    } else {
     Assert-BorrowingContainsAll $text @(
       'schema: borrowing-item/v1', 'borrow_id:', 'title:', 'lifecycle_status:',
       'decision:', 'impact_level:', 'owner_pm:', 'blocked:', 'created_at:', 'updated_at:',
@@ -95,6 +130,7 @@ function Invoke-BorrowingTemplateContracts {
       '目标文件', '责任 PM', 'PROP/ADR', '验收标准', '实施记录', 'fresh 验证证据',
       '时间 | 旧状态 | 新状态 | decision | 原因 | 确认'
     ) 'borrowing card template'
+    }
     Assert-CzxtTrue $text.Contains('{{PROJECT_NAME}}') 'borrowing template lost project placeholder anchor'
   }
 

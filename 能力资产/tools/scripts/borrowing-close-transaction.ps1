@@ -2,7 +2,7 @@
 
 $closeStagingPath = Join-Path $PSScriptRoot 'borrowing-close-staging.ps1'
 if (-not (Test-Path -LiteralPath $closeStagingPath -PathType Leaf)) {
-  throw 'close 缺少 staging 生命周期 helper'
+  throw 'close requires the staging lifecycle helper'
 }
 . $closeStagingPath
 
@@ -21,7 +21,7 @@ function New-BctResult {
 
 function Install-BctFormalBytes {
   param([string]$FormalPath, [byte[]]$Bytes, $ExpectedSnapshot)
-  Assert-BciCondition ($null -ne $ExpectedSnapshot) '正式事项卡缺少替换前快照'
+  Assert-BciCondition ($null -ne $ExpectedSnapshot) 'formal item card is missing its pre-replacement snapshot'
   $current = Get-BsiStableSnapshot $FormalPath
   Assert-BsiSnapshotUnchanged $ExpectedSnapshot $current
   $temporary = New-BsiTemporaryFile (Split-Path -Parent $FormalPath) $Bytes
@@ -31,23 +31,23 @@ function Install-BctFormalBytes {
   }
   finally { Remove-BsiOwnedTemporaryFile $temporary }
   Assert-BciCondition (Test-BcvBytesEqual $installed.Bytes $Bytes) `
-    '正式事项卡原子替换后字节不一致'
+    'formal item card bytes do not match after atomic replacement'
   return $installed
 }
 
 function Open-BctFormalReadLock {
   param([string]$FormalPath, $ExpectedSnapshot)
-  Assert-BciCondition ($null -ne $ExpectedSnapshot) '正式事项卡缺少最终稳定快照'
+  Assert-BciCondition ($null -ne $ExpectedSnapshot) 'formal item card is missing its final stable snapshot'
   Assert-BciCondition (Test-BsiSamePath $FormalPath $ExpectedSnapshot.Path) `
-    '正式事项卡最终规范路径改变'
+    'formal item card final canonical path changed'
   Invoke-BctStagingTestInjection 'before-final-formal-handle-open' `
     ([pscustomobject]@{
         FormalPath = $ExpectedSnapshot.Path
         ExpectedSnapshot = $ExpectedSnapshot
       })
-  # 单次 OPEN_REPARSE_POINT 打开后，从同一 handle 复核规范路径、类型、
-  # link count、identity、length 与 bytes，并保持排他 lease 到 staging 清理结束。
-  $lock = Open-BsiOwnedFileLock $ExpectedSnapshot '正式事项卡最终锁 '
+  # After a single OPEN_REPARSE_POINT open, verify the canonical path, type,
+  # link count, identity, length, and bytes on the same handle; retain the exclusive lease until staging cleanup finishes.
+  $lock = Open-BsiOwnedFileLock $ExpectedSnapshot 'formal item card final lock '
   return $lock.Stream
 }
 
@@ -57,9 +57,9 @@ function Restore-BctOriginal {
     $ExpectedFormalSnapshot, $Staging
   )
   Assert-BciCondition ($null -ne $ExpectedFormalSnapshot) `
-    '回滚缺少本事务正式卡快照'
+    'rollback is missing the formal card snapshot for this transaction'
   Assert-BciCondition ($null -ne $Staging -and $null -ne $Staging.Candidate -and
-      $null -ne $Staging.Candidate.Bytes) '回滚缺少当前 staging 候选快照'
+      $null -ne $Staging.Candidate.Bytes) 'rollback is missing the current staging candidate snapshot'
   [byte[]]$stagingCandidateBytes = $Staging.Candidate.Bytes
   Restore-BctStagingFiles $Staging $OriginalBytes $stagingCandidateBytes
   $current = Get-BsiStableSnapshot $FormalPath
@@ -67,10 +67,10 @@ function Restore-BctOriginal {
   [void](Install-BctFormalBytes $FormalPath $OriginalBytes $current)
   $restored = Get-BsiStableSnapshot $FormalPath
   Assert-BciCondition (Test-BcvBytesEqual $restored.Bytes $OriginalBytes) `
-    '原活动卡恢复后字节不一致'
+    'original active card bytes do not match after restoration'
   Assert-BctOwnedFileLease $Staging.Original
   Assert-BciCondition (Test-BcvBytesEqual `
-      $Staging.Original.Bytes $OriginalBytes) '回滚原活动卡 guard 字节改变'
+      $Staging.Original.Bytes $OriginalBytes) 'rollback original active card guard bytes changed'
   Assert-BsiSnapshotUnchanged $Staging.Candidate `
     (Get-BsiStableSnapshot $Staging.Candidate.Path)
 }
@@ -80,7 +80,7 @@ function Invoke-BctSealProcess {
   $scriptPath = Join-Path $SafeRoot '能力资产\tools\scripts\seal-borrowing-item.ps1'
   $scriptInfo = Get-BorrowingSafePathInfo $scriptPath File close missing-trusted-component
   Assert-BciCondition ((Get-BorrowingPathRelation $SafeRoot $scriptInfo.CanonicalPath) -ceq `
-      'ancestor') 'seal helper 跨出项目根'
+      'ancestor') 'seal helper escapes the project root'
   $executableInfo = Get-BorrowingSafePathInfo (Join-Path $PSHOME 'powershell.exe') `
     File close missing-trusted-component $true $true
   $environment = New-BorrowingProcessEnvironment -RemovePrefixes @('GIT_') `
@@ -116,25 +116,25 @@ function Invoke-BorrowingCloseTransaction {
   try {
     $mode = Invoke-BorrowingP4tModeCheck -Root $Root
     Assert-BciCondition ($mode.ExitCode -eq 0 -and $mode.Mode -ceq 'project') `
-      'close 只允许 project-only Root'
+      'close permits only a project-only Root'
     $safeRoot = Resolve-BorrowingP4tSafeRoot $Root
     $formal = Get-BciFormalTarget $safeRoot $CardPath
     $borrowId = $formal.Card.BorrowId
     $formalPath = $formal.Path
     $sourceState = Invoke-BorrowingP4tSourceCheck -Root $safeRoot -Mode project
-    Assert-BciCondition ($sourceState.ExitCode -eq 0) 'close 来源检查未通过'
+    Assert-BciCondition ($sourceState.ExitCode -eq 0) 'close source checks failed'
     $active = Invoke-BpiSingleItemValidation -Root $safeRoot `
       -CardPath $formal.Path -SourceState $sourceState
-    Assert-BciCondition $active.IsValid '原活动事项卡合同无效'
-    Assert-BciCondition ($active.Card.Status -cne 'closed') '事项卡已经 closed'
+    Assert-BciCondition $active.IsValid 'original active item card contract is invalid'
+    Assert-BciCondition ($active.Card.Status -cne 'closed') 'item card is already closed'
     $itemRoot = Get-BorrowingSafePathInfo (Split-Path -Parent $formal.Path) `
       Directory close source-unsafe
     Assert-BciCondition ((Get-BorrowingPathRelation `
         $itemRoot.CanonicalPath $formal.Path) -ceq 'ancestor') `
-      '正式事项卡不在受信事项目录直属范围'
+      'formal item card is not a direct child of the trusted item directory'
     $baseline = Get-BsiStableSnapshot $formal.Path
     Assert-BciCondition (Test-BcvBytesEqual $active.Card.Bytes $baseline.Bytes) `
-      '原活动事项卡在校验后改变'
+      'original active item card changed after validation'
     $originalBytes = $baseline.Bytes
 
     $stage = 'candidate'
@@ -143,7 +143,7 @@ function Invoke-BorrowingCloseTransaction {
     $staging = New-BctStaging $itemRoot `
       $originalBytes $candidate.Bytes -AttemptedPath $stagingAttempt
     $context = New-BpiValidationContext $safeRoot $sourceState
-    Assert-BciCondition ($context.Failures.Count -eq 0) '关闭候选上下文无效'
+    Assert-BciCondition ($context.Failures.Count -eq 0) 'closure candidate context is invalid'
     [void](Assert-BciClosedCandidate $staging.Candidate.Path $formal.Path `
       $context $candidate.Bytes)
 
@@ -154,7 +154,7 @@ function Invoke-BorrowingCloseTransaction {
     $stage = 'seal'
     $reasonCode = 'seal-failed'
     $sealResult = Invoke-BctSealProcess $safeRoot $formal.Path
-    Assert-BciCondition ($sealResult.ExitCode -eq 0) 'seal helper 未通过'
+    Assert-BciCondition ($sealResult.ExitCode -eq 0) 'seal helper failed'
     try { $sealed = Get-BsiStableSnapshot $formal.Path }
     catch {
       $formalOwnershipUnproven = $true
@@ -172,20 +172,20 @@ function Invoke-BorrowingCloseTransaction {
         $attestation.Sha256 -cne (Get-BorrowingSha256Hex -Bytes $sealed.Bytes)) {
       $formalOwnershipUnproven = $true
       $reasonCode = 'seal-ownership-unproven'
-      throw 'seal helper 证明未绑定当前正式卡'
+      throw 'seal helper attestation is not bound to the current formal card'
     }
     $ownedFormalSnapshot = $sealed
     Set-BctCandidateBytes $staging $sealed.Bytes
     Assert-BciCondition ($attestation.BorrowId -ceq $borrowId) `
-      'seal helper 证明 borrow_id 不一致'
+      'seal helper attestation borrow_id does not match'
     Assert-BciCondition (Test-BcvBytesEqual $sealed.Bytes $candidate.SealedBytes) `
-      'seal helper 结果与关闭候选不一致'
+      'seal helper result does not match the closure candidate'
 
     $stage = 'p4t-after'
     $reasonCode = 'p4t-failed'
     $p4tResult = Invoke-BorrowingP4tGate -Root $safeRoot -Stage p4t-after
     $p4t = [string]$p4tResult.ExitCode
-    Assert-BciCondition ($p4tResult.ExitCode -eq 0) '完整根 P4t 未通过'
+    Assert-BciCondition ($p4tResult.ExitCode -eq 0) 'full-root P4t checks failed'
 
     $stage = 'stability-after-p4t'
     $reasonCode = 'concurrent-change'
@@ -209,7 +209,7 @@ function Invoke-BorrowingCloseTransaction {
   catch {
     if ($null -ne $staging -and
         $staging.State -cin @('content-deleted', 'removed')) {
-      # 2026-07-21 by Codex — staging 证据全删后事务已不可逆完成，禁止再回滚正式卡。
+      # 2026-07-21 by Codex — Once all staging evidence is deleted, the transaction is irreversibly complete; never roll back the formal card.
       $completeReached = $true
     }
     if ($null -ne $formalLock) {

@@ -39,7 +39,7 @@ The [meta-rule pool](操作系统/01_架构/元规则池.md) is the single sourc
 
 ## Required checks before sensitive actions
 
-For any item below, first search the Class C section (`### ❌ C 类`) in `操作系统/01_架构/三类行为铁律.md`. Do not rely on memory.
+For any item below, first search the Class C section (`### ❌ Class C`) in `操作系统/01_架构/三类行为铁律.md`. Do not rely on memory.
 
 - `git commit` or `git push`: conditional Class B actions with six requirements; see ADR-016.
 - Changing `package.json` version: Class B when paired with an APK release task.

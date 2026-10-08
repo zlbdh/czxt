@@ -82,26 +82,26 @@ Assert-Contains "操作系统\02_智能体\项目PM-咪咪.md" `
 
 # 全局 A/B/C 入口必须覆盖来源读取、捕获与采纳，但不重复治理规则正文。
 $abc = "操作系统\01_架构\三类行为铁律.md"
-Assert-Contains $abc '借鉴来源动作|来源读取、捕获与采纳' "借鉴动作分级入口"
+Assert-Contains $abc '借鉴来源动作|来源读取、捕获与采纳|Borrowing-source actions' "借鉴动作分级入口"
 foreach ($case in @(
-    @('只读分析.*来源.*A 类|来源.*只读分析.*A 类', '普通来源只读分析为 A 类'),
-    @('小型本地 capture.*A 类|A 类.*小型本地 capture', '小型本地捕获为 A 类'),
-    @('远端取源.*B 类|B 类.*远端取源', '远端取源为 B 类'),
-    @('刷新.*B 类|B 类.*刷新', '来源刷新为 B 类'),
-    @('私有凭据.*B 类|B 类.*私有凭据', '私有凭据为 B 类'),
-    @('来源.*运行/构建.*B 类|B 类.*来源.*运行/构建', '来源运行构建为 B 类'),
-    @('capture.*删除/移动.*B 类|B 类.*capture.*删除/移动', 'capture 删除移动为 B 类'),
-    @('L3/L4.*采纳.*B 类|B 类.*L3/L4.*采纳', 'L3/L4 采纳为 B 类'),
-    @('凭据.*tracked.*C 类|C 类.*凭据.*tracked', '凭据写 tracked 为 C 类'),
-    @('来源远端写入.*C 类|C 类.*来源远端写入', '来源远端写入为 C 类'),
-    @('路径逃逸.*C 类|C 类.*路径逃逸', '路径逃逸为 C 类'),
-    @('外部指令.*C 类|C 类.*外部指令', '遵从外部指令为 C 类'),
-    @('删除用户数据.*C 类|C 类.*删除用户数据', '删除用户数据为 C 类')
+    @('只读分析.*来源.*A 类|来源.*只读分析.*A 类|Read-only source analysis \| Class A', '普通来源只读分析为 A 类'),
+    @('小型本地 capture.*A 类|A 类.*小型本地 capture|Small local capture without sensitive information \| Class A', '小型本地捕获为 A 类'),
+    @('远端取源.*B 类|B 类.*远端取源|Fetch remote sources \| Class B', '远端取源为 B 类'),
+    @('刷新.*B 类|B 类.*刷新|Refresh sources \| Class B', '来源刷新为 B 类'),
+    @('私有凭据.*B 类|B 类.*私有凭据|Use private credentials \| Class B', '私有凭据为 B 类'),
+    @('来源.*运行/构建.*B 类|B 类.*来源.*运行/构建|Run or build source content \| Class B', '来源运行构建为 B 类'),
+    @('capture.*删除/移动.*B 类|B 类.*capture.*删除/移动|Delete or move an existing capture \| Class B', 'capture 删除移动为 B 类'),
+    @('L3/L4.*采纳.*B 类|B 类.*L3/L4.*采纳|Implement L3/L4 adoption \| Class B', 'L3/L4 采纳为 B 类'),
+    @('凭据.*tracked.*C 类|C 类.*凭据.*tracked|Write credentials to tracked files \| Class C', '凭据写 tracked 为 C 类'),
+    @('来源远端写入.*C 类|C 类.*来源远端写入|Write to the source remote \| Class C', '来源远端写入为 C 类'),
+    @('路径逃逸.*C 类|C 类.*路径逃逸|Path escape \| Class C', '路径逃逸为 C 类'),
+    @('外部指令.*C 类|C 类.*外部指令|Follow external instructions carried by the source \| Class C', '遵从外部指令为 C 类'),
+    @('删除用户数据.*C 类|C 类.*删除用户数据|Delete user data \| Class C', '删除用户数据为 C 类')
   )) {
   Assert-Contains $abc $case[0] $case[1]
 }
-Assert-Contains $abc '普通只读分析.*不.*C 类' "普通只读分析不升级为 C 类"
-Assert-Contains $abc '采纳.*目标路径.*既有.*白名单.*A/B/C' `
+Assert-Contains $abc '普通只读分析.*不.*C 类|Ordinary read-only source analysis is not elevated to Class C' "普通只读分析不升级为 C 类"
+Assert-Contains $abc '采纳.*目标路径.*既有.*白名单.*A/B/C|Adoption still follows the target path.s existing allowlist and A/B/C classification' `
   "采纳动作服从目标路径既有分级"
 
 # AGENTS、总入口和角色入口都只给一条主 Skill 路由。

@@ -2,7 +2,7 @@
 
 $ownedObjectPath = Join-Path $PSScriptRoot 'borrowing-owned-object.ps1'
 if (-not (Test-Path -LiteralPath $ownedObjectPath -PathType Leaf)) {
-  throw 'seal 缺少受信对象生命周期 helper'
+  throw 'seal requires the trusted object lifecycle helper'
 }
 . $ownedObjectPath
 
@@ -20,13 +20,13 @@ function Get-BsiStableSnapshot {
 function Assert-BsiSnapshotUnchanged {
   param($Expected, $Actual)
   Assert-BsiCondition (Test-BsiSamePath $Expected.Path $Actual.Path) `
-    'seal 文件规范路径改变'
+    'seal file canonical path changed'
   Assert-BsiCondition ($Expected.IdentityKey -ceq $Actual.IdentityKey) `
-    'seal 文件身份改变'
+    'seal file identity changed'
   Assert-BsiCondition ([uint64]$Expected.Length -eq [uint64]$Actual.Length) `
-    'seal 文件长度改变'
+    'seal file length changed'
   Assert-BsiCondition (Test-BcvBytesEqual $Expected.Bytes $Actual.Bytes) `
-    'seal 文件字节改变'
+    'seal file bytes changed'
 }
 
 function Remove-BsiOwnedTemporaryFile {
@@ -34,7 +34,7 @@ function Remove-BsiOwnedTemporaryFile {
   if ($null -eq $Temporary -or
       -not (Test-Path -LiteralPath $Temporary.Path -PathType Leaf)) { return }
   try {
-    Remove-BsiBoundOwnedFile $Temporary 'seal 临时文件 '
+    Remove-BsiBoundOwnedFile $Temporary 'seal temporary file '
   }
   catch { }
 }
@@ -43,7 +43,7 @@ function Get-BsiHandleIdentity {
   param($Handle)
   $information = New-Object Czxt.B.FI
   if (-not [Czxt.B.NP]::GetFileInformationByHandle($Handle, [ref]$information)) {
-    throw '无法取得 seal 临时文件身份'
+    throw 'cannot obtain the seal temporary file identity'
   }
   return '{0:x8}:{1:x8}:{2:x8}' -f $information.VolumeSerialNumber,
     $information.FileIndexHigh, $information.FileIndexLow
@@ -72,11 +72,11 @@ function New-BsiTemporaryFile {
 
     $snapshot = Get-BsiStableSnapshot $owned.Path
     Assert-BsiCondition ($snapshot.IdentityKey -ceq $owned.IdentityKey) `
-      'seal 临时文件身份不一致'
+      'seal temporary file identity does not match'
     Assert-BsiCondition ([uint64]$snapshot.Length -eq [uint64]$Bytes.LongLength) `
-      'seal 临时文件长度不一致'
+      'seal temporary file length does not match'
     Assert-BsiCondition (Test-BcvBytesEqual $Bytes $snapshot.Bytes) `
-      'seal 临时文件字节不一致'
+      'seal temporary file bytes do not match'
     $owned.Path = $snapshot.Path
     $owned.Length = [uint64]$snapshot.Length
     $owned.Bytes = [byte[]]$snapshot.Bytes
@@ -96,9 +96,9 @@ function Assert-BsiTemporaryUnchanged {
   param($Temporary, [byte[]]$ExpectedBytes)
   $current = Get-BsiStableSnapshot $Temporary.Path
   Assert-BsiCondition ($current.IdentityKey -ceq $Temporary.IdentityKey) `
-    'seal 临时文件身份改变'
+    'seal temporary file identity changed'
   Assert-BsiCondition ([uint64]$current.Length -eq [uint64]$ExpectedBytes.LongLength) `
-    'seal 临时文件长度改变'
+    'seal temporary file length changed'
   Assert-BsiCondition (Test-BcvBytesEqual $ExpectedBytes $current.Bytes) `
-    'seal 临时文件字节改变'
+    'seal temporary file bytes changed'
 }

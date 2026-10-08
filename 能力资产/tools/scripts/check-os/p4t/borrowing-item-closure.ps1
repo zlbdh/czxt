@@ -2,6 +2,11 @@
 
 function global:Test-BpiSectionEvidence {
   param([string[]]$Lines, [string[]]$Forbidden)
+  $placeholderAliases = @{
+    '待填写' = 'To be completed'; '当前尚未实施' = 'Not yet implemented'
+    '当前尚无' = 'None yet'; '无其他排除项' = 'No other exclusions'
+    '恢复条件' = 'Resume condition'; '复查时间' = 'Review time'
+  }
   foreach ($line in $Lines) {
     if (-not $line.StartsWith('- ', [StringComparison]::Ordinal)) { continue }
     $content = $line.Substring(2)
@@ -10,7 +15,9 @@ function global:Test-BpiSectionEvidence {
     }
     $rejected = $false
     foreach ($value in $Forbidden) {
-      if ($line.IndexOf($value, [StringComparison]::Ordinal) -ge 0) { $rejected = $true }
+      if ($line.IndexOf($value, [StringComparison]::Ordinal) -ge 0 -or
+          ($placeholderAliases.ContainsKey($value) -and
+           $line.IndexOf($placeholderAliases[$value], [StringComparison]::OrdinalIgnoreCase) -ge 0)) { $rejected = $true }
     }
     if (-not $rejected) { return $true }
   }
@@ -20,7 +27,7 @@ function global:Test-BpiSectionEvidence {
 function global:Assert-BpiSafeTargetRow {
   param([string]$Root, $Row)
   [string[]]$cells = $Row.Cells
-  if ($cells[0] -ceq '待填写' -or $cells[0] -match '^[A-Za-z]:|^[/\\]|(^|/)\.\.(/|$)' -or
+  if ($cells[0] -in @('待填写', 'To be completed') -or $cells[0] -match '^[A-Za-z]:|^[/\\]|(^|/)\.\.(/|$)' -or
       $cells[2] -notin @('L1', 'L2', 'L3', 'L4')) { throw 'item target row invalid' }
   $target = [IO.Path]::GetFullPath((Join-Path $Root $cells[0].Replace('/', '\')))
   $prefix = [IO.Path]::GetFullPath($Root).TrimEnd('\') + '\'
@@ -186,7 +193,7 @@ function global:Assert-BpiClosureContract {
     }
     elseif ($Card.Decision -ceq 'reject') {
       foreach ($row in $Card.CandidateRows) {
-        if ($row.Cells[4] -ceq '待填写') { throw 'closed reject assessment evidence missing' }
+        if ($row.Cells[4] -in @('待填写', 'To be completed')) { throw 'closed reject assessment evidence missing' }
       }
       if (-not (Test-BpiSectionEvidence $Card.Sections['## 明确不采纳'] @(
               '待填写', '无其他排除项', '恢复条件', '复查时间'))) {
@@ -204,8 +211,10 @@ function global:Assert-BpiClosureContract {
   if ($Card.Status -ceq 'parked') {
     $hasResume = $false
     foreach ($line in $Card.Sections['## 明确不采纳']) {
-      if (($line.Contains('恢复条件') -or $line.Contains('复查时间')) -and
-          -not $line.Contains('当前没有') -and -not $line.Contains('待填写')) {
+      if (($line.Contains('恢复条件') -or $line.Contains('复查时间') -or
+           $line.IndexOf('Resume condition', [StringComparison]::OrdinalIgnoreCase) -ge 0 -or $line.IndexOf('Review time', [StringComparison]::OrdinalIgnoreCase) -ge 0) -and
+          -not $line.Contains('当前没有') -and -not $line.Contains('待填写') -and
+          $line.IndexOf('None currently', [StringComparison]::OrdinalIgnoreCase) -lt 0 -and $line.IndexOf('To be completed', [StringComparison]::OrdinalIgnoreCase) -lt 0) {
         $hasResume = $true
       }
     }

@@ -15,14 +15,22 @@ function Invoke-BorrowingDocBoundaryCases {
     Assert-BorrowingDocNoMatch $text '\]\([^)]*(借鉴治理|借鉴闭环)\.md(?:#[^)]*)?\)' 'zone README direct rule/workflow link'
     Assert-BorrowingDocMatchCount $text '(?i)\]\([^)]*能力资产/skills/[^)]*\)' 1 'zone README total Skill links'
     Assert-BorrowingDocMatchCount $text '(?m)\[[^\]]+\]\([^)]+\)' 1 'zone README total Markdown links'
-    Assert-BorrowingDocContainsAll $text @(
-      'capture.local.json/v1` 只保存固定 schema 的规范化本机路径',
-      '真实凭据不由借鉴区持久化', '操作系统或工具的凭据存储',
-      '私有 Git / Web 内容须在借鉴区外预取',
-      '新增 schema、独立 B 类授权与专用秘密存储方案'
-    ) 'zone README local-secret boundary'
+    $secretBoundaries = if ($text.Contains('# Borrowing Area')) {
+      @('`capture.local.json/v1` stores only normalized local paths in a fixed schema.',
+        'The borrowing area does not persist real credentials.',
+        'operating-system or tool credential stores outside this area',
+        'Prefetch private Git or web content outside the area',
+        'Future secret-access support requires a new schema, separate Class B authorization, and a dedicated secret store.')
+    } else {
+      @('capture.local.json/v1` 只保存固定 schema 的规范化本机路径',
+        '真实凭据不由借鉴区持久化', '操作系统或工具的凭据存储',
+        '私有 Git / Web 内容须在借鉴区外预取',
+        '新增 schema、独立 B 类授权与专用秘密存储方案')
+    }
+    Assert-BorrowingDocContainsAll $text $secretBoundaries 'zone README local-secret boundary'
     Assert-BorrowingDocExcludesAll $text @(
-      '私有访问参数和凭据只能进入被忽略的本机状态'
+      '私有访问参数和凭据只能进入被忽略的本机状态',
+      'Private access parameters and credentials may only enter ignored local state'
     ) 'obsolete ignored-secret persistence guidance'
   }
 

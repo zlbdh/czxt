@@ -75,9 +75,9 @@ function global:Read-BorrowingStableSafeFileSnapshot {
         $script:BorrowingTrustedReadTestInjections.Contains('before-handle-open')) {
       & $script:BorrowingTrustedReadTestInjections['before-handle-open']
     }
-    # FileShare.Read|Delete 与持有 DELETE 权限的树封印只读句柄兼容。
-    # 普通读取窗口仍禁止写入；若无树封印时发生改名或替换，下面的
-    # handle/path 双重身份复核会令本次读取失败关闭。
+    # FileShare.Read|Delete is compatible with read-only tree-seal handles that hold DELETE access.
+    # Ordinary read windows still prevent writes; if a rename or replacement occurs without a tree seal,
+    # the dual handle/path identity check below makes this read fail closed.
     $stream = New-Object IO.FileStream(
       $before.CanonicalPath, [IO.FileMode]::Open, [IO.FileAccess]::Read,
       ([IO.FileShare]::Read -bor [IO.FileShare]::Delete))

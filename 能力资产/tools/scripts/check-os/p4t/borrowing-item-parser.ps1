@@ -123,10 +123,31 @@ function global:Read-BpiItemCard {
     throw 'item supersedes id invalid'
   }
   $formal = '- 正式路径：`借鉴区/事项/' + $values.borrow_id + '/借鉴卡.md`'
-  if (@($document.Lines | Where-Object { $_ -ceq '# 借鉴卡' }).Count -ne 1 -or
-      @($document.Lines | Where-Object { $_ -ceq $formal }).Count -ne 1) {
+  $englishFormal = '- Formal path: `借鉴区/事项/' + $values.borrow_id + '/借鉴卡.md`.'
+  if (@($document.Lines | Where-Object { $_ -cin @('# 借鉴卡', '# Borrowing Card') }).Count -ne 1 -or
+      @($document.Lines | Where-Object { $_ -ceq $formal -or $_ -ceq $englishFormal }).Count -ne 1) {
     throw 'item fixed identity body invalid'
   }
+  $labelAliases = @{
+    '## Problem and success criteria' = '## 问题与成功标准'
+    '## Source bindings' = '## 来源绑定'
+    '## Candidate matrix' = '## 候选矩阵'
+    '## Explicitly adopted' = '## 明确采纳'
+    '## Explicitly not adopted' = '## 明确不采纳'
+    '## Targets and responsibilities' = '## 目标与责任'
+    '## Acceptance criteria' = '## 验收标准'
+    '## Implementation record' = '## 实施记录'
+    '## Fresh verification evidence' = '## fresh 验证证据'
+    '## Status history' = '## 状态历史'
+    '## Blocking information' = '## 阻塞信息'
+    '| source_id | capture_id | fingerprint | Evidence locator |' = '| source_id | capture_id | fingerprint | 证据定位符 |'
+    '| Existing capability | Reusable element | Conflicts | Conclusion | Rationale |' = '| 已有能力 | 可借鉴点 | 冲突 | 结论 | 理由 |'
+    '| Target file | Responsible PM | Impact level | PROP/ADR |' = '| 目标文件 | 责任 PM | 影响级别 | PROP/ADR |'
+    '| Time | Previous status | New status | decision | Reason | Confirmation |' = '| 时间 | 旧状态 | 新状态 | decision | 原因 | 确认 |'
+  }
+  [string[]]$parseLines = @($document.Lines | ForEach-Object {
+    if ($labelAliases.ContainsKey($_) -and $labelAliases.Keys -ccontains $_) { $labelAliases[$_] } else { $_ }
+  })
   $headings = @(
     '## 问题与成功标准', '## 来源绑定', '## 候选矩阵', '## 明确采纳',
     '## 明确不采纳', '## 目标与责任', '## 验收标准', '## 实施记录',
@@ -134,7 +155,7 @@ function global:Read-BpiItemCard {
   )
   $sections = [ordered]@{}
   foreach ($heading in $headings) {
-    $sections[$heading] = @(Get-BpiSectionLines $document.Lines $heading)
+    $sections[$heading] = @(Get-BpiSectionLines $parseLines $heading)
   }
   $sourceRows = @(Get-BpiTableRows $sections['## 来源绑定'] `
       '| source_id | capture_id | fingerprint | 证据定位符 |' `
@@ -151,7 +172,8 @@ function global:Read-BpiItemCard {
   foreach ($row in $historyRows) {
     # 空原因已由表格标量拒绝；这里额外封住模板占位符及其装饰写法。
     if ($row.Cells[2] -ceq 'cancelled' -and
-        $row.Cells[4].IndexOf('待填写', [StringComparison]::Ordinal) -ge 0) {
+        ($row.Cells[4].IndexOf('待填写', [StringComparison]::Ordinal) -ge 0 -or
+         $row.Cells[4].IndexOf('To be completed', [StringComparison]::OrdinalIgnoreCase) -ge 0)) {
       throw 'cancelled item reason is placeholder'
     }
   }

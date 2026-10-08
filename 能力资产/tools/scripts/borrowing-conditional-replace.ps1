@@ -22,7 +22,7 @@ function New-BsiReplacementSiblingPath {
       return [IO.Path]::GetFullPath($path)
     }
   }
-  throw '无法分配条件替换同目录路径'
+  throw 'cannot allocate a same-directory path for conditional replacement'
 }
 
 function Remove-BsiOwnedSnapshotFile {
@@ -45,14 +45,14 @@ function Move-BsiOwnedSnapshotOnceToEmptyPath {
   $destination = [IO.Path]::GetFullPath($DestinationPath)
   Assert-BsiCondition (-not [IO.File]::Exists($destination) -and
       -not [IO.Directory]::Exists($destination)) `
-    ($Context + '目标路径已被占用')
+    ($Context + 'target path is already occupied')
   $current = Get-BsiHandleBoundCurrentSnapshot $Expected $Context
   Assert-BsiSnapshotMaterialEqual $Expected $current `
-    ($Context + '源对象在移动前改变')
+    ($Context + 'source object changed before the move')
   [IO.File]::Move($current.Path, $destination)
   $moved = Get-BsiStableSnapshot $destination
   Assert-BsiSnapshotMaterialEqual $Expected $moved `
-    ($Context + '移动后的对象不是受信源对象')
+    ($Context + 'moved object is not the trusted source object')
   return $moved
 }
 
@@ -70,10 +70,10 @@ function Move-BsiOwnedSnapshotToEmptyPath {
       try {
         $observed = Get-BsiStableSnapshot $DestinationPath
         [void](Move-BsiOwnedSnapshotOnceToEmptyPath $observed `
-            ([string]$Expected.Path) ($Context + '补偿 '))
+            ([string]$Expected.Path) ($Context + 'compensation '))
       }
       catch {
-        throw ($Context + '失败且补偿失败；对象均未覆盖：' +
+        throw ($Context + ' failed and compensation also failed; no objects were overwritten: ' +
           $_.Exception.Message)
       }
     }
@@ -88,17 +88,17 @@ function Restore-BsiDisplacedTarget {
   )
   $currentDisplaced = Get-BsiStableSnapshot $Displaced.Path
   Assert-BsiSnapshotMaterialEqual $Displaced $currentDisplaced `
-    '条件替换 backup 在恢复前改变'
+    'conditional replacement backup changed before restoration'
   $currentInstalled = Get-BsiStableSnapshot $TargetPath
   Assert-BsiSnapshotMaterialEqual $Installed $currentInstalled `
-    '条件替换目标在恢复前改变'
+    'conditional replacement target changed before restoration'
   $rescuePath = New-BsiReplacementSiblingPath `
     (Split-Path -Parent $TargetPath) 'rescue'
   $rescued = Move-BsiOwnedSnapshotToEmptyPath $currentInstalled `
-    $rescuePath '条件替换移出 installed '
+    $rescuePath 'conditional replacement move installed aside '
   try {
     $restored = Move-BsiOwnedSnapshotToEmptyPath $currentDisplaced `
-      $TargetPath '条件替换恢复 displaced '
+      $TargetPath 'conditional replacement restore displaced '
   }
   catch {
     $restoreFailure = $_
@@ -107,25 +107,25 @@ function Restore-BsiDisplacedTarget {
         [IO.File]::Exists($rescuePath)) {
       try {
         [void](Move-BsiOwnedSnapshotToEmptyPath $rescued `
-            $TargetPath '条件替换恢复 installed ')
+            $TargetPath 'conditional replacement restore installed ')
       }
       catch {
-        throw ('条件替换恢复失败且 installed 无法归位；对象均未覆盖：' +
+        throw ('conditional replacement restoration failed and installed could not be returned; no objects were overwritten: ' +
           $_.Exception.Message)
       }
     }
     throw $restoreFailure
   }
   Assert-BsiSnapshotMaterialEqual $Displaced $restored `
-    '条件替换未能恢复旧对象'
-  Remove-BsiOwnedSnapshotFile $rescued '条件替换 rescue '
+    'conditional replacement could not restore the old object'
+  Remove-BsiOwnedSnapshotFile $rescued 'conditional replacement rescue '
   return $restored
 }
 
 function Assert-BsiPendingReplaceTransaction {
   param($Transaction)
   Assert-BsiCondition ($null -ne $Transaction -and
-      $Transaction.State -ceq 'pending') '条件替换事务不是 pending'
+      $Transaction.State -ceq 'pending') 'conditional replacement transaction is not pending'
 }
 
 function Start-BsiConditionalReplace {
@@ -134,22 +134,22 @@ function Start-BsiConditionalReplace {
     [byte[]]$ReplacementBytes
   )
   Assert-BsiCondition ($null -ne $Temporary -and $null -ne $ExpectedSnapshot) `
-    '条件替换缺少受信快照'
+    'conditional replacement is missing a trusted snapshot'
   $targetDirectory = [IO.Path]::GetFullPath((Split-Path -Parent $TargetPath))
   $temporaryDirectory = [IO.Path]::GetFullPath((Split-Path -Parent $Temporary.Path))
   Assert-BsiCondition ([string]::Equals($targetDirectory, $temporaryDirectory,
-      [StringComparison]::OrdinalIgnoreCase)) '条件替换临时文件不在目标同目录'
+      [StringComparison]::OrdinalIgnoreCase)) 'conditional replacement temporary file is not in the target directory'
 
   $current = Get-BsiStableSnapshot $TargetPath
   Assert-BsiSnapshotUnchanged $ExpectedSnapshot $current
   Assert-BsiTemporaryUnchanged $Temporary $ReplacementBytes
   $backupPath = New-BsiReplacementSiblingPath $targetDirectory 'backup'
-  # 2026-07-21 by Codex — 仅用不覆盖 move，ABA 占位必须停止并保留对象。
+  # 2026-07-21 by Codex — Use only non-overwriting moves; stop on an ABA reservation race and preserve the objects.
   $displaced = Move-BsiOwnedSnapshotToEmptyPath $current `
-    $backupPath '条件替换移出 target '
+    $backupPath 'conditional replacement move target aside '
   try {
     $installed = Move-BsiOwnedSnapshotToEmptyPath $Temporary `
-      $TargetPath '条件替换安装 temporary '
+      $TargetPath 'conditional replacement install temporary '
   }
   catch {
     $installFailure = $_
@@ -158,10 +158,10 @@ function Start-BsiConditionalReplace {
         [IO.File]::Exists($backupPath)) {
       try {
         [void](Move-BsiOwnedSnapshotToEmptyPath $displaced `
-            $TargetPath '条件替换安装失败恢复 target ')
+            $TargetPath 'conditional replacement restore target after installation failure ')
       }
       catch {
-        throw ('条件替换安装失败且旧对象无法归位；对象均未覆盖：' +
+        throw ('conditional replacement installation failed and the old object could not be returned; no objects were overwritten: ' +
           $_.Exception.Message)
       }
     }
@@ -194,9 +194,9 @@ function Complete-BsiConditionalReplace {
   $cleanupFailure = $null
   try {
     $targetLock = Open-BsiOwnedFileLock $Transaction.Installed `
-      '条件替换 commit target '
+      'conditional replacement commit target '
     $current = $targetLock.Snapshot
-    Remove-BsiOwnedSnapshotFile $Transaction.Displaced '条件替换 backup '
+    Remove-BsiOwnedSnapshotFile $Transaction.Displaced 'conditional replacement backup '
     $Transaction.State = 'completed'
   }
   catch {
@@ -210,7 +210,7 @@ function Complete-BsiConditionalReplace {
       [void](Undo-BsiConditionalReplace $Transaction)
     }
     catch {
-      throw ('条件替换 backup 清理失败且恢复失败，对象已保留：' +
+      throw ('conditional replacement backup cleanup and restoration both failed; objects were preserved: ' +
         $_.Exception.Message)
     }
     throw $cleanupFailure

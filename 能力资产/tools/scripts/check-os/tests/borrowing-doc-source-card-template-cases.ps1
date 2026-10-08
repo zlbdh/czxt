@@ -47,6 +47,25 @@ function Invoke-BorrowingSourceCardTemplateCases {
     Assert-BorrowingLineSequence $card @(
       'captured_at: 1970-01-01T00:00:00.000Z'
     ) 'template canonical captured_at'
+    if ($card.Contains('# Source Capture Card')) {
+    Assert-BorrowingExactOrderedTable $card @(
+      'Permission dimension', 'Effective value', 'Authorization time', 'Authorization source', 'Scope'
+    ) (Get-BorrowingTemplatePermissionRows) 'template permission rows'
+    $git = @('ref', 'Ref type', 'Object format', 'commit', 'tree', 'Submodule status', 'LFS status')
+    Assert-BorrowingExactOrderedTable (Get-BorrowingMarkdownSection $card 'Git capture facts') `
+      $git @(,@($git | ForEach-Object { 'not-applicable' })) 'template Git facts'
+    Assert-BorrowingExactOrderedTable (Get-BorrowingMarkdownSection $card 'Local capture facts') `
+      @('Manifest algorithm', 'File count', 'Byte count', 'Exclusions', 'Failures') `
+      @(,@('sha256-manifest-v1', '0', '0', 'None', 'None')) 'template Local facts'
+    $web = @('Original URL', 'Final URL', 'Redirects', 'Status code', 'MIME', 'charset',
+      'ETag', 'Last-Modified', 'Response hash')
+    Assert-BorrowingExactOrderedTable (Get-BorrowingMarkdownSection $card 'Web capture facts') `
+      $web @(,@($web | ForEach-Object { 'not-applicable' })) 'template Web facts'
+    Assert-BorrowingExactOrderedTable (Get-BorrowingMarkdownSection $card 'Management history') `
+      @('Time', 'Previous status', 'New status', 'Reason', 'Confirmation') `
+      @(,@('1970-01-01T00:00:00.000Z', 'none', 'ready',
+          'initial-capture', 'capture-executor')) 'template initial history'
+    } else {
     Assert-BorrowingExactOrderedTable $card @(
       '权限维度', '生效值', '授权时间', '授权来源', '适用范围'
     ) (Get-BorrowingTemplatePermissionRows) 'template permission rows'
@@ -64,5 +83,6 @@ function Invoke-BorrowingSourceCardTemplateCases {
       @('时间', '旧状态', '新状态', '原因', '确认') `
       @(,@('1970-01-01T00:00:00.000Z', 'none', 'ready',
           'initial-capture', 'capture-executor')) 'template initial history'
+    }
   }
 }

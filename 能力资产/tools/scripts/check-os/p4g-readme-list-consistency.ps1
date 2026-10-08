@@ -44,9 +44,9 @@ if ($panoramaFound) {
 $poolPath = Join-Path $Root "操作系统/01_架构/元规则池.md"
 if (Test-Path -LiteralPath $poolPath) {
     $poolContent = Get-Content -LiteralPath $poolPath -Raw -Encoding UTF8
-    $section2 = if ($poolContent -match "(?s)## 二、.*?(?=## 三、)") { $matches[0] } else { "" }
+    $section2 = if ($poolContent -match "(?s)## (?:二、|2\.).*?(?=## (?:三、|3\.))") { $matches[0] } else { "" }
     $poolRows = ([regex]::Matches($section2, "(?m)^\| \*\*")).Count
-    $claimMatch = [regex]::Match($poolContent, "\*\*v3\.\d+(?:\.\d+)?\*\*[^|]*\| \*\*当前\*\*[^|]*\| \*\*(\d+)")
+    $claimMatch = [regex]::Match($poolContent, "\*\*v3\.\d+(?:\.\d+)?\*\*[^|]*\| \*\*(?:当前|Current)\*\*[^|]*\| \*\*(\d+)")
     if ($claimMatch.Success) {
         $poolClaim = [int]$claimMatch.Groups[1].Value
         if ($poolRows -eq $poolClaim) {

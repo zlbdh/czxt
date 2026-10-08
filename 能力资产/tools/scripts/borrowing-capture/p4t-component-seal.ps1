@@ -24,7 +24,7 @@ function global:Get-BorrowingP4tComponentPaths {
         '能力资产\tools\scripts\borrowing-capture'
       )) {
       $directory = Join-Path $rootInfo.CanonicalPath $relative
-      # 最小化的合同 fixture 可以只提供无依赖的 main；一旦目录存在就必须完整固定其 PS1 集。
+      # A minimal contract fixture may provide only a dependency-free main; if a directory exists, pin its complete PS1 set.
       if (-not (Test-Path -LiteralPath $directory)) { continue }
       $directoryInfo = Get-BorrowingSafePathInfo $directory Directory $Stage `
         missing-trusted-component
@@ -100,7 +100,7 @@ function global:New-BorrowingP4tComponentSeal {
     foreach ($path in @(Get-BorrowingP4tComponentPaths $Root preflight)) {
       $before = Get-BorrowingSafePathInfo $path File preflight `
         missing-trusted-component
-      # FileShare.Read 保留读取能力，但在两道 gate 之间禁止写入、删除和改名。
+      # FileShare.Read permits reads but prevents writes, deletion, and renaming between the two gates.
       $current = New-Object IO.FileStream(
         $before.CanonicalPath, [IO.FileMode]::Open, [IO.FileAccess]::Read,
         [IO.FileShare]::Read)

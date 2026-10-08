@@ -3,102 +3,102 @@ name: subagent-dispatch-mechanism
 scope: project
 type: semantic
 loaded: on-demand
-description: PM 职责层与子 agent 执行层分离 / 项目 PM 统一调度真实子 agent 的入口规则
+description: Separate PM responsibilities from subagent execution; the Project PM centrally dispatches real subagents.
 ---
 
-# 子 agent 调度机制
+# Subagent Dispatch
 
-> 核心原则：**PM 是职责与权限，agent 是一次性执行实例**。  
-> 对外身份永远是项目 PM「咪咪」；真实子 agent 由项目 PM统一调度、限定边界、验收结果。
+> Core principle: **a PM defines responsibilities and permissions; an agent is a temporary execution instance**.  
+> The external identity is always Project PM “Mimi”. The Project PM centrally dispatches real subagents, limits their scope, and accepts their results.
 
-本文件保留高频入口和硬规则。背景解释、完整映射、B-lite 历史和能力资产关系见 [`子agent调度机制-附录.md`](子agent调度机制-附录.md)。
+This file contains frequent-use entry points and mandatory rules. See the [appendix](子agent调度机制-附录.md) for background, the complete mapping, B-lite history, and the relationship to capability assets.
 
-## 一、三层模型
+## 1. Three-layer model
 
-| 层 | 定义 | 谁负责 |
+| Layer | Definition | Owner |
 |---|---|---|
-| PM 职责层 | 9 PM 抽象角色、路径白名单、决策边界 | `操作系统/02_智能体/` + `角色边界.md` |
-| 调度层 | 判断是否开 agent、拆任务、限定路径、验收 | 项目 PM「咪咪」 |
-| 执行实例层 | explorer / worker / 其他 runtime 子 agent | 当前 Codex subagent runtime 或未来执行型 agent |
+| PM responsibilities | Nine abstract PM roles, path allowlists, and decision boundaries | `操作系统/02_智能体/` and `角色边界.md` |
+| Dispatch | Decide whether to instantiate agents, split tasks, bound paths, and accept results | Project PM “Mimi” |
+| Execution instances | Explorers, workers, or other runtime subagents | Current Codex subagent runtime or future execution agents |
 
-硬规则：
-- **生成权（spawn）+ 验收权仍在项目 PM「咪咪」**，各 PM 不自治乱开、不下放 spawn 权。
-- **禁嵌套自治派 agent / 验收恒单点**：worker / explorer 不得自己再 spawn 子 agent；需要帮手时回流项目 PM，由项目 PM 派平级 agent 并验收。
-- agent 是执行实例，不改变 PM 权责；对外身份仍是项目 PM「咪咪」（ADR-031）。
+Mandatory rules:
+- **Spawn and acceptance authority remain with Project PM “Mimi”**. Individual PMs do not spawn autonomously; spawn authority is not delegated.
+- **No nested autonomous dispatch; acceptance always has one owner**. Workers and explorers must not spawn further subagents. Return requests for help to the Project PM, who dispatches peer agents and accepts their work.
+- Agents are execution instances and do not change PM permissions or responsibilities. The external identity remains Project PM “Mimi” (ADR-031).
 
-## 二、默认触发规则
+## 2. Default triggers
 
-### 默认要开 agent
+### Instantiate an agent by default
 
-| 场景 | 推荐 agent | 口径 |
+| Scenario | Recommended agent | Rule |
 |---|---|---|
-| 新增功能 + 多文件实现 | worker | 开发 PM「实施者」实例，限定 `{{APP_REPO_DIR}}/src/` |
-| 实现与只读诊断可并行 | worker + explorer | worker 写实现，explorer 查风险或历史模式 |
-| 2 个以上独立代码问题 | 多个 explorer | 每个问题自包含，不重复查同一件事 |
-| 工作流明写 subagent / 多 agent | 对应 agent | 必须真实派发，不能口头代替 |
-| 大范围重构且写集可分离 | 多个 worker | 每个 worker 必须有互斥写入范围 |
-| framework 写入（操作系统 PM「框架管家」） | worker | 非单源 framework 文件默认派 worker；单源禁并行文件只起草、主会话落最后一笔 |
+| New feature across multiple files | Worker | Development PM “Implementer” instance, limited to `{{APP_REPO_DIR}}/src/`. |
+| Implementation and read-only diagnosis can proceed in parallel | Worker + explorer | Worker implements; explorer examines risks or historical patterns. |
+| Two or more independent code issues | Multiple explorers | Each issue is self-contained; do not duplicate the same investigation. |
+| Workflow explicitly requires subagents or multiple agents | Corresponding agents | Actually dispatch them; a verbal role change is not a substitute. |
+| Broad refactoring with separable write sets | Multiple workers | Each worker must have a disjoint write scope. |
+| Framework writes by Operating System PM “Framework Steward” | Worker | Delegate nonsingle-source framework files by default. For single-source files that prohibit parallel writes, agents draft and the main session performs the final write. |
 
-### 默认由主会话单点收口
+### Close through the main session by default
 
-| 场景 | 原因 |
+| Scenario | Reason |
 |---|---|
-| `commit` / `tag` / `push` / version bump | 发布状态强串行，归测试发布 PM「闭环者」主控 |
-| APK / 真机 smoke / `状态.md` / 交接卡收口 | 需要单一事实源，避免多 agent 写乱 |
-| 单源禁并行文件写入 | 强串行单 append 点，无 worktree 兜底；agent 只起草，主会话落最后一笔 |
-| API key / baseUrl / 用户数据删除 | 敏感边界，不交给子 agent |
-| 小型、不可并行、无独立审计价值且下一步立即阻塞的动作 | 主会话自己做，避免等待损耗 |
+| `commit`, `tag`, `push`, or version bump | Release state is strictly sequential, controlled by Test and Release PM “Closer”. |
+| APK, physical-device smoke, `状态.md`, or final handoff card | A single source of truth prevents conflicting agent writes. |
+| Writes to single-source files that prohibit parallel writes | Strictly sequential, one append point, and no worktree protection. Agents draft; the main session performs the final write. |
+| API key, baseUrl, or user-data deletion | Sensitive boundaries are not delegated to subagents. |
+| Small, nonparallel work with no independent audit value that immediately blocks the next step | The main session handles it to avoid waiting overhead. |
 
-单源禁并行文件：`状态.md` / `交接区/` / `CHANGELOG.md` / `元规则池.md` / `角色边界.md` / `子agent调度机制.md`。
+Single-source files that prohibit parallel writes: `状态.md` / `交接区/` / `CHANGELOG.md` / `元规则池.md` / `角色边界.md` / `子agent调度机制.md`.
 
-## 三、framework 写入受控并行（B-lite / PROP-044 approve 2026-06-14）
+## 3. Controlled parallel framework writes: B-lite / PROP-044 approved 2026-06-14
 
-本节是**多 worker 平级并行**改 framework，不是 worker 嵌套派 agent。仅当全部满足以下条件才可派：
+This means **multiple peer workers writing framework files**, not workers dispatching nested agents. Dispatch is allowed only when all conditions hold:
 
-1. **写集大**：≥6 个独立文件，小批量单线程即可。
-2. **写集互斥**：每个 worker 有明确、不重叠的写入文件清单，派工卡必填。
-3. **主会话单点合并 + 体检 gate**：worker 返回后，项目 PM核对越界并跑 `能力资产/tools/scripts/check-operating-system.ps1`，以当前 P4a-P4t 输出为准。
+1. **Large write set**: at least six independent files; small batches can stay sequential.
+2. **Disjoint writes**: every worker has an explicit, nonoverlapping file list in its assignment.
+3. **Main-session integration and health gate**: after workers return, the Project PM checks boundaries and runs `能力资产/tools/scripts/check-operating-system.ps1`, using the current P4a–P4t output.
 
-⛔ 永远单点、禁并行写：`状态.md` · `交接区/` · `CHANGELOG.md` · `元规则池.md` · `角色边界.md` · `子agent调度机制.md`。
+⛔ Always one writer; no parallel writes: `状态.md` · `交接区/` · `CHANGELOG.md` · `元规则池.md` · `角色边界.md` · `子agent调度机制.md`.
 
-## 四、PM 到 agent 的映射速查
+## 4. Quick PM-to-agent mapping
 
-- 项目 PM「咪咪」不实例化为子 agent；主会话保留全局调度与验收。
-- 写入型 PM 默认 worker；只读诊断型 PM 默认 explorer；测试发布 PM 的发布动作单点不外包。
-- 完整 9 PM 映射、典型方式和写入边界见 [`子agent调度机制-附录.md`](子agent调度机制-附录.md)。
+- Project PM “Mimi” is not instantiated as a subagent; the main session retains global dispatch and acceptance.
+- Writing PMs default to workers; read-only diagnostic PMs default to explorers. The Test and Release PM's release actions remain centralized and are not delegated.
+- See the [appendix](子agent调度机制-附录.md) for all nine PM mappings, common uses, and write boundaries.
 
-## 五、派工卡必填字段
+## 5. Required assignment fields
 
-每个子 agent brief 必须自包含：
+Every subagent brief must be self-contained:
 
-- 角色与任务目标
-- 工作目录、允许读取、允许写入
-- 写集互斥声明
-- 禁止事项
-- 输入材料、完成标准、输出格式
+- Role and task objective.
+- Working directory, allowed reads, and allowed writes.
+- Disjoint-write declaration.
+- Prohibited actions.
+- Inputs, completion criteria, and output format.
 
-完整模板见 [`子agent调度机制-附录.md`](子agent调度机制-附录.md)。
+See the [full template](子agent调度机制-附录.md).
 
-## 六、主会话验收责任
+## 6. Main-session acceptance duties
 
-子 agent 返回后，项目 PM必须：
+When a subagent returns, the Project PM must:
 
-1. 读取其变更或结论。
-2. 核对是否越权。
-3. 跑必要测试 / 体检。
-4. 由主会话决定接纳、修正或回退。
-5. 发布、状态、交接、PM 轨迹由主会话统一收口。
-6. 最终 chat ①-⑦ 说明是否真实开过 agent。
+1. Read its changes or findings.
+2. Check for permission violations.
+3. Run necessary tests and health checks.
+4. Decide in the main session whether to accept, correct, or revert the work.
+5. Centrally finalize publication, status, handoff, and PM transition records.
+6. State in the final seven-part chat handoff whether agents were actually instantiated.
 
-## 七、一句话执行口径
+## 7. Execution rule
 
-> **除项目 PM 主会话外，每个 PM 的实际工作默认实例化为真实 agent（写=worker / 只读=explorer）**；单源禁并行文件 agent **起草**、主会话**落最后一笔**；发布动作单点不外包；**不嵌套自治派 agent（worker 不自己 spawn 子 agent，要帮手回流由项目 PM 派平级）、验收恒单点在项目 PM**；项目 PM「咪咪」持**唯一调度权 + 验收权（spawn 权不下放 / 各 PM 不自治乱开）**，并对调度与结果负责。
+> **Except for the Project PM's main session, each PM's actual work defaults to a real agent instance: worker for writes, explorer for read-only work**. For single-source files that prohibit parallel writes, agents **draft** and the main session **performs the final write**. Release actions remain centralized and are not delegated. **No nested autonomous dispatch: workers do not spawn subagents; they return requests for help so the Project PM can dispatch peers. Acceptance always remains with the Project PM**. Project PM “Mimi” retains **exclusive dispatch and acceptance authority: spawn authority is not delegated and individual PMs do not spawn autonomously**, and is accountable for both dispatch and results.
 
-## 八、关联
+## 8. Related documents
 
-- [`子agent调度机制-附录.md`](子agent调度机制-附录.md) — 背景、完整映射、B-lite 历史、能力资产关系
-- [`角色边界.md`](角色边界.md) — 9 PM 路径白名单
-- [`工具载体矩阵.md`](工具载体矩阵.md) — PM 角色与工具载体解耦
-- [`../02_智能体/README.md`](../02_智能体/README.md) — 9 PM playbook 入口
-- [`../07_完整工作流/decision-checkpoint.md`](../07_完整工作流/decision-checkpoint.md) — 切角色 Q1-Q7（含 agent 实例化判定）
-- [`../../能力资产/agents/README.md`](../../能力资产/agents/README.md) — 可复用执行型 agent 资产目录
+- [Dispatch appendix](子agent调度机制-附录.md): background, complete mapping, B-lite history, and capability assets.
+- [Role boundaries](角色边界.md): nine-PM path allowlists.
+- [Tool matrix](工具载体矩阵.md): decouple PM roles from tools.
+- [Agent entry point](../02_智能体/README.md): nine PM playbooks.
+- [Decision checkpoint](../07_完整工作流/decision-checkpoint.md): Q1–Q7 at role transitions, including agent-instantiation decisions.
+- [Capability agents](../../能力资产/agents/README.md): reusable execution-agent assets.

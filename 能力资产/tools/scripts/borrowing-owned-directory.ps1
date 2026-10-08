@@ -366,10 +366,10 @@ function ConvertFrom-BctNativeDirectoryPath {
   param([string]$Path)
   $canonical = $Path.Normalize([Text.NormalizationForm]::FormC).Replace('/', '\')
   Assert-BciCondition ($canonical.StartsWith('\\?\', [StringComparison]::Ordinal) -and
-      $canonical.Length -ge 7) 'close staging 原子目录最终路径无效'
+      $canonical.Length -ge 7) 'close staging atomic directory final path is invalid'
   $canonical = $canonical.Substring(4)
   Assert-BciCondition ($canonical -match '\A[A-Za-z]:\\') `
-    'close staging 原子目录不是盘符路径'
+    'close staging atomic directory is not a drive-letter path'
   return $canonical.Substring(0, 1).ToUpperInvariant() + $canonical.Substring(1)
 }
 
@@ -378,7 +378,7 @@ function Open-BctOwnedParentDirectory {
   Assert-BciCondition ($null -ne $Expected -and
       -not [string]::IsNullOrWhiteSpace([string]$Expected.CanonicalPath) -and
       -not [string]::IsNullOrWhiteSpace([string]$Expected.IdentityKey)) `
-    'close staging 缺少受信父目录快照'
+    'close staging is missing a trusted parent directory snapshot'
   $lease = $null
   try {
     $lease = [Czxt.B.AtomicDirectoryLease]::OpenExisting(
@@ -387,11 +387,11 @@ function Open-BctOwnedParentDirectory {
     Assert-BciCondition ([string]::Equals(
         $canonical, [string]$Expected.CanonicalPath,
         [StringComparison]::OrdinalIgnoreCase)) `
-      'close staging 父目录物理路径改变'
+      'close staging parent directory physical path changed'
     $identity = '{0:x8}:{1:x8}:{2:x8}' -f `
       $lease.VolumeSerialNumber, $lease.FileIndexHigh, $lease.FileIndexLow
     Assert-BciCondition ($identity -ceq [string]$Expected.IdentityKey) `
-      'close staging 父目录身份改变'
+      'close staging parent directory identity changed'
     return [pscustomobject]@{
       Path = $canonical
       CanonicalPath = $canonical
@@ -418,7 +418,7 @@ function New-BctOwnedDirectory {
     $canonical = ConvertFrom-BctNativeDirectoryPath $lease.FinalPath
     Assert-BciCondition ([string]::Equals(
         $canonical, $expected, [StringComparison]::OrdinalIgnoreCase)) `
-      'close staging 原子目录物理路径改变'
+      'close staging atomic directory physical path changed'
     return [pscustomobject]@{
       Path = $canonical
       CanonicalPath = $canonical
@@ -438,7 +438,7 @@ function New-BctOwnedDirectory {
     try { $parentLease.Native.Dispose() } catch { }
     $parentLease.Native = $null
     if ($null -ne $cleanupFailure) {
-      throw ('close staging 原子目录验证失败且同句柄补偿失败：' +
+      throw ('close staging atomic directory validation and same-handle compensation both failed: ' +
         $cleanupFailure.Exception.Message)
     }
     throw $creationFailure
@@ -448,9 +448,9 @@ function New-BctOwnedDirectory {
 function Assert-BctOwnedDirectoryLease {
   param($Directory)
   Assert-BciCondition ($null -ne $Directory -and $null -ne $Directory.Native) `
-    'close staging 缺少原子目录 lease'
+    'close staging is missing the atomic directory lease'
   Assert-BciCondition ($null -ne $Directory.Parent -and
-      $null -ne $Directory.Parent.Native) 'close staging 缺少父目录 lease'
+      $null -ne $Directory.Parent.Native) 'close staging is missing the parent directory lease'
   $Directory.Parent.Native.Verify()
   $Directory.Native.Verify()
 }
@@ -477,5 +477,5 @@ function Remove-BctOwnedDirectory {
   }
   finally { Close-BctOwnedDirectoryLease $Directory }
   Assert-BciCondition (-not [IO.Directory]::Exists([string]$Directory.Path)) `
-    'close staging 原子目录删除后仍存在'
+    'close staging atomic directory still exists after deletion'
 }

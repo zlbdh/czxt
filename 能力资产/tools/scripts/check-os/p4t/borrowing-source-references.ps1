@@ -13,9 +13,10 @@ function global:Get-BorrowingP4tItemReferences {
       $statusMatches = [regex]::Matches($text, '(?m)^lifecycle_status: ([a-z_]+)$')
       if ($statusMatches.Count -ne 1) { throw 'item status invalid' }
       $status = $statusMatches[0].Groups[1].Value
-      $section = [regex]::Match($text,
-        '(?ms)^## 来源绑定\n.*?^\|---\|---\|---\|---\|\n(?<rows>(?:\| .*? \|\n)+)')
-      if (-not $section.Success) { throw 'item bindings invalid' }
+      $sections = [regex]::Matches($text,
+        '(?ms)^## (?:来源绑定|Source bindings)\n.*?^\|---\|---\|---\|---\|\n(?<rows>(?:\| .*? \|\n)+)')
+      if ($sections.Count -ne 1) { throw 'item bindings invalid' }
+      $section = $sections[0]
       foreach ($line in @($section.Groups['rows'].Value.TrimEnd("`n").Split("`n"))) {
         [string[]]$cells = ConvertFrom-BcvCardRow $line 4
         [void]$references.Add([pscustomobject]@{

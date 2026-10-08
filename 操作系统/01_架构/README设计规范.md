@@ -3,17 +3,17 @@ name: readme-design-spec
 scope: project
 type: semantic
 loaded: on-demand
-description: README 体系设计规范（议题 DN / task #120）— 必含 3 段 + frontmatter + 更新触发 + 议题 BE 起手必查防御
+description: README design standard (issue DN / task #120) — three required sections, frontmatter, update triggers, and issue BE startup safeguards.
 ---
 
-# README 设计 + 更新规范（议题 DN / Sprint-10 沉淀）
+# README Design and Maintenance Standard (Issue DN / Sprint-10)
 
-> ⭐ **背景**：Sprint-10 体检发现 31 个 README 中 3 个严重过时（项目根写 v2.3 实际 v3.10.0 / 02_智能体 还列旧 PM-产品经理 / PM工作区写 6 PM 实际 9 PM）。这些 README 是议题 BE 起手必查的真威胁 —— 新会话读到过时版会带偏判断。
-> ⭐ **依据**：PROP-040 task #120 + PM 自纠 #88（误判 ADR-007 历史档案）/ PM 自纠 #89（体检字节盲区）
+> ⭐ **Background**: The Sprint-10 README health check reviewed 31 files and found three seriously outdated entries: the project root said v2.3 while the actual version was v3.10.0; `02_智能体` still listed the old Product Manager PM; and the PM workspace said six PMs instead of nine. These READMEs threaten issue BE's mandatory startup checks because stale entry points misdirect new sessions.
+> ⭐ **Basis**: PROP-040 task #120, PM self-correction #88 (misclassification of the ADR-007 historical archive), and PM self-correction #89 (health-check byte-size blind spot).
 
 ---
 
-## 一、必含 3 段（任何 README 不可缺）
+## 1. Three required sections in every README
 
 ```markdown
 ---
@@ -21,101 +21,101 @@ name: <kebab-case-slug>
 scope: project | agent | session
 type: semantic | procedural
 loaded: always | on-demand | triggered
-description: <一句话 ≤120 字 / 含核心范围>
+description: <one sentence, at most 120 characters, including the core scope>
 ---
 
-# <目录名> — <一句话定位>
+# <Directory name> — <one-sentence purpose>
 
-## 这一组讲什么（30 秒读懂）
+## What this group covers (30-second overview)
 
-## 文件清单（表格 / 每行 ≤80 字）
+## File list (table; at most 80 characters per row)
 
-## 跟其他分组的区别（防混淆）
+## How this group differs from others
 ```
 
-可选第 4 段「关联」/ 第 5 段「速记」(<500B 才加 / 议题 CO 极简)。
+Optional section 4, “Related documents”, and section 5, “Quick reference”: add only when below 500B, following issue CO's minimalism.
 
 ---
 
-## 二、按 scope 分类设计
+## 2. Design by scope
 
-| 路径 | scope | type | loaded | 典型 |
+| Path | scope | type | loaded | Typical use |
 |---|---|---|---|---|
-| 项目根 `README.md` | project | semantic | always | 含"AI 新会话第一动作" |
-| `操作系统/*/README.md` | project | semantic | on-demand | framework 子分组入口 |
-| `能力资产/*/README.md` | project | semantic/procedural | on-demand | 执行能力子分组 |
-| `PM工作区/<PM>/README.md` | **agent** | semantic | on-demand | 私人工作区入口 / `agent: <PM 名>` |
-| `Docs/*/README.md` | project | semantic | on-demand | 文档分组（ADR/RETRO 列表）|
+| Root `README.md` | project | semantic | always | Includes the first action for a new AI session. |
+| `操作系统/*/README.md` | project | semantic | on-demand | Framework subgroup entry point. |
+| `能力资产/*/README.md` | project | semantic/procedural | on-demand | Execution-capability subgroup. |
+| `PM工作区/<PM>/README.md` | **agent** | semantic | on-demand | Private workspace entry point with `agent: <PM name>`. |
+| `Docs/*/README.md` | project | semantic | on-demand | Documentation group, such as ADR/RETRO lists. |
 
 ---
 
-## 三、更新触发（谁负责更新）
+## 3. Update triggers and owners
 
-| 触发场景 | 必更 README | 责任 PM |
+| Trigger | Required README update | Responsible PM |
 |---|---|---|
-| 业务新版本 ship | 项目根 README "当前最新 vX.Y.Z" | 项目 PM ship 收档时 |
-| 9 PM 矩阵升级（如 v3→v4 / 加新 PM） | `操作系统/02_智能体/README` + `PM工作区/README` + 项目根 README 9 PM 速记 | 操作系统 PM |
-| 新增 ADR | `Docs/3-开发文档/adr/README` | 操作系统 PM 起 ADR 时 |
-| Sprint 末 | 各 PM 工作区 README 速查表清单更新 | 沉淀 PM 体检维护 |
-| 新建/重命名/合并目录 | 父级 README 文件清单 | 操作系统 PM |
+| Ship a new application version | Root README's current vX.Y.Z | Project PM during release archival. |
+| Upgrade the nine-PM matrix, such as v3 → v4 or adding a PM | `操作系统/02_智能体/README`, `PM工作区/README`, and the root README's nine-PM summary | Operating System PM. |
+| Add an ADR | `Docs/3-开发文档/adr/README` | Operating System PM when creating the ADR. |
+| End of Sprint | Refresh each PM workspace README's quick-reference list | Knowledge PM during health-check maintenance. |
+| Create, rename, or merge a directory | Parent README's file list | Operating System PM. |
 
 ---
 
-## 四、议题 DN 体检 SOP（PM 自纠 #88 + #89 教训永久化）
+## 4. Issue DN health-check procedure: permanent lessons from self-corrections #88 and #89
 
-体检 README 时**必跑 3 步**:
+Perform **all three steps** when checking READMEs:
 
-1. **看版本号**:项目根 README "当前最新 vX.Y.Z" 是否等于 `{{APP_REPO_DIR}}/package.json` version？
-2. **看架构号**:涉及 9 PM 矩阵的 README 是否含 "v4.0" / "9 PM × 4 层" 关键词？
-3. **看历史档案**:大文件 >8KB 判"该拆"前**必看文件内是否有"保留作历史档案" / ADR-007 类说明**（PM 自纠 #88 教训）
+1. **Version**: does the current vX.Y.Z in the root README match `{{APP_REPO_DIR}}/package.json` version?
+2. **Architecture**: do READMEs covering the nine-PM matrix include “v4.0” or “9 PMs across 4 layers”?
+3. **Historical records**: before deciding to split a file above 8KB, **check for a historical-record preservation notice or an ADR-007-style explanation** (self-correction #88).
 
-体检大文件 >8KB 必跟"可拆性 vs 核心性"判定（PM 自纠 #89 教训）:
-- 先 `awk` 段字节分布
-- 评估每段是"案例/历史长尾"还是"必要核心"
-- 只对"长尾段 ≥30% 文件大小"建议拆
+For files above 8KB, distinguish splittable material from essential content (self-correction #89):
+- First inspect section byte sizes with `awk`.
+- Determine whether each section contains examples/historical detail or essential core material.
+- Recommend splitting only when the non-core sections account for at least 30% of the file.
 
 ---
 
-## 五、🆕 列表类 README 一致性核查（ADR-032 v2 决定 6）
+## 5. 🆕 Consistency checks for list READMEs (ADR-032 v2 decision 6)
 
-任何"索引 / 列表 / 汇总"类 README/.md **必跟实际文件数同步**:
+Every README or Markdown index, list, or summary **must agree with the actual file count**:
 
-| 列表类文件 | 一致性核对 |
+| List document | Cross-check |
 |---|---|
-| `Docs/3-开发文档/adr/README.md` 表格 | vs `ls Docs/3-开发文档/adr/ADR-*.md \| wc -l` |
-| `操作系统/04_台账/议题全景.md` ADR 永久现行表 | vs ADR 文件中议题永久化类数 |
-| `操作系统/01_架构/元规则池.md` "v3.X / N 永久" 字段 | vs 二表行数 |
+| Table in `Docs/3-开发文档/adr/README.md` | `ls Docs/3-开发文档/adr/ADR-*.md \| wc -l` |
+| Permanent/current ADR table in `操作系统/04_台账/议题全景.md` | Number of ADR files that make issue rules permanent. |
+| “v3.X / N permanent” field in `操作系统/01_架构/元规则池.md` | Number of rows in section 2's table. |
 
-历史快照只作追溯抽检，不作为当前计数单一信息源；需要当前数字时回到活入口与自动守卫。
+Historical snapshots support traceability spot checks, not the sole source for current counts. Use active entry points and automated guards for current numbers.
 
-**操作系统 PM 起 ADR 时必须同步索引；只有“元规则类 ADR”才改元规则池**：
-1. ADR-XXX 文件新建
-2. ADR README 表格 +1 行
-3. 议题全景 ADR 表 +1 行
-4. 若 ADR 永久化协作铁律：元规则池 v3.X→v3.(X+1) + 二表 +1 行；普通 ADR 不强行写入元规则池
+**The Operating System PM must update indexes when creating an ADR. Update the meta-rule pool only for a meta-rule ADR**:
+1. Create ADR-XXX.
+2. Add one row to the ADR README table.
+3. Add one row to the issue-overview ADR table.
+4. If the ADR makes a collaboration rule permanent, advance the meta-rule pool from v3.X to v3.(X+1) and add one row to section 2. Do not force ordinary ADRs into the meta-rule pool.
 
-→ PM 自纠 #91 教训:软规则失守 = 列表类 README 长期过时 / 必双复核 + 终极自动化（PROP-038 Hooks）
+→ PM self-correction #91: failed soft rules leave list READMEs chronically stale. Require two checks and, ultimately, automation through PROP-038 Hooks.
 
-## 六、议题 BE 起手必查防御
+## 6. Issue BE startup-check safeguards
 
-README 是 always-loaded 高频入口。**过时 README = 议题 BE 起手必查崩塌**。
+READMEs are frequently used, always-loaded entry points. **An outdated README undermines issue BE's mandatory startup checks.**
 
-必查清单（每月一次 / 沉淀 PM 主导）:
-- [ ] 项目根 README 版本号对齐 {{APP_REPO_DIR}}/package.json
-- [ ] 操作系统/02_智能体/README 9 PM 清单对齐 [`角色边界.md`](角色边界.md)
-- [ ] PM工作区/README 9 PM 清单对齐
-- [ ] README frontmatter 覆盖与 P4g 输出一致（当前以 `check-operating-system.ps1` 为准）
-
----
-
-## 七、关联
-
-- PM 自纠 #88+#89 批次：[`../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-88+89-体检盲区-批次.md`](../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-88+89-体检盲区-批次.md)
-- 大文件治理现行边界：[`ADR-033`](../../Docs/3-开发文档/adr/ADR-033-大文件mount不可信.md)
-- 议题 CW scope schema：[`../05_记忆/scope-schema.md`](../05_记忆/scope-schema.md)
-- 议题 BE 起手必查：ADR-029
-- 沉淀 PM 速查表 D 类规则 9：[`../../PM工作区/沉淀PM-沉淀者/速查表/INDEX.md`](../../PM工作区/沉淀PM-沉淀者/速查表/INDEX.md)
+Required monthly checklist, led by the Knowledge PM:
+- [ ] Root README version matches `{{APP_REPO_DIR}}/package.json`.
+- [ ] Nine-PM list in `操作系统/02_智能体/README` matches [role boundaries](角色边界.md).
+- [ ] Nine-PM list in `PM工作区/README` matches.
+- [ ] README frontmatter coverage matches P4g output; `check-operating-system.ps1` is the current authority.
 
 ---
 
-⭐ **本规范已由 ADR-032 / ADR-032 v2 永久化；后续只维护当前口径，不再按候选状态处理。**
+## 7. Related documents
+
+- [PM self-corrections #88 and #89](../../PM工作区/项目PM-咪咪/PM自纠/PM自纠-88+89-体检盲区-批次.md).
+- [ADR-033](../../Docs/3-开发文档/adr/ADR-033-大文件mount不可信.md): current large-file governance boundaries.
+- [Scope schema](../05_记忆/scope-schema.md): issue CW.
+- ADR-029: issue BE mandatory startup checks.
+- [Knowledge PM quick reference](../../PM工作区/沉淀PM-沉淀者/速查表/INDEX.md): category D, rule 9.
+
+---
+
+⭐ **ADR-032 / ADR-032 v2 made this standard permanent. Maintain its current guidance; do not treat it as a candidate rule.**

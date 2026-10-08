@@ -3,90 +3,90 @@ name: project-memory-index
 scope: project
 type: semantic
 loaded: always
-description: 项目记忆索引 / 新会话起手必读 / 多运行时 / AppData memory 退役指针的单一入口
+description: Project memory index for new sessions and multiple runtimes; the single entry point for retired AppData memory pointers.
 ---
 
-# 项目记忆索引 · 新会话起手必读
+# Project Memory Index · Required for New Sessions
 
-> **单一入口原则**：所有跨对话必读内容先从本文件进入。AppData memory 已退役为指针；项目真相回到 `{{PROJECT_ROOT}}\` 内。
+> **Single entry point**: start here for required cross-conversation context. AppData memory has been retired to pointers; authoritative project information belongs under `{{PROJECT_ROOT}}\`.
 >
-> **起手 trigger**：按 `AGENTS.md` + `操作系统/00_总入口.md` 起手链路进入本文件；任何新对话 / 新 PM 接手 / Codex / Claude Code 启动时，读本文件后再按任务 follow 指针。
+> **Startup trigger**: reach this file through `AGENTS.md` and `操作系统/00_总入口.md`. At a new conversation, PM takeover, Codex launch, or Claude Code launch, read this index and follow only the pointers relevant to the task.
 >
-> **维护规则**：项目类信息指向 `Docs/`、`操作系统/`、`能力资产/` 真知识源；本文件只保留高频入口，不复制长历史正文。
+> **Maintenance**: point project information to authoritative sources in `Docs/`, `操作系统/`, and `能力资产/`. Keep frequent-use entry points here; do not duplicate long historical content.
 >
-> **scope schema**：记忆文件 frontmatter 规范见 [`scope-schema.md`](scope-schema.md)。
-
----
-
-## 一、用户身份与偏好
-
-### zlbdh（项目所有者，开发者本人）
-
-- **沟通语言**：中文优先，文档/方案/提交说明默认中文。
-- **决策模式**：给多选时必须明确推荐 + 1-3 条理由；不要用“我赌 / 我倾向”等弱化表述。
-- **PM 工作模式**：希望 PM 主动拍板、持续推进，不要每个小事都让他选。
-- **视觉偏好**：咪咪文人风 UI / 樱粉系视觉 / 温柔克制不油腻。
-- **私人边界**：眯的日记是私人项目，除非 zlbdh 主动提起，不主动交叉。
-- **角色定位**：zlbdh 是最终决策者 + 代码作者 + 真机 smoke 验证者。
-
-### 当前项目身份
-
-- **项目**：「{{PROJECT_NAME}}」（包名 `{{APP_ID}}` / 副标题按项目实例填写）
-- **代码路径**：`{{PROJECT_ROOT}}\{{APP_REPO_DIR}}\`
-- **当前版本**：以 `状态.md` 顶部快照 + `{{APP_REPO_DIR}}/package.json` + 最新已接收 ship 卡为准；若 `交接区/待接手/` 有 in-flight 卡则优先读待接手。
-- **仓库分支**：`main`（不是 master）。
-- **AI / 品牌口径**：供应商、模型、endpoint 与合规结论以项目实例真值为准；通用品牌术语及协议层 / 模型层边界见 [`../../能力资产/shared/品牌词典.md`](../../能力资产/shared/品牌词典.md)，模板不预设具体品牌、模型或合规结论。
+> **Scope schema**: see [memory frontmatter](scope-schema.md).
 
 ---
 
-## 二、行为反思入口
+## 1. User identity and preferences
 
-详细正文已拆到 [`行为反思.md`](行为反思.md)。起手只需按任务命中加载：
+### zlbdh: project owner and developer
 
-| 触发场景 | 必读 |
+- **Language**: converse with zlbdh in Chinese. Maintained project documentation, plans, and commit messages use English, following the current localization instruction.
+- **Decisions**: when presenting options, state a clear recommendation with one to three reasons. Avoid tentative phrasing such as “I bet” or “I lean toward”.
+- **PM working style**: make appropriate decisions and keep progressing; do not ask zlbdh to choose every minor detail.
+- **Visual preferences**: Mimi's literary UI style, cherry-pink palettes, and a gentle, restrained tone.
+- **Private boundary**: Mimi's Diary is a private project. Do not bring it into other work unless zlbdh raises it.
+- **Role**: zlbdh is the final decision maker, code author, and physical-device smoke-test verifier.
+
+### Current project identity
+
+- **Project**: {{PROJECT_NAME}}, package `{{APP_ID}}`; fill the subtitle from the project instance.
+- **Code path**: `{{PROJECT_ROOT}}\{{APP_REPO_DIR}}\`.
+- **Current version**: use the top snapshot in `状态.md`, `{{APP_REPO_DIR}}/package.json`, and the latest accepted ship card. Read any in-flight card in `交接区/待接手/` first.
+- **Branch**: `main`, not master.
+- **AI and branding**: providers, models, endpoints, and compliance conclusions come from the project instance source of truth. See the [brand dictionary](../../能力资产/shared/品牌词典.md) for generic terminology and protocol/model-layer boundaries. The template does not assume a particular brand, model, or compliance conclusion.
+
+---
+
+## 2. Behavioral reflection entry points
+
+The detailed content lives in [behavioral reflections](行为反思.md). Load sections according to the task:
+
+| Trigger | Required reflection |
 |---|---|
-| 准备推断代码/接口/模型状态 | 反思 1：先核实，不默认推测 |
-| 准备拍 UI / Tab / 路由 / 模块入口方案 | 反思 2：先 verify 真实代码 |
-| 准备给 Codex / Claude Code 写执行提示词 | 反思 3：提示词极简，细节放 handoff 卡 |
-| 准备起 handoff / ship 卡 | 反思 4：verify checklist |
-| 准备改 Cowork >6500B 或 Codex/Claude >8KB 文件 | 反思 5：大文件写入风险 |
-| 发现项目数据/配置/状态在项目外 | 反思 6：framework 项目外存储错向 |
-| 切 PM 帽子 / 长 session / 收尾输出 | 反思 7：PM 轨迹留痕防衰减 |
+| Inferring code, API, or model state | 1: verify first; do not assume. |
+| Deciding UI, tabs, routes, or module entry points | 2: verify actual code first. |
+| Writing execution prompts for Codex or Claude Code | 3: keep prompts minimal; put details in the handoff card. |
+| Creating a handoff or ship card | 4: verification checklist. |
+| Editing files above 6500B in Cowork or above 8KB in Codex/Claude | 5: large-file write risks. |
+| Finding project data, configuration, or state outside the project | 6: misplaced framework storage. |
+| Switching PM roles, working a long session, or delivering results | 7: prevent PM-transition recording from fading. |
 
 ---
 
-## 三、项目重要历史入口
+## 3. Important project-history entry points
 
-详细早期样本已拆到 [`项目历史指针.md`](项目历史指针.md)。当前判断优先读真知识源：
+Early examples live in [project-history pointers](项目历史指针.md). For current decisions, prioritize authoritative sources:
 
-| 内容 | 真知识源 |
+| Information | Authoritative source |
 |---|---|
-| 当前快照 / 待接手 | [`../../状态.md`](../../状态.md) + `交接区/待接手/` |
-| Sprint / 需求历史 | [`../../Docs/1-需求文档/`](../../Docs/1-需求文档/) |
-| ADR 完整索引 | [`../../Docs/3-开发文档/adr/README.md`](../../Docs/3-开发文档/adr/README.md) |
-| RETRO 完整索引 | [`../../Docs/7-复盘/README.md`](../../Docs/7-复盘/README.md) |
-| 元规则永久池 | [`../01_架构/元规则池.md`](../01_架构/元规则池.md) |
-| PM / agent / 角色边界 | [`../02_智能体/README.md`](../02_智能体/README.md) + [`../01_架构/角色边界.md`](../01_架构/角色边界.md) |
-| 工具治理 / hooks / 体检 | [`../06_工具治理/README.md`](../06_工具治理/README.md) + [`../../能力资产/tools/hooks/README.md`](../../能力资产/tools/hooks/README.md) |
-| 项目台账总入口 | [`../04_台账/INDEX.md`](../04_台账/INDEX.md) |
+| Current snapshot and pending handoffs | [Status](../../状态.md) and `交接区/待接手/`. |
+| Sprint and requirements history | [Requirements](../../Docs/1-需求文档/). |
+| Complete ADR index | [ADR index](../../Docs/3-开发文档/adr/README.md). |
+| Complete RETRO index | [RETRO index](../../Docs/7-复盘/README.md). |
+| Permanent meta-rule pool | [Meta-rule pool](../01_架构/元规则池.md). |
+| PMs, agents, and role boundaries | [Agent entry](../02_智能体/README.md) and [role boundaries](../01_架构/角色边界.md). |
+| Tool governance, hooks, and health checks | [Tool governance](../06_工具治理/README.md) and [hooks](../../能力资产/tools/hooks/README.md). |
+| Project ledgers | [Ledger index](../04_台账/INDEX.md). |
 
 ---
 
-## 四、起手必走 checklist（进入本文件后）
+## 4. Required checklist after reaching this file
 
-1. 确认已按 `AGENTS.md` + `操作系统/00_总入口.md` 进入本文件（已完成 = 你正在读）。
-2. Read [`../../状态.md`](../../状态.md) 顶部和最新 PM 切换轨迹。
-3. Read [`../00_总入口.md`](../00_总入口.md) 和 [`../01_架构/角色边界.md`](../01_架构/角色边界.md)。
-4. Read `交接区/待接手/` 最新卡（如有）。
-5. 跑 [`../../能力资产/skills/项目体检.md`](../../能力资产/skills/项目体检.md) 对应体检；动 framework 前后跑自动门禁。
-6. `git -C {{APP_REPO_DIR}} status --short --branch` verify 工作区（议题 BK / ADR-025）。
-7. 按当前任务加载 `PM工作区/<X-PM>/速查表/INDEX.md`，不要无差别灌 context。
+1. Confirm that you reached this file through `AGENTS.md` and `操作系统/00_总入口.md`; reading it completes this step.
+2. Read the top of [status](../../状态.md) and its latest PM-transition records.
+3. Read the [main entry](../00_总入口.md) and [role boundaries](../01_架构/角色边界.md).
+4. Read the latest card in `交接区/待接手/`, if present.
+5. Run the relevant [project health checks](../../能力资产/skills/项目体检.md). Run automated gates before and after framework changes.
+6. Verify the working tree with `git -C {{APP_REPO_DIR}} status --short --branch` (issue BK / ADR-025).
+7. Load `PM工作区/<X-PM>/速查表/INDEX.md` according to the current task; do not load context indiscriminately.
 
 ---
 
-## 五、维护与退役指针
+## 5. Maintenance and retired pointers
 
-- **维护责任**：项目 PM「咪咪」统筹；涉及记忆 framework 时切操作系统 PM「框架管家」。
-- **版本来源**：当前版本/Sprint 不在本文件硬编码，读 `状态.md` + `{{APP_REPO_DIR}}/package.json` + 完成卡。
-- **AppData memory**：仅保留为指针，不再作为项目真相；退役清单见 [`AppData-memory退役清单.md`](AppData-memory退役清单.md)。
-- **新建记忆文件**：先按 [`scope-schema.md`](scope-schema.md) 加 frontmatter，再从本入口或对应 README 建指针。
+- **Owner**: Project PM “Mimi” coordinates; switch to Operating System PM “Framework Steward” for memory-framework changes.
+- **Version source**: do not hardcode current version or Sprint here. Read `状态.md`, `{{APP_REPO_DIR}}/package.json`, and the completion card.
+- **AppData memory**: retained only as pointers; no longer authoritative for project facts. See the [retirement list](AppData-memory退役清单.md).
+- **New memory files**: add frontmatter according to the [scope schema](scope-schema.md), then link from this entry or the relevant README.

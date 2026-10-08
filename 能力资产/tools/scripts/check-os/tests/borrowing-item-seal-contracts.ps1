@@ -316,7 +316,7 @@ try {
     }
 
     Invoke-CzxtContract 'conditional replace stays completed after ignored pre-dispose hook failures' {
-      foreach ($failureContext in @('条件替换 backup ', '条件替换 commit target ')) {
+      foreach ($failureContext in @('conditional replacement backup ', 'conditional replacement commit target ')) {
         $slug = if ($failureContext.Contains('backup')) { 'backup' } else { 'target' }
         $directory = Join-Path $script:P4tFixtureRoot `
           ('seal-post-commit-close-' + $slug)

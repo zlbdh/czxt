@@ -181,7 +181,7 @@ function global:Get-BorrowingSafePathInfo {
     if ($candidate -ne $full -and -not $isDirectory) {
       Stop-Bsp $Stage $ReasonCode
     }
-    # 卷根 ADS 属卷元数据；目标及项目内祖先仍必查。
+    # Volume-root ADS is volume metadata; still check the target and all ancestors within the project.
     $isVolumeRoot = $candidate.Equals($root, [StringComparison]::OrdinalIgnoreCase)
     if ($candidate -eq $full -or
         (-not $AllowAncestorStreams -and -not $isVolumeRoot)) {

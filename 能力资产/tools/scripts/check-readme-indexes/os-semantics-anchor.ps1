@@ -42,7 +42,7 @@ foreach ($rel in @(
 )) {
   if ($rel -in @("AGENTS.md", "README.md")) {
     Assert-Contains $rel "lead, meta, decision, and implementation" "Current nine-PM layer terminology"
-  } elseif ($rel -in @("操作系统\00_总入口.md", "操作系统\01_架构\README.md")) {
+  } elseif ($rel -in @("操作系统\00_总入口.md", "操作系统\01_架构\README.md", "操作系统\01_架构\工具载体矩阵.md")) {
     Assert-Contains $rel "主-元-决策-实施|lead, meta, decision, and implementation" "Current nine-PM layer terminology"
   } else {
     Assert-Contains $rel "主-元-决策-实施" "9 PM 四层现行术语"
@@ -100,7 +100,7 @@ $candidateIds = @(
 foreach ($id in @($candidateIds | Where-Object { $permanentIds -contains $_ } | Sort-Object -Unique)) {
   Add-Failure "元规则候选编号已永久化仍在候选表：$id"
 }
-$declaredCandidate = [regex]::Match($candidateText, '## 一、(\d+) 候选元规则')
+$declaredCandidate = [regex]::Match($candidateText, '## (?:一、|1\. The )(\d+) (?:候选元规则|candidate meta-rules)')
 if ($declaredCandidate.Success -and [int]$declaredCandidate.Groups[1].Value -ne $candidateIds.Count) {
   Add-Failure "元规则候选数不一致：声明 $($declaredCandidate.Groups[1].Value) vs 表格 $($candidateIds.Count)"
 }

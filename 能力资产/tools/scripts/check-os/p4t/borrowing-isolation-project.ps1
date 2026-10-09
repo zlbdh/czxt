@@ -13,19 +13,19 @@ function global:Resolve-P4tIsolationAppRoot {
       })
   }
   catch {
-    Add-P4tIsolationFailure $Failures '项目配置目录缺失或不安全'
+    Add-P4tIsolationFailure $Failures 'The project-configuration directory is missing or unsafe'
     return $null
   }
 
   $concrete = @($configs | Where-Object { $_.Name -cne '_模板.project.json' })
   if ($concrete.Count -gt 0) { $configs = $concrete }
   if ($configs.Count -ne 1) {
-    Add-P4tIsolationFailure $Failures '项目卡缺失或不唯一，无法确定业务目录'
+    Add-P4tIsolationFailure $Failures 'The project card is missing or not unique; cannot determine the business directory'
     return $null
   }
 
   try {
-    # 先按安全路径 snapshot 的长度扣预算，再允许全量读取项目卡。
+    # Deduct the safe path snapshot length from the budget before allowing a full project-card read.
     Use-P4tIsolationProjectConfigBudget `
       $Budget ([uint64]$configs[0].Snapshot.Length)
     $configSnapshot = Read-P4tIsolationExpectedFullSnapshot `
@@ -59,7 +59,7 @@ function global:Resolve-P4tIsolationAppRoot {
     }
   }
   catch {
-    Add-P4tIsolationFailure $Failures '项目卡或业务目录无效'
+    Add-P4tIsolationFailure $Failures 'The project card or business directory is invalid'
     return $null
   }
 }

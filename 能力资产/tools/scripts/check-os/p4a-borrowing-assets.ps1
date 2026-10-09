@@ -171,7 +171,7 @@ function Test-CzxtBorrowingAssets {
     [object]$Passes
   )
   if ($RootMode -notin @('template', 'project')) {
-    $Failures.Add(('🔴 借鉴资产根模式非法：{0}' -f $RootMode))
+    $Failures.Add(('🔴 Invalid borrowing-asset root mode: {0}' -f $RootMode))
     return
   }
 

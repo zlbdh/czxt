@@ -158,7 +158,7 @@ if ($script:BorrowingAssetsHelperReady) {
     $passes = New-Object 'Collections.Generic.List[string]'
     Test-CzxtBorrowingAssets -Root $templateRoot -RootMode unknown `
       -Failures $failures -Passes $passes
-    Assert-CzxtTrue (($failures -join "`n").Contains('借鉴资产根模式非法')) `
+    Assert-CzxtTrue (($failures -join "`n").Contains('Invalid borrowing-asset root mode')) `
       'unknown mode was not rejected'
   }
 }

@@ -31,13 +31,13 @@ function global:Invoke-BorrowingP4tSourceCheck {
   if ($null -ne $safeRoot) {
     $detectedMode = Get-BorrowingP4tRootMode -Root $safeRoot
     if ($detectedMode -eq 'unknown') {
-      Add-BorrowingP4tSourceIssue $failures 'Root 缺 marker'
+      Add-BorrowingP4tSourceIssue $failures 'Root lacks a marker'
     }
     elseif ($detectedMode -eq 'conflict') {
-      Add-BorrowingP4tSourceIssue $failures 'Root marker 冲突'
+      Add-BorrowingP4tSourceIssue $failures 'Conflicting Root markers'
     }
     if ($suppliedMode -cne $detectedMode) {
-      Add-BorrowingP4tSourceIssue $failures 'RootMode 与传入 Mode 不一致'
+      Add-BorrowingP4tSourceIssue $failures 'RootMode does not match the supplied Mode'
     }
   }
   $byCapture = @{}; $byStableIdentity = @{}
@@ -68,7 +68,7 @@ function global:Invoke-BorrowingP4tSourceCheck {
             if ($candidate.IgnoredCacheState.State -ceq 'AllMissing' -and
                 $candidate.Permissions.StoragePolicy -ceq 'local-only') {
               Add-BorrowingP4tSourceIssue $warnings `
-                ('来源本地缓存缺失：' + $candidate.SourceId + '/' + $candidate.CaptureId)
+                ('Source local cache is missing: ' + $candidate.SourceId + '/' + $candidate.CaptureId)
             }
             elseif ($candidate.IgnoredCacheState.State -cne 'Healthy') {
               throw 'source cache is incomplete'
@@ -81,7 +81,7 @@ function global:Invoke-BorrowingP4tSourceCheck {
           }
           catch {
             Add-BorrowingP4tSourceIssue $failures `
-              ('来源 capture 无效：' + $inventoryEntry.SourceName + '/' + $captureDirectory.Name)
+              ('Invalid source capture: ' + $inventoryEntry.SourceName + '/' + $captureDirectory.Name)
           }
       }
       foreach ($reference in @(Get-BorrowingP4tItemReferences $safeRoot $failures)) {
@@ -91,7 +91,7 @@ function global:Invoke-BorrowingP4tSourceCheck {
             ($reference.Status -notin @('closed', 'cancelled') -and
               $candidate.CaptureStatus -cne 'ready')) {
           Add-BorrowingP4tSourceIssue $failures `
-            ('事项引用了不可用来源 capture：' + $reference.ItemId)
+            ('Item references an unavailable source capture: ' + $reference.ItemId)
         }
       }
     }

@@ -18,19 +18,19 @@ foreach ($file in Get-ChildItem -LiteralPath $activeDir -Filter "PROP-*.md" -Fil
 
   if ($text -match "(?i)\.env\.local|apiKey|baseUrl|API key") {
     if ($head -notmatch "三类行为铁律|ADR-022|真实 key|tracked 文件|B 类|C 类") {
-      Add-Failure "$rel 命中敏感配置但首屏缺 ADR-022 / B-C 边界"
+      Add-Failure "$rel contains sensitive configuration but lacks the ADR-022 / B-C boundary near the top"
     }
   }
 
   if ($text -match "(?i)\bpush\b|\btag\b|version|package\.json|APK") {
     if ($head -notmatch "ADR-016|测试发布 PM|B 类|失败.*停手|闭环者") {
-      Add-Failure "$rel 命中发布/git/version 语义但首屏缺 ADR-016 / 测试发布 PM 边界"
+      Add-Failure "$rel contains release/git/version semantics but lacks the ADR-016 / Test and Release PM boundary near the top"
     }
   }
 
   if ($text -match "backlog|待排期|待重审|待重估|外部能力跟踪|暂停") {
     if ($head -match "状态.*已审批\s*·\s*实施中" -and $head -notmatch "未收口") {
-      Add-Failure "$rel 是 backlog/待重估类 PROP 但首屏仍纯写实施中"
+      Add-Failure "$rel is a backlog/reassessment PROP but its opening still states only implementation in progress"
     }
   }
 }
@@ -39,13 +39,13 @@ $readmePath = Join-Path $Root "确认改动\README.md"
 if (Test-Path -LiteralPath $readmePath -PathType Leaf) {
   $readme = Get-Content -LiteralPath $readmePath -Raw -Encoding UTF8
   if ($readme -notmatch "已审批·未收口|Approved · Open" -or $readme -notmatch "待重估|await scheduling, rereview, external capability tracking, or reassessment") {
-    Add-Failure "确认改动 README 未把进行中目录说明为已审批·未收口 / 待重估"
+    Add-Failure "The confirmed-change README does not describe the active directory as approved but unclosed / awaiting reassessment"
   }
   if ($readme -match "PROP-012.*git tag / 发版 / API key 仍 C 类" -and $readme -notmatch "现行见.*三类行为铁律|当前.*三类行为铁律") {
-    Add-Failure "确认改动 README 的 PROP-012 摘要仍可能误导现行 git/tag/API 边界"
+    Add-Failure "The confirmed-change README summary for PROP-012 may still misrepresent current git/tag/API boundaries"
   }
 }
 
 if ($failures.Count -gt 0) { exit 10 }
-Write-Host "  ✅ 进行中 PROP 敏感配置/发布边界对齐" -ForegroundColor Green
+Write-Host "  ✅ Active PROP sensitive-configuration and release boundaries are aligned" -ForegroundColor Green
 exit 0

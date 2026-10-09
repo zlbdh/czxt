@@ -5,7 +5,7 @@ $borrowingP4tCaptureRoot = [IO.Path]::GetFullPath(
 foreach ($dependency in @('common.ps1', 'file-safety.ps1', 'trusted-file-read.ps1')) {
   $dependencyPath = Join-Path $borrowingP4tCaptureRoot $dependency
   if (-not (Test-Path -LiteralPath $dependencyPath -PathType Leaf)) {
-    throw ('P4t 缺少捕获公共依赖：{0}' -f $dependencyPath)
+    throw ('P4t lacks a shared capture dependency: {0}' -f $dependencyPath)
   }
   $null = . $dependencyPath
 }
@@ -15,7 +15,7 @@ function global:Resolve-BorrowingP4tSafeRoot {
   param([Parameter(Mandatory = $true)][string]$Root)
 
   try {
-    if ([string]::IsNullOrWhiteSpace($Root)) { throw 'Root 为空' }
+    if ([string]::IsNullOrWhiteSpace($Root)) { throw 'Root is empty' }
     $fullPath = [IO.Path]::GetFullPath($Root)
     $pathInfo = Get-BorrowingSafePathInfo -Path $fullPath -ExpectedKind Directory `
       -Stage 'p4t-root' -ReasonCode 'unsafe-root'

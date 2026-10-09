@@ -2,7 +2,7 @@
 name: "chat-summary-dedup"
 description: "Scan chat summary items ①-⑦ for repeated content before sending. Prevents PM self-correction #48."
 trigger: "After drafting the short chat summary and before sending"
-loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
+loaded: "Conditional loading; the PM dispatches when the trigger matches."
 ---
 
 # Quick Reference: Deduplicate Chat Summaries — Self-Correction #48

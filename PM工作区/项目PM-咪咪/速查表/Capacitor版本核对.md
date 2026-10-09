@@ -2,7 +2,7 @@
 name: "capacitor-version-verify"
 description: "Read {{APP_REPO_DIR}}/package.json before adding @capacitor/* dependencies to confirm the Capacitor major version. Prevents self-correction #46."
 trigger: "Before adding a new @capacitor/XXX dependency"
-loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
+loaded: "Conditional loading; the PM dispatches when the trigger matches."
 ---
 
 # Quick Reference: Capacitor Dependency Versions — Self-Correction #46

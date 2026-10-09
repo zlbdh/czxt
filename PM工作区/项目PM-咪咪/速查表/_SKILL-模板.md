@@ -1,7 +1,7 @@
 ---
 name: "skill-template"
 description: "Standard SKILL.md template under PROP-031 for PM quick references, using Progressive Context Loading."
-loaded: "参考文档（不会被加载，仅作为模板）"
+loaded: "Reference document; not loaded, used only as a template."
 ---
 
 # SKILL.md Template: Progressive Context Loading

@@ -114,7 +114,7 @@ function Test-CzxtBorrowingInstaller {
     foreach ($item in $copyItemsResult.Items) {
       $state = Get-CzxtBorrowingCopyItemState -Root $Root -Item $item
       if ($state -eq 'borrowing') {
-        $Failures.Add('🔴 实例化脚本 $copyItems 不得递归复制借鉴区')
+        $Failures.Add('🔴 Instantiation script $copyItems must not recursively copy the borrowing area')
         $copyItemsSafe = $false
         break
       }
@@ -129,18 +129,18 @@ function Test-CzxtBorrowingInstaller {
     $Passes.Add('Instantiation script excludes the borrowing area from recursive copying')
   }
   $anchors = @(
-    @($installerText, 'installer-borrowing-zone.ps1', '实例化脚本未加载借鉴区专用 helper'),
-    @($installerText, 'Copy-BorrowingZoneSkeleton', '实例化脚本未调用借鉴区专用复制'),
-    @($installerText, 'Test-CzxtBorrowingPlaceholderRewriteAllowed', '实例化脚本未保护借鉴卡片的占位符改写'),
-    @($helperText, 'installer-borrowing-skeleton.ps1', '借鉴区主 helper 未加载骨架 helper'),
-    @($skeletonText, 'function Copy-BorrowingZoneSkeleton', '借鉴区骨架 helper 缺专用复制函数'),
-    @($helperText, 'function Test-CzxtBorrowingPlaceholderRewriteAllowed', '借鉴区 helper 缺改写保护函数')
+    @($installerText, 'installer-borrowing-zone.ps1', 'Instantiation script does not load the dedicated borrowing-area helper', 'Instantiation script loads the dedicated borrowing-area helper'),
+    @($installerText, 'Copy-BorrowingZoneSkeleton', 'Instantiation script does not invoke dedicated borrowing-area copying', 'Instantiation script invokes dedicated borrowing-area copying'),
+    @($installerText, 'Test-CzxtBorrowingPlaceholderRewriteAllowed', 'Instantiation script does not protect borrowing-card placeholder rewrites', 'Instantiation script protects borrowing-card placeholder rewrites'),
+    @($helperText, 'installer-borrowing-skeleton.ps1', 'Main borrowing-area helper does not load the scaffold helper', 'Main borrowing-area helper loads the scaffold helper'),
+    @($skeletonText, 'function Copy-BorrowingZoneSkeleton', 'Borrowing-area scaffold helper lacks the dedicated copy function', 'Borrowing-area scaffold helper provides the dedicated copy function'),
+    @($helperText, 'function Test-CzxtBorrowingPlaceholderRewriteAllowed', 'Borrowing-area helper lacks the rewrite-protection function', 'Borrowing-area helper provides the rewrite-protection function')
   )
   foreach ($anchor in $anchors) {
     if (-not $anchor[0].Contains($anchor[1])) {
       $Failures.Add(('🔴 {0}' -f $anchor[2]))
     } else {
-      $Passes.Add($anchor[2].Replace('未', '已'))
+      $Passes.Add($anchor[3])
     }
   }
 }

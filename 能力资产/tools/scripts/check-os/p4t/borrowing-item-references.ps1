@@ -6,12 +6,12 @@ function global:New-BpiSourceIndex {
   if ($null -eq $SourceState -or
       $null -eq $SourceState.PSObject.Properties['ReadyCaptures'] -or
       $null -eq $SourceState.PSObject.Properties['RetiredCaptures']) {
-    Add-BpiFailure $Failures '来源检查结果缺少 ready/retired capture 集合'
+    Add-BpiFailure $Failures 'Source-check results lack the ready/retired capture collection'
     return $index
   }
   if ($null -ne $SourceState.PSObject.Properties['Failures'] -and
       @($SourceState.Failures).Count -gt 0) {
-    Add-BpiFailure $Failures '来源检查存在硬失败，事项引用不可判定'
+    Add-BpiFailure $Failures 'Source checks have hard failures; item references cannot be determined'
   }
   foreach ($group in @(
       [pscustomobject]@{ Records = @($SourceState.ReadyCaptures); Ready = $true },
@@ -33,7 +33,7 @@ function global:New-BpiSourceIndex {
           IsReady = [bool]$group.Ready; Record = $record
         }
       }
-      catch { Add-BpiFailure $Failures '来源检查结果包含无效 capture 记录' }
+      catch { Add-BpiFailure $Failures 'Source-check results contain an invalid capture record' }
     }
   }
   return $index
@@ -50,7 +50,7 @@ function global:Test-BpiEvidenceLocator {
     if (-not [string]::IsNullOrEmpty($uri.Query)) {
       try { $query = [Uri]::UnescapeDataString($uri.Query.Substring(1)) }
       catch { return $false }
-      # 普通公开查询可保留，但凭据参数名即使经过 URL 编码也不得进入事项卡。
+      # Ordinary public query parameters may remain, but credential parameter names must not enter item cards even when URL-encoded.
       $credentialName = '(?i)(?:(?:\A|[._-])(?:token|key|secret|password|credential|credentials|auth|authorization)(?:\z|[._-])|\A(?:access|refresh|id|bearer|api|client)(?:token|key|secret)\z)'
       foreach ($part in @($query -split '[&;]')) {
         if (($part -split '=', 2)[0] -match $credentialName) { return $false }
@@ -96,7 +96,7 @@ function global:Assert-BpiSourceBindings {
     if (-not $terminal -and -not $source.IsReady) {
       throw 'active item references retired capture'
     }
-    # reuse_scope 是互不推导的独立授权；每个绑定都必须精确满足当前内部决策。
+    # reuse_scope values are independent permissions with no implied derivation; each binding must exactly satisfy the current internal decision.
     if ($requiredReuseScope.Length -gt 0) {
       $permissions = $source.Record.PSObject.Properties['Permissions']
       if ($null -eq $permissions -or
@@ -127,7 +127,7 @@ function global:Assert-BpiSupersedesGraph {
         throw 'item supersedes target missing'
       }
       $target = $index[$current.Supersedes]
-      # supersedes 表示终态事项的合法修订，不能拿仍可继续编辑的活动事项做前身。
+      # supersedes represents a valid revision of a terminal item; an active item that remains editable cannot be its predecessor.
       if ($target.Status -cnotin @('closed', 'cancelled')) {
         throw 'item supersedes target is not terminal'
       }

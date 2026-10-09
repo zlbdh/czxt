@@ -99,7 +99,7 @@ if (Test-Path -LiteralPath $propReadmeI) {
     }
 } else {
     Write-Host "  🔴 确认改动/README.md is missing" -ForegroundColor Red
-    $failures += "确认改动/README.md 缺失"
+    $failures += "确认改动/README.md is missing"
 }
 
 if ($failures.Count -gt 0) {

@@ -25,7 +25,7 @@ function global:Get-BorrowingP4tItemReferences {
           })
       }
     }
-    catch { Add-BorrowingP4tSourceIssue $Failures ('无法安全验证事项来源引用：' + $directory.Name) }
+    catch { Add-BorrowingP4tSourceIssue $Failures ('Cannot safely verify item source references: ' + $directory.Name) }
   }
   return $references.ToArray()
 }

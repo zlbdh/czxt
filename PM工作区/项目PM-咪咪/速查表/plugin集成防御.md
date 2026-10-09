@@ -2,7 +2,7 @@
 name: "capacitor-plugin-defense"
 description: "Three Capacitor plugin safeguards: static imports, NotificationChannel creation, and cap sync. Prevents self-correction #47 / issue BC."
 trigger: "Before writing a Capacitor plugin integration handoff"
-loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
+loaded: "Conditional loading; the PM dispatches when the trigger matches."
 ---
 
 # Quick Reference: Three Capacitor Plugin Safeguards — Self-Correction #47

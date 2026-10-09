@@ -2,7 +2,7 @@
 name: "web-api-source-selection"
 description: "Source-selection matrix for navigator.*, Intl.*, and window.* APIs, covering Android WebView compatibility and recommended choices."
 trigger: "Before choosing a web API as an application data source"
-loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
+loaded: "Conditional loading; the PM dispatches when the trigger matches."
 ---
 
 # Quick Reference: Issue AT Web API Source Matrix

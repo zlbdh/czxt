@@ -11,7 +11,7 @@ function Add-Failure([string]$Message) {
 function Read-Text([string]$Rel) {
   $path = Join-Path $Root $Rel
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    Add-Failure "RETRO 历史锚点缺文件：$Rel"
+    Add-Failure "RETRO historical anchor file is missing: $Rel"
     return ""
   }
   return Get-Content -LiteralPath $path -Raw -Encoding UTF8
@@ -36,7 +36,7 @@ foreach ($required in @(
     $pattern += '|' + [regex]::Escape($readmeAliases[$required])
   }
   if ($readme -notmatch $pattern) {
-    Add-Failure "Docs/7-复盘/README.md 缺少历史覆盖说明锚点：$required"
+    Add-Failure "Docs/7-复盘/README.md lacks a historical-override notice anchor: $required"
   }
 }
 
@@ -46,52 +46,52 @@ if (Test-Path -LiteralPath $retroDir -PathType Container) {
     Where-Object { $_.Name -notmatch "候选" })
   $indexedRows = @([regex]::Matches($readme, '(?m)^\| \[RETRO-\d{3}\]')).Count
   if ($indexedRows -ne $officialRetros.Count) {
-    Add-Failure "RETRO README 索引行数不一致：README $indexedRows vs 文件 $($officialRetros.Count)"
+    Add-Failure "RETRO README index row count mismatch: README $indexedRows vs files $($officialRetros.Count)"
   }
   if ($readme -notmatch "P4i / readme-index|P4i, and README-index checks jointly compare this index with actual RETRO files\.") {
-    Add-Failure "RETRO README 未声明 P4i / readme-index 共同守索引"
+    Add-Failure "RETRO README does not declare that P4i / readme-index jointly maintain the index"
   }
 }
 
 $template = Read-Text "Docs/7-复盘/_模板.md"
 if ($template -match "agent/workflows|agent/skills|5 个必问|five mandatory questions") {
-  Add-Failure "RETRO 模板仍含旧路径或旧 5 问口径"
+  Add-Failure "The RETRO template still contains legacy paths or the old 5-question format"
 }
 
 $tasksHeadPath = Join-Path $Root "TASKS.md"
 if (Test-Path -LiteralPath $tasksHeadPath -PathType Leaf) {
   $tasksHead = (Get-Content -LiteralPath $tasksHeadPath -TotalCount 45 -Encoding UTF8) -join "`n"
   if (($tasksHead -match "TaskCreate|TaskUpdate") -and $tasksHead -notmatch "不再用 TaskCreate / TaskUpdate") {
-    Add-Failure "TASKS.md 顶部当前区仍把 TaskCreate/TaskUpdate 写作当前维护入口"
+    Add-Failure "The current section at the top of TASKS.md still names TaskCreate/TaskUpdate as the current maintenance entry"
   }
   if ($tasksHead -match "等 RETRO-012|议题 BW 接近永久关闭|如属议题 backl") {
-    Add-Failure "TASKS.md 顶部当前区仍含旧维护口径或已关闭 BW pending"
+    Add-Failure "The current section at the top of TASKS.md still contains an old maintenance convention or the closed BW pending item"
   }
 }
 
 $retro009 = Read-Text "Docs/7-复盘/RETRO-009-2026-05.md"
 if ($retro009 -match "git reset --hard HEAD|预批路径|preapproved path" -and $retro009 -notmatch "当前安全覆盖说明|Current safety override(?:\*\*)?:") {
-  Add-Failure "RETRO-009 含 reset 预批旧口径但缺当前安全覆盖说明"
+  Add-Failure "RETRO-009 contains the old reset preapproval convention but lacks the current safety override"
 }
 
 $retro010 = Read-Text "Docs/7-复盘/RETRO-010-2026-05.md"
 if ($retro010 -match "git reset --hard HEAD|预批|preapproved" -and $retro010 -notmatch "当前安全覆盖说明|Current safety override(?:\*\*)?:") {
-  Add-Failure "RETRO-010 含 reset 预批旧口径但缺当前安全覆盖说明"
+  Add-Failure "RETRO-010 contains the old reset preapproval convention but lacks the current safety override"
 }
 if ($retro010 -match "git push origin master" -and $retro010 -notmatch "当前分支覆盖说明|Current branch override:") {
-  Add-Failure "RETRO-010 含 master 旧口径但缺当前分支覆盖说明"
+  Add-Failure "RETRO-010 contains the old master convention but lacks the current branch override"
 }
 
 $retro013 = Read-Text "Docs/7-复盘/RETRO-013-2026-05.md"
 if ($retro013 -match "git reset --hard|预批 git reset|preapproved git reset" -and $retro013 -notmatch "当前安全覆盖说明|Current safety override(?:\*\*)?:") {
-  Add-Failure "RETRO-013 含 reset 旧口径但缺当前安全覆盖说明"
+  Add-Failure "RETRO-013 contains the old reset convention but lacks the current safety override"
 }
 
 $retro009Candidate = Read-Text "Docs/7-复盘/RETRO-009-候选议题.md"
 if ($retro009Candidate -match "agent/" -and $retro009Candidate -notmatch "历史链接说明|Historical links:") {
-  Add-Failure "RETRO-009 候选议题含 agent/ 旧链接但缺历史链接说明"
+  Add-Failure "RETRO-009 candidate issues contain legacy agent/ links without a historical-link notice"
 }
 
 if ($failures.Count -gt 0) { exit 10 }
-Write-Host "  ✅ RETRO 历史安全覆盖锚点对齐"
+Write-Host "  ✅ RETRO historical safety override anchors are aligned"
 exit 0

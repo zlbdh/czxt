@@ -20,7 +20,7 @@ function global:Test-P4tTemplateDirectoryShape {
       -Stage 'p4t-mode' -ReasonCode 'unsafe-template-path'
   }
   catch {
-    Add-P4tModeFailure $Failures ('模板目录无效：{0}' -f $Path)
+    Add-P4tModeFailure $Failures ('Invalid template directory: {0}' -f $Path)
     return
   }
 
@@ -28,7 +28,7 @@ function global:Test-P4tTemplateDirectoryShape {
   foreach ($name in $ExpectedFiles) {
     $entry = @($entries | Where-Object { -not $_.PSIsContainer -and $_.Name -ceq $name })
     if ($entry.Count -ne 1) {
-      Add-P4tModeFailure $Failures ('缺文件：{0}' -f (Join-Path $Path $name))
+      Add-P4tModeFailure $Failures ('Missing file: {0}' -f (Join-Path $Path $name))
       continue
     }
     try {
@@ -36,13 +36,13 @@ function global:Test-P4tTemplateDirectoryShape {
         -Stage 'p4t-mode' -ReasonCode 'unsafe-template-path'
     }
     catch {
-      Add-P4tModeFailure $Failures ('文件不安全：{0}' -f $entry[0].FullName)
+      Add-P4tModeFailure $Failures ('Unsafe file: {0}' -f $entry[0].FullName)
     }
   }
   foreach ($name in $ExpectedDirectories) {
     $entry = @($entries | Where-Object { $_.PSIsContainer -and $_.Name -ceq $name })
     if ($entry.Count -ne 1) {
-      Add-P4tModeFailure $Failures ('缺目录：{0}' -f (Join-Path $Path $name))
+      Add-P4tModeFailure $Failures ('Missing directory: {0}' -f (Join-Path $Path $name))
     }
   }
 
@@ -54,7 +54,7 @@ function global:Test-P4tTemplateDirectoryShape {
       $ExpectedFiles -ccontains $entry.Name
     }
     if (-not $allowed) {
-      Add-P4tModeFailure $Failures ('模板含具体项：{0}' -f $entry.FullName)
+      Add-P4tModeFailure $Failures ('The template contains a concrete item: {0}' -f $entry.FullName)
     }
   }
 }
@@ -67,7 +67,7 @@ function global:Get-P4tInstallerItems {
   $ast = [Management.Automation.Language.Parser]::ParseInput(
     $InstallerText, [ref]$tokens, [ref]$parseErrors)
   if ($parseErrors.Count -gt 0) {
-    return [pscustomobject]@{ Success = $false; Items = @(); Error = '实例化脚本解析失败' }
+    return [pscustomobject]@{ Success = $false; Items = @(); Error = 'Instantiation script could not be parsed' }
   }
   $assignments = @($ast.FindAll({
       param($node)
@@ -126,7 +126,7 @@ function global:Test-P4tInstallerContract {
       $texts[$entry.Name] = [IO.File]::ReadAllText($entry.Path)
     }
     catch {
-      Add-P4tModeFailure $Failures ('缺少/不安全：{0}' -f $entry.Path)
+      Add-P4tModeFailure $Failures ('Missing or unsafe: {0}' -f $entry.Path)
       $texts[$entry.Name] = ''
     }
   }
@@ -141,24 +141,24 @@ function global:Test-P4tInstallerContract {
     foreach ($item in $copyItems.Items) {
       try { $itemPath = [IO.Path]::GetFullPath((Join-Path $Root $item)) }
       catch {
-        Add-P4tModeFailure $Failures ('$copyItems 路径无效：{0}' -f $item)
+        Add-P4tModeFailure $Failures ('Invalid $copyItems path: {0}' -f $item)
         continue
       }
       if (-not (Test-P4tPathWithinRoot $itemPath $Root) -or
           (Test-P4tPathWithinRoot $borrowingRoot $itemPath) -or
           (Test-P4tPathWithinRoot $itemPath $borrowingRoot)) {
-        Add-P4tModeFailure $Failures '$copyItems 禁止借鉴区/越界'
+        Add-P4tModeFailure $Failures '$copyItems must not include the borrowing area or escape its bounds'
       }
     }
   }
 
   foreach ($anchor in @(
-      @($texts.installer, 'installer-borrowing-zone.ps1', '实例化脚本缺 helper'),
-      @($texts.installer, 'Copy-BorrowingZoneSkeleton', '实例化脚本缺专用复制'),
-      @($texts.installer, 'Test-CzxtBorrowingPlaceholderRewriteAllowed', '实例化脚本缺卡片保护'),
-      @($texts.zoneHelper, 'installer-borrowing-skeleton.ps1', 'helper 缺骨架 helper 加载'),
-      @($texts.zoneHelper, 'function Test-CzxtBorrowingPlaceholderRewriteAllowed', 'helper 缺改写保护'),
-      @($texts.skeletonHelper, 'function Copy-BorrowingZoneSkeleton', '骨架 helper 缺专用复制'))) {
+      @($texts.installer, 'installer-borrowing-zone.ps1', 'Instantiation script lacks a helper'),
+      @($texts.installer, 'Copy-BorrowingZoneSkeleton', 'Instantiation script lacks dedicated copying'),
+      @($texts.installer, 'Test-CzxtBorrowingPlaceholderRewriteAllowed', 'Instantiation script lacks card protection'),
+      @($texts.zoneHelper, 'installer-borrowing-skeleton.ps1', 'Helper does not load the scaffold helper'),
+      @($texts.zoneHelper, 'function Test-CzxtBorrowingPlaceholderRewriteAllowed', 'Helper lacks rewrite protection'),
+      @($texts.skeletonHelper, 'function Copy-BorrowingZoneSkeleton', 'Scaffold helper lacks dedicated copying'))) {
     if (-not $anchor[0].Contains($anchor[1])) {
       Add-P4tModeFailure $Failures $anchor[2]
     }
@@ -195,7 +195,7 @@ function global:Invoke-BorrowingP4tModeCheck {
     $safeRoot = Resolve-BorrowingP4tSafeRoot -Root $Root
   }
   catch {
-    Add-P4tModeFailure $failures 'Root 无效'
+    Add-P4tModeFailure $failures 'Invalid Root'
     return New-BorrowingP4tCheckResult -Mode $mode -Warnings $warnings -Failures $failures
   }
 
@@ -212,10 +212,10 @@ function global:Invoke-BorrowingP4tModeCheck {
   }
 
   if ($mode -eq 'unknown') {
-    Add-P4tModeFailure $failures 'Root 缺 marker'
+    Add-P4tModeFailure $failures 'Root lacks a marker'
   }
   elseif ($mode -eq 'conflict') {
-    Add-P4tModeFailure $failures 'Root marker 冲突'
+    Add-P4tModeFailure $failures 'Conflicting Root markers'
   }
   elseif ($mode -eq 'template') {
     Test-P4tTemplateSkeleton -Root $safeRoot -Failures $failures

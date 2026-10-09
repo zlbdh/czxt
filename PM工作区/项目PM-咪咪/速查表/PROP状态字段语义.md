@@ -2,7 +2,7 @@
 name: "prop-status-semantics"
 description: "Check completion criteria before changing PROP status. Prevents self-correction #44 across pending, approved, in_progress, completed, and rejected states."
 trigger: "Before changing a PROP status field"
-loaded: "条件加载（按 trigger 匹配时由 PM 调度）"
+loaded: "Conditional loading; the PM dispatches when the trigger matches."
 ---
 
 # Quick Reference: PROP Status Semantics — Self-Correction #44

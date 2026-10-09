@@ -12,7 +12,7 @@ function global:Test-BorrowingP4tIgnoreContract {
       }
     }
   }
-  catch { Add-BorrowingP4tSourceIssue $Failures '借鉴区 .gitignore 缺少来源缓存静态忽略规则' }
+  catch { Add-BorrowingP4tSourceIssue $Failures 'The borrowing-area .gitignore lacks static source-cache ignore rules' }
 }
 
 function global:Test-BorrowingP4tSourceSkeletonSafety {
@@ -23,7 +23,7 @@ function global:Test-BorrowingP4tSourceSkeletonSafety {
       throw 'source-card skeleton project name contains credential material'
     }
   }
-  catch { Add-BorrowingP4tSourceIssue $Failures '借鉴区来源卡模板缺失、不安全或含凭据' }
+  catch { Add-BorrowingP4tSourceIssue $Failures 'The borrowing source-card template is missing, unsafe, or contains credentials' }
 }
 
 function global:Get-BorrowingP4tTrackedSourceValues {

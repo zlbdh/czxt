@@ -19,17 +19,17 @@ function global:New-BpiValidationContext {
     $safeRoot = Resolve-BorrowingP4tSafeRoot -Root $Root
     $mode = Get-BpiRootMode $safeRoot
   }
-  catch { Add-BpiFailure $failures 'P4t item Root 无效或不安全' }
-  # 公开 leaf 必须自行 fail closed，不能把模式前置校验只寄托在 façade。
+  catch { Add-BpiFailure $failures 'P4t item Root is invalid or unsafe' }
+  # A public leaf must fail closed independently; it cannot rely only on facade mode preflight.
   if ($mode -cnotin @('project', 'template')) {
-    Add-BpiFailure $failures ('P4t item RootMode 无效：' + $mode)
+    Add-BpiFailure $failures ('Invalid P4t item RootMode: ' + $mode)
   }
   $sourceIndex = New-BpiSourceIndex $SourceState $failures
   $cards = @()
   if ($null -ne $safeRoot) {
     $cards = @(Get-BpiItemInventory $safeRoot $failures)
     try { Assert-BpiSupersedesGraph $cards }
-    catch { Add-BpiFailure $failures '借鉴事项 supersedes 引用缺失或成环' }
+    catch { Add-BpiFailure $failures 'A borrowing-item supersedes reference is missing or cyclic' }
   }
   return [pscustomobject]@{
     Root = $safeRoot; Mode = $mode; Cards = $cards
@@ -56,23 +56,23 @@ function global:Invoke-BpiSingleItemValidation {
   $target = $null
   try { $fullCardPath = [IO.Path]::GetFullPath($CardPath) }
   catch {
-    Add-BpiFailure $context.Failures '目标借鉴卡路径无效'
+    Add-BpiFailure $context.Failures 'The target borrowing-card path is invalid'
     $fullCardPath = ''
   }
   foreach ($card in $context.Cards) {
     if ($card.Path.Equals($fullCardPath, [StringComparison]::OrdinalIgnoreCase)) {
       if ($null -ne $target) {
-        Add-BpiFailure $context.Failures '目标借鉴卡路径不唯一'
+        Add-BpiFailure $context.Failures 'The target borrowing-card path is not unique'
       }
       $target = $card
     }
   }
-  if ($null -eq $target) { Add-BpiFailure $context.Failures '目标借鉴卡不在事项 inventory 中' }
+  if ($null -eq $target) { Add-BpiFailure $context.Failures 'The target borrowing card is absent from the item inventory' }
   else {
     try {
       Test-BpiCardContract $target $context -AllowEmptyClosedSeal:$AllowEmptyClosedSeal
     }
-    catch { Add-BpiFailure $context.Failures ('目标借鉴卡合同失败：' + $target.BorrowId) }
+    catch { Add-BpiFailure $context.Failures ('Target borrowing-card contract failed: ' + $target.BorrowId) }
   }
   return [pscustomobject][ordered]@{
     IsValid = $context.Failures.Count -eq 0
@@ -93,7 +93,7 @@ function global:Invoke-BorrowingP4tItemCheck {
   $context = New-BpiValidationContext $Root $SourceState
   foreach ($card in $context.Cards) {
     try { Test-BpiCardContract $card $context }
-    catch { Add-BpiFailure $context.Failures ('借鉴事项合同失败：' + $card.BorrowId) }
+    catch { Add-BpiFailure $context.Failures ('Borrowing-item contract failed: ' + $card.BorrowId) }
   }
   return New-BorrowingP4tCheckResult -Mode $context.Mode `
     -Warnings $warnings -Failures $context.Failures

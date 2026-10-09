@@ -2,11 +2,11 @@
 
 function Get-PropStateSpecs {
   @(
-    [PSCustomObject]@{ Label = "待审批"; RelPattern = "确认改动\待审批\*"; StatusPattern = "待审批|\APending approval(?=\s*(?:/|$))"; DirRel = "确认改动\待审批"; LinkPrefix = "待审批/" },
-    [PSCustomObject]@{ Label = "进行中"; RelPattern = "确认改动\已审批\进行中\*"; StatusPattern = "未收口|\AApproved\s*·\s*Open(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\进行中"; LinkPrefix = "已审批/进行中/" },
-    [PSCustomObject]@{ Label = "已完成"; RelPattern = "确认改动\已审批\已完成\*"; StatusPattern = "已完成|\AApproved\s*·\s*Completed(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\已完成"; LinkPrefix = "已审批/已完成/" },
-    [PSCustomObject]@{ Label = "已弃用"; RelPattern = "确认改动\已审批\已弃用\*"; StatusPattern = "已弃用|\AApproved\s*·\s*Abandoned(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\已弃用"; LinkPrefix = "已审批/已弃用/" },
-    [PSCustomObject]@{ Label = "拒绝"; RelPattern = "确认改动\拒绝\*"; StatusPattern = "拒绝|\ARejected(?=\s*(?:/|$))"; DirRel = "确认改动\拒绝"; LinkPrefix = "拒绝/" }
+    [PSCustomObject]@{ Label = "Pending approval"; RelPattern = "确认改动\待审批\*"; StatusPattern = "待审批|\APending approval(?=\s*(?:/|$))"; DirRel = "确认改动\待审批"; LinkPrefix = "待审批/" },
+    [PSCustomObject]@{ Label = "In progress"; RelPattern = "确认改动\已审批\进行中\*"; StatusPattern = "未收口|\AApproved\s*·\s*Open(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\进行中"; LinkPrefix = "已审批/进行中/" },
+    [PSCustomObject]@{ Label = "Completed"; RelPattern = "确认改动\已审批\已完成\*"; StatusPattern = "已完成|\AApproved\s*·\s*Completed(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\已完成"; LinkPrefix = "已审批/已完成/" },
+    [PSCustomObject]@{ Label = "Abandoned"; RelPattern = "确认改动\已审批\已弃用\*"; StatusPattern = "已弃用|\AApproved\s*·\s*Abandoned(?=\s*(?:/|$))"; DirRel = "确认改动\已审批\已弃用"; LinkPrefix = "已审批/已弃用/" },
+    [PSCustomObject]@{ Label = "Rejected"; RelPattern = "确认改动\拒绝\*"; StatusPattern = "拒绝|\ARejected(?=\s*(?:/|$))"; DirRel = "确认改动\拒绝"; LinkPrefix = "拒绝/" }
   )
 }
 
@@ -43,11 +43,11 @@ function Get-PropHeaderStatus {
   }
 
   if ($candidates.Count -eq 0) {
-    Add-Failure "$rel 缺少文件头状态字段"
+    Add-Failure "$rel lacks a status field in its header"
     return ""
   }
   if ($candidates.Count -gt 1) {
-    Add-Failure "$rel 文件头状态字段候选不唯一：$($candidates.Line -join ', ')"
+    Add-Failure "$rel has multiple candidate header status fields: $($candidates.Line -join ', ')"
   }
   return $candidates[0].Status
 }

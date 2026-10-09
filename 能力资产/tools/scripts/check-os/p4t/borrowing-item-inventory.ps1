@@ -53,13 +53,13 @@ function global:Get-BpiItemInventory {
   $zone = Join-Path $Root '借鉴区\事项'
   try { [void](Get-BorrowingSafePathInfo $zone Directory p4t-item source-unsafe) }
   catch {
-    Add-BpiFailure $Failures '借鉴区事项目录缺失或不安全'
+    Add-BpiFailure $Failures 'The borrowing item directory is missing or unsafe'
     return $items.ToArray()
   }
   foreach ($entry in @(Get-ChildItem -LiteralPath $zone -Force)) {
     if (-not $entry.PSIsContainer) {
       if (-not $entry.Name.StartsWith('.', [StringComparison]::Ordinal)) {
-        Add-BpiFailure $Failures ('事项区含非目录成员：' + $entry.Name)
+        Add-BpiFailure $Failures ('The item area contains a non-directory member: ' + $entry.Name)
       }
       continue
     }
@@ -75,12 +75,12 @@ function global:Get-BpiItemInventory {
       if ($card.BorrowId -cne $entry.Name) { throw 'item directory id mismatch' }
       [void]$items.Add($card)
     }
-    catch { Add-BpiFailure $Failures ('借鉴事项无效：' + $entry.Name) }
+    catch { Add-BpiFailure $Failures ('Invalid borrowing item: ' + $entry.Name) }
   }
   $byId = @{}
   foreach ($card in $items) {
     if ($byId.ContainsKey($card.BorrowId)) {
-      Add-BpiFailure $Failures ('borrow_id 重复：' + $card.BorrowId)
+      Add-BpiFailure $Failures ('Duplicate borrow_id: ' + $card.BorrowId)
     }
     else { $byId[$card.BorrowId] = $card }
   }

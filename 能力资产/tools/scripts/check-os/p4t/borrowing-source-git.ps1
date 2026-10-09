@@ -76,12 +76,12 @@ function global:Test-BorrowingP4tTrackedCache {
         throw 'tracked cache query failed'
       }
       if ($tracked.StdOut.Length -gt 0) {
-        Add-BorrowingP4tSourceIssue $Failures '来源 raw/cache 不得被 Git 跟踪'
+        Add-BorrowingP4tSourceIssue $Failures 'Source raw/cache content must not be tracked by Git'
         return
       }
     }
   }
-  catch { Add-BorrowingP4tSourceIssue $Failures 'git ls-files 来源缓存追踪检查失败' }
+  catch { Add-BorrowingP4tSourceIssue $Failures 'git ls-files failed while checking source-cache tracking' }
 }
 
 function global:Get-BorrowingP4tAdvertisedOid {

@@ -140,7 +140,7 @@ function global:Get-BorrowingValidatedSourceCardSkeleton {
       'source-card project line is unsafe'
   }
   $fixed = @($lines[0..66])
-  # 运行时构造占位符，避免实例化器改写校验器自身的规范化常量。
+  # Construct the placeholder at runtime so the installer cannot rewrite the validator normalization constant.
   $canonicalProjectToken = '{' + '{PROJECT_NAME}' + '}'
   $fixed[22] = $prefix + $canonicalProjectToken + $suffix
   $fixedBytes = [Text.Encoding]::UTF8.GetBytes(($fixed -join "`n") + "`n")

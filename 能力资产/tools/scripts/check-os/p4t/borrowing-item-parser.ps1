@@ -106,7 +106,7 @@ function global:Read-BpiItemCard {
       $values.closure_seal_sha256
     }
     else { throw 'item seal scalar invalid' }
-  # 枚举直接锁定治理合同，避免任意字符串被误当成可写角色授权。
+  # Enums enforce the governance contract directly so arbitrary strings cannot be mistaken for role write authorization.
   $owners = @(
     'project-pm', 'sediment-pm', 'operating-system-pm', 'product-pm',
     'technical-pm', 'test-pm', 'operations-pm', 'development-pm', 'release-pm'
@@ -170,7 +170,7 @@ function global:Read-BpiItemCard {
       '| 时间 | 旧状态 | 新状态 | decision | 原因 | 确认 |' `
       '|---|---|---|---|---|---|' 6)
   foreach ($row in $historyRows) {
-    # 空原因已由表格标量拒绝；这里额外封住模板占位符及其装饰写法。
+    # Table scalars already reject empty reasons; also reject template placeholders and decorated variants here.
     if ($row.Cells[2] -ceq 'cancelled' -and
         ($row.Cells[4].IndexOf('待填写', [StringComparison]::Ordinal) -ge 0 -or
          $row.Cells[4].IndexOf('To be completed', [StringComparison]::OrdinalIgnoreCase) -ge 0)) {

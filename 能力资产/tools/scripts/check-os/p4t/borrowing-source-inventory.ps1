@@ -8,7 +8,7 @@ function global:Get-BorrowingP4tSafeSourceInventory {
     $sourceEntries = @(Get-ChildItem -LiteralPath $SourcesPath -Force -ErrorAction Stop)
   }
   catch {
-    Add-BorrowingP4tSourceIssue $Failures '借鉴区来源目录缺失或不安全'
+    Add-BorrowingP4tSourceIssue $Failures 'The borrowing source directory is missing or unsafe'
     return $captures.ToArray()
   }
 
@@ -20,7 +20,7 @@ function global:Get-BorrowingP4tSafeSourceInventory {
           throw 'unexpected source-root file'
         }
       }
-      catch { Add-BorrowingP4tSourceIssue $Failures ('来源区含非法成员：' + $sourceEntry.Name) }
+      catch { Add-BorrowingP4tSourceIssue $Failures ('Invalid source-area member: ' + $sourceEntry.Name) }
       continue
     }
 
@@ -30,7 +30,7 @@ function global:Get-BorrowingP4tSafeSourceInventory {
       $captureEntries = @(Get-ChildItem -LiteralPath $sourceEntry.FullName -Force -ErrorAction Stop)
     }
     catch {
-      Add-BorrowingP4tSourceIssue $Failures ('来源目录无效：' + $sourceEntry.Name)
+      Add-BorrowingP4tSourceIssue $Failures ('Invalid source directory: ' + $sourceEntry.Name)
       continue
     }
     foreach ($captureEntry in $captureEntries) {

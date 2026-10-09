@@ -32,4 +32,4 @@ foreach ($check in $checks) {
 }
 
 $hits = @(Invoke-P4mPatternChecks -Root $Root -Checks $checks)
-Complete-P4mScan -Hits $hits -FailureTitle "rules/skills 可复制性旧口径" -SuccessMessage "rules/skills 可复制命令与起手语义未发现旧口径"
+Complete-P4mScan -Hits $hits -FailureTitle "rules/skills contain obsolete copyable guidance" -SuccessMessage "rules/skills contain no obsolete copyable commands or startup semantics"

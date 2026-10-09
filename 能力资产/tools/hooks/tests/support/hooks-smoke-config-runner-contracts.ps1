@@ -61,7 +61,7 @@ exit `$LASTEXITCODE
 
   $readmeOutput = Run-Checked @("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $Paths.ReadmeCheck)
   Assert-True ($readmeOutput -match "ADR README") "README check bad"
-  Assert-True ($readmeOutput -match "PM 工作区入口对齐") "README check missing PM workspace anchor"
+  Assert-True ($readmeOutput -match "PM workspace entries are aligned") "README check missing PM workspace anchor"
 
   $adrOutput = Run-Checked @("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $Paths.AdrUpdate, "-Mode", "Check")
   Assert-True ($adrOutput -match "ADR README") "ADR update bad"

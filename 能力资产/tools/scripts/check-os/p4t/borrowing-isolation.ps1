@@ -72,7 +72,7 @@ function global:Test-P4tIsolationTextFile {
     }
   }
   catch {
-    Add-P4tIsolationFailure $Failures ('业务文件检查后改变：' + $relative)
+    Add-P4tIsolationFailure $Failures ('Business file changed after inspection: ' + $relative)
     return
   }
   $maximumBytes = 8MB
@@ -82,11 +82,11 @@ function global:Test-P4tIsolationTextFile {
   else { [uint64]$before.Length }
   try { Use-P4tIsolationResourceBudget $Budget 1 0 $plannedBytes }
   catch {
-    Add-P4tIsolationFailure $Failures ('业务扫描资源预算超限：' + $relative)
+    Add-P4tIsolationFailure $Failures ('Business-scan resource budget exceeded: ' + $relative)
     return
   }
   if ([uint64]$before.Length -gt [uint64]$maximumBytes) {
-    # 超限文本必须 fail closed；Decoder 的非终结读取可避免 UTF-8 字符恰在采样边界被误判为二进制。
+    # Oversized text must fail closed; nonfinal Decoder reads prevent UTF-8 characters split at the sampling boundary from being misclassified as binary.
     try {
       $prefixSnapshot = Read-P4tIsolationStablePrefixSnapshot -ExpectedFile $before
       [byte[]]$prefix = $prefixSnapshot.Bytes
@@ -103,20 +103,20 @@ function global:Test-P4tIsolationTextFile {
           if ($characters[$index] -eq [char]0) { $containsNul = $true; break }
         }
         if (-not $containsNul) {
-          Add-P4tIsolationFailure $Failures ('业务文本超出隔离扫描上限：' + $relative)
+          Add-P4tIsolationFailure $Failures ('Business text exceeds the isolation-scan limit: ' + $relative)
         }
       }
     }
     catch [Text.DecoderFallbackException] {
       if (-not (Test-P4tIsolationHasNulEvidence $prefix $read)) {
-        Add-P4tIsolationFailure $Failures ('业务文本编码无效：' + $relative)
+        Add-P4tIsolationFailure $Failures ('Invalid business-text encoding: ' + $relative)
       }
     }
-    catch { Add-P4tIsolationFailure $Failures ('业务文本无法安全读取：' + $relative) }
+    catch { Add-P4tIsolationFailure $Failures ('Cannot safely read business text: ' + $relative) }
     return
   }
 
-  # 按内容而非扩展名识别文本，避免 HTML、环境文件或无扩展名启动器绕过零依赖扫描。
+  # Detect text by content, not extension, so HTML, environment files, and extensionless launchers cannot bypass the zero-dependency scan.
   try {
     $fullSnapshot = Read-P4tIsolationExpectedFullSnapshot `
       -ExpectedFile $before -MaximumBytes $plannedBytes
@@ -127,17 +127,17 @@ function global:Test-P4tIsolationTextFile {
   }
   catch [Text.DecoderFallbackException] {
     if (-not (Test-P4tIsolationHasNulEvidence $bytes $bytes.Length)) {
-      Add-P4tIsolationFailure $Failures ('业务文本编码无效：' + $relative)
+      Add-P4tIsolationFailure $Failures ('Invalid business-text encoding: ' + $relative)
     }
     return
   }
   catch {
-    Add-P4tIsolationFailure $Failures ('业务文本无法安全读取：' + $relative)
+    Add-P4tIsolationFailure $Failures ('Cannot safely read business text: ' + $relative)
     return
   }
   if ($text.IndexOf([char]0) -ge 0) { return }
   if ($text -match '(?i)(?<![\p{L}\p{N}_])借鉴区(?=[\\/]|["''])') {
-    Add-P4tIsolationFailure $Failures ('业务文件直接依赖借鉴区：' + $relative)
+    Add-P4tIsolationFailure $Failures ('Business file directly depends on the borrowing area: ' + $relative)
   }
 }
 
@@ -148,7 +148,7 @@ function global:Test-P4tIsolationBusinessTree {
     $Budget
   )
 
-  # 构建/运行产物也可能被实际部署或执行，必须扫描；只跳过明确的第三方、VCS、覆盖率与缓存树。
+  # Build/runtime artifacts may be deployed or executed and must be scanned; skip only explicit third-party, VCS, coverage, and cache trees.
   $excluded = @('.git', 'node_modules', 'coverage', '.cache')
   $pending = New-Object Collections.Generic.Queue[object]
   try {
@@ -156,7 +156,7 @@ function global:Test-P4tIsolationBusinessTree {
       -Stage 'p4t-isolation' -ReasonCode 'unsafe-business-path'
   }
   catch {
-    Add-P4tIsolationFailure $Failures '业务目录不安全'
+    Add-P4tIsolationFailure $Failures 'The business directory is unsafe'
     return
   }
   $pending.Enqueue($appInfo)
@@ -172,7 +172,7 @@ function global:Test-P4tIsolationBusinessTree {
       $initialInventory = Get-P4tIsolationDirectoryInventory $expectedDirectory $Budget
     }
     catch {
-      Add-P4tIsolationFailure $Failures '业务目录无法读取'
+      Add-P4tIsolationFailure $Failures 'Cannot read the business directory'
       continue
     }
     Invoke-P4tIsolationTestInjection 'after-directory-inventory' `
@@ -194,14 +194,14 @@ function global:Test-P4tIsolationBusinessTree {
     try {
       $finalInventory = Get-P4tIsolationDirectoryInventory `
         $initialInventory.Directory $Budget
-      # 这是扫描窗口首尾一致性，不承诺检查返回后的文件系统不可变化。
+      # This checks consistency at both ends of the scan window; it does not promise filesystem immutability after the check returns.
       if (-not (Test-P4tIsolationDirectoryInventoryEqual `
           $initialInventory $finalInventory)) {
         throw 'business directory entries changed during scan'
       }
     }
     catch {
-      Add-P4tIsolationFailure $Failures ('业务目录扫描期间改变：' + $directory)
+      Add-P4tIsolationFailure $Failures ('Business directory changed during scanning: ' + $directory)
     }
   }
 }
@@ -220,23 +220,23 @@ function global:Invoke-BorrowingP4tIsolationCheck {
   $failures = New-Object Collections.Generic.List[string]
   try { $safeRoot = Resolve-BorrowingP4tSafeRoot -Root $Root }
   catch {
-    Add-P4tIsolationFailure $failures 'Root 无效'
+    Add-P4tIsolationFailure $failures 'Invalid Root'
     return New-BorrowingP4tCheckResult $detectedMode $warnings $failures
   }
   $detectedMode = Get-BorrowingP4tRootMode -Root $safeRoot
   if ($detectedMode -eq 'unknown') {
-    Add-P4tIsolationFailure $failures 'Root 缺 marker'
+    Add-P4tIsolationFailure $failures 'Root lacks a marker'
   }
   elseif ($detectedMode -eq 'conflict') {
-    Add-P4tIsolationFailure $failures 'Root marker 冲突'
+    Add-P4tIsolationFailure $failures 'Conflicting Root markers'
   }
   if ($suppliedMode -cne $detectedMode) {
-    Add-P4tIsolationFailure $failures 'RootMode 与传入 Mode 不一致'
+    Add-P4tIsolationFailure $failures 'RootMode does not match the supplied Mode'
   }
   if ($failures.Count -eq 0 -and $detectedMode -eq 'project') {
     $budget = $null
     try { $budget = New-P4tIsolationResourceBudget }
-    catch { Add-P4tIsolationFailure $failures '隔离扫描资源预算无效' }
+    catch { Add-P4tIsolationFailure $failures 'Invalid isolation-scan resource budget' }
     $resolution = if ($null -ne $budget) {
       Resolve-P4tIsolationAppRoot -Root $safeRoot -Failures $failures -Budget $budget
     } else { $null }
@@ -247,11 +247,11 @@ function global:Invoke-BorrowingP4tIsolationCheck {
         $baseline = Get-P4tIsolationTreeSnapshot `
           $resolution.AppRootSnapshot $excluded $budget
       }
-      catch { Add-P4tIsolationFailure $failures '业务树基线无法安全建立' }
+      catch { Add-P4tIsolationFailure $failures 'Cannot safely establish the business-tree baseline' }
       if ($null -ne $baseline) {
         Invoke-P4tIsolationTestInjection 'after-tree-baseline' `
           ([pscustomobject]@{ Path = [string]$resolution.AppRoot })
-        # 基线、业务扫描、最终树复核均对实际读取独立计量，并共用一次调用预算。
+        # Baseline, business scanning, and final tree verification each meter actual reads independently while sharing one invocation budget.
         Test-P4tIsolationBusinessTree -AppRoot $resolution.AppRoot `
           -Failures $failures -Budget $budget
         try {
@@ -260,10 +260,10 @@ function global:Invoke-BorrowingP4tIsolationCheck {
             throw 'business tree changed during scan'
           }
         }
-        catch { Add-P4tIsolationFailure $failures '业务树在隔离扫描期间改变' }
+        catch { Add-P4tIsolationFailure $failures 'The business tree changed during isolation scanning' }
       }
       try { Assert-P4tIsolationProjectResolutionStable $resolution $budget }
-      catch { Add-P4tIsolationFailure $failures '项目卡在隔离扫描期间改变' }
+      catch { Add-P4tIsolationFailure $failures 'The project card changed during isolation scanning' }
     }
   }
   return New-BorrowingP4tCheckResult $detectedMode $warnings $failures

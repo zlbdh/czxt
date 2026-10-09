@@ -196,7 +196,7 @@ if (Test-Path -LiteralPath $configDir -PathType Container) {
   foreach ($file in Get-ChildItem -LiteralPath $configDir -Filter "*.project.json" -File) {
     if ($file.Name -ne "_模板.project.json") {
       $rel = Get-RelativePathCompat -BasePath $Root -FullPath $file.FullName
-      $failures.Add("$rel 不应进入模板仓库；具体项目卡请放本机项目目录或 项目区/本地实例/")
+      $failures.Add("$rel must not enter the template repository; keep project-specific cards in the local project directory or 项目区/本地实例/")
     }
   }
 }

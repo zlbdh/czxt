@@ -13,7 +13,7 @@ function Add-Failure([string]$Message) {
 function Read-Text([string]$Rel) {
   $path = Join-Path $Root $Rel
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    Add-Failure "PROP 模板锚点缺文件：$Rel"
+    Add-Failure "PROP template anchor file is missing: $Rel"
     return ""
   }
   return Get-Content -LiteralPath $path -Raw -Encoding UTF8
@@ -22,7 +22,7 @@ function Read-Text([string]$Rel) {
 function Read-Head([string]$Rel, [int]$Lines = 14) {
   $path = Join-Path $Root $Rel
   if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
-    Add-Failure "PROP 模板锚点缺文件：$Rel"
+    Add-Failure "PROP template anchor file is missing: $Rel"
     return ""
   }
   return (Get-Content -LiteralPath $path -TotalCount $Lines -Encoding UTF8) -join "`n"
@@ -30,22 +30,22 @@ function Read-Head([string]$Rel, [int]$Lines = 14) {
 
 $template = Read-Text "确认改动\_模板.md"
 if ($template -notmatch '```powershell' -or $template -match '```bash|grep PROP-|2>/dev/null') {
-  Add-Failure "PROP 模板编号查询未使用当前 PowerShell 口径"
+  Add-Failure "The PROP template ID query does not use the current PowerShell convention"
 }
 
 $readme = Read-Text "确认改动\README.md"
 if ($readme -notmatch "已批未收口|Approved · Open" -or $readme -notmatch "待排期 / 待重审 / 外部能力跟踪|await scheduling, rereview, external capability tracking, or reassessment") {
-  Add-Failure "确认改动 README 仍把进行中简化为纯实施中"
+  Add-Failure "The confirmed-change README still simplifies the active state to implementation in progress"
 }
 
 $prop038 = Read-Text "确认改动\已审批\进行中\PROP-038-2026-05-22-多形式自动化-Layer4.md"
 if ($prop038 -match "Sprint-9 候选" -or $prop038 -notmatch "外部能力跟踪") {
-  Add-Failure "PROP-038 未标为 v0 已落地后的外部能力跟踪"
+  Add-Failure "PROP-038 is not marked as external-capability tracking after v0 implementation"
 }
 
 $prop039 = Read-Text "确认改动\已审批\进行中\PROP-039-2026-05-22-Mem0+Skills-SDK集成.md"
 if ($prop039 -notmatch "重估暂停说明" -or $prop039 -notmatch "不得按下表直接实施") {
-  Add-Failure "PROP-039 原 AC/实施路径未显式暂停重估"
+  Add-Failure "The original PROP-039 AC/implementation path is not explicitly paused for reassessment"
 }
 
 foreach ($rel in @(
@@ -56,7 +56,7 @@ foreach ($rel in @(
 )) {
   $head = ((Read-Text $rel) -split "`n" | Select-Object -First 12) -join "`n"
   if ($head -notmatch "历史封存说明" -or $head -notmatch "当前执行入口") {
-    Add-Failure "$rel 缺少历史封存说明"
+    Add-Failure "$rel lacks a historical-archive notice"
   }
 }
 
@@ -70,15 +70,15 @@ if (Test-Path -LiteralPath $completedDir -PathType Container) {
 
     $head = Read-Head $rel 14
     if ($head -notmatch "历史|封存|旧|草案" -or $head -notmatch "当前|现行|不得照抄|不作为当前执行入口") {
-      Add-Failure "$rel 命中旧路径/危险命令/API/chat 旧口径但首屏缺历史边界"
+      Add-Failure "$rel contains legacy paths, dangerous commands, or old API/chat conventions but lacks a historical boundary near the top"
     }
 
     if ($text -match "git reset --hard|rm\s+\.git/index" -and $head -notmatch "不得照抄|三类行为铁律|用户明确授权") {
-      Add-Failure "$rel 含破坏性 git 历史命令但首屏未前置禁止照抄语义"
+      Add-Failure "$rel contains destructive historical Git commands without an opening prohibition on copying them into execution"
     }
   }
 }
 
 if ($failures.Count -gt 0) { exit 10 }
-Write-Host "  ✅ PROP 模板与历史封存口径对齐" -ForegroundColor Green
+Write-Host "  ✅ PROP template and historical-archive conventions are aligned" -ForegroundColor Green
 exit 0

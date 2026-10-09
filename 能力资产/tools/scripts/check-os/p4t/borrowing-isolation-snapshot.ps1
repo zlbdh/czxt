@@ -102,7 +102,7 @@ function global:Read-P4tIsolationStablePrefixSnapshot {
     }
     Invoke-P4tIsolationTestInjection 'after-oversized-prefix-read' `
       ([pscustomobject]@{ Path = [string]$opened.CanonicalPath })
-    # 路径复核必须发生在句柄释放前；FileShare.Read 同时封住删除与改名窗口。
+    # Recheck paths before releasing handles; FileShare.Read also closes deletion and rename windows.
     $pathAfter = Get-BorrowingSafePathInfo -Path $opened.CanonicalPath `
       -ExpectedKind File -Stage 'p4t-isolation' -ReasonCode 'unsafe-business-path'
     if (-not (Test-BorrowingTrustedSnapshotEqual $opened $pathAfter) -or

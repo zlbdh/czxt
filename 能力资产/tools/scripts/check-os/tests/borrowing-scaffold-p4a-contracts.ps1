@@ -54,7 +54,7 @@ $files | Where-Object { Test-CzxtBorrowingPlaceholderRewriteAllowed -ProjectRoot
       $passes = New-Object 'Collections.Generic.List[string]'
       Test-CzxtBorrowingScaffold -Root $guardRoot -RootMode 'template' `
         -Failures $failures -Passes $passes
-      Assert-CzxtTrue (($failures -join "`n").Contains('不得递归复制借鉴区')) `
+      Assert-CzxtTrue (($failures -join "`n").Contains('must not recursively copy the borrowing area')) `
         ("copyItems bypass was accepted: {0}" -f $case.Name)
     }
     $safeText = $installerTemplate.Replace('{COPY_ITEMS}', '$copyItems = @("借鉴区2")')

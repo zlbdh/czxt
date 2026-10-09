@@ -168,7 +168,7 @@ try {
     }
     Assert-CzxtTrue ([bool]$script:P4tIsolationLateFilesRan) `
       'late-file injection did not run after baseline'
-    Assert-CzxtTrue (@($result.Failures) -contains '业务扫描资源预算超限：b.js') `
+    Assert-CzxtTrue (@($result.Failures) -contains 'Business-scan resource budget exceeded: b.js') `
       'late files were not rejected at the business-read budget point'
   }
   Invoke-CzxtContract 'business scan charges late file bytes before content reads' {
@@ -190,7 +190,7 @@ try {
     }
     Assert-CzxtTrue ([bool]$script:P4tIsolationLateBytesRan) `
       'late-byte injection did not run after baseline'
-    Assert-CzxtTrue (@($result.Failures) -contains '业务扫描资源预算超限：late.bin') `
+    Assert-CzxtTrue (@($result.Failures) -contains 'Business-scan resource budget exceeded: late.bin') `
       'late bytes were not rejected at the business-read budget point'
   }
   Invoke-CzxtContract 'isolation fails closed when the whole-call file budget is exceeded' {
